@@ -3,35 +3,35 @@
 
 #ifdef INIMF
 boolean 
-getstringsstarted (void) 
+get_strings_started (void) 
 {
   /* 30 10 */ register boolean Result; unsigned char k, l;
-  strnumber g;
+  str_number g;
   pool_ptr = 0;
   str_ptr = 0;
   max_pool_ptr = 0;
-  maxstr_ptr = 0;
-  strstart[0] = 0;
+  max_str_ptr = 0;
+  str_start[0] = 0;
   {register integer for_end; k = 0;for_end = 255; if (k <= for_end) do 
     {
       if (((k < 32) || (k > 126))) 
       {
 	{
-	  strpool[pool_ptr] = 94;
+	  str_pool[pool_ptr] = 94;
 	  incr (pool_ptr);
 	} 
 	{
-	  strpool[pool_ptr] = 94;
+	  str_pool[pool_ptr] = 94;
 	  incr (pool_ptr);
 	} 
 	if (k < 64) 
 	{
-	  strpool[pool_ptr] = k + 64;
+	  str_pool[pool_ptr] = k + 64;
 	  incr (pool_ptr);
 	} 
 	else if (k < 128) 
 	{
-	  strpool[pool_ptr] = k - 64;
+	  str_pool[pool_ptr] = k - 64;
 	  incr (pool_ptr);
 	} 
 	else {
@@ -39,40 +39,40 @@ getstringsstarted (void)
 	  l = k / 16;
 	  if (l < 10) 
 	  {
-	    strpool[pool_ptr] = l + 48;
+	    str_pool[pool_ptr] = l + 48;
 	    incr (pool_ptr);
 	  } 
 	  else {
 	      
-	    strpool[pool_ptr] = l + 87;
+	    str_pool[pool_ptr] = l + 87;
 	    incr (pool_ptr);
 	  } 
 	  l = k % 16;
 	  if (l < 10) 
 	  {
-	    strpool[pool_ptr] = l + 48;
+	    str_pool[pool_ptr] = l + 48;
 	    incr (pool_ptr);
 	  } 
 	  else {
 	      
-	    strpool[pool_ptr] = l + 87;
+	    str_pool[pool_ptr] = l + 87;
 	    incr (pool_ptr);
 	  } 
 	} 
       } 
       else {
 	  
-	strpool[pool_ptr] = k;
+	str_pool[pool_ptr] = k;
 	incr (pool_ptr);
       } 
       g = makestring ();
-      strref[g] = 127;
+      str_ref[g] = 127;
     } 
   while (k++ < for_end);} 
-  g = loadpoolstrings ((pool_size - stringvacancies));
+  g = loadpoolstrings ((pool_size - string_vacancies));
   if (g == 0) 
   {
-  ;
+;
     fprintf (stdout , "%s\n",  "! You have to increase pool_size.");
     Result = false;
     goto lab10;
@@ -84,7 +84,7 @@ getstringsstarted (void)
 #endif /* INIMF */
 #ifdef INIMF
 void 
-sortavail (void) 
+sort_avail (void) 
 {
   halfword p, q, r;
   halfword oldrover;
@@ -121,38 +121,38 @@ sortavail (void)
 #endif /* INIMF */
 #ifdef INIMF
 void 
-zprimitive (strnumber s , halfword c , halfword o) 
+primitive (str_number s , halfword c , halfword o) 
 {
-  poolpointer k;
-  smallnumber j;
-  smallnumber l;
-  k = strstart[s];
-  l = strstart[s + 1] - k;
+  pool_pointer k;
+  small_number j;
+  small_number l;
+  k = str_start[s];
+  l = str_start[s + 1] - k;
   {register integer for_end; j = 0;for_end = l - 1; if (j <= for_end) do 
-    buffer[j] = strpool[k + j];
+    buffer[j] = str_pool[k + j];
   while (j++ < for_end);} 
-  cursym = idlookup (0 , l);
+  cur_sym = idlookup (0 , l);
   if (s >= 256) 
   {
     flushstring (str_ptr - 1);
-    hash[cursym].v.RH = s;
+    hash[cur_sym].v.RH = s;
   } 
-  eqtb[cursym].lhfield = c;
-  eqtb[cursym].v.RH = o;
+  eqtb[cur_sym].lhfield = c;
+  eqtb[cur_sym].v.RH = o;
 } 
 #endif /* INIMF */
 #ifdef INIMF
 void 
-storebasefile (void) 
+store_base_file (void) 
 {
   integer k;
   halfword p, q;
   integer x;
   fourquarters w;
-  ASCIIcode * baseengine;
+  ASCII_code * baseengine;
   selector = 5;
   print (1073);
-  print (jobname);
+  print (job_name);
   printchar (32);
   printint (roundunscaled (internal[14]));
   printchar (46);
@@ -171,18 +171,18 @@ storebasefile (void)
       max_pool_ptr = pool_ptr + 1;
     } 
   } 
-  baseident = makestring ();
-  strref[baseident] = 127;
-  packjobname (742);
-  while (! wopenout (basefile)) promptfilename (1074 , 742);
+  base_ident = makestring ();
+  str_ref[base_ident] = 127;
+  packjob_name (742);
+  while (! wopenout (base_file)) promptfilename (1074 , 742);
   printnl (1075);
-  slowprint (wmakenamestring (basefile));
+  slowprint (wmakenamestring (base_file));
   flushstring (str_ptr - 1);
   printnl (261);
-  slowprint (baseident);
+  slowprint (base_ident);
   dumpint (1462914374L);
   x = strlen (enginename);
-  baseengine = xmallocarray (ASCIIcode , x + 4);
+  baseengine = xmallocarray (ASCII_code , x + 4);
   strcpy (stringcast (baseengine) , enginename);
   {register integer for_end; k = x;for_end = x + 3; if (k <= for_end) do 
     baseengine[k] = 0;
@@ -203,31 +203,31 @@ storebasefile (void)
   dumpint (pool_ptr);
   dumpint (str_ptr);
   {register integer for_end; k = 0;for_end = str_ptr; if (k <= for_end) do 
-    dumpint (strstart[k]);
+    dumpint (str_start[k]);
   while (k++ < for_end);} 
   k = 0;
   while (k + 4 < pool_ptr) {
       
-    w .b0 = strpool[k];
-    w .b1 = strpool[k + 1];
-    w .b2 = strpool[k + 2];
-    w .b3 = strpool[k + 3];
+    w .b0 = str_pool[k];
+    w .b1 = str_pool[k + 1];
+    w .b2 = str_pool[k + 2];
+    w .b3 = str_pool[k + 3];
     dumpqqqq (w);
     k = k + 4;
   } 
   k = pool_ptr - 4;
-  w .b0 = strpool[k];
-  w .b1 = strpool[k + 1];
-  w .b2 = strpool[k + 2];
-  w .b3 = strpool[k + 3];
+  w .b0 = str_pool[k];
+  w .b1 = str_pool[k + 1];
+  w .b2 = str_pool[k + 2];
+  w .b3 = str_pool[k + 3];
   dumpqqqq (w);
   println ();
   printint (str_ptr);
   print (1070);
   printint (pool_ptr);
-  sortavail ();
-  varused = 0;
-  dumpint (lomemmax);
+  sort_avail ();
+  var_used = 0;
+  dumpint (lo_mem_max);
   dumpint (rover);
   p = 0;
   q = rover;
@@ -238,102 +238,102 @@ storebasefile (void)
       dumpwd (mem[k]);
     while (k++ < for_end);} 
     x = x + q + 2 - p;
-    varused = varused + q - p;
+    var_used = var_used + q - p;
     p = q + mem[q].hhfield.lhfield;
     q = mem[q + 1].hhfield.v.RH;
   } while (! (q == rover));
-  varused = varused + lomemmax - p;
-  dynused = memend + 1 - himemmin;
-  {register integer for_end; k = p;for_end = lomemmax; if (k <= for_end) 
+  var_used = var_used + lo_mem_max - p;
+  dyn_used = mem_end + 1 - hi_mem_min;
+  {register integer for_end; k = p;for_end = lo_mem_max; if (k <= for_end) 
   do 
     dumpwd (mem[k]);
   while (k++ < for_end);} 
-  x = x + lomemmax + 1 - p;
-  dumpint (himemmin);
+  x = x + lo_mem_max + 1 - p;
+  dumpint (hi_mem_min);
   dumpint (avail);
-  {register integer for_end; k = himemmin;for_end = memend; if (k <= 
+  {register integer for_end; k = hi_mem_min;for_end = mem_end; if (k <= 
   for_end) do 
     dumpwd (mem[k]);
   while (k++ < for_end);} 
-  x = x + memend + 1 - himemmin;
+  x = x + mem_end + 1 - hi_mem_min;
   p = avail;
   while (p != 0) {
       
-    decr (dynused);
+    decr (dyn_used);
     p = mem[p].hhfield.v.RH;
   } 
-  dumpint (varused);
-  dumpint (dynused);
+  dumpint (var_used);
+  dumpint (dyn_used);
   println ();
   printint (x);
   print (1071);
-  printint (varused);
+  printint (var_used);
   printchar (38);
-  printint (dynused);
-  dumpint (hashused);
-  stcount = 9756 - hashused;
-  {register integer for_end; p = 1;for_end = hashused; if (p <= for_end) 
+  printint (dyn_used);
+  dumpint (hash_used);
+  st_count = 9756 - hash_used;
+  {register integer for_end; p = 1;for_end = hash_used; if (p <= for_end) 
   do 
     if (hash[p].v.RH != 0) 
     {
       dumpint (p);
       dumphh (hash[p]);
       dumphh (eqtb[p]);
-      incr (stcount);
+      incr (st_count);
     } 
   while (p++ < for_end);} 
-  {register integer for_end; p = hashused + 1;for_end = 9769; if (p <= 
+  {register integer for_end; p = hash_used + 1;for_end = 9769; if (p <= 
   for_end) do 
     {
       dumphh (hash[p]);
       dumphh (eqtb[p]);
     } 
   while (p++ < for_end);} 
-  dumpint (stcount);
+  dumpint (st_count);
   println ();
-  printint (stcount);
+  printint (st_count);
   print (1072);
-  dumpint (intptr);
-  {register integer for_end; k = 1;for_end = intptr; if (k <= for_end) do 
+  dumpint (int_ptr);
+  {register integer for_end; k = 1;for_end = int_ptr; if (k <= for_end) do 
     {
       dumpint (internal[k]);
-      dumpint (intname[k]);
+      dumpint (int_name[k]);
     } 
   while (k++ < for_end);} 
-  dumpint (startsym);
+  dumpint (start_sym);
   dumpint (interaction);
-  dumpint (baseident);
-  dumpint (bgloc);
-  dumpint (egloc);
-  dumpint (serialno);
+  dumpint (base_ident);
+  dumpint (bg_loc);
+  dumpint (eg_loc);
+  dumpint (serial_no);
   dumpint (69069L);
   internal[12] = 0;
-  wclose (basefile);
+  wclose (base_file);
 } 
 #endif /* INIMF */
 boolean 
-loadbasefile (void) 
+load_base_file (void) 
 {
   /* 6666 10 */ register boolean Result; integer k;
   halfword p, q;
   integer x;
   fourquarters w;
-  ASCIIcode * baseengine;
-  ASCIIcode dummyxord;
-  ASCIIcode dummyxchr;
-  ASCIIcode dummyxprn;
+  ASCII_code * baseengine;
+  ASCII_code dummyxord;
+  ASCII_code dummyxchr;
+  ASCII_code dummyxprn;
   undumpint (x);
   if (x != 1462914374L) 
   goto lab6666;
   undumpint (x);
   if ((x < 0) || (x > 256)) 
   goto lab6666;
-  baseengine = xmallocarray (ASCIIcode , x);
+  baseengine = xmallocarray (ASCII_code , x);
   undumpthings (baseengine[0], x);
   baseengine[x - 1] = 0;
   if (strcmp (enginename , stringcast (baseengine))) 
   {
-  ;
+;
     fprintf (stdout , "%s%s%s%s\n",  "---! " , stringcast (name_of_file + 1) ,     " was written by " , stringcast (baseengine));
     libcfree (baseengine);
     goto lab6666;
@@ -342,8 +342,8 @@ loadbasefile (void)
   undumpint (x);
   if (x != 4795517L) 
   {
-  ;
-    fprintf (stdout , "%s%s%s%s\n",  "---! " , stringcast (name_of_file + 1) ,     " doesn't match " , poolname);
+;
+    fprintf (stdout , "%s%s%s%s\n",  "---! " , stringcast (name_of_file + 1) ,     " doesn't match " , pool_name);
     goto lab6666;
   } 
   if (translatefilename) 
@@ -399,7 +399,7 @@ loadbasefile (void)
     goto lab6666;
     if (x > pool_size) 
     {
-    ;
+  ;
       fprintf (stdout , "%s%s\n",  "---! Must increase the " , "string pool size");
       goto lab6666;
     } 
@@ -409,9 +409,9 @@ loadbasefile (void)
     undumpint (x);
     if (x < 0) 
     goto lab6666;
-    if (x > maxstrings) 
+    if (x > max_strings) 
     {
-    ;
+  ;
       fprintf (stdout , "%s%s\n",  "---! Must increase the " , "max strings");
       goto lab6666;
     } 
@@ -423,40 +423,40 @@ loadbasefile (void)
 	undumpint (x);
 	if ((x < 0) || (x > pool_ptr)) 
 	goto lab6666;
-	else strstart[k] = x;
+	else str_start[k] = x;
       } 
-      strref[k] = 127;
+      str_ref[k] = 127;
     } 
   while (k++ < for_end);} 
   k = 0;
   while (k + 4 < pool_ptr) {
       
     undumpqqqq (w);
-    strpool[k] = w .b0;
-    strpool[k + 1] = w .b1;
-    strpool[k + 2] = w .b2;
-    strpool[k + 3] = w .b3;
+    str_pool[k] = w .b0;
+    str_pool[k + 1] = w .b1;
+    str_pool[k + 2] = w .b2;
+    str_pool[k + 3] = w .b3;
     k = k + 4;
   } 
   k = pool_ptr - 4;
   undumpqqqq (w);
-  strpool[k] = w .b0;
-  strpool[k + 1] = w .b1;
-  strpool[k + 2] = w .b2;
-  strpool[k + 3] = w .b3;
-  initstr_ptr = str_ptr;
+  str_pool[k] = w .b0;
+  str_pool[k + 1] = w .b1;
+  str_pool[k + 2] = w .b2;
+  str_pool[k + 3] = w .b3;
+  init_str_ptr = str_ptr;
   init_pool_ptr = pool_ptr;
-  maxstr_ptr = str_ptr;
+  max_str_ptr = str_ptr;
   max_pool_ptr = pool_ptr;
   {
     undumpint (x);
     if ((x < 1022) || (x > memtop - 3)) 
     goto lab6666;
-    else lomemmax = x;
+    else lo_mem_max = x;
   } 
   {
     undumpint (x);
-    if ((x < 23) || (x > lomemmax)) 
+    if ((x < 23) || (x > lo_mem_max)) 
     goto lab6666;
     else rover = x;
   } 
@@ -468,20 +468,20 @@ loadbasefile (void)
       undumpwd (mem[k]);
     while (k++ < for_end);} 
     p = q + mem[q].hhfield.lhfield;
-    if ((p > lomemmax) || ((q >= mem[q + 1].hhfield.v.RH) && (mem 
+    if ((p > lo_mem_max) || ((q >= mem[q + 1].hhfield.v.RH) && (mem 
    [q + 1].hhfield.v.RH != rover))) 
     goto lab6666;
     q = mem[q + 1].hhfield.v.RH;
   } while (! (q == rover));
-  {register integer for_end; k = p;for_end = lomemmax; if (k <= for_end) 
+  {register integer for_end; k = p;for_end = lo_mem_max; if (k <= for_end) 
   do 
     undumpwd (mem[k]);
   while (k++ < for_end);} 
   {
     undumpint (x);
-    if ((x < lomemmax + 1) || (x > memtop - 2)) 
+    if ((x < lo_mem_max + 1) || (x > memtop - 2)) 
     goto lab6666;
-    else himemmin = x;
+    else hi_mem_min = x;
   } 
   {
     undumpint (x);
@@ -489,52 +489,52 @@ loadbasefile (void)
     goto lab6666;
     else avail = x;
   } 
-  memend = memtop;
-  {register integer for_end; k = himemmin;for_end = memend; if (k <= 
+  mem_end = memtop;
+  {register integer for_end; k = hi_mem_min;for_end = mem_end; if (k <= 
   for_end) do 
     undumpwd (mem[k]);
   while (k++ < for_end);} 
-  undumpint (varused);
-  undumpint (dynused);
+  undumpint (var_used);
+  undumpint (dyn_used);
   {
     undumpint (x);
     if ((x < 1) || (x > 9757)) 
     goto lab6666;
-    else hashused = x;
+    else hash_used = x;
   } 
   p = 0;
   do {
       { 
       undumpint (x);
-      if ((x < p + 1) || (x > hashused)) 
+      if ((x < p + 1) || (x > hash_used)) 
       goto lab6666;
       else p = x;
     } 
     undumphh (hash[p]);
     undumphh (eqtb[p]);
-  } while (! (p == hashused));
-  {register integer for_end; p = hashused + 1;for_end = 9769; if (p <= 
+  } while (! (p == hash_used));
+  {register integer for_end; p = hash_used + 1;for_end = 9769; if (p <= 
   for_end) do 
     {
       undumphh (hash[p]);
       undumphh (eqtb[p]);
     } 
   while (p++ < for_end);} 
-  undumpint (stcount);
+  undumpint (st_count);
   {
     undumpint (x);
-    if ((x < 41) || (x > maxinternal)) 
+    if ((x < 41) || (x > max_internal)) 
     goto lab6666;
-    else intptr = x;
+    else int_ptr = x;
   } 
-  {register integer for_end; k = 1;for_end = intptr; if (k <= for_end) do 
+  {register integer for_end; k = 1;for_end = int_ptr; if (k <= for_end) do 
     {
       undumpint (internal[k]);
       {
 	undumpint (x);
 	if ((x < 0) || (x > str_ptr)) 
 	goto lab6666;
-	else intname[k] = x;
+	else int_name[k] = x;
       } 
     } 
   while (k++ < for_end);} 
@@ -542,7 +542,7 @@ loadbasefile (void)
     undumpint (x);
     if ((x < 0) || (x > 9757)) 
     goto lab6666;
-    else startsym = x;
+    else start_sym = x;
   } 
   {
     undumpint (x);
@@ -556,21 +556,21 @@ loadbasefile (void)
     undumpint (x);
     if ((x < 0) || (x > str_ptr)) 
     goto lab6666;
-    else baseident = x;
+    else base_ident = x;
   } 
   {
     undumpint (x);
     if ((x < 1) || (x > 9769)) 
     goto lab6666;
-    else bgloc = x;
+    else bg_loc = x;
   } 
   {
     undumpint (x);
     if ((x < 1) || (x > 9769)) 
     goto lab6666;
-    else egloc = x;
+    else eg_loc = x;
   } 
-  undumpint (serialno);
+  undumpint (serial_no);
   undumpint (x);
   if (x != 69069L) 
   goto lab6666;
@@ -583,36 +583,36 @@ loadbasefile (void)
   return Result;
 } 
 void 
-finalcleanup (void) 
+final_cleanup (void) 
 {
-  /* 10 */ smallnumber c;
-  c = curmod;
-  if (jobname == 0) 
+  /* 10 */ small_number c;
+  c = cur_mod;
+  if (job_name == 0) 
   open_log_file ();
-  while (inputptr > 0) if ((curinput.indexfield > 15)) 
+  while (input_ptr > 0) if ((cur_input.index_field > 15)) 
   endtokenlist ();
   else endfilereading ();
-  while (loopptr != 0) stop_iteration ();
-  while (openparens > 0) {
+  while (loop_ptr != 0) stop_iteration ();
+  while (open_parens > 0) {
       
     print (1077);
-    decr (openparens);
+    decr (open_parens);
   } 
-  while (condptr != 0) {
+  while (cond_ptr != 0) {
       
     printnl (1078);
-    printcmdmod (2 , curif);
-    if (ifline != 0) 
+    printcmdmod (2 , cur_if);
+    if (if_line != 0) 
     {
       print (1079);
-      printint (ifline);
+      printint (if_line);
     } 
     print (1080);
-    ifline = mem[condptr + 1].cint;
-    curif = mem[condptr].hhfield .b1;
-    loopptr = condptr;
-    condptr = mem[condptr].hhfield.v.RH;
-    freenode (loopptr , 2);
+    if_line = mem[cond_ptr + 1].cint;
+    cur_if = mem[cond_ptr].hhfield .b1;
+    loop_ptr = cond_ptr;
+    cond_ptr = mem[cond_ptr].hhfield.v.RH;
+    freenode (loop_ptr , 2);
   } 
   if (history != 0) {
       
@@ -632,7 +632,7 @@ finalcleanup (void)
 #ifdef INIMF
     if (iniversion) 
     {
-      storebasefile ();
+      store_base_file ();
       goto lab10;
     } 
 #endif /* INIMF */
@@ -643,7 +643,7 @@ finalcleanup (void)
 } 
 #ifdef INIMF
 void 
-initprim (void) 
+init_prim (void) 
 {
   primitive (409 , 40 , 1);
   primitive (410 , 40 , 2);
@@ -688,32 +688,32 @@ initprim (void)
   primitive (449 , 40 , 41);
   primitive (408 , 47 , 0);
   primitive (91 , 63 , 0);
-  eqtb[9760] = eqtb[cursym];
+  eqtb[9760] = eqtb[cur_sym];
   primitive (93 , 64 , 0);
   primitive (125 , 65 , 0);
   primitive (123 , 46 , 0);
   primitive (58 , 81 , 0);
-  eqtb[9762] = eqtb[cursym];
+  eqtb[9762] = eqtb[cur_sym];
   primitive (459 , 80 , 0);
   primitive (460 , 79 , 0);
   primitive (461 , 77 , 0);
   primitive (44 , 82 , 0);
   primitive (59 , 83 , 0);
-  eqtb[9763] = eqtb[cursym];
+  eqtb[9763] = eqtb[cur_sym];
   primitive (92 , 7 , 0);
   primitive (462 , 18 , 0);
   primitive (463 , 72 , 0);
   primitive (464 , 59 , 0);
   primitive (465 , 32 , 0);
-  bgloc = cursym;
+  bg_loc = cur_sym;
   primitive (466 , 57 , 0);
   primitive (467 , 19 , 0);
   primitive (468 , 60 , 0);
   primitive (469 , 27 , 0);
   primitive (470 , 11 , 0);
   primitive (453 , 84 , 0);
-  eqtb[9767] = eqtb[cursym];
-  egloc = cursym;
+  eqtb[9767] = eqtb[cur_sym];
+  eg_loc = cur_sym;
   primitive (471 , 26 , 0);
   primitive (472 , 6 , 0);
   primitive (473 , 9 , 0);
@@ -740,12 +740,12 @@ initprim (void)
   primitive (658 , 16 , 44);
   primitive (659 , 16 , 49);
   primitive (454 , 16 , 0);
-  eqtb[9765] = eqtb[cursym];
+  eqtb[9765] = eqtb[cur_sym];
   primitive (660 , 4 , 9770);
   primitive (661 , 4 , 9920);
   primitive (662 , 4 , 1);
   primitive (455 , 4 , 0);
-  eqtb[9764] = eqtb[cursym];
+  eqtb[9764] = eqtb[cur_sym];
   primitive (663 , 61 , 0);
   primitive (664 , 61 , 1);
   primitive (64 , 61 , 2);
@@ -760,7 +760,7 @@ initprim (void)
   primitive (617 , 3 , 1);
   primitive (718 , 1 , 1);
   primitive (452 , 2 , 2);
-  eqtb[9766] = eqtb[cursym];
+  eqtb[9766] = eqtb[cur_sym];
   primitive (719 , 2 , 3);
   primitive (720 , 2 , 4);
   primitive (347 , 33 , 30);
@@ -806,7 +806,7 @@ initprim (void)
   primitive (45 , 43 , 70);
   primitive (42 , 55 , 71);
   primitive (47 , 54 , 72);
-  eqtb[9761] = eqtb[cursym];
+  eqtb[9761] = eqtb[cur_sym];
   primitive (386 , 45 , 73);
   primitive (310 , 45 , 74);
   primitive (388 , 52 , 76);
@@ -883,7 +883,7 @@ initprim (void)
   primitive (1060 , 29 , 16);
 } 
 void 
-inittab (void) 
+init_tab (void) 
 {
   integer k;
   rover = 23;
@@ -891,61 +891,61 @@ inittab (void)
   mem[rover].hhfield.lhfield = 1000;
   mem[rover + 1].hhfield.lhfield = rover;
   mem[rover + 1].hhfield.v.RH = rover;
-  lomemmax = rover + 1000;
-  mem[lomemmax].hhfield.v.RH = 0;
-  mem[lomemmax].hhfield.lhfield = 0;
+  lo_mem_max = rover + 1000;
+  mem[lo_mem_max].hhfield.v.RH = 0;
+  mem[lo_mem_max].hhfield.lhfield = 0;
   {register integer for_end; k = memtop - 2;for_end = memtop; if (k <= 
   for_end) do 
-    mem[k] = mem[lomemmax];
+    mem[k] = mem[lo_mem_max];
   while (k++ < for_end);} 
   avail = 0;
-  memend = memtop;
-  himemmin = memtop - 2;
-  varused = 23;
-  dynused = memtop + 1 - himemmin;
-  intname[1] = 409;
-  intname[2] = 410;
-  intname[3] = 411;
-  intname[4] = 412;
-  intname[5] = 413;
-  intname[6] = 414;
-  intname[7] = 415;
-  intname[8] = 416;
-  intname[9] = 417;
-  intname[10] = 418;
-  intname[11] = 419;
-  intname[12] = 420;
-  intname[13] = 421;
-  intname[14] = 422;
-  intname[15] = 423;
-  intname[16] = 424;
-  intname[17] = 425;
-  intname[18] = 426;
-  intname[19] = 427;
-  intname[20] = 428;
-  intname[21] = 429;
-  intname[22] = 430;
-  intname[23] = 431;
-  intname[24] = 432;
-  intname[25] = 433;
-  intname[26] = 434;
-  intname[27] = 435;
-  intname[28] = 436;
-  intname[29] = 437;
-  intname[30] = 438;
-  intname[31] = 439;
-  intname[32] = 440;
-  intname[33] = 441;
-  intname[34] = 442;
-  intname[35] = 443;
-  intname[36] = 444;
-  intname[37] = 445;
-  intname[38] = 446;
-  intname[39] = 447;
-  intname[40] = 448;
-  intname[41] = 449;
-  hashused = 9757;
-  stcount = 0;
+  mem_end = memtop;
+  hi_mem_min = memtop - 2;
+  var_used = 23;
+  dyn_used = memtop + 1 - hi_mem_min;
+  int_name[1] = 409;
+  int_name[2] = 410;
+  int_name[3] = 411;
+  int_name[4] = 412;
+  int_name[5] = 413;
+  int_name[6] = 414;
+  int_name[7] = 415;
+  int_name[8] = 416;
+  int_name[9] = 417;
+  int_name[10] = 418;
+  int_name[11] = 419;
+  int_name[12] = 420;
+  int_name[13] = 421;
+  int_name[14] = 422;
+  int_name[15] = 423;
+  int_name[16] = 424;
+  int_name[17] = 425;
+  int_name[18] = 426;
+  int_name[19] = 427;
+  int_name[20] = 428;
+  int_name[21] = 429;
+  int_name[22] = 430;
+  int_name[23] = 431;
+  int_name[24] = 432;
+  int_name[25] = 433;
+  int_name[26] = 434;
+  int_name[27] = 435;
+  int_name[28] = 436;
+  int_name[29] = 437;
+  int_name[30] = 438;
+  int_name[31] = 439;
+  int_name[32] = 440;
+  int_name[33] = 441;
+  int_name[34] = 442;
+  int_name[35] = 443;
+  int_name[36] = 444;
+  int_name[37] = 445;
+  int_name[38] = 446;
+  int_name[39] = 447;
+  int_name[40] = 448;
+  int_name[41] = 449;
+  hash_used = 9757;
+  st_count = 0;
   hash[9768].v.RH = 451;
   hash[9766].v.RH = 452;
   hash[9767].v.RH = 453;
@@ -973,7 +973,7 @@ inittab (void)
   mem[0].hhfield.lhfield = 0;
   mem[1].cint = 0;
   mem[2].cint = 0;
-  serialno = 0;
+  serial_no = 0;
   mem[13].hhfield.v.RH = 13;
   mem[14].hhfield.lhfield = 13;
   mem[13].hhfield.lhfield = 0;
@@ -989,10 +989,10 @@ inittab (void)
   mem[16].cint = 0;
   mem[15].hhfield.lhfield = 0;
   if (iniversion) 
-  baseident = 1069;
+  base_ident = 1069;
 } 
 #endif /* INIMF */
-void mainbody(void) {
+void mainbody (void) {
     
   bounddefault = 250000L;
   boundname = "main_memory";
@@ -1006,7 +1006,7 @@ void mainbody(void) {
   bounddefault = 50;
   boundname = "half_error_line";
   setupboundvariable (addressof (halferrorline) , boundname , bounddefault 
- );
+);
   bounddefault = 79;
   boundname = "max_print_line";
   setupboundvariable (addressof (maxprintline) , boundname , bounddefault) 
@@ -1042,11 +1042,11 @@ void mainbody(void) {
     else if (bufsize > supbufsize) 
     bufsize = supbufsize;
   } 
-  buffer = xmallocarray (ASCIIcode , bufsize);
-  rowtransition = xmallocarray (screencol , screenwidth);
-  gf_buf = xmallocarray (eightbits , gf_buf_size);
-  sourcefilenamestack = xmallocarray (strnumber , 15);
-  fullsourcefilenamestack = xmallocarray (strnumber , 15);
+  buffer = xmallocarray (ASCII_code , bufsize);
+  row_transition = xmallocarray (screen_col , screenwidth);
+  gf_buf = xmallocarray (eight_bits , gf_buf_size);
+  sourcefilenamestack = xmallocarray (str_number , 15);
+  fullsourcefilenamestack = xmallocarray (str_number , 15);
 #ifdef INIMF
   if (iniversion) 
   {
@@ -1054,7 +1054,7 @@ void mainbody(void) {
   } 
 #endif /* INIMF */
   history = 3;
-  if (readyalready == 314159L) 
+  if (ready_already == 314159L) 
   goto lab1;
   bad = 0;
   if ((halferrorline < 30) || (halferrorline > errorline - 15)) 
@@ -1067,9 +1067,9 @@ void mainbody(void) {
   bad = 4;
   if (7919 > 9500) 
   bad = 5;
-  if (headersize % 4 != 0) 
+  if (header_size % 4 != 0) 
   bad = 6;
-  if ((ligtablesize < 255) || (ligtablesize > 32510)) 
+  if ((lig_table_size < 255) || (lig_table_size > 32510)) 
   bad = 7;
 #ifdef INIMF
   if (memmax != memtop) 
@@ -1085,19 +1085,19 @@ void mainbody(void) {
   bad = 13;
   if ((0 < 0) || (memmax >= 268435455L)) 
   bad = 14;
-  if (maxstrings > 268435455L) 
+  if (max_strings > 268435455L) 
   bad = 15;
   if (bufsize > 268435455L) 
   bad = 16;
   if ((255 < 255) || (268435455L < 65535L)) 
   bad = 17;
-  if (9769 + maxinternal > 268435455L) 
+  if (9769 + max_internal > 268435455L) 
   bad = 21;
   if (10220 > 268435455L) 
   bad = 22;
-  if (15 * 11 > bistacksize) 
+  if (15 * 11 > bistack_size) 
   bad = 31;
-  if (20 + 17 * 45 > bistacksize) 
+  if (20 + 17 * 45 > bistack_size) 
   bad = 32;
   if (basedefaultlength > maxint) 
   bad = 41;
@@ -1110,29 +1110,29 @@ void mainbody(void) {
 #ifdef INIMF
   if (iniversion) 
   {
-    if (! getstringsstarted ()) 
+    if (! get_strings_started ()) 
     goto lab9999;
-    inittab ();
-    initprim ();
-    initstr_ptr = str_ptr;
+    init_tab ();
+    init_prim ();
+    init_str_ptr = str_ptr;
     init_pool_ptr = pool_ptr;
-    maxstr_ptr = str_ptr;
+    max_str_ptr = str_ptr;
     max_pool_ptr = pool_ptr;
     fixdateandtime ();
   } 
 #endif /* INIMF */
-  readyalready = 314159L;
+  ready_already = 314159L;
   lab1: selector = 1;
   tally = 0;
-  termoffset = 0;
-  fileoffset = 0;
+  term_offset = 0;
+  file_offset = 0;
   Fputs (stdout ,  "This is METAFONT, Version 2.7182818");
   Fputs (stdout ,  versionstring);
-  if (baseident == 0) 
+  if (base_ident == 0) 
   fprintf (stdout , "%s%s%c\n",  " (preloaded base=" , dumpname , ')');
   else {
       
-    slowprint (baseident);
+    slowprint (base_ident);
     println ();
   } 
   if (translatefilename) 
@@ -1142,70 +1142,70 @@ void mainbody(void) {
     { putc (')' ,  stdout);  putc ('\n',  stdout); }
   } 
   fflush (stdout);
-  jobname = 0;
-  logopened = false;
-  outputfilename = 0;
+  job_name = 0;
+  log_opened = false;
+  output_file_name = 0;
   {
     {
-      inputptr = 0;
-      maxinstack = 0;
-      inopen = 0;
-      openparens = 0;
-      maxbufstack = 0;
-      paramptr = 0;
-      maxparamstack = 0;
+      input_ptr = 0;
+      max_in_stack = 0;
+      in_open = 0;
+      open_parens = 0;
+      max_buf_stack = 0;
+      param_ptr = 0;
+      max_param_stack = 0;
       first = 1;
-      curinput .startfield = 1;
-      curinput.indexfield = 0;
+      cur_input .start_field = 1;
+      cur_input.index_field = 0;
       line = 0;
-      curinput .namefield = 0;
-      forceeof = false;
+      cur_input .name_field = 0;
+      force_eof = false;
       if (! initterminal ()) 
       goto lab9999;
-      curinput .limitfield = last;
+      cur_input .limit_field = last;
       first = last + 1;
     } 
-    scannerstatus = 0;
-    if ((baseident == 0) || (buffer[curinput.locfield] == 38)) 
+    scanner_status = 0;
+    if ((base_ident == 0) || (buffer[cur_input.loc_field] == 38)) 
     {
-      if (baseident != 0) 
+      if (base_ident != 0) 
       initialize ();
-      if (! openbasefile ()) 
+      if (! open_base_file ()) 
       goto lab9999;
-      if (! loadbasefile ()) 
+      if (! load_base_file ()) 
       {
-	wclose (basefile);
+	wclose (base_file);
 	goto lab9999;
       } 
-      wclose (basefile);
-      while ((curinput.locfield < curinput .limitfield) && (buffer[
-      curinput.locfield] == 32)) incr (curinput.locfield);
+      wclose (base_file);
+      while ((cur_input.loc_field < cur_input .limit_field) && (buffer[
+      cur_input.loc_field] == 32)) incr (cur_input.loc_field);
     } 
-    buffer[curinput .limitfield] = 37;
+    buffer[cur_input .limit_field] = 37;
     fixdateandtime ();
     initrandoms ((internal[17]/ 65536L) + internal[16]);
     if (interaction == 0) 
     selector = 0;
     else selector = 1;
-    if (curinput.locfield < curinput .limitfield) {
+    if (cur_input.loc_field < cur_input .limit_field) {
 	
-      if (buffer[curinput.locfield]!= 92) 
+      if (buffer[cur_input.loc_field]!= 92) 
       start_input ();
     } 
   } 
   history = 0;
-  if (startsym > 0) 
+  if (start_sym > 0) 
   {
-    cursym = startsym;
+    cur_sym = start_sym;
     backinput ();
   } 
   maincontrol ();
-  finalcleanup ();
-  closefilesandterminate ();
+  final_cleanup ();
+  close_files_and_terminate ();
   lab9999: {
       
     fflush (stdout);
-    readyalready = 0;
+    ready_already = 0;
     if ((history != 0) && (history != 1)) 
     uexit (1);
     else uexit (0);

@@ -124,17 +124,17 @@ initialize (void)
   if (interactionoption == 4) 
   interaction = 3;
   else interaction = interactionoption;
-  deletionsallowed = true;
-  errorcount = 0;
+  deletions_allowed = true;
+  error_count = 0;
   help_ptr = 0;
-  useerrhelp = false;
-  errhelp = 0;
+  use_err_help = false;
+  err_help = 0;
   interrupt = 0;
-  OKtointerrupt = true;
-  aritherror = false;
-  twotothe[0] = 1;
+  OK_to_interrupt = true;
+  arith_error = false;
+  two_to_the[0] = 1;
   {register integer for_end; k = 1;for_end = 30; if (k <= for_end) do 
-    twotothe[k] = 2 * twotothe[k - 1];
+    two_to_the[k] = 2 * two_to_the[k - 1];
   while (k++ < for_end);} 
   spec_log[1] = 93032640L;
   spec_log[2] = 38612034L;
@@ -150,7 +150,7 @@ initialize (void)
   spec_log[12] = 32772L;
   spec_log[13] = 16385;
   {register integer for_end; k = 14;for_end = 27; if (k <= for_end) do 
-    spec_log[k] = twotothe[27 - k];
+    spec_log[k] = two_to_the[27 - k];
   while (k++ < for_end);} 
   spec_log[28] = 1;
   spec_atan[1] = 27855475L;
@@ -181,15 +181,15 @@ initialize (void)
   spec_atan[26] = 1;
 	;
 #ifdef TEXMF_DEBUG
-  wasmemend = 0;
-  waslomax = 0;
-  washimin = memmax;
+  was_mem_end = 0;
+  was_lo_max = 0;
+  was_hi_min = memmax;
   panicking = false;
 #endif /* TEXMF_DEBUG */
   {register integer for_end; k = 1;for_end = 41; if (k <= for_end) do 
     internal[k] = 0;
   while (k++ < for_end);} 
-  intptr = 41;
+  int_ptr = 41;
   {register integer for_end; k = 48;for_end = 57; if (k <= for_end) do 
     char_class[k] = 0;
   while (k++ < for_end);} 
@@ -250,9 +250,9 @@ initialize (void)
       eqtb[k] = eqtb[1];
     } 
   while (k++ < for_end);} 
-  bignodesize[13] = 12;
-  bignodesize[14] = 4;
-  saveptr = 0;
+  big_node_size[13] = 12;
+  big_node_size[14] = 4;
+  save_ptr = 0;
   octant_dir[1] = 548;
   octant_dir[5] = 549;
   octant_dir[6] = 550;
@@ -261,7 +261,7 @@ initialize (void)
   octant_dir[8] = 553;
   octant_dir[7] = 554;
   octant_dir[3] = 555;
-  maxroundingptr = 0;
+  max_rounding_ptr = 0;
   octant_code[1] = 1;
   octant_code[2] = 5;
   octant_code[3] = 6;
@@ -271,9 +271,9 @@ initialize (void)
   octant_code[7] = 7;
   octant_code[8] = 3;
   {register integer for_end; k = 1;for_end = 8; if (k <= for_end) do 
-    octantnumber[octant_code[k]] = k;
+    octant_number[octant_code[k]] = k;
   while (k++ < for_end);} 
-  revturns = false;
+  rev_turns = false;
   x_corr[1] = 0;
   y_corr[1] = 0;
   xy_corr[1] = 0;
@@ -299,42 +299,42 @@ initialize (void)
   y_corr[3] = 1;
   xy_corr[3] = 0;
   {register integer for_end; k = 1;for_end = 8; if (k <= for_end) do 
-    zcorr[k] = xy_corr[k] - x_corr[k];
+    z_corr[k] = xy_corr[k] - x_corr[k];
   while (k++ < for_end);} 
-  screenstarted = false;
-  screenOK = false;
+  screen_started = false;
+  screen_OK = false;
   {register integer for_end; k = 0;for_end = 15; if (k <= for_end) do 
     {
-      windowopen[k] = false;
-      windowtime[k] = 0;
+      window_open[k] = false;
+      window_time[k] = 0;
     } 
   while (k++ < for_end);} 
-  fixneeded = false;
-  watchcoefs = true;
-  condptr = 0;
-  iflimit = 0;
-  curif = 0;
-  ifline = 0;
-  loopptr = 0;
+  fix_needed = false;
+  watch_coefs = true;
+  cond_ptr = 0;
+  if_limit = 0;
+  cur_if = 0;
+  if_line = 0;
+  loop_ptr = 0;
   cur_exp = 0;
-  varflag = 0;
-  startsym = 0;
-  longhelpseen = false;
+  var_flag = 0;
+  start_sym = 0;
+  long_help_seen = false;
   {register integer for_end; k = 0;for_end = 255; if (k <= for_end) do 
     {
-      tfmwidth[k] = 0;
-      tfmheight[k] = 0;
-      tfmdepth[k] = 0;
-      tfmitalcorr[k] = 0;
-      charexists[k] = false;
-      chartag[k] = 0;
-      charremainder[k] = 0;
-      skiptable[k] = ligtablesize;
+      tfm_width[k] = 0;
+      tfm_height[k] = 0;
+      tfm_depth[k] = 0;
+      tfm_ital_corr[k] = 0;
+      char_exists[k] = false;
+      char_tag[k] = 0;
+      char_remainder[k] = 0;
+      skip_table[k] = lig_table_size;
     } 
   while (k++ < for_end);} 
-  {register integer for_end; k = 1;for_end = headersize; if (k <= 
+  {register integer for_end; k = 1;for_end = header_size; if (k <= 
   for_end) do 
-    headerbyte[k] = -1;
+    header_byte[k] = -1;
   while (k++ < for_end);} 
   bc = 255;
   ec = 0;
@@ -343,16 +343,16 @@ initialize (void)
   ne = 0;
   np = 0;
   internal[41] = -65536L;
-  bchlabel = ligtablesize;
-  labelloc[0] = -1;
-  labelptr = 0;
-  gfprevptr = 0;
-  totalchars = 0;
-  halfbuf = gf_buf_size / 2;
+  bch_label = lig_table_size;
+  label_loc[0] = -1;
+  label_ptr = 0;
+  gf_prev_ptr = 0;
+  total_chars = 0;
+  half_buf = gf_buf_size / 2;
   gf_limit = gf_buf_size;
   gf_ptr = 0;
   gf_offset = 0;
-  baseident = 0;
+  base_ident = 0;
   editnamestart = 0;
   stopatspace = true;
 } 
@@ -363,14 +363,14 @@ print_ln (void)
   {case 3 : 
     {
       putc ('\n',  stdout);
-      putc ('\n',  logfile);
+      putc ('\n',  log_file);
       term_offset = 0;
       file_offset = 0;
     } 
     break;
   case 2 : 
     {
-      putc ('\n',  logfile);
+      putc ('\n',  log_file);
       file_offset = 0;
     } 
     break;
@@ -394,7 +394,7 @@ print_char (ASCII_code s)
   {case 3 : 
     {
       putc (xchr[s],  stdout);
-      putc (xchr[s],  logfile);
+      putc (xchr[s],  log_file);
       incr (term_offset);
       incr (file_offset);
       if (term_offset == maxprintline) 
@@ -404,14 +404,14 @@ print_char (ASCII_code s)
       } 
       if (file_offset == maxprintline) 
       {
-	putc ('\n',  logfile);
+	putc ('\n',  log_file);
 	file_offset = 0;
       } 
     } 
     break;
   case 2 : 
     {
-      putc (xchr[s],  logfile);
+      putc (xchr[s],  log_file);
       incr (file_offset);
       if (file_offset == maxprintline) 
       print_ln ();
@@ -429,8 +429,8 @@ print_char (ASCII_code s)
 ;
     break;
   case 4 : 
-    if (tally < trickcount) 
-    trickbuf[tally % errorline] = s;
+    if (tally < trick_count) 
+    trick_buf[tally % errorline] = s;
     break;
   case 5 : 
     {
@@ -644,7 +644,7 @@ print_type (small_number t)
 void 
 begin_diagnostic (void) 
 {
-  oldsetting = selector;
+  old_setting = selector;
   if ((internal[13]<= 0) && (selector == 3)) 
   {
     decr (selector);
@@ -658,7 +658,7 @@ end_diagnostic (boolean blankline)
   print_nl (261);
   if (blankline) 
   print_ln ();
-  selector = oldsetting;
+  selector = old_setting;
 } 
 void 
 print_diagnostic (str_number s , str_number t , boolean nuline) 
@@ -734,19 +734,19 @@ void
 flush_string (str_number s) 
 {
   if (s < str_ptr - 1) 
-  strref[s] = 0;
+  str_ref[s] = 0;
   else do {
       decr (str_ptr);
-  } while (!(strref[str_ptr - 1]!= 0));
+  } while (!(str_ref[str_ptr - 1]!= 0));
   pool_ptr = str_start[str_ptr];
 } 
 void 
 jump_out (void) 
 {
-  closefilesandterminate ();
+  close_files_and_terminate ();
   {
     fflush (stdout);
-    readyalready = 0;
+    ready_already = 0;
     if ((history != 0) && (history != 1)) 
     uexit (1);
     else uexit (0);
@@ -772,7 +772,7 @@ error (void)
       
     lab22: clearforerrorprompt ();
     {
-  ;
+;
       print (265);
       term_input ();
     } 
@@ -792,12 +792,12 @@ error (void)
     case 55 : 
     case 56 : 
     case 57 : 
-      if (deletionsallowed) 
+      if (deletions_allowed) 
       {
-	s1 = curcmd;
-	s2 = curmod;
-	s3 = cursym;
-	OKtointerrupt = false;
+	s1 = cur_cmd;
+	s2 = cur_mod;
+	s3 = cur_sym;
+	OK_to_interrupt = false;
 	if ((last > first + 1) && (buffer[first + 1] >= 48) && (
 	buffer[first + 1]<= 57)) 
 	c = c * 10 + buffer[first + 1] - 48 * 11;
@@ -805,21 +805,21 @@ error (void)
 	while (c > 0) {
 	    
 	  getnext ();
-	  if (curcmd == 39) 
+	  if (cur_cmd == 39) 
 	  {
-	    if (strref[curmod]< 127) {
+	    if (str_ref[cur_mod]< 127) {
 		
-	      if (strref[curmod] > 1) 
-	      decr (strref[curmod]);
-	      else flush_string (curmod);
+	      if (str_ref[cur_mod] > 1) 
+	      decr (str_ref[cur_mod]);
+	      else flush_string (cur_mod);
 	    } 
 	  } 
 	  decr (c);
 	} 
-	curcmd = s1;
-	curmod = s2;
-	cursym = s3;
-	OKtointerrupt = true;
+	cur_cmd = s1;
+	cur_mod = s2;
+	cur_sym = s3;
+	OK_to_interrupt = true;
 	{
 	  help_ptr = 2;
 	  help_line[1] = 278;
@@ -839,25 +839,25 @@ error (void)
       break;
 #endif /* TEXMF_DEBUG */
     case 69 : 
-      if (fileptr > 0) 
+      if (file_ptr > 0) 
       {
-	editnamestart = str_start[inputstack[fileptr].namefield];
-	editnamelength = str_start[inputstack[fileptr].namefield + 1] - 
-	str_start[inputstack[fileptr].namefield];
+	editnamestart = str_start[input_stack[file_ptr].name_field];
+	editname_length = str_start[input_stack[file_ptr].name_field + 1] - 
+	str_start[input_stack[file_ptr].name_field];
 	editline = line;
 	jump_out ();
       } 
       break;
     case 72 : 
       {
-	if (useerrhelp) 
+	if (use_err_help) 
 	{
-	  j = str_start[errhelp];
-	  while (j < str_start[errhelp + 1]) {
+	  j = str_start[err_help];
+	  while (j < str_start[err_help + 1]) {
 	      
 	    if (str_pool[j]!= 37) 
 	    print (str_pool[j]);
-	    else if (j + 1 == str_start[errhelp + 1]) 
+	    else if (j + 1 == str_start[err_help + 1]) 
 	    print_ln ();
 	    else if (str_pool[j + 1]!= 37) 
 	    print_ln ();
@@ -868,7 +868,7 @@ error (void)
 	    } 
 	    incr (j);
 	  } 
-	  useerrhelp = false;
+	  use_err_help = false;
 	} 
 	else {
 	    
@@ -899,7 +899,7 @@ error (void)
 	beginfilereading ();
 	if (last > first + 1) 
 	{
-	  curinput.locfield = first + 1;
+	  cur_input.loc_field = first + 1;
 	  buffer[first] = 32;
 	} 
 	else {
@@ -909,10 +909,10 @@ error (void)
 	    print (277);
 	    term_input ();
 	  } 
-	  curinput.locfield = first;
+	  cur_input.loc_field = first;
 	} 
 	first = last + 1;
-	curinput .limitfield = last;
+	cur_input .limit_field = last;
 	goto lab10;
       } 
       break;
@@ -920,7 +920,7 @@ error (void)
     case 82 : 
     case 83 : 
       {
-	errorcount = 0;
+	error_count = 0;
 	interaction = 0 + c - 81;
 	print (272);
 	switch (c) 
@@ -950,22 +950,22 @@ error (void)
       } 
       break;
       default: 
-  ;
+;
       break;
     } 
     {
       print (266);
       print_nl (267);
       print_nl (268);
-      if (fileptr > 0) 
+      if (file_ptr > 0) 
       print (269);
-      if (deletionsallowed) 
+      if (deletions_allowed) 
       print_nl (270);
       print_nl (271);
     } 
   } 
-  incr (errorcount);
-  if (errorcount == 100) 
+  incr (error_count);
+  if (error_count == 100) 
   {
     print_nl (264);
     history = 3;
@@ -973,15 +973,15 @@ error (void)
   } 
   if (interaction > 0) 
   decr (selector);
-  if (useerrhelp) 
+  if (use_err_help) 
   {
     print_nl (261);
-    j = str_start[errhelp];
-    while (j < str_start[errhelp + 1]) {
+    j = str_start[err_help];
+    while (j < str_start[err_help + 1]) {
 	
       if (str_pool[j]!= 37) 
       print (str_pool[j]);
-      else if (j + 1 == str_start[errhelp + 1]) 
+      else if (j + 1 == str_start[err_help + 1]) 
       print_ln ();
       else if (str_pool[j + 1]!= 37) 
       print_ln ();
@@ -1011,10 +1011,10 @@ fatal_error (str_number s)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -1033,7 +1033,7 @@ fatal_error (str_number s)
   {
     if (interaction == 3) 
     interaction = 2;
-    if (logopened) 
+    if (log_opened) 
     error ();
 	;
 #ifdef TEXMF_DEBUG
@@ -1051,10 +1051,10 @@ overflow (str_number s , integer n)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -1078,7 +1078,7 @@ overflow (str_number s , integer n)
   {
     if (interaction == 3) 
     interaction = 2;
-    if (logopened) 
+    if (log_opened) 
     error ();
 	;
 #ifdef TEXMF_DEBUG
@@ -1097,11 +1097,11 @@ confusion (str_number s)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -1124,11 +1124,11 @@ confusion (str_number s)
       
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -1149,7 +1149,7 @@ confusion (str_number s)
   {
     if (interaction == 3) 
     interaction = 2;
-    if (logopened) 
+    if (log_opened) 
     error ();
 	;
 #ifdef TEXMF_DEBUG
@@ -1166,10 +1166,10 @@ init_terminal (void)
   /* 10 */ register boolean Result; topenin ();
   if (last > first) 
   {
-    curinput.locfield = first;
-    while ((curinput.locfield < last) && (buffer[curinput.locfield]
-    == ' ')) incr (curinput.locfield);
-    if (curinput.locfield < last) 
+    cur_input.loc_field = first;
+    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field]
+    == ' ')) incr (cur_input.loc_field);
+    if (cur_input.loc_field < last) 
     {
       Result = true;
       goto lab10;
@@ -1187,10 +1187,10 @@ init_terminal (void)
       Result = false;
       goto lab10;
     } 
-    curinput.locfield = first;
-    while ((curinput.locfield < last) && (buffer[curinput.locfield]
-    == 32)) incr (curinput.locfield);
-    if (curinput.locfield < last) 
+    cur_input.loc_field = first;
+    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field]
+    == 32)) incr (cur_input.loc_field);
+    if (cur_input.loc_field < last) 
     {
       Result = true;
       goto lab10;
@@ -1203,13 +1203,13 @@ init_terminal (void)
 str_number 
 make_string (void) 
 {
-  register str_number Result; if (str_ptr == maxstr_ptr) 
+  register str_number Result; if (str_ptr == max_str_ptr) 
   {
-    if (str_ptr == maxstrings) 
-    overflow (258 , maxstrings - initstr_ptr);
-    incr (maxstr_ptr);
+    if (str_ptr == max_strings) 
+    overflow (258 , max_strings - init_str_ptr);
+    incr (max_str_ptr);
   } 
-  strref[str_ptr] = 1;
+  str_ref[str_ptr] = 1;
   incr (str_ptr);
   str_start[str_ptr] = pool_ptr;
   Result = str_ptr - 1;
@@ -1291,10 +1291,10 @@ term_input (void)
 void 
 normalize_selector (void) 
 {
-  if (logopened) 
+  if (log_opened) 
   selector = 3;
   else selector = 1;
-  if (jobname == 0) 
+  if (job_name == 0) 
   open_log_file ();
   if (interaction == 0) 
   decr (selector);
@@ -1302,18 +1302,18 @@ normalize_selector (void)
 void 
 pause_for_instructions (void) 
 {
-  if (OKtointerrupt) 
+  if (OK_to_interrupt) 
   {
     interaction = 3;
     if ((selector == 2) || (selector == 0)) 
     incr (selector);
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -1331,9 +1331,9 @@ pause_for_instructions (void)
       help_line[1] = 296;
       help_line[0] = 297;
     } 
-    deletionsallowed = false;
+    deletions_allowed = false;
     error ();
-    deletionsallowed = true;
+    deletions_allowed = true;
     interrupt = 0;
   } 
 } 
@@ -1343,10 +1343,10 @@ missing_err (str_number s)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -1367,10 +1367,10 @@ clear_arith (void)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -1390,7 +1390,7 @@ clear_arith (void)
     help_line[0] = 304;
   } 
   error ();
-  aritherror = false;
+  arith_error = false;
 } 
 integer 
 slow_add (integer x , integer y) 
@@ -1401,7 +1401,7 @@ slow_add (integer x , integer y)
     Result = x + y;
     else {
 	
-      aritherror = true;
+      arith_error = true;
       Result = 2147483647L;
     } 
   } 
@@ -1409,7 +1409,7 @@ slow_add (integer x , integer y)
   Result = x + y;
   else {
       
-    aritherror = true;
+    arith_error = true;
     Result = -2147483647L;
   } 
   return Result;
@@ -1456,7 +1456,7 @@ zmakefraction (integer p , integer q)
   p = p % q;
   if (n >= 8) 
   {
-    aritherror = true;
+    arith_error = true;
     if (negative) 
     Result = -2147483647L;
     else Result = 2147483647L;
@@ -1516,7 +1516,7 @@ ztakefraction (integer q , fraction f)
     n = n * q;
     else {
 	
-      aritherror = true;
+      arith_error = true;
       n = 2147483647L;
     } 
   } 
@@ -1538,7 +1538,7 @@ ztakefraction (integer q , fraction f)
   becareful = n - 2147483647L;
   if (becareful + p > 0) 
   {
-    aritherror = true;
+    arith_error = true;
     n = 2147483647L - p;
   } 
   if (negative) 
@@ -1577,7 +1577,7 @@ ztakescaled (integer q , scaled f)
     n = n * q;
     else {
 	
-      aritherror = true;
+      arith_error = true;
       n = 2147483647L;
     } 
   } 
@@ -1599,7 +1599,7 @@ ztakescaled (integer q , scaled f)
   becareful = n - 2147483647L;
   if (becareful + p > 0) 
   {
-    aritherror = true;
+    arith_error = true;
     n = 2147483647L - p;
   } 
   if (negative) 
@@ -1637,7 +1637,7 @@ zmakescaled (integer p , integer q)
   p = p % q;
   if (n >= 32768L) 
   {
-    aritherror = true;
+    arith_error = true;
     if (negative) 
     Result = -2147483647L;
     else Result = 2147483647L;
@@ -1810,10 +1810,10 @@ zsquarert (scaled x)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -1924,7 +1924,7 @@ pyth_add (integer a , integer b)
       a = a + a + a + a;
       else {
 	  
-	aritherror = true;
+	arith_error = true;
 	a = 2147483647L;
       } 
     } 
@@ -1946,10 +1946,10 @@ pyth_sub (integer a , integer b)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -2010,11 +2010,11 @@ m_log (scaled x)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -2050,7 +2050,7 @@ m_log (scaled x)
     k = 2;
     while (x > 1073741828L) {
 	
-      z = ((x - 1) / twotothe[k]) + 1;
+      z = ((x - 1) / two_to_the[k]) + 1;
       while (x < 1073741824L + z) {
 	  
 	z = halfp (z + 1);
@@ -2070,7 +2070,7 @@ m_exp (scaled x)
   integer y, z;
   if (x > 174436200L) 
   {
-    aritherror = true;
+    arith_error = true;
     Result = 2147483647L;
   } 
   else if (x < -197694359L) 
@@ -2095,7 +2095,7 @@ m_exp (scaled x)
       while (z >= spec_log[k]) {
 	  
 	z = z - spec_log[k];
-	y = y - 1 - ((y - twotothe[k - 1]) / twotothe[k]);
+	y = y - 1 - ((y - two_to_the[k - 1]) / two_to_the[k]);
       } 
       incr (k);
     } 
@@ -2135,11 +2135,11 @@ n_arg (integer x , integer y)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -2182,7 +2182,7 @@ n_arg (integer x , integer y)
 	{
 	  z = z + spec_atan[k];
 	  t = x;
-	  x = x + (y / twotothe[k + k]);
+	  x = x + (y / two_to_the[k + k]);
 	  y = y - t;
 	} 
       } while (!(k == 15));
@@ -2247,8 +2247,8 @@ n_sin_cos (angle z)
     {
       z = z - spec_atan[k];
       t = x;
-      x = t + y / twotothe[k];
-      y = y - t / twotothe[k];
+      x = t + y / two_to_the[k];
+      y = y - t / two_to_the[k];
     } 
     incr (k);
   } 
@@ -2300,8 +2300,8 @@ n_sin_cos (angle z)
     break;
   } 
   r = pyth_add (x , y);
-  ncos = makefraction (x , r);
-  nsin = makefraction (y , r);
+  n_cos = makefraction (x , r);
+  n_sin = makefraction (y , r);
 } 
 void 
 new_randoms (void) 
@@ -2324,7 +2324,7 @@ new_randoms (void)
       randoms[k] = x;
     } 
   while (k++ < for_end);} 
-  jrandom = 54;
+  j_random = 54;
 } 
 void 
 init_randoms (scaled seed) 
@@ -2352,10 +2352,10 @@ scaled
 unif_rand (scaled x) 
 {
   register scaled Result; scaled y;
-  if (jrandom == 0) 
+  if (j_random == 0) 
   new_randoms ();
-  else decr (jrandom);
-  y = takefraction (abs (x) , randoms[jrandom]);
+  else decr (j_random);
+  y = takefraction (abs (x) , randoms[j_random]);
   if (y == abs (x)) 
   Result = 0;
   else if (x > 0) 
@@ -2368,14 +2368,14 @@ norm_rand (void)
 {
   register scaled Result; integer x, u, l;
   do {
-      do { if (jrandom == 0) 
+      do { if (j_random == 0) 
       new_randoms ();
-      else decr (jrandom);
-      x = takefraction (112429L , randoms[jrandom] - 134217728L);
-      if (jrandom == 0) 
+      else decr (j_random);
+      x = takefraction (112429L , randoms[j_random] - 134217728L);
+      if (j_random == 0) 
       new_randoms ();
-      else decr (jrandom);
-      u = randoms[jrandom];
+      else decr (j_random);
+      u = randoms[j_random];
     } while (!(abs (x) < u));
     x = makefraction (x , u);
     l = 139548960L - m_log (u);
@@ -2421,18 +2421,18 @@ show_token_list (integer p , integer q , integer l , integer nulltally)
       
     if (p == q) 
     {
-      firstcount = tally;
-      trickcount = tally + 1 + errorline - halferrorline;
-      if (trickcount < errorline) 
-      trickcount = errorline;
+      first_count = tally;
+      trick_count = tally + 1 + errorline - halferrorline;
+      if (trick_count < errorline) 
+      trick_count = errorline;
     } 
     c = 9;
-    if ((p < 0) || (p > memend)) 
+    if ((p < 0) || (p > mem_end)) 
     {
       print (493);
       goto lab10;
     } 
-    if (p < himemmin) {
+    if (p < hi_mem_min) {
 	
       if (mem[p].hhfield.b1 == 12) {
 	  
@@ -2471,8 +2471,8 @@ show_token_list (integer p , integer q , integer l , integer nulltally)
       print (496);
       else {
 	  
-	gpointer = p;
-	printcapsule ();
+	g_pointer = p;
+	print_capsule ();
 	c = 8;
       } 
     } 
@@ -2548,10 +2548,10 @@ show_token_list (integer p , integer q , integer l , integer nulltally)
 void 
 runaway (void) 
 {
-  if (scannerstatus > 2) 
+  if (scanner_status > 2) 
   {
     print_nl (638);
-    switch (scannerstatus) 
+    switch (scanner_status) 
     {case 3 : 
       print (639);
       break;
@@ -2565,7 +2565,7 @@ runaway (void)
     } 
     print_ln ();
     show_token_list (mem[memtop - 2].hhfield.v.RH , 0 , errorline - 10 , 0 
-  );
+ );
   } 
 } 
 halfword 
@@ -2575,16 +2575,16 @@ get_avail (void)
   p = avail;
   if (p != 0) 
   avail = mem[avail].hhfield.v.RH;
-  else if (memend < memmax) 
+  else if (mem_end < memmax) 
   {
-    incr (memend);
-    p = memend;
+    incr (mem_end);
+    p = mem_end;
   } 
   else {
       
-    decr (himemmin);
-    p = himemmin;
-    if (himemmin <= lomemmax) 
+    decr (hi_mem_min);
+    p = hi_mem_min;
+    if (hi_mem_min <= lo_mem_max) 
     {
       runaway ();
       overflow (315 , memmax + 1);
@@ -2593,7 +2593,7 @@ get_avail (void)
   mem[p].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-  incr (dynused);
+  incr (dyn_used);
 #endif /* STAT */
   Result = p;
   return Result;
@@ -2644,26 +2644,26 @@ get_node (integer s)
     Result = 268435455L;
     goto lab10;
   } 
-  if (lomemmax + 2 < himemmin) {
+  if (lo_mem_max + 2 < hi_mem_min) {
       
-    if (lomemmax + 2 <= 268435455L) 
+    if (lo_mem_max + 2 <= 268435455L) 
     {
-      if (himemmin - lomemmax >= 1998) 
-      t = lomemmax + 1000;
-      else t = lomemmax + 1 + (himemmin - lomemmax) / 2;
+      if (hi_mem_min - lo_mem_max >= 1998) 
+      t = lo_mem_max + 1000;
+      else t = lo_mem_max + 1 + (hi_mem_min - lo_mem_max) / 2;
       if (t > 268435455L) 
       t = 268435455L;
       p = mem[rover + 1].hhfield.lhfield;
-      q = lomemmax;
+      q = lo_mem_max;
       mem[p + 1].hhfield.v.RH = q;
       mem[rover + 1].hhfield.lhfield = q;
       mem[q + 1].hhfield.v.RH = rover;
       mem[q + 1].hhfield.lhfield = p;
       mem[q].hhfield.v.RH = 268435455L;
-      mem[q].hhfield.lhfield = t - lomemmax;
-      lomemmax = t;
-      mem[lomemmax].hhfield.v.RH = 0;
-      mem[lomemmax].hhfield.lhfield = 0;
+      mem[q].hhfield.lhfield = t - lo_mem_max;
+      lo_mem_max = t;
+      mem[lo_mem_max].hhfield.v.RH = 0;
+      mem[lo_mem_max].hhfield.lhfield = 0;
       rover = q;
       goto lab20;
     } 
@@ -2672,7 +2672,7 @@ get_node (integer s)
   found: mem[r].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-  varused = varused + s;
+  var_used = var_used + s;
 #endif /* STAT */
   Result = r;
   lab10:;
@@ -2691,14 +2691,14 @@ free_node (halfword p , halfword s)
   mem[q + 1].hhfield.v.RH = p;
 	;
 #ifdef STAT
-  varused = varused - s;
+  var_used = var_used - s;
 #endif /* STAT */
 } 
 void 
 flush_list (halfword p) 
 {
   /* 30 */ halfword q, r;
-  if (p >= himemmin) {
+  if (p >= hi_mem_min) {
       
     if (p != memtop) 
     {
@@ -2708,9 +2708,9 @@ flush_list (halfword p)
 	r = mem[r].hhfield.v.RH;
 	;
 #ifdef STAT
-	decr (dynused);
+	decr (dyn_used);
 #endif /* STAT */
-	if (r < himemmin) 
+	if (r < hi_mem_min) 
 	goto done;
       } while (!(r == memtop));
       done: mem[q].hhfield.v.RH = avail;
@@ -2726,7 +2726,7 @@ flush_node_list (halfword p)
       
     q = p;
     p = mem[p].hhfield.v.RH;
-    if (q < himemmin) 
+    if (q < hi_mem_min) 
     free_node (q , 2);
     else {
 	
@@ -2734,7 +2734,7 @@ flush_node_list (halfword p)
       avail = q;
 	;
 #ifdef STAT
-      decr (dynused);
+      decr (dyn_used);
 #endif /* STAT */
     } 
   } 
@@ -2745,11 +2745,11 @@ zcheckmem (boolean printlocs)
 {
   /* 31 32 */ halfword p, q, r;
   boolean clobbered;
-  {register integer for_end; p = 0;for_end = lomemmax; if (p <= for_end) 
+  {register integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end) 
   do 
     freearr[p] = false;
   while (p++ < for_end);} 
-  {register integer for_end; p = himemmin;for_end = memend; if (p <= 
+  {register integer for_end; p = hi_mem_min;for_end = mem_end; if (p <= 
   for_end) do 
     freearr[p] = false;
   while (p++ < for_end);} 
@@ -2758,7 +2758,7 @@ zcheckmem (boolean printlocs)
   clobbered = false;
   while (p != 0) {
       
-    if ((p > memend) || (p < himemmin)) 
+    if ((p > mem_end) || (p < hi_mem_min)) 
     clobbered = true;
     else if (freearr[p]) 
     clobbered = true;
@@ -2777,12 +2777,12 @@ zcheckmem (boolean printlocs)
   q = 0;
   clobbered = false;
   do {
-      if ((p >= lomemmax)) 
+      if ((p >= lo_mem_max)) 
     clobbered = true;
-    else if ((mem[p + 1].hhfield.v.RH >= lomemmax)) 
+    else if ((mem[p + 1].hhfield.v.RH >= lo_mem_max)) 
     clobbered = true;
     else if (!((mem[p].hhfield.v.RH == 268435455L)) || (mem[p]
-    .hhfield.lhfield < 2) || (p + mem[p].hhfield.lhfield > lomemmax) 
+    .hhfield.lhfield < 2) || (p + mem[p].hhfield.lhfield > lo_mem_max) 
     || (mem[mem[p + 1].hhfield.v.RH + 1].hhfield.lhfield != p)) 
     clobbered = true;
     if (clobbered) 
@@ -2808,15 +2808,15 @@ zcheckmem (boolean printlocs)
   } while (!(p == rover));
   done2:;
   p = 0;
-  while (p <= lomemmax) {
+  while (p <= lo_mem_max) {
       
     if ((mem[p].hhfield.v.RH == 268435455L)) 
     {
       print_nl (319);
       print_int (p);
     } 
-    while ((p <= lomemmax) && !freearr[p]) incr (p);
-    while ((p <= lomemmax) && freearr[p]) incr (p);
+    while ((p <= lo_mem_max) && !freearr[p]) incr (p);
+    while ((p <= lo_mem_max) && freearr[p]) incr (p);
   } 
   q = 13;
   p = mem[q].hhfield.v.RH;
@@ -2844,35 +2844,35 @@ zcheckmem (boolean printlocs)
   if (printlocs) 
   {
     print_nl (320);
-    {register integer for_end; p = 0;for_end = lomemmax; if (p <= 
+    {register integer for_end; p = 0;for_end = lo_mem_max; if (p <= 
     for_end) do 
-      if (!freearr[p]&& ((p > waslomax) || wasfree[p])) 
+      if (!freearr[p]&& ((p > was_lo_max) || was_free[p])) 
       {
 	print_char (32);
 	print_int (p);
       } 
     while (p++ < for_end);} 
-    {register integer for_end; p = himemmin;for_end = memend; if (p <= 
+    {register integer for_end; p = hi_mem_min;for_end = mem_end; if (p <= 
     for_end) do 
-      if (!freearr[p]&& ((p < washimin) || (p > wasmemend) || 
-      wasfree[p])) 
+      if (!freearr[p]&& ((p < was_hi_min) || (p > was_mem_end) || 
+      was_free[p])) 
       {
 	print_char (32);
 	print_int (p);
       } 
     while (p++ < for_end);} 
   } 
-  {register integer for_end; p = 0;for_end = lomemmax; if (p <= for_end) 
+  {register integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end) 
   do 
-    wasfree[p] = freearr[p];
+    was_free[p] = freearr[p];
   while (p++ < for_end);} 
-  {register integer for_end; p = himemmin;for_end = memend; if (p <= 
+  {register integer for_end; p = hi_mem_min;for_end = mem_end; if (p <= 
   for_end) do 
-    wasfree[p] = freearr[p];
+    was_free[p] = freearr[p];
   while (p++ < for_end);} 
-  wasmemend = memend;
-  waslomax = lomemmax;
-  washimin = himemmin;
+  was_mem_end = mem_end;
+  was_lo_max = lo_mem_max;
+  was_hi_min = hi_mem_min;
 } 
 #endif /* TEXMF_DEBUG */
 #ifdef TEXMF_DEBUG
@@ -2880,7 +2880,7 @@ void
 zsearchmem (halfword p) 
 {
   integer q;
-  {register integer for_end; q = 0;for_end = lomemmax; if (q <= for_end) 
+  {register integer for_end; q = 0;for_end = lo_mem_max; if (q <= for_end) 
   do 
     {
       if (mem[q].hhfield.v.RH == p) 
@@ -2897,7 +2897,7 @@ zsearchmem (halfword p)
       } 
     } 
   while (q++ < for_end);} 
-  {register integer for_end; q = himemmin;for_end = memend; if (q <= 
+  {register integer for_end; q = hi_mem_min;for_end = mem_end; if (q <= 
   for_end) do 
     {
       if (mem[q].hhfield.v.RH == p) 
@@ -3183,7 +3183,7 @@ id_lookup (integer j , integer l)
     if (hash[p].v.RH > 0) {
 	
       if ((str_start[hash[p].v.RH + 1] - str_start[hash[p].v.RH]
-    ) == l) {
+   ) == l) {
 	  
 	if (str_eq_buf (hash[p].v.RH , j)) 
 	goto found;
@@ -3194,12 +3194,12 @@ id_lookup (integer j , integer l)
       if (hash[p].v.RH > 0) 
       {
 	do {
-	    if ((hashused == 257)) 
+	    if ((hash_used == 257)) 
 	  overflow (457 , 9500);
-	  decr (hashused);
-	} while (!(hash[hashused].v.RH == 0));
-	hash[p].lhfield = hashused;
-	p = hashused;
+	  decr (hash_used);
+	} while (!(hash[hash_used].v.RH == 0));
+	hash[p].lhfield = hash_used;
+	p = hash_used;
       } 
       {
 	if (pool_ptr + l > max_pool_ptr) 
@@ -3217,10 +3217,10 @@ id_lookup (integer j , integer l)
 	} 
       while (k++ < for_end);} 
       hash[p].v.RH = make_string ();
-      strref[hash[p].v.RH] = 127;
+      str_ref[hash[p].v.RH] = 127;
 	;
 #ifdef STAT
-      incr (stcount);
+      incr (st_count);
 #endif /* STAT */
       goto found;
     } 
@@ -3248,13 +3248,13 @@ flush_token_list (halfword p)
       
     q = p;
     p = mem[p].hhfield.v.RH;
-    if (q >= himemmin) 
+    if (q >= hi_mem_min) 
     {
       mem[q].hhfield.v.RH = avail;
       avail = q;
 	;
 #ifdef STAT
-      decr (dynused);
+      decr (dyn_used);
 #endif /* STAT */
     } 
     else {
@@ -3267,10 +3267,10 @@ flush_token_list (halfword p)
 	break;
       case 4 : 
 	{
-	  if (strref[mem[q + 1].cint]< 127) {
+	  if (str_ref[mem[q + 1].cint]< 127) {
 	      
-	    if (strref[mem[q + 1].cint] > 1) 
-	    decr (strref[mem[q + 1].cint]);
+	    if (str_ref[mem[q + 1].cint] > 1) 
+	    decr (str_ref[mem[q + 1].cint]);
 	    else flush_string (mem[q + 1].cint);
 	  } 
 	} 
@@ -3290,8 +3290,8 @@ flush_token_list (halfword p)
       case 18 : 
       case 19 : 
 	{
-	  gpointer = q;
-	  tokenrecycle ();
+	  g_pointer = q;
+	  token_recycle ();
 	} 
 	break;
 	default: 
@@ -3613,7 +3613,7 @@ print_cmd_mod (integer c , integer m)
     print (949);
     break;
   case 40 : 
-    slow_print (intname[m]);
+    slow_print (int_name[m]);
     break;
   case 68 : 
     if (m == 1) 
@@ -3750,16 +3750,16 @@ init_big_node (halfword p)
 {
   halfword q;
   small_number s;
-  s = bignodesize[mem[p].hhfield.b0];
+  s = big_node_size[mem[p].hhfield.b0];
   q = get_node (s);
   do {
       s = s - 2;
     {
-      if (serialno > 2147483583L) 
-      overflow (588 , serialno / 64);
+      if (serial_no > 2147483583L) 
+      overflow (588 , serial_no / 64);
       mem[q + s].hhfield.b0 = 19;
-      serialno = serialno + 64;
-      mem[q + s + 1].cint = serialno;
+      serial_no = serial_no + 64;
+      mem[q + s + 1].cint = serial_no;
     } 
     mem[q + s].hhfield.b1 = halfp (s) + 5;
     mem[q + s].hhfield.v.RH = 0;
@@ -3990,7 +3990,7 @@ find_variable (halfword t)
     } 
     if (mem[p].hhfield.b0 != 21) 
     p = new_structure (p);
-    if (t < himemmin) 
+    if (t < hi_mem_min) 
     {
       n = mem[t + 1].cint;
       pp = mem[mem[pp + 1].hhfield.lhfield].hhfield.v.RH;
@@ -4128,7 +4128,7 @@ print_path (halfword h , str_number s , boolean nuline)
       break;
     case 4 : 
       if ((mem[p].hhfield.b0 != 1) && (mem[p].hhfield.b0 != 4) 
-    ) 
+   ) 
       print (518);
       break;
     case 3 : 
@@ -4145,9 +4145,9 @@ print_path (halfword h , str_number s , boolean nuline)
 	    
 	  n_sin_cos (mem[p + 5].cint);
 	  print_char (123);
-	  print_scaled (ncos);
+	  print_scaled (n_cos);
 	  print_char (44);
-	  print_scaled (nsin);
+	  print_scaled (n_sin);
 	} 
 	print_char (125);
       } 
@@ -4182,9 +4182,9 @@ print_path (halfword h , str_number s , boolean nuline)
       {
 	n_sin_cos (mem[p + 3].cint);
 	print_char (123);
-	print_scaled (ncos);
+	print_scaled (n_cos);
 	print_char (44);
-	print_scaled (nsin);
+	print_scaled (n_sin);
 	print_char (125);
       } 
       else if (mem[p].hhfield.b0 == 3) 
@@ -4206,7 +4206,7 @@ print_weight (halfword q , integer xoff)
   integer d;
   d = mem[q].hhfield.lhfield;
   w = d % 8;
-  m = (d / 8) - mem[curedges + 3].hhfield.lhfield;
+  m = (d / 8) - mem[cur_edges + 3].hhfield.lhfield;
   if (file_offset > maxprintline - 9) 
   print_nl (32);
   else print_char (32);
@@ -4228,9 +4228,9 @@ print_edges (str_number s , boolean nuline , integer xoff , integer yoff)
   halfword p, q, r;
   integer n;
   print_diagnostic (532 , s , nuline);
-  p = mem[curedges].hhfield.lhfield;
-  n = mem[curedges + 1].hhfield.v.RH - 4096;
-  while (p != curedges) {
+  p = mem[cur_edges].hhfield.lhfield;
+  n = mem[cur_edges + 1].hhfield.v.RH - 4096;
+  while (p != cur_edges) {
       
     q = mem[p + 1].hhfield.lhfield;
     r = mem[p + 1].hhfield.v.RH;
@@ -4353,7 +4353,7 @@ print_pen (halfword p , str_number s , boolean nuline)
   {
     w = mem[p + 1].hhfield.v.RH;
     print_two (mem[w + 1].cint + mem[w + 2].cint , mem[w + 2].cint 
-  );
+ );
   } 
   print_nl (570);
   end_diagnostic (true);
@@ -4549,7 +4549,7 @@ print_exp (halfword p , small_number verbosity)
 	break;
       case 11 : 
 	{
-	  curedges = v;
+	  cur_edges = v;
 	  print_edges (261 , false , 0 , 0);
 	} 
 	break;
@@ -4563,7 +4563,7 @@ print_exp (halfword p , small_number verbosity)
     else {
 	
       print_char (40);
-      q = v + bignodesize[t];
+      q = v + big_node_size[t];
       do {
 	  if (mem[v].hhfield.b0 == 16) 
 	print_scaled (mem[v + 1].cint);
@@ -4640,10 +4640,10 @@ tt)
 	  
 	if (abs (v) >= 626349397L) {
 	    
-	  if (watchcoefs) 
+	  if (watch_coefs) 
 	  {
 	    mem[qq].hhfield.b0 = 0;
-	    fixneeded = true;
+	    fix_needed = true;
 	  } 
 	} 
 	mem[r].hhfield.v.RH = s;
@@ -4666,10 +4666,10 @@ tt)
       mem[s + 1].cint = v;
       if (abs (v) >= 626349397L) {
 	  
-	if (watchcoefs) 
+	if (watch_coefs) 
 	{
 	  mem[qq].hhfield.b0 = 0;
-	  fixneeded = true;
+	  fix_needed = true;
 	} 
       } 
       mem[r].hhfield.v.RH = s;
@@ -4691,7 +4691,7 @@ tt)
   else mem[p + 1].cint = slow_add (mem[p + 1].cint , takescaled (mem 
 [q + 1].cint , f));
   mem[r].hhfield.v.RH = p;
-  depfinal = p;
+  dep_final = p;
   Result = mem[memtop - 1].hhfield.v.RH;
   return Result;
 } 
@@ -4728,7 +4728,7 @@ p_over_v (halfword p , scaled v , small_number t0 , small_number t1)
 	
       if (abs (w) >= 626349397L) 
       {
-	fixneeded = true;
+	fix_needed = true;
 	mem[mem[p].hhfield.lhfield].hhfield.b0 = 0;
       } 
       mem[r].hhfield.v.RH = p;
@@ -4749,11 +4749,11 @@ val_too_big (scaled x)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -4864,14 +4864,14 @@ fix_dependencies (void)
       avail = s;
 	;
 #ifdef STAT
-      decr (dynused);
+      decr (dyn_used);
 #endif /* STAT */
     } 
     s = p;
     mem[x].hhfield.b0 = 19;
     mem[x + 1].cint = mem[x + 1].cint + 2;
   } 
-  fixneeded = false;
+  fix_needed = false;
 } 
 void 
 toss_knot_list (halfword p) 
@@ -4962,10 +4962,10 @@ recycle_value (halfword p)
     break;
   case 4 : 
     {
-      if (strref[v]< 127) {
+      if (str_ref[v]< 127) {
 	  
-	if (strref[v] > 1) 
-	decr (strref[v]);
+	if (str_ref[v] > 1) 
+	decr (str_ref[v]);
 	else flush_string (v);
       } 
     } 
@@ -4986,12 +4986,12 @@ recycle_value (halfword p)
   case 13 : 
     if (v != 0) 
     {
-      q = v + bignodesize[t];
+      q = v + big_node_size[t];
       do {
 	  q = q - 2;
 	recycle_value (q);
       } while (!(q == v));
-      free_node (v , bignodesize[t]);
+      free_node (v , big_node_size[t]);
     } 
     break;
   case 17 : 
@@ -4999,7 +4999,7 @@ recycle_value (halfword p)
     {
       q = mem[p + 1].hhfield.v.RH;
       while (mem[q].hhfield.lhfield != 0) q = mem[q].hhfield.v.RH 
-  ;
+;
       mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = mem[q]
       .hhfield.v.RH;
       mem[mem[q].hhfield.v.RH + 1].hhfield.lhfield = mem[p + 1]
@@ -5010,10 +5010,10 @@ recycle_value (halfword p)
     break;
   case 19 : 
     {
-      maxc[17] = 0;
-      maxc[18] = 0;
-      maxlink[17] = 0;
-      maxlink[18] = 0;
+      max_c[17] = 0;
+      max_c[18] = 0;
+      max_link[17] = 0;
+      max_link[18] = 0;
       q = mem[13].hhfield.v.RH;
       while (q != 13) {
 	  
@@ -5030,31 +5030,31 @@ recycle_value (halfword p)
 	    t = mem[q].hhfield.b0;
 	    mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
 	    mem[r].hhfield.lhfield = q;
-	    if (abs (mem[r + 1].cint) > maxc[t]) 
+	    if (abs (mem[r + 1].cint) > max_c[t]) 
 	    {
-	      if (maxc[t] > 0) 
+	      if (max_c[t] > 0) 
 	      {
-		mem[maxptr[t]].hhfield.v.RH = maxlink[t];
-		maxlink[t] = maxptr[t];
+		mem[max_ptr[t]].hhfield.v.RH = max_link[t];
+		max_link[t] = max_ptr[t];
 	      } 
-	      maxc[t] = abs (mem[r + 1].cint);
-	      maxptr[t] = r;
+	      max_c[t] = abs (mem[r + 1].cint);
+	      max_ptr[t] = r;
 	    } 
 	    else {
 		
-	      mem[r].hhfield.v.RH = maxlink[t];
-	      maxlink[t] = r;
+	      mem[r].hhfield.v.RH = max_link[t];
+	      max_link[t] = r;
 	    } 
 	  } 
 	} 
 	done: q = mem[r].hhfield.v.RH;
       } 
-      if ((maxc[17] > 0) || (maxc[18] > 0)) 
+      if ((max_c[17] > 0) || (max_c[18] > 0)) 
       {
-	if ((maxc[17]/ 4096 >= maxc[18])) 
+	if ((max_c[17]/ 4096 >= max_c[18])) 
 	t = 17;
 	else t = 18;
-	s = maxptr[t];
+	s = max_ptr[t];
 	pp = mem[s].hhfield.lhfield;
 	v = mem[s + 1].cint;
 	if (t == 17) 
@@ -5069,11 +5069,11 @@ recycle_value (halfword p)
 	mem[q + 1].hhfield.lhfield = mem[pp + 1].hhfield.lhfield;
 	mem[mem[pp + 1].hhfield.lhfield].hhfield.v.RH = q;
 	{
-	  if (serialno > 2147483583L) 
-	  overflow (588 , serialno / 64);
+	  if (serial_no > 2147483583L) 
+	  overflow (588 , serial_no / 64);
 	  mem[pp].hhfield.b0 = 19;
-	  serialno = serialno + 64;
-	  mem[pp + 1].cint = serialno;
+	  serial_no = serial_no + 64;
+	  mem[pp + 1].cint = serial_no;
 	} 
 	if (cur_exp == pp) {
 	    
@@ -5089,8 +5089,8 @@ recycle_value (halfword p)
 	    if (v > 0) 
 	    print_char (45);
 	    if (t == 17) 
-	    vv = roundfraction (maxc[17]);
-	    else vv = maxc[18];
+	    vv = roundfraction (max_c[17]);
+	    else vv = max_c[18];
 	    if (vv != 65536L) 
 	    print_scaled (vv);
 	    print_variable_name (p);
@@ -5107,24 +5107,24 @@ recycle_value (halfword p)
 	  } 
 	} 
 	t = 35 - t;
-	if (maxc[t] > 0) 
+	if (max_c[t] > 0) 
 	{
-	  mem[maxptr[t]].hhfield.v.RH = maxlink[t];
-	  maxlink[t] = maxptr[t];
+	  mem[max_ptr[t]].hhfield.v.RH = max_link[t];
+	  max_link[t] = max_ptr[t];
 	} 
 	if (t != 17) 
 	{register integer for_end; t = 17;for_end = 18; if (t <= for_end) 
 	do 
 	  {
-	    r = maxlink[t];
+	    r = max_link[t];
 	    while (r != 0) {
 		
 	      q = mem[r].hhfield.lhfield;
 	      mem[q + 1].hhfield.v.RH = p_plus_fq (mem[q + 1].hhfield 
 	    .v.RH , makefraction (mem[r + 1].cint , - (integer) v) , s 
 	      , t , 17);
-	      if (mem[q + 1].hhfield.v.RH == depfinal) 
-	      make_known (q , depfinal);
+	      if (mem[q + 1].hhfield.v.RH == dep_final) 
+	      make_known (q , dep_final);
 	      q = r;
 	      r = mem[r].hhfield.v.RH;
 	      free_node (q , 2);
@@ -5135,7 +5135,7 @@ recycle_value (halfword p)
 	    register integer for_end; t = 17;for_end = 18; if (t <= 
 	for_end) do 
 	  {
-	    r = maxlink[t];
+	    r = max_link[t];
 	    while (r != 0) {
 		
 	      q = mem[r].hhfield.lhfield;
@@ -5154,8 +5154,8 @@ recycle_value (halfword p)
 	      mem[q + 1].hhfield.v.RH = p_plus_fq (mem[q + 1].hhfield 
 	    .v.RH , makescaled (mem[r + 1].cint , - (integer) v) , s , 
 	      18 , 18);
-	      if (mem[q + 1].hhfield.v.RH == depfinal) 
-	      make_known (q , depfinal);
+	      if (mem[q + 1].hhfield.v.RH == dep_final) 
+	      make_known (q , dep_final);
 	      q = r;
 	      r = mem[r].hhfield.v.RH;
 	      free_node (q , 2);
@@ -5163,10 +5163,10 @@ recycle_value (halfword p)
 	  } 
 	while (t++ < for_end);} 
 	flush_node_list (s);
-	if (fixneeded) 
+	if (fix_needed) 
 	fix_dependencies ();
 	{
-	  if (aritherror) 
+	  if (arith_error) 
 	  clear_arith ();
 	} 
       } 
@@ -5209,10 +5209,10 @@ flush_cur_exp (scaled v)
     break;
   case 4 : 
     {
-      if (strref[cur_exp]< 127) {
+      if (str_ref[cur_exp]< 127) {
 	  
-	if (strref[cur_exp] > 1) 
-	decr (strref[cur_exp]);
+	if (str_ref[cur_exp] > 1) 
+	decr (str_ref[cur_exp]);
 	else flush_string (cur_exp);
       } 
     } 
@@ -5408,27 +5408,27 @@ void
 zsavevariable (halfword q) 
 {
   halfword p;
-  if (saveptr != 0) 
+  if (save_ptr != 0) 
   {
     p = get_node (2);
     mem[p].hhfield.lhfield = q;
-    mem[p].hhfield.v.RH = saveptr;
+    mem[p].hhfield.v.RH = save_ptr;
     mem[p + 1].hhfield = eqtb[q];
-    saveptr = p;
+    save_ptr = p;
   } 
-  clearsymbol (q , (saveptr != 0));
+  clearsymbol (q , (save_ptr != 0));
 } 
 void 
 zsaveinternal (halfword q) 
 {
   halfword p;
-  if (saveptr != 0) 
+  if (save_ptr != 0) 
   {
     p = get_node (2);
     mem[p].hhfield.lhfield = 9769 + q;
-    mem[p].hhfield.v.RH = saveptr;
+    mem[p].hhfield.v.RH = save_ptr;
     mem[p + 1].cint = internal[q];
-    saveptr = p;
+    save_ptr = p;
   } 
 } 
 void 
@@ -5436,22 +5436,22 @@ unsave (void)
 {
   halfword q;
   halfword p;
-  while (mem[saveptr].hhfield.lhfield != 0) {
+  while (mem[save_ptr].hhfield.lhfield != 0) {
       
-    q = mem[saveptr].hhfield.lhfield;
+    q = mem[save_ptr].hhfield.lhfield;
     if (q > 9769) 
     {
       if (internal[8] > 0) 
       {
 	begin_diagnostic ();
 	print_nl (516);
-	slow_print (intname[q - (9769)]);
+	slow_print (int_name[q - (9769)]);
 	print_char (61);
-	print_scaled (mem[saveptr + 1].cint);
+	print_scaled (mem[save_ptr + 1].cint);
 	print_char (125);
 	end_diagnostic (false);
       } 
-      internal[q - (9769)] = mem[saveptr + 1].cint;
+      internal[q - (9769)] = mem[save_ptr + 1].cint;
     } 
     else {
 	
@@ -5464,7 +5464,7 @@ unsave (void)
 	end_diagnostic (false);
       } 
       clearsymbol (q , false);
-      eqtb[q] = mem[saveptr + 1].hhfield;
+      eqtb[q] = mem[save_ptr + 1].hhfield;
       if (eqtb[q].lhfield % 86 == 41) 
       {
 	p = eqtb[q].v.RH;
@@ -5472,20 +5472,20 @@ unsave (void)
 	mem[p].hhfield.b1 = 0;
       } 
     } 
-    p = mem[saveptr].hhfield.v.RH;
-    free_node (saveptr , 2);
-    saveptr = p;
+    p = mem[save_ptr].hhfield.v.RH;
+    free_node (save_ptr , 2);
+    save_ptr = p;
   } 
-  p = mem[saveptr].hhfield.v.RH;
+  p = mem[save_ptr].hhfield.v.RH;
   {
-    mem[saveptr].hhfield.v.RH = avail;
-    avail = saveptr;
+    mem[save_ptr].hhfield.v.RH = avail;
+    avail = save_ptr;
 	;
 #ifdef STAT
-    decr (dynused);
+    decr (dyn_used);
 #endif /* STAT */
   } 
-  saveptr = p;
+  save_ptr = p;
 } 
 halfword 
 zcopyknot (halfword p) 
@@ -5549,7 +5549,7 @@ zhtapypoc (halfword p)
     if (mem[pp].hhfield.v.RH == p) 
     {
       mem[q].hhfield.v.RH = qq;
-      pathtail = pp;
+      path_tail = pp;
       Result = q;
       goto lab10;
     } 
@@ -5562,7 +5562,7 @@ zhtapypoc (halfword p)
   return Result;
 } 
 fraction 
-zcurlratio (scaled gamma , scaled atension , scaled btension) 
+curl_ratio (scaled gamma , scaled atension , scaled btension) 
 {
   register fraction Result; fraction alpha, beta, num, denom, ff;
   alpha = makefraction (65536L , atension);
@@ -5590,7 +5590,7 @@ zcurlratio (scaled gamma , scaled atension , scaled btension)
   return Result;
 } 
 void 
-zsetcontrols (halfword p , halfword q , integer k) 
+set_controls (halfword p , halfword q , integer k) 
 {
   fraction rr, ss;
   scaled lt, rt;
@@ -5604,7 +5604,7 @@ zsetcontrols (halfword p , halfword q , integer k)
     if (((st >= 0) && (sf >= 0)) || ((st <= 0) && (sf <= 0))) 
     {
       sine = takefraction (abs (st) , cf) + takefraction (abs (sf) , ct 
-    );
+   );
       if (sine > 0) 
       {
 	sine = takefraction (sine , 268500992L);
@@ -5622,18 +5622,18 @@ zsetcontrols (halfword p , halfword q , integer k)
     } 
   } 
   mem[p + 5].cint = mem[p + 1].cint + takefraction (takefraction (
-  deltax[k], ct) - takefraction (deltay[k], st) , rr);
+  delta_x[k], ct) - takefraction (delta_y[k], st) , rr);
   mem[p + 6].cint = mem[p + 2].cint + takefraction (takefraction (
-  deltay[k], ct) + takefraction (deltax[k], st) , rr);
+  delta_y[k], ct) + takefraction (delta_x[k], st) , rr);
   mem[q + 3].cint = mem[q + 1].cint - takefraction (takefraction (
-  deltax[k], cf) + takefraction (deltay[k], sf) , ss);
+  delta_x[k], cf) + takefraction (delta_y[k], sf) , ss);
   mem[q + 4].cint = mem[q + 2].cint - takefraction (takefraction (
-  deltay[k], cf) - takefraction (deltax[k], sf) , ss);
+  delta_y[k], cf) - takefraction (delta_x[k], sf) , ss);
   mem[p].hhfield.b1 = 1;
   mem[q].hhfield.b0 = 1;
 } 
 void 
-zsolvechoices (halfword p , halfword q , halfword n) 
+solve_choices (halfword p , halfword q , halfword n) 
 {
   /* 40 10 */ integer k;
   halfword r, s, t;
@@ -5650,19 +5650,19 @@ zsolvechoices (halfword p , halfword q , halfword n)
     {case 2 : 
       if (mem[t].hhfield.b0 == 2) 
       {
-	aa = n_arg (deltax[0], deltay[0]);
+	aa = n_arg (delta_x[0], delta_y[0]);
 	n_sin_cos (mem[p + 5].cint - aa);
-	ct = ncos;
-	st = nsin;
+	ct = n_cos;
+	st = n_sin;
 	n_sin_cos (mem[q + 3].cint - aa);
-	cf = ncos;
-	sf = - (integer) nsin;
-	setcontrols (p , q , 0);
+	cf = n_cos;
+	sf = - (integer) n_sin;
+	set_controls (p , q , 0);
 	goto lab10;
       } 
       else {
 	  
-	vv[0] = mem[s + 5].cint - n_arg (deltax[0], deltay[0]) 
+	vv[0] = mem[s + 5].cint - n_arg (delta_x[0], delta_y[0]) 
 	;
 	if (abs (vv[0]) > 188743680L) {
 	    
@@ -5683,44 +5683,44 @@ zsolvechoices (halfword p , halfword q , halfword n)
 	rt = abs (mem[p + 6].cint);
 	if (rt == 65536L) 
 	{
-	  if (deltax[0] >= 0) 
-	  mem[p + 5].cint = mem[p + 1].cint + ((deltax[0]+ 1) / 
+	  if (delta_x[0] >= 0) 
+	  mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0]+ 1) / 
 	  3);
-	  else mem[p + 5].cint = mem[p + 1].cint + ((deltax[0] - 
+	  else mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0] - 
 	  1) / 3);
-	  if (deltay[0] >= 0) 
-	  mem[p + 6].cint = mem[p + 2].cint + ((deltay[0]+ 1) / 
+	  if (delta_y[0] >= 0) 
+	  mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0]+ 1) / 
 	  3);
-	  else mem[p + 6].cint = mem[p + 2].cint + ((deltay[0] - 
+	  else mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0] - 
 	  1) / 3);
 	} 
 	else {
 	    
 	  ff = makefraction (65536L , 3 * rt);
-	  mem[p + 5].cint = mem[p + 1].cint + takefraction (deltax[
+	  mem[p + 5].cint = mem[p + 1].cint + takefraction (delta_x[
 	  0], ff);
-	  mem[p + 6].cint = mem[p + 2].cint + takefraction (deltay[
+	  mem[p + 6].cint = mem[p + 2].cint + takefraction (delta_y[
 	  0], ff);
 	} 
 	if (lt == 65536L) 
 	{
-	  if (deltax[0] >= 0) 
-	  mem[q + 3].cint = mem[q + 1].cint - ((deltax[0]+ 1) / 
+	  if (delta_x[0] >= 0) 
+	  mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0]+ 1) / 
 	  3);
-	  else mem[q + 3].cint = mem[q + 1].cint - ((deltax[0] - 
+	  else mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0] - 
 	  1) / 3);
-	  if (deltay[0] >= 0) 
-	  mem[q + 4].cint = mem[q + 2].cint - ((deltay[0]+ 1) / 
+	  if (delta_y[0] >= 0) 
+	  mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0]+ 1) / 
 	  3);
-	  else mem[q + 4].cint = mem[q + 2].cint - ((deltay[0] - 
+	  else mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0] - 
 	  1) / 3);
 	} 
 	else {
 	    
 	  ff = makefraction (65536L , 3 * lt);
-	  mem[q + 3].cint = mem[q + 1].cint - takefraction (deltax[
+	  mem[q + 3].cint = mem[q + 1].cint - takefraction (delta_x[
 	  0], ff);
-	  mem[q + 4].cint = mem[q + 2].cint - takefraction (deltay[
+	  mem[q + 4].cint = mem[q + 2].cint - takefraction (delta_y[
 	  0], ff);
 	} 
 	goto lab10;
@@ -5732,7 +5732,7 @@ zsolvechoices (halfword p , halfword q , halfword n)
 	rt = abs (mem[s + 6].cint);
 	if ((rt == 65536L) && (lt == 65536L)) 
 	uu[0] = makefraction (cc + cc + 65536L , cc + 131072L);
-	else uu[0] = curlratio (cc , rt , lt);
+	else uu[0] = curl_ratio (cc , rt , lt);
 	vv[0] = - (integer) takefraction (psi[1], uu[0]);
 	ww[0] = 0;
       } 
@@ -5839,7 +5839,7 @@ zsolvechoices (halfword p , halfword q , halfword n)
 	rt = abs (mem[r + 6].cint);
 	if ((rt == 65536L) && (lt == 65536L)) 
 	ff = makefraction (cc + cc + 65536L , cc + 131072L);
-	else ff = curlratio (cc , lt , rt);
+	else ff = curl_ratio (cc , lt , rt);
 	theta[n] = - (integer) makefraction (takefraction (vv[n - 1], 
 	ff) , 268435456L - takefraction (ff , uu[n - 1]));
 	goto found;
@@ -5847,7 +5847,7 @@ zsolvechoices (halfword p , halfword q , halfword n)
       break;
     case 2 : 
       {
-	theta[n] = mem[s + 3].cint - n_arg (deltax[n - 1], deltay[
+	theta[n] = mem[s + 3].cint - n_arg (delta_x[n - 1], delta_y[
 	n - 1]);
 	if (abs (theta[n]) > 188743680L) {
 	    
@@ -5873,19 +5873,19 @@ zsolvechoices (halfword p , halfword q , halfword n)
   do {
       t = mem[s].hhfield.v.RH;
     n_sin_cos (theta[k]);
-    st = nsin;
-    ct = ncos;
+    st = n_sin;
+    ct = n_cos;
     n_sin_cos (- (integer) psi[k + 1] - theta[k + 1]);
-    sf = nsin;
-    cf = ncos;
-    setcontrols (s , t , k);
+    sf = n_sin;
+    cf = n_cos;
+    set_controls (s , t , k);
     incr (k);
     s = t;
   } while (!(k == n));
   lab10:;
 } 
 void 
-zmakechoices (halfword knots) 
+make_choices (halfword knots) 
 {
   /* 30 */ halfword h;
   halfword p, q;
@@ -5894,7 +5894,7 @@ zmakechoices (halfword knots)
   scaled delx, dely;
   fraction sine, cosine;
   {
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
   if (internal[4] > 0) 
@@ -5950,22 +5950,22 @@ zmakechoices (halfword knots)
     if (mem[p].hhfield.b1 >= 2) 
     {
       while ((mem[q].hhfield.b0 == 4) && (mem[q].hhfield.b1 == 4 
-    )) q = mem[q].hhfield.v.RH;
+   )) q = mem[q].hhfield.v.RH;
       k = 0;
       s = p;
       n = pathsize;
       do {
 	  t = mem[s].hhfield.v.RH;
-	deltax[k] = mem[t + 1].cint - mem[s + 1].cint;
-	deltay[k] = mem[t + 2].cint - mem[s + 2].cint;
-	delta[k] = pyth_add (deltax[k], deltay[k]);
+	delta_x[k] = mem[t + 1].cint - mem[s + 1].cint;
+	delta_y[k] = mem[t + 2].cint - mem[s + 2].cint;
+	delta[k] = pyth_add (delta_x[k], delta_y[k]);
 	if (k > 0) 
 	{
-	  sine = makefraction (deltay[k - 1], delta[k - 1]);
-	  cosine = makefraction (deltax[k - 1], delta[k - 1]);
-	  psi[k] = n_arg (takefraction (deltax[k], cosine) + 
-	  takefraction (deltay[k], sine) , takefraction (deltay[k], 
-	  cosine) - takefraction (deltax[k], sine));
+	  sine = makefraction (delta_y[k - 1], delta[k - 1]);
+	  cosine = makefraction (delta_x[k - 1], delta[k - 1]);
+	  psi[k] = n_arg (takefraction (delta_x[k], cosine) + 
+	  takefraction (delta_y[k], sine) , takefraction (delta_y[k], 
+	  cosine) - takefraction (delta_x[k], sine));
 	} 
 	incr (k);
 	s = t;
@@ -5993,7 +5993,7 @@ zmakechoices (halfword knots)
 	} 
       } 
       if ((mem[p].hhfield.b1 == 4) && (mem[p].hhfield.b0 == 1) 
-    ) 
+   ) 
       {
 	delx = mem[p + 1].cint - mem[p + 3].cint;
 	dely = mem[p + 2].cint - mem[p + 4].cint;
@@ -6008,21 +6008,21 @@ zmakechoices (halfword knots)
 	  mem[p + 5].cint = n_arg (delx , dely);
 	} 
       } 
-      solvechoices (p , q , n);
+      solve_choices (p , q , n);
     } 
     p = q;
   } while (!(p == h));
   if (internal[4] > 0) 
   print_path (knots , 527 , true);
-  if (aritherror) 
+  if (arith_error) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -6040,11 +6040,11 @@ zmakechoices (halfword knots)
       help_line[0] = 530;
     } 
     put_get_error ();
-    aritherror = false;
+    arith_error = false;
   } 
 } 
 void 
-zmakemoves (scaled xx0 , scaled xx1 , scaled xx2 , scaled xx3 , scaled yy0 , 
+make_moves (scaled xx0 , scaled xx1 , scaled xx2 , scaled xx3 , scaled yy0 , 
 scaled yy1 , scaled yy2 , scaled yy3 , small_number xicorr , small_number 
 etacorr) 
 {
@@ -6053,7 +6053,7 @@ etacorr)
   if ((xx3 < xx0) || (yy3 < yy0)) 
   confusion (109);
   l = 16;
-  bisectptr = 0;
+  bisect_ptr = 0;
   x1 = xx1 - xx0;
   x2 = xx2 - xx1;
   x3 = xx3 - xx2;
@@ -6085,16 +6085,16 @@ etacorr)
     lab22: if (m == 0) 
     while (n > 0) {
 	
-      incr (moveptr);
-      move[moveptr] = 1;
+      incr (move_ptr);
+      move[move_ptr] = 1;
       decr (n);
     } 
     else if (n == 0) 
-    move[moveptr] = move[moveptr]+ m;
+    move[move_ptr] = move[move_ptr]+ m;
     else if (m + n == 2) 
     {
-      r = twotothe[l] - r;
-      s = twotothe[l] - s;
+      r = two_to_the[l] - r;
+      s = two_to_the[l] - s;
       while (l < 30) {
 	  
 	x3a = x3;
@@ -6125,8 +6125,8 @@ etacorr)
 	  else {
 	      
 	    {
-	      incr (moveptr);
-	      move[moveptr] = 2;
+	      incr (move_ptr);
+	      move[move_ptr] = 2;
 	    } 
 	    goto done;
 	  } 
@@ -6134,9 +6134,9 @@ etacorr)
 	else if (u < s) 
 	{
 	  {
-	    incr (move[moveptr]);
-	    incr (moveptr);
-	    move[moveptr] = 1;
+	    incr (move[move_ptr]);
+	    incr (move_ptr);
+	    move[move_ptr] = 1;
 	  } 
 	  goto done;
 	} 
@@ -6146,65 +6146,65 @@ etacorr)
       s = s - etacorr;
       if (ab_vs_cd (x1 + x2 + x3 , s , y1 + y2 + y3 , r) - xicorr >= 0) 
       {
-	incr (move[moveptr]);
-	incr (moveptr);
-	move[moveptr] = 1;
+	incr (move[move_ptr]);
+	incr (move_ptr);
+	move[move_ptr] = 1;
       } 
       else {
 	  
-	incr (moveptr);
-	move[moveptr] = 2;
+	incr (move_ptr);
+	move[move_ptr] = 2;
       } 
       done:;
     } 
     else {
 	
       incr (l);
-      bisectstack[bisectptr + 10] = l;
-      bisectstack[bisectptr + 2] = x3;
-      bisectstack[bisectptr + 1] = half (x2 + x3 + xicorr);
+      bisect_stack[bisect_ptr + 10] = l;
+      bisect_stack[bisect_ptr + 2] = x3;
+      bisect_stack[bisect_ptr + 1] = half (x2 + x3 + xicorr);
       x2 = half (x1 + x2 + xicorr);
-      x3 = half (x2 + bisectstack[bisectptr + 1]+ xicorr);
-      bisectstack[bisectptr] = x3;
+      x3 = half (x2 + bisect_stack[bisect_ptr + 1]+ xicorr);
+      bisect_stack[bisect_ptr] = x3;
       r = r + r + xicorr;
       t = x1 + x2 + x3 + r;
-      q = t / twotothe[l];
-      bisectstack[bisectptr + 3] = t % twotothe[l];
-      bisectstack[bisectptr + 4] = m - q;
+      q = t / two_to_the[l];
+      bisect_stack[bisect_ptr + 3] = t % two_to_the[l];
+      bisect_stack[bisect_ptr + 4] = m - q;
       m = q;
-      bisectstack[bisectptr + 7] = y3;
-      bisectstack[bisectptr + 6] = half (y2 + y3 + etacorr);
+      bisect_stack[bisect_ptr + 7] = y3;
+      bisect_stack[bisect_ptr + 6] = half (y2 + y3 + etacorr);
       y2 = half (y1 + y2 + etacorr);
-      y3 = half (y2 + bisectstack[bisectptr + 6]+ etacorr);
-      bisectstack[bisectptr + 5] = y3;
+      y3 = half (y2 + bisect_stack[bisect_ptr + 6]+ etacorr);
+      bisect_stack[bisect_ptr + 5] = y3;
       s = s + s + etacorr;
       u = y1 + y2 + y3 + s;
-      q = u / twotothe[l];
-      bisectstack[bisectptr + 8] = u % twotothe[l];
-      bisectstack[bisectptr + 9] = n - q;
+      q = u / two_to_the[l];
+      bisect_stack[bisect_ptr + 8] = u % two_to_the[l];
+      bisect_stack[bisect_ptr + 9] = n - q;
       n = q;
-      bisectptr = bisectptr + 11;
+      bisect_ptr = bisect_ptr + 11;
       goto lab22;
     } 
-    if (bisectptr == 0) 
+    if (bisect_ptr == 0) 
     goto lab10;
-    bisectptr = bisectptr - 11;
-    x1 = bisectstack[bisectptr];
-    x2 = bisectstack[bisectptr + 1];
-    x3 = bisectstack[bisectptr + 2];
-    r = bisectstack[bisectptr + 3];
-    m = bisectstack[bisectptr + 4];
-    y1 = bisectstack[bisectptr + 5];
-    y2 = bisectstack[bisectptr + 6];
-    y3 = bisectstack[bisectptr + 7];
-    s = bisectstack[bisectptr + 8];
-    n = bisectstack[bisectptr + 9];
-    l = bisectstack[bisectptr + 10];
+    bisect_ptr = bisect_ptr - 11;
+    x1 = bisect_stack[bisect_ptr];
+    x2 = bisect_stack[bisect_ptr + 1];
+    x3 = bisect_stack[bisect_ptr + 2];
+    r = bisect_stack[bisect_ptr + 3];
+    m = bisect_stack[bisect_ptr + 4];
+    y1 = bisect_stack[bisect_ptr + 5];
+    y2 = bisect_stack[bisect_ptr + 6];
+    y3 = bisect_stack[bisect_ptr + 7];
+    s = bisect_stack[bisect_ptr + 8];
+    n = bisect_stack[bisect_ptr + 9];
+    l = bisect_stack[bisect_ptr + 10];
   } 
   lab10:;
 } 
 void 
-zsmoothmoves (integer b , integer t) 
+smooth_moves (integer b , integer t) 
 {
   integer k;
   integer a, aa, aaa;
@@ -6247,7 +6247,7 @@ zsmoothmoves (integer b , integer t)
   } 
 } 
 void 
-zinitedges (halfword h) 
+init_edges (halfword h) 
 {
   mem[h].hhfield.lhfield = h;
   mem[h].hhfield.v.RH = h;
@@ -6262,14 +6262,14 @@ zinitedges (halfword h)
   mem[h + 5].hhfield.lhfield = 0;
 } 
 void 
-fixoffset (void) 
+fix_offset (void) 
 {
   halfword p, q;
   integer delta;
-  delta = 8 * (mem[curedges + 3].hhfield.lhfield - 4096);
-  mem[curedges + 3].hhfield.lhfield = 4096;
-  q = mem[curedges].hhfield.v.RH;
-  while (q != curedges) {
+  delta = 8 * (mem[cur_edges + 3].hhfield.lhfield - 4096);
+  mem[cur_edges + 3].hhfield.lhfield = 4096;
+  q = mem[cur_edges].hhfield.v.RH;
+  while (q != cur_edges) {
       
     p = mem[q + 1].hhfield.v.RH;
     while (p != memtop) {
@@ -6287,7 +6287,7 @@ fixoffset (void)
   } 
 } 
 void 
-zedgeprep (integer ml , integer mr , integer nl , integer nr) 
+edge_prep (integer ml , integer mr , integer nl , integer nr) 
 {
   halfword delta;
   integer temp;
@@ -6296,25 +6296,25 @@ zedgeprep (integer ml , integer mr , integer nl , integer nr)
   mr = mr + 4096;
   nl = nl + 4096;
   nr = nr + 4095;
-  if (ml < mem[curedges + 2].hhfield.lhfield) 
-  mem[curedges + 2].hhfield.lhfield = ml;
-  if (mr > mem[curedges + 2].hhfield.v.RH) 
-  mem[curedges + 2].hhfield.v.RH = mr;
-  temp = mem[curedges + 3].hhfield.lhfield - 4096;
-  if (!(abs (mem[curedges + 2].hhfield.lhfield + temp - 4096) < 4096 
-) || !(abs (mem[curedges + 2].hhfield.v.RH + temp - 4096) < 4096) 
+  if (ml < mem[cur_edges + 2].hhfield.lhfield) 
+  mem[cur_edges + 2].hhfield.lhfield = ml;
+  if (mr > mem[cur_edges + 2].hhfield.v.RH) 
+  mem[cur_edges + 2].hhfield.v.RH = mr;
+  temp = mem[cur_edges + 3].hhfield.lhfield - 4096;
+  if (!(abs (mem[cur_edges + 2].hhfield.lhfield + temp - 4096) < 4096 
+) || !(abs (mem[cur_edges + 2].hhfield.v.RH + temp - 4096) < 4096) 
 ) 
-  fixoffset ();
-  if (mem[curedges].hhfield.v.RH == curedges) 
+  fix_offset ();
+  if (mem[cur_edges].hhfield.v.RH == cur_edges) 
   {
-    mem[curedges + 1].hhfield.lhfield = nr + 1;
-    mem[curedges + 1].hhfield.v.RH = nr;
+    mem[cur_edges + 1].hhfield.lhfield = nr + 1;
+    mem[cur_edges + 1].hhfield.v.RH = nr;
   } 
-  if (nl < mem[curedges + 1].hhfield.lhfield) 
+  if (nl < mem[cur_edges + 1].hhfield.lhfield) 
   {
-    delta = mem[curedges + 1].hhfield.lhfield - nl;
-    mem[curedges + 1].hhfield.lhfield = nl;
-    p = mem[curedges].hhfield.v.RH;
+    delta = mem[cur_edges + 1].hhfield.lhfield - nl;
+    mem[cur_edges + 1].hhfield.lhfield = nl;
+    p = mem[cur_edges].hhfield.v.RH;
     do {
 	q = get_node (2);
       mem[q + 1].hhfield.v.RH = memtop;
@@ -6324,16 +6324,16 @@ zedgeprep (integer ml , integer mr , integer nl , integer nr)
       p = q;
       decr (delta);
     } while (!(delta == 0));
-    mem[p].hhfield.lhfield = curedges;
-    mem[curedges].hhfield.v.RH = p;
-    if (mem[curedges + 5].hhfield.v.RH == curedges) 
-    mem[curedges + 5].hhfield.lhfield = nl - 1;
+    mem[p].hhfield.lhfield = cur_edges;
+    mem[cur_edges].hhfield.v.RH = p;
+    if (mem[cur_edges + 5].hhfield.v.RH == cur_edges) 
+    mem[cur_edges + 5].hhfield.lhfield = nl - 1;
   } 
-  if (nr > mem[curedges + 1].hhfield.v.RH) 
+  if (nr > mem[cur_edges + 1].hhfield.v.RH) 
   {
-    delta = nr - mem[curedges + 1].hhfield.v.RH;
-    mem[curedges + 1].hhfield.v.RH = nr;
-    p = mem[curedges].hhfield.lhfield;
+    delta = nr - mem[cur_edges + 1].hhfield.v.RH;
+    mem[cur_edges + 1].hhfield.v.RH = nr;
+    p = mem[cur_edges].hhfield.lhfield;
     do {
 	q = get_node (2);
       mem[q + 1].hhfield.v.RH = memtop;
@@ -6343,14 +6343,14 @@ zedgeprep (integer ml , integer mr , integer nl , integer nr)
       p = q;
       decr (delta);
     } while (!(delta == 0));
-    mem[p].hhfield.v.RH = curedges;
-    mem[curedges].hhfield.lhfield = p;
-    if (mem[curedges + 5].hhfield.v.RH == curedges) 
-    mem[curedges + 5].hhfield.lhfield = nr + 1;
+    mem[p].hhfield.v.RH = cur_edges;
+    mem[cur_edges].hhfield.lhfield = p;
+    if (mem[cur_edges + 5].hhfield.v.RH == cur_edges) 
+    mem[cur_edges + 5].hhfield.lhfield = nr + 1;
   } 
 } 
 halfword 
-zcopyedges (halfword h) 
+copy_edges (halfword h) 
 {
   register halfword Result; halfword p, r;
   halfword hh, pp, qq, rr, ss;
@@ -6400,38 +6400,38 @@ zcopyedges (halfword h)
   return Result;
 } 
 void 
-yreflectedges (void) 
+reflect_edges (void) 
 {
   halfword p, q, r;
-  p = mem[curedges + 1].hhfield.lhfield;
-  mem[curedges + 1].hhfield.lhfield = 8191 - mem[curedges + 1]
+  p = mem[cur_edges + 1].hhfield.lhfield;
+  mem[cur_edges + 1].hhfield.lhfield = 8191 - mem[cur_edges + 1]
   .hhfield.v.RH;
-  mem[curedges + 1].hhfield.v.RH = 8191 - p;
-  mem[curedges + 5].hhfield.lhfield = 8191 - mem[curedges + 5]
+  mem[cur_edges + 1].hhfield.v.RH = 8191 - p;
+  mem[cur_edges + 5].hhfield.lhfield = 8191 - mem[cur_edges + 5]
   .hhfield.lhfield;
-  p = mem[curedges].hhfield.v.RH;
-  q = curedges;
+  p = mem[cur_edges].hhfield.v.RH;
+  q = cur_edges;
   do {
       r = mem[p].hhfield.v.RH;
     mem[p].hhfield.v.RH = q;
     mem[q].hhfield.lhfield = p;
     q = p;
     p = r;
-  } while (!(q == curedges));
-  mem[curedges + 4].cint = 0;
+  } while (!(q == cur_edges));
+  mem[cur_edges + 4].cint = 0;
 } 
 void 
-xreflectedges (void) 
+x_reflect_edges (void) 
 {
   halfword p, q, r, s;
   integer m;
-  p = mem[curedges + 2].hhfield.lhfield;
-  mem[curedges + 2].hhfield.lhfield = 8192 - mem[curedges + 2]
+  p = mem[cur_edges + 2].hhfield.lhfield;
+  mem[cur_edges + 2].hhfield.lhfield = 8192 - mem[cur_edges + 2]
   .hhfield.v.RH;
-  mem[curedges + 2].hhfield.v.RH = 8192 - p;
-  m = (4096 + mem[curedges + 3].hhfield.lhfield) * 8 + 8;
-  mem[curedges + 3].hhfield.lhfield = 4096;
-  p = mem[curedges].hhfield.v.RH;
+  mem[cur_edges + 2].hhfield.v.RH = 8192 - p;
+  m = (4096 + mem[cur_edges + 3].hhfield.lhfield) * 8 + 8;
+  mem[cur_edges + 3].hhfield.lhfield = 4096;
+  p = mem[cur_edges].hhfield.v.RH;
   do {
       q = mem[p + 1].hhfield.v.RH;
     r = memtop;
@@ -6451,24 +6451,24 @@ xreflectedges (void)
       q = mem[q].hhfield.v.RH;
     } 
     p = mem[p].hhfield.v.RH;
-  } while (!(p == curedges));
-  mem[curedges + 4].cint = 0;
+  } while (!(p == cur_edges));
+  mem[cur_edges + 4].cint = 0;
 } 
 void 
-zyscaleedges (integer s) 
+y_scale_edges (integer s) 
 {
   halfword p, q, pp, r, rr, ss;
   integer t;
-  if ((s * (mem[curedges + 1].hhfield.v.RH - 4095) >= 4096) || (s * 
-  (mem[curedges + 1].hhfield.lhfield - 4096) <= -4096)) 
+  if ((s * (mem[cur_edges + 1].hhfield.v.RH - 4095) >= 4096) || (s * 
+  (mem[cur_edges + 1].hhfield.lhfield - 4096) <= -4096)) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -6490,11 +6490,11 @@ zyscaleedges (integer s)
   } 
   else {
       
-    mem[curedges + 1].hhfield.v.RH = s * (mem[curedges + 1].hhfield 
+    mem[cur_edges + 1].hhfield.v.RH = s * (mem[cur_edges + 1].hhfield 
   .v.RH - 4095) + 4095;
-    mem[curedges + 1].hhfield.lhfield = s * (mem[curedges + 1]
+    mem[cur_edges + 1].hhfield.lhfield = s * (mem[cur_edges + 1]
     .hhfield.lhfield - 4096) + 4096;
-    p = curedges;
+    p = cur_edges;
     do {
 	q = p;
       p = mem[p].hhfield.v.RH;
@@ -6532,27 +6532,27 @@ zyscaleedges (integer s)
 	;
 	} 
       while (t++ < for_end);} 
-    } while (!(mem[p].hhfield.v.RH == curedges));
-    mem[curedges + 4].cint = 0;
+    } while (!(mem[p].hhfield.v.RH == cur_edges));
+    mem[cur_edges + 4].cint = 0;
   } 
 } 
 void 
-zxscaleedges (integer s) 
+x_scale_edges (integer s) 
 {
   halfword p, q;
   unsigned short t;
   unsigned char w;
   integer delta;
-  if ((s * (mem[curedges + 2].hhfield.v.RH - 4096) >= 4096) || (s * 
-  (mem[curedges + 2].hhfield.lhfield - 4096) <= -4096)) 
+  if ((s * (mem[cur_edges + 2].hhfield.v.RH - 4096) >= 4096) || (s * 
+  (mem[cur_edges + 2].hhfield.lhfield - 4096) <= -4096)) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -6572,16 +6572,16 @@ zxscaleedges (integer s)
     } 
     put_get_error ();
   } 
-  else if ((mem[curedges + 2].hhfield.v.RH != 4096) || (mem[
-  curedges + 2].hhfield.lhfield != 4096)) 
+  else if ((mem[cur_edges + 2].hhfield.v.RH != 4096) || (mem[
+  cur_edges + 2].hhfield.lhfield != 4096)) 
   {
-    mem[curedges + 2].hhfield.v.RH = s * (mem[curedges + 2].hhfield 
+    mem[cur_edges + 2].hhfield.v.RH = s * (mem[cur_edges + 2].hhfield 
   .v.RH - 4096) + 4096;
-    mem[curedges + 2].hhfield.lhfield = s * (mem[curedges + 2]
+    mem[cur_edges + 2].hhfield.lhfield = s * (mem[cur_edges + 2]
     .hhfield.lhfield - 4096) + 4096;
-    delta = 8 * (4096 - s * mem[curedges + 3].hhfield.lhfield) + 0;
-    mem[curedges + 3].hhfield.lhfield = 4096;
-    q = mem[curedges].hhfield.v.RH;
+    delta = 8 * (4096 - s * mem[cur_edges + 3].hhfield.lhfield) + 0;
+    mem[cur_edges + 3].hhfield.lhfield = 4096;
+    q = mem[cur_edges].hhfield.v.RH;
     do {
 	p = mem[q + 1].hhfield.v.RH;
       while (p != memtop) {
@@ -6600,12 +6600,12 @@ zxscaleedges (integer s)
 	p = mem[p].hhfield.v.RH;
       } 
       q = mem[q].hhfield.v.RH;
-    } while (!(q == curedges));
-    mem[curedges + 4].cint = 0;
+    } while (!(q == cur_edges));
+    mem[cur_edges + 4].cint = 0;
   } 
 } 
 void 
-znegateedges (halfword h) 
+negate_edges (halfword h) 
 {
   /* 30 */ halfword p, q, r, s, t, u;
   p = mem[h].hhfield.v.RH;
@@ -6655,7 +6655,7 @@ znegateedges (halfword h)
   mem[h + 4].cint = 0;
 } 
 void 
-zsortedges (halfword h) 
+sort_edges (halfword h) 
 {
   /* 30 */ halfword k;
   halfword p, q, r, s;
@@ -6701,7 +6701,7 @@ zsortedges (halfword h)
   } 
 } 
 void 
-zculledges (integer wlo , integer whi , integer wout , integer win) 
+cull_edges (integer wlo , integer whi , integer wout , integer win) 
 {
   /* 30 */ halfword p, q, r, s;
   integer w;
@@ -6716,12 +6716,12 @@ zculledges (integer wlo , integer whi , integer wout , integer win)
   maxd = 0;
   minn = 268435455L;
   maxn = 0;
-  p = mem[curedges].hhfield.v.RH;
-  n = mem[curedges + 1].hhfield.lhfield;
-  while (p != curedges) {
+  p = mem[cur_edges].hhfield.v.RH;
+  n = mem[cur_edges + 1].hhfield.lhfield;
+  while (p != cur_edges) {
       
     if (mem[p + 1].hhfield.lhfield > 1) 
-    sortedges (p);
+    sort_edges (p);
     if (mem[p + 1].hhfield.v.RH != memtop) 
     {
       r = memtop - 1;
@@ -6766,7 +6766,7 @@ zculledges (integer wlo , integer whi , integer wout , integer win)
 	  avail = q;
 	;
 #ifdef STAT
-	  decr (dynused);
+	  decr (dyn_used);
 #endif /* STAT */
 	} 
 	q = s;
@@ -6790,48 +6790,48 @@ zculledges (integer wlo , integer whi , integer wout , integer win)
   } 
   if (minn > maxn) 
   {
-    p = mem[curedges].hhfield.v.RH;
-    while (p != curedges) {
+    p = mem[cur_edges].hhfield.v.RH;
+    while (p != cur_edges) {
 	
       q = mem[p].hhfield.v.RH;
       free_node (p , 2);
       p = q;
     } 
-    initedges (curedges);
+    init_edges (cur_edges);
   } 
   else {
       
-    n = mem[curedges + 1].hhfield.lhfield;
-    mem[curedges + 1].hhfield.lhfield = minn;
+    n = mem[cur_edges + 1].hhfield.lhfield;
+    mem[cur_edges + 1].hhfield.lhfield = minn;
     while (minn > n) {
 	
-      p = mem[curedges].hhfield.v.RH;
-      mem[curedges].hhfield.v.RH = mem[p].hhfield.v.RH;
-      mem[mem[p].hhfield.v.RH].hhfield.lhfield = curedges;
+      p = mem[cur_edges].hhfield.v.RH;
+      mem[cur_edges].hhfield.v.RH = mem[p].hhfield.v.RH;
+      mem[mem[p].hhfield.v.RH].hhfield.lhfield = cur_edges;
       free_node (p , 2);
       incr (n);
     } 
-    n = mem[curedges + 1].hhfield.v.RH;
-    mem[curedges + 1].hhfield.v.RH = maxn;
-    mem[curedges + 5].hhfield.lhfield = maxn + 1;
-    mem[curedges + 5].hhfield.v.RH = curedges;
+    n = mem[cur_edges + 1].hhfield.v.RH;
+    mem[cur_edges + 1].hhfield.v.RH = maxn;
+    mem[cur_edges + 5].hhfield.lhfield = maxn + 1;
+    mem[cur_edges + 5].hhfield.v.RH = cur_edges;
     while (maxn < n) {
 	
-      p = mem[curedges].hhfield.lhfield;
-      mem[curedges].hhfield.lhfield = mem[p].hhfield.lhfield;
-      mem[mem[p].hhfield.lhfield].hhfield.v.RH = curedges;
+      p = mem[cur_edges].hhfield.lhfield;
+      mem[cur_edges].hhfield.lhfield = mem[p].hhfield.lhfield;
+      mem[mem[p].hhfield.lhfield].hhfield.v.RH = cur_edges;
       free_node (p , 2);
       decr (n);
     } 
-    mem[curedges + 2].hhfield.lhfield = ((mind) / 8) - mem[curedges 
+    mem[cur_edges + 2].hhfield.lhfield = ((mind) / 8) - mem[cur_edges 
     + 3].hhfield.lhfield + 4096;
-    mem[curedges + 2].hhfield.v.RH = ((maxd) / 8) - mem[curedges + 
+    mem[cur_edges + 2].hhfield.v.RH = ((maxd) / 8) - mem[cur_edges + 
     3].hhfield.lhfield + 4096;
   } 
-  mem[curedges + 4].cint = 0;
+  mem[cur_edges + 4].cint = 0;
 } 
 void 
-xyswapedges (void) 
+xy_swap_edges (void) 
 {
   /* 30 */ integer mmagic, nmagic;
   halfword p, q, r, s;
@@ -6846,10 +6846,10 @@ xyswapedges (void)
   integer extras;
   schar xw;
   integer k;
-  mspread = mem[curedges + 2].hhfield.v.RH - mem[curedges + 2]
+  mspread = mem[cur_edges + 2].hhfield.v.RH - mem[cur_edges + 2]
   .hhfield.lhfield;
-  if (mspread > movesize) 
-  overflow (540 , movesize);
+  if (mspread > move_size) 
+  overflow (540 , move_size);
   {register integer for_end; j = 0;for_end = mspread; if (j <= for_end) 
   do 
     move[j] = memtop;
@@ -6857,18 +6857,18 @@ xyswapedges (void)
   p = get_node (2);
   mem[p + 1].hhfield.v.RH = memtop;
   mem[p + 1].hhfield.lhfield = 0;
-  mem[p].hhfield.lhfield = curedges;
-  mem[mem[curedges].hhfield.v.RH].hhfield.lhfield = p;
+  mem[p].hhfield.lhfield = cur_edges;
+  mem[mem[cur_edges].hhfield.v.RH].hhfield.lhfield = p;
   p = get_node (2);
   mem[p + 1].hhfield.v.RH = memtop;
-  mem[p].hhfield.lhfield = mem[curedges].hhfield.lhfield;
-  mmagic = mem[curedges + 2].hhfield.lhfield + mem[curedges + 3]
+  mem[p].hhfield.lhfield = mem[cur_edges].hhfield.lhfield;
+  mmagic = mem[cur_edges + 2].hhfield.lhfield + mem[cur_edges + 3]
   .hhfield.lhfield - 4096;
-  nmagic = 8 * mem[curedges + 1].hhfield.v.RH + 12;
+  nmagic = 8 * mem[cur_edges + 1].hhfield.v.RH + 12;
   do {
       q = mem[p].hhfield.lhfield;
     if (mem[q + 1].hhfield.lhfield > 1) 
-    sortedges (q);
+    sort_edges (q);
     r = mem[p + 1].hhfield.v.RH;
     free_node (p , 2);
     p = r;
@@ -6887,7 +6887,7 @@ xyswapedges (void)
 	  
 	if (m != mm) 
 	{
-	  if (mm - mmagic >= movesize) 
+	  if (mm - mmagic >= move_size) 
 	  confusion (510);
 	  extras = (abs (w) - 1) / 3;
 	  if (extras > 0) 
@@ -6926,7 +6926,7 @@ xyswapedges (void)
 	  avail = p;
 	;
 #ifdef STAT
-	  decr (dynused);
+	  decr (dyn_used);
 #endif /* STAT */
 	} 
 	p = s;
@@ -6948,26 +6948,26 @@ xyswapedges (void)
     done:;
     p = q;
     nmagic = nmagic - 8;
-  } while (!(mem[p].hhfield.lhfield == curedges));
+  } while (!(mem[p].hhfield.lhfield == cur_edges));
   free_node (p , 2);
   move[mspread] = 0;
   j = 0;
   while (move[j] == memtop) incr (j);
   if (j == mspread) 
-  initedges (curedges);
+  init_edges (cur_edges);
   else {
       
-    mm = mem[curedges + 2].hhfield.lhfield;
-    mem[curedges + 2].hhfield.lhfield = mem[curedges + 1].hhfield 
+    mm = mem[cur_edges + 2].hhfield.lhfield;
+    mem[cur_edges + 2].hhfield.lhfield = mem[cur_edges + 1].hhfield 
   .lhfield;
-    mem[curedges + 2].hhfield.v.RH = mem[curedges + 1].hhfield.v.RH 
+    mem[cur_edges + 2].hhfield.v.RH = mem[cur_edges + 1].hhfield.v.RH 
     + 1;
-    mem[curedges + 3].hhfield.lhfield = 4096;
+    mem[cur_edges + 3].hhfield.lhfield = 4096;
     jj = mspread - 1;
     while (move[jj] == memtop) decr (jj);
-    mem[curedges + 1].hhfield.lhfield = j + mm;
-    mem[curedges + 1].hhfield.v.RH = jj + mm;
-    q = curedges;
+    mem[cur_edges + 1].hhfield.lhfield = j + mm;
+    mem[cur_edges + 1].hhfield.v.RH = jj + mm;
+    q = cur_edges;
     do {
 	p = get_node (2);
       mem[q].hhfield.v.RH = p;
@@ -6977,16 +6977,16 @@ xyswapedges (void)
       incr (j);
       q = p;
     } while (!(j > jj));
-    mem[q].hhfield.v.RH = curedges;
-    mem[curedges].hhfield.lhfield = q;
-    mem[curedges + 5].hhfield.lhfield = mem[curedges + 1].hhfield 
+    mem[q].hhfield.v.RH = cur_edges;
+    mem[cur_edges].hhfield.lhfield = q;
+    mem[cur_edges + 5].hhfield.lhfield = mem[cur_edges + 1].hhfield 
   .v.RH + 1;
-    mem[curedges + 5].hhfield.v.RH = curedges;
-    mem[curedges + 4].cint = 0;
+    mem[cur_edges + 5].hhfield.v.RH = cur_edges;
+    mem[cur_edges + 4].cint = 0;
   } 
 } 
 void 
-zmergeedges (halfword h) 
+merge_edges (halfword h) 
 {
   /* 30 */ halfword p, q, r, pp, qq, rr;
   integer n;
@@ -6994,19 +6994,19 @@ zmergeedges (halfword h)
   integer delta;
   if (mem[h].hhfield.v.RH != h) 
   {
-    if ((mem[h + 2].hhfield.lhfield < mem[curedges + 2].hhfield 
-  .lhfield) || (mem[h + 2].hhfield.v.RH > mem[curedges + 2]
-    .hhfield.v.RH) || (mem[h + 1].hhfield.lhfield < mem[curedges + 1 
-  ].hhfield.lhfield) || (mem[h + 1].hhfield.v.RH > mem[curedges + 
+    if ((mem[h + 2].hhfield.lhfield < mem[cur_edges + 2].hhfield 
+  .lhfield) || (mem[h + 2].hhfield.v.RH > mem[cur_edges + 2]
+    .hhfield.v.RH) || (mem[h + 1].hhfield.lhfield < mem[cur_edges + 1 
+  ].hhfield.lhfield) || (mem[h + 1].hhfield.v.RH > mem[cur_edges + 
     1].hhfield.v.RH)) 
-    edgeprep (mem[h + 2].hhfield.lhfield - 4096 , mem[h + 2].hhfield 
+    edge_prep (mem[h + 2].hhfield.lhfield - 4096 , mem[h + 2].hhfield 
   .v.RH - 4096 , mem[h + 1].hhfield.lhfield - 4096 , mem[h + 1]
     .hhfield.v.RH - 4095);
-    if (mem[h + 3].hhfield.lhfield != mem[curedges + 3].hhfield 
+    if (mem[h + 3].hhfield.lhfield != mem[cur_edges + 3].hhfield 
   .lhfield) 
     {
       pp = mem[h].hhfield.v.RH;
-      delta = 8 * (mem[curedges + 3].hhfield.lhfield - mem[h + 3]
+      delta = 8 * (mem[cur_edges + 3].hhfield.lhfield - mem[h + 3]
       .hhfield.lhfield);
       do {
 	  qq = mem[pp + 1].hhfield.v.RH;
@@ -7026,8 +7026,8 @@ zmergeedges (halfword h)
 	pp = mem[pp].hhfield.v.RH;
       } while (!(pp == h));
     } 
-    n = mem[curedges + 1].hhfield.lhfield;
-    p = mem[curedges].hhfield.v.RH;
+    n = mem[cur_edges + 1].hhfield.lhfield;
+    p = mem[cur_edges].hhfield.v.RH;
     pp = mem[h].hhfield.v.RH;
     while (n < mem[h + 1].hhfield.lhfield) {
 	
@@ -7083,7 +7083,7 @@ zmergeedges (halfword h)
   } 
 } 
 integer 
-ztotalweight (halfword h) 
+total_weight (halfword h) 
 {
   register integer Result; halfword p, q;
   integer n;
@@ -7112,48 +7112,48 @@ ztotalweight (halfword h)
   return Result;
 } 
 void 
-beginedgetracing (void) 
+begin_edge_tracing (void) 
 {
   print_diagnostic (541 , 261 , true);
   print (542);
-  print_int (curwt);
+  print_int (cur_wt);
   print_char (41);
-  tracex = -4096;
+  trace_x = -4096;
 } 
 void 
-traceacorner (void) 
+trace_a_corner (void) 
 {
   if (file_offset > maxprintline - 13) 
   print_nl (261);
   print_char (40);
-  print_int (tracex);
+  print_int (trace_x);
   print_char (44);
-  print_int (traceyy);
+  print_int (trace_yy);
   print_char (41);
-  tracey = traceyy;
+  trace_y = trace_yy;
 } 
 void 
-endedgetracing (void) 
+end_edge_tracing (void) 
 {
-  if (tracex == -4096) 
+  if (trace_x == -4096) 
   print_nl (543);
   else {
       
-    traceacorner ();
+    trace_a_corner ();
     print_char (46);
   } 
   end_diagnostic (true);
 } 
 void 
-ztracenewedge (halfword r , integer n) 
+trace_new_edge (halfword r , integer n) 
 {
   integer d;
   schar w;
   integer m, n0, n1;
   d = mem[r].hhfield.lhfield;
   w = (d % 8) - 4;
-  m = (d / 8) - mem[curedges + 3].hhfield.lhfield;
-  if (w == curwt) 
+  m = (d / 8) - mem[cur_edges + 3].hhfield.lhfield;
+  if (w == cur_wt) 
   {
     n0 = n + 1;
     n1 = n;
@@ -7163,31 +7163,31 @@ ztracenewedge (halfword r , integer n)
     n0 = n;
     n1 = n + 1;
   } 
-  if (m != tracex) 
+  if (m != trace_x) 
   {
-    if (tracex == -4096) 
+    if (trace_x == -4096) 
     {
       print_nl (261);
-      traceyy = n0;
+      trace_yy = n0;
     } 
-    else if (traceyy != n0) 
+    else if (trace_yy != n0) 
     print_char (63);
-    else traceacorner ();
-    tracex = m;
-    traceacorner ();
+    else trace_a_corner ();
+    trace_x = m;
+    trace_a_corner ();
   } 
   else {
       
-    if (n0 != traceyy) 
+    if (n0 != trace_yy) 
     print_char (33);
-    if (((n0 < n1) && (tracey > traceyy)) || ((n0 > n1) && (tracey 
-    < traceyy))) 
-    traceacorner ();
+    if (((n0 < n1) && (trace_y > trace_yy)) || ((n0 > n1) && (trace_y 
+    < trace_yy))) 
+    trace_a_corner ();
   } 
-  traceyy = n1;
+  trace_yy = n1;
 } 
 void 
-zlineedges (scaled x0 , scaled y0 , scaled x1 , scaled y1) 
+line_edges (scaled x0 , scaled y0 , scaled x1 , scaled y1) 
 {
   /* 30 31 */ integer m0, n0, m1, n1;
   scaled delx, dely;
@@ -7209,12 +7209,12 @@ zlineedges (scaled x0 , scaled y0 , scaled x1 , scaled y1)
     y1 = y1 - yt;
     if (n0 < n1) 
     {
-      base = 8 * mem[curedges + 3].hhfield.lhfield + 4 - curwt;
+      base = 8 * mem[cur_edges + 3].hhfield.lhfield + 4 - cur_wt;
       if (m0 <= m1) 
-      edgeprep (m0 , m1 , n0 , n1);
-      else edgeprep (m1 , m0 , n0 , n1);
-      n = mem[curedges + 5].hhfield.lhfield - 4096;
-      p = mem[curedges + 5].hhfield.v.RH;
+      edge_prep (m0 , m1 , n0 , n1);
+      else edge_prep (m1 , m0 , n0 , n1);
+      n = mem[cur_edges + 5].hhfield.lhfield - 4096;
+      p = mem[cur_edges + 5].hhfield.v.RH;
       if (n != n0) {
 	  
 	if (n < n0) 
@@ -7239,7 +7239,7 @@ zlineedges (scaled x0 , scaled y0 , scaled x1 , scaled y1)
 	mem[r].hhfield.lhfield = 8 * roundunscaled (x0 + tx) + base;
 	y1 = y1 - 65536L;
 	if (internal[10] > 0) 
-	tracenewedge (r , n);
+	trace_new_edge (r , n);
 	if (y1 < 65536L) 
 	goto done;
 	p = mem[p].hhfield.v.RH;
@@ -7250,13 +7250,13 @@ zlineedges (scaled x0 , scaled y0 , scaled x1 , scaled y1)
     } 
     else {
 	
-      base = 8 * mem[curedges + 3].hhfield.lhfield + 4 + curwt;
+      base = 8 * mem[cur_edges + 3].hhfield.lhfield + 4 + cur_wt;
       if (m0 <= m1) 
-      edgeprep (m0 , m1 , n1 , n0);
-      else edgeprep (m1 , m0 , n1 , n0);
+      edge_prep (m0 , m1 , n1 , n0);
+      else edge_prep (m1 , m0 , n1 , n0);
       decr (n0);
-      n = mem[curedges + 5].hhfield.lhfield - 4096;
-      p = mem[curedges + 5].hhfield.v.RH;
+      n = mem[cur_edges + 5].hhfield.lhfield - 4096;
+      p = mem[cur_edges + 5].hhfield.v.RH;
       if (n != n0) {
 	  
 	if (n < n0) 
@@ -7280,7 +7280,7 @@ zlineedges (scaled x0 , scaled y0 , scaled x1 , scaled y1)
 	mem[r].hhfield.lhfield = 8 * roundunscaled (x0 - tx) + base;
 	y1 = y1 + 65536L;
 	if (internal[10] > 0) 
-	tracenewedge (r , n);
+	trace_new_edge (r , n);
 	if (y1 >= 0) 
 	goto done1;
 	p = mem[p].hhfield.lhfield;
@@ -7289,12 +7289,12 @@ zlineedges (scaled x0 , scaled y0 , scaled x1 , scaled y1)
       } 
       done1:;
     } 
-    mem[curedges + 5].hhfield.v.RH = p;
-    mem[curedges + 5].hhfield.lhfield = n + 4096;
+    mem[cur_edges + 5].hhfield.v.RH = p;
+    mem[cur_edges + 5].hhfield.lhfield = n + 4096;
   } 
 } 
 void 
-zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1) 
+move_to_edges (integer m0 , integer n0 , integer m1 , integer n1) 
 {
   /* 60 61 62 63 30 */ integer delta;
   integer k;
@@ -7320,21 +7320,21 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   {case 1 : 
     {
       dx = 8;
-      edgeprep (m0 , m1 , n0 , n1);
+      edge_prep (m0 , m1 , n0 , n1);
       goto lab60;
     } 
     break;
   case 5 : 
     {
       dx = 8;
-      edgeprep (n0 , n1 , m0 , m1);
+      edge_prep (n0 , n1 , m0 , m1);
       goto lab62;
     } 
     break;
   case 6 : 
     {
       dx = -8;
-      edgeprep (- (integer) n1 , - (integer) n0 , m0 , m1);
+      edge_prep (- (integer) n1 , - (integer) n0 , m0 , m1);
       n0 = - (integer) n0;
       goto lab62;
     } 
@@ -7342,7 +7342,7 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   case 2 : 
     {
       dx = -8;
-      edgeprep (- (integer) m1 , - (integer) m0 , n0 , n1);
+      edge_prep (- (integer) m1 , - (integer) m0 , n0 , n1);
       m0 = - (integer) m0;
       goto lab60;
     } 
@@ -7350,7 +7350,7 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   case 4 : 
     {
       dx = -8;
-      edgeprep (- (integer) m1 , - (integer) m0 , - (integer) n1 , 
+      edge_prep (- (integer) m1 , - (integer) m0 , - (integer) n1 , 
       - (integer) n0);
       m0 = - (integer) m0;
       goto lab61;
@@ -7359,7 +7359,7 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   case 8 : 
     {
       dx = -8;
-      edgeprep (- (integer) n1 , - (integer) n0 , - (integer) m1 , 
+      edge_prep (- (integer) n1 , - (integer) n0 , - (integer) m1 , 
       - (integer) m0);
       n0 = - (integer) n0;
       goto lab63;
@@ -7368,20 +7368,20 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   case 7 : 
     {
       dx = 8;
-      edgeprep (n0 , n1 , - (integer) m1 , - (integer) m0);
+      edge_prep (n0 , n1 , - (integer) m1 , - (integer) m0);
       goto lab63;
     } 
     break;
   case 3 : 
     {
       dx = 8;
-      edgeprep (m0 , m1 , - (integer) n1 , - (integer) n0);
+      edge_prep (m0 , m1 , - (integer) n1 , - (integer) n0);
       goto lab61;
     } 
     break;
   } 
-  lab60: n = mem[curedges + 5].hhfield.lhfield - 4096;
-  p = mem[curedges + 5].hhfield.v.RH;
+  lab60: n = mem[cur_edges + 5].hhfield.lhfield - 4096;
+  p = mem[cur_edges + 5].hhfield.v.RH;
   if (n != n0) {
       
     if (n < n0) 
@@ -7397,8 +7397,8 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   if (delta > 0) 
   {
     k = 0;
-    edgeandweight = 8 * (m0 + mem[curedges + 3].hhfield.lhfield) + 4 - 
-    curwt;
+    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hhfield.lhfield) + 4 - 
+    cur_wt;
     do {
 	edgeandweight = edgeandweight + dx * move[k];
       {
@@ -7411,14 +7411,14 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
 	  mem[r].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-	  incr (dynused);
+	  incr (dyn_used);
 #endif /* STAT */
 	} 
       } 
       mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
       mem[r].hhfield.lhfield = edgeandweight;
       if (internal[10] > 0) 
-      tracenewedge (r , n);
+      trace_new_edge (r , n);
       mem[p + 1].hhfield.lhfield = r;
       p = mem[p].hhfield.v.RH;
       incr (k);
@@ -7427,8 +7427,8 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   } 
   goto done;
   lab61: n0 = - (integer) n0 - 1;
-  n = mem[curedges + 5].hhfield.lhfield - 4096;
-  p = mem[curedges + 5].hhfield.v.RH;
+  n = mem[cur_edges + 5].hhfield.lhfield - 4096;
+  p = mem[cur_edges + 5].hhfield.v.RH;
   if (n != n0) {
       
     if (n < n0) 
@@ -7444,8 +7444,8 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
   if (delta > 0) 
   {
     k = 0;
-    edgeandweight = 8 * (m0 + mem[curedges + 3].hhfield.lhfield) + 4 + 
-    curwt;
+    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hhfield.lhfield) + 4 + 
+    cur_wt;
     do {
 	edgeandweight = edgeandweight + dx * move[k];
       {
@@ -7458,14 +7458,14 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
 	  mem[r].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-	  incr (dynused);
+	  incr (dyn_used);
 #endif /* STAT */
 	} 
       } 
       mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
       mem[r].hhfield.lhfield = edgeandweight;
       if (internal[10] > 0) 
-      tracenewedge (r , n);
+      trace_new_edge (r , n);
       mem[p + 1].hhfield.lhfield = r;
       p = mem[p].hhfield.lhfield;
       incr (k);
@@ -7473,12 +7473,12 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
     } while (!(k == delta));
   } 
   goto done;
-  lab62: edgeandweight = 8 * (n0 + mem[curedges + 3].hhfield.lhfield) + 
-  4 - curwt;
+  lab62: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hhfield.lhfield) + 
+  4 - cur_wt;
   n0 = m0;
   k = 0;
-  n = mem[curedges + 5].hhfield.lhfield - 4096;
-  p = mem[curedges + 5].hhfield.v.RH;
+  n = mem[cur_edges + 5].hhfield.lhfield - 4096;
+  p = mem[cur_edges + 5].hhfield.v.RH;
   if (n != n0) {
       
     if (n < n0) 
@@ -7505,14 +7505,14 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
 	  mem[r].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-	  incr (dynused);
+	  incr (dyn_used);
 #endif /* STAT */
 	} 
       } 
       mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
       mem[r].hhfield.lhfield = edgeandweight;
       if (internal[10] > 0) 
-      tracenewedge (r , n);
+      trace_new_edge (r , n);
       mem[p + 1].hhfield.lhfield = r;
       p = mem[p].hhfield.v.RH;
       decr (j);
@@ -7522,12 +7522,12 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
     incr (k);
   } while (!(k > delta));
   goto done;
-  lab63: edgeandweight = 8 * (n0 + mem[curedges + 3].hhfield.lhfield) + 
-  4 + curwt;
+  lab63: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hhfield.lhfield) + 
+  4 + cur_wt;
   n0 = - (integer) m0 - 1;
   k = 0;
-  n = mem[curedges + 5].hhfield.lhfield - 4096;
-  p = mem[curedges + 5].hhfield.v.RH;
+  n = mem[cur_edges + 5].hhfield.lhfield - 4096;
+  p = mem[cur_edges + 5].hhfield.v.RH;
   if (n != n0) {
       
     if (n < n0) 
@@ -7554,14 +7554,14 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
 	  mem[r].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-	  incr (dynused);
+	  incr (dyn_used);
 #endif /* STAT */
 	} 
       } 
       mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
       mem[r].hhfield.lhfield = edgeandweight;
       if (internal[10] > 0) 
-      tracenewedge (r , n);
+      trace_new_edge (r , n);
       mem[p + 1].hhfield.lhfield = r;
       p = mem[p].hhfield.lhfield;
       decr (j);
@@ -7571,8 +7571,8 @@ zmovetoedges (integer m0 , integer n0 , integer m1 , integer n1)
     incr (k);
   } while (!(k > delta));
   goto done;
-  done: mem[curedges + 5].hhfield.lhfield = n + 4096;
-  mem[curedges + 5].hhfield.v.RH = p;
+  done: mem[cur_edges + 5].hhfield.lhfield = n + 4096;
+  mem[cur_edges + 5].hhfield.v.RH = p;
 } 
 void 
 zskew (scaled x , scaled y , small_number octant) 
@@ -7730,10 +7730,10 @@ zprintspec (str_number s)
   /* 45 30 */ halfword p, q;
   small_number octant;
   print_diagnostic (544 , s , true);
-  p = curspec;
+  p = cur_spec;
   octant = mem[p + 3].cint;
   print_ln ();
-  unskew (mem[curspec + 1].cint , mem[curspec + 2].cint , octant);
+  unskew (mem[cur_spec + 1].cint , mem[cur_spec + 2].cint , octant);
   print_two (cur_x , cur_y);
   print (545);
   while (true) {
@@ -7760,7 +7760,7 @@ zprintspec (str_number s)
       } 
       p = q;
     } 
-    not_found: if (q == curspec) 
+    not_found: if (q == cur_spec) 
     goto done;
     p = q;
     octant = mem[p + 3].cint;
@@ -7779,7 +7779,7 @@ zprintstrange (str_number s)
   if (interaction == 3) 
 ;
   print_nl (62);
-  p = curspec;
+  p = cur_spec;
   t = 256;
   do {
       p = mem[p].hhfield.v.RH;
@@ -7789,8 +7789,8 @@ zprintstrange (str_number s)
       f = p;
       t = mem[p].hhfield.b0;
     } 
-  } while (!(p == curspec));
-  p = curspec;
+  } while (!(p == cur_spec));
+  p = cur_spec;
   q = p;
   do {
       p = mem[p].hhfield.v.RH;
@@ -7852,10 +7852,10 @@ zprintstrange (str_number s)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -7924,12 +7924,12 @@ quadrantsubdivide (void)
   fraction t;
   scaled destx, desty;
   boolean constantx;
-  p = curspec;
-  firstx = mem[curspec + 1].cint;
-  firsty = mem[curspec + 2].cint;
+  p = cur_spec;
+  firstx = mem[cur_spec + 1].cint;
+  firsty = mem[cur_spec + 2].cint;
   do {
       lab22: q = mem[p].hhfield.v.RH;
-    if (q == curspec) 
+    if (q == cur_spec) 
     {
       destx = firstx;
       desty = firsty;
@@ -8166,11 +8166,11 @@ quadrantsubdivide (void)
 	if (q != p) 
 	{
 	  removecubic (p);
-	  if (curspec != q) 
+	  if (cur_spec != q) 
 	  goto lab22;
 	  else {
 	      
-	    curspec = p;
+	    cur_spec = p;
 	    goto lab10;
 	  } 
 	} 
@@ -8204,7 +8204,7 @@ quadrantsubdivide (void)
       } while (!(pp == q));
     } 
     p = q;
-  } while (!(p == curspec));
+  } while (!(p == cur_spec));
   lab10:;
 } 
 void 
@@ -8214,13 +8214,13 @@ octantsubdivide (void)
   scaled del1, del2, del3, del, dmax;
   fraction t;
   scaled destx, desty;
-  p = curspec;
+  p = cur_spec;
   do {
       q = mem[p].hhfield.v.RH;
     mem[p + 1].cint = mem[p + 1].cint - mem[p + 2].cint;
     mem[p + 5].cint = mem[p + 5].cint - mem[p + 6].cint;
     mem[q + 3].cint = mem[q + 3].cint - mem[q + 4].cint;
-    if (q == curspec) 
+    if (q == cur_spec) 
     {
       unskew (mem[q + 1].cint , mem[q + 2].cint , mem[q].hhfield 
      .b1);
@@ -8401,7 +8401,7 @@ octantsubdivide (void)
       } 
     } 
     p = q;
-  } while (!(p == curspec));
+  } while (!(p == cur_spec));
 } 
 void 
 makesafe (void) 
@@ -8410,13 +8410,13 @@ makesafe (void)
   boolean allsafe;
   scaled nexta;
   scaled deltaa, deltab;
-  before[curroundingptr] = before[0];
-  nodetoround[curroundingptr] = nodetoround[0];
+  before[cur_rounding_ptr] = before[0];
+  node_to_round[cur_rounding_ptr] = node_to_round[0];
   do {
-      after[curroundingptr] = after[0];
+      after[cur_rounding_ptr] = after[0];
     allsafe = true;
     nexta = after[0];
-    {register integer for_end; k = 0;for_end = curroundingptr - 1; if (k 
+    {register integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k 
     <= for_end) do 
       {
 	deltab = before[k + 1] - before[k];
@@ -8428,7 +8428,7 @@ makesafe (void)
 	{
 	  allsafe = false;
 	  after[k] = before[k];
-	  if (k == curroundingptr - 1) 
+	  if (k == cur_rounding_ptr - 1) 
 	  after[0] = before[0];
 	  else after[k + 1] = before[k + 1];
 	} 
@@ -8439,16 +8439,16 @@ makesafe (void)
 void 
 zbeforeandafter (scaled b , scaled a , halfword p) 
 {
-  if (curroundingptr == maxroundingptr) {
+  if (cur_rounding_ptr == max_rounding_ptr) {
       
-    if (maxroundingptr < maxwiggle) 
-    incr (maxroundingptr);
-    else overflow (568 , maxwiggle);
+    if (max_rounding_ptr < max_wiggle) 
+    incr (max_rounding_ptr);
+    else overflow (568 , max_wiggle);
   } 
-  after[curroundingptr] = a;
-  before[curroundingptr] = b;
-  nodetoround[curroundingptr] = p;
-  incr (curroundingptr);
+  after[cur_rounding_ptr] = a;
+  before[cur_rounding_ptr] = b;
+  node_to_round[cur_rounding_ptr] = p;
+  incr (cur_rounding_ptr);
 } 
 scaled 
 zgoodval (scaled b , scaled o) 
@@ -8456,11 +8456,11 @@ zgoodval (scaled b , scaled o)
   register scaled Result; scaled a;
   a = b + o;
   if (a >= 0) 
-  a = a - (a % curgran) - o;
-  else a = a + ((- (integer) (a + 1)) % curgran) - curgran + 1 - o;
-  if (b - a < a + curgran - b) 
+  a = a - (a % cur_gran) - o;
+  else a = a + ((- (integer) (a + 1)) % cur_gran) - cur_gran + 1 - o;
+  if (b - a < a + cur_gran - b) 
   Result = a;
-  else Result = a + curgran;
+  else Result = a + cur_gran;
   return Result;
 } 
 scaled 
@@ -8477,11 +8477,11 @@ xyround (void)
   scaled b, a;
   scaled penedge;
   fraction alpha;
-  curgran = abs (internal[37]);
-  if (curgran == 0) 
-  curgran = 65536L;
-  p = curspec;
-  curroundingptr = 0;
+  cur_gran = abs (internal[37]);
+  if (cur_gran == 0) 
+  cur_gran = 65536L;
+  p = cur_spec;
+  cur_rounding_ptr = 0;
   do {
       q = mem[p].hhfield.v.RH;
     if (odd (mem[p].hhfield.b1) != odd (mem[q].hhfield.b1)) 
@@ -8492,51 +8492,51 @@ xyround (void)
       if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (
       abs (mem[q + 1].cint + mem[q + 3].cint) < 655)) 
       {
-	if (curpen == 3) 
+	if (cur_pen == 3) 
 	penedge = 0;
-	else if (curpathtype == 0) 
-	penedge = compromise (mem[mem[curpen + 5].hhfield.v.RH + 2]
-	.cint , mem[mem[curpen + 7].hhfield.v.RH + 2].cint);
+	else if (cur_path_type == 0) 
+	penedge = compromise (mem[mem[cur_pen + 5].hhfield.v.RH + 2]
+	.cint , mem[mem[cur_pen + 7].hhfield.v.RH + 2].cint);
 	else if (odd (mem[q].hhfield.b1)) 
-	penedge = mem[mem[curpen + 7].hhfield.v.RH + 2].cint;
-	else penedge = mem[mem[curpen + 5].hhfield.v.RH + 2].cint;
+	penedge = mem[mem[cur_pen + 7].hhfield.v.RH + 2].cint;
+	else penedge = mem[mem[cur_pen + 5].hhfield.v.RH + 2].cint;
 	a = goodval (b , penedge);
       } 
       else a = b;
-      if (abs (a) > maxallowed) {
+      if (abs (a) > max_allowed) {
 	  
 	if (a > 0) 
-	a = maxallowed;
-	else a = - (integer) maxallowed;
+	a = max_allowed;
+	else a = - (integer) max_allowed;
       } 
       beforeandafter (b , a , q);
     } 
     p = q;
-  } while (!(p == curspec));
-  if (curroundingptr > 0) 
+  } while (!(p == cur_spec));
+  if (cur_rounding_ptr > 0) 
   {
     makesafe ();
     do {
-	decr (curroundingptr);
-      if ((after[curroundingptr]!= before[curroundingptr]) || (
-      after[curroundingptr + 1]!= before[curroundingptr + 1])) 
+	decr (cur_rounding_ptr);
+      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (
+      after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1])) 
       {
-	p = nodetoround[curroundingptr];
+	p = node_to_round[cur_rounding_ptr];
 	if (odd (mem[p].hhfield.b1)) 
 	{
-	  b = before[curroundingptr];
-	  a = after[curroundingptr];
+	  b = before[cur_rounding_ptr];
+	  a = after[cur_rounding_ptr];
 	} 
 	else {
 	    
-	  b = - (integer) before[curroundingptr];
-	  a = - (integer) after[curroundingptr];
+	  b = - (integer) before[cur_rounding_ptr];
+	  a = - (integer) after[cur_rounding_ptr];
 	} 
-	if (before[curroundingptr] == before[curroundingptr + 1]) 
+	if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1]) 
 	alpha = 268435456L;
-	else alpha = makefraction (after[curroundingptr + 1] - after[
-	curroundingptr], before[curroundingptr + 1] - before[
-	curroundingptr]);
+	else alpha = makefraction (after[cur_rounding_ptr + 1] - after[
+	cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
+	cur_rounding_ptr]);
 	do {
 	    mem[p + 1].cint = takefraction (alpha , mem[p + 1].cint 
 	  - b) + a;
@@ -8545,12 +8545,12 @@ xyround (void)
 	  p = mem[p].hhfield.v.RH;
 	  mem[p + 3].cint = takefraction (alpha , mem[p + 3].cint - b 
 	) + a;
-	} while (!(p == nodetoround[curroundingptr + 1]));
+	} while (!(p == node_to_round[cur_rounding_ptr + 1]));
       } 
-    } while (!(curroundingptr == 0));
+    } while (!(cur_rounding_ptr == 0));
   } 
-  p = curspec;
-  curroundingptr = 0;
+  p = cur_spec;
+  cur_rounding_ptr = 0;
   do {
       q = mem[p].hhfield.v.RH;
     if ((mem[p].hhfield.b1 > 2) != (mem[q].hhfield.b1 > 2)) 
@@ -8561,51 +8561,51 @@ xyround (void)
       if ((abs (mem[q + 2].cint - mem[q + 6].cint) < 655) || (
       abs (mem[q + 2].cint + mem[q + 4].cint) < 655)) 
       {
-	if (curpen == 3) 
+	if (cur_pen == 3) 
 	penedge = 0;
-	else if (curpathtype == 0) 
-	penedge = compromise (mem[mem[curpen + 2].hhfield.v.RH + 2]
-	.cint , mem[mem[curpen + 1].hhfield.v.RH + 2].cint);
+	else if (cur_path_type == 0) 
+	penedge = compromise (mem[mem[cur_pen + 2].hhfield.v.RH + 2]
+	.cint , mem[mem[cur_pen + 1].hhfield.v.RH + 2].cint);
 	else if (mem[q].hhfield.b1 <= 2) 
-	penedge = mem[mem[curpen + 1].hhfield.v.RH + 2].cint;
-	else penedge = mem[mem[curpen + 2].hhfield.v.RH + 2].cint;
+	penedge = mem[mem[cur_pen + 1].hhfield.v.RH + 2].cint;
+	else penedge = mem[mem[cur_pen + 2].hhfield.v.RH + 2].cint;
 	a = goodval (b , penedge);
       } 
       else a = b;
-      if (abs (a) > maxallowed) {
+      if (abs (a) > max_allowed) {
 	  
 	if (a > 0) 
-	a = maxallowed;
-	else a = - (integer) maxallowed;
+	a = max_allowed;
+	else a = - (integer) max_allowed;
       } 
       beforeandafter (b , a , q);
     } 
     p = q;
-  } while (!(p == curspec));
-  if (curroundingptr > 0) 
+  } while (!(p == cur_spec));
+  if (cur_rounding_ptr > 0) 
   {
     makesafe ();
     do {
-	decr (curroundingptr);
-      if ((after[curroundingptr]!= before[curroundingptr]) || (
-      after[curroundingptr + 1]!= before[curroundingptr + 1])) 
+	decr (cur_rounding_ptr);
+      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (
+      after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1])) 
       {
-	p = nodetoround[curroundingptr];
+	p = node_to_round[cur_rounding_ptr];
 	if (mem[p].hhfield.b1 <= 2) 
 	{
-	  b = before[curroundingptr];
-	  a = after[curroundingptr];
+	  b = before[cur_rounding_ptr];
+	  a = after[cur_rounding_ptr];
 	} 
 	else {
 	    
-	  b = - (integer) before[curroundingptr];
-	  a = - (integer) after[curroundingptr];
+	  b = - (integer) before[cur_rounding_ptr];
+	  a = - (integer) after[cur_rounding_ptr];
 	} 
-	if (before[curroundingptr] == before[curroundingptr + 1]) 
+	if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1]) 
 	alpha = 268435456L;
-	else alpha = makefraction (after[curroundingptr + 1] - after[
-	curroundingptr], before[curroundingptr + 1] - before[
-	curroundingptr]);
+	else alpha = makefraction (after[cur_rounding_ptr + 1] - after[
+	cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
+	cur_rounding_ptr]);
 	do {
 	    mem[p + 2].cint = takefraction (alpha , mem[p + 2].cint 
 	  - b) + a;
@@ -8614,9 +8614,9 @@ xyround (void)
 	  p = mem[p].hhfield.v.RH;
 	  mem[p + 4].cint = takefraction (alpha , mem[p + 4].cint - b 
 	) + a;
-	} while (!(p == nodetoround[curroundingptr + 1]));
+	} while (!(p == node_to_round[cur_rounding_ptr + 1]));
       } 
-    } while (!(curroundingptr == 0));
+    } while (!(cur_rounding_ptr == 0));
   } 
 } 
 void 
@@ -8630,8 +8630,8 @@ diaground (void)
   boolean allsafe;
   integer k;
   scaled firstx, firsty;
-  p = curspec;
-  curroundingptr = 0;
+  p = cur_spec;
+  cur_rounding_ptr = 0;
   do {
       q = mem[p].hhfield.v.RH;
     if (mem[p].hhfield.b1 != mem[q].hhfield.b1) 
@@ -8644,47 +8644,47 @@ diaground (void)
 	if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (
 	abs (mem[q + 1].cint + mem[q + 3].cint) < 655)) 
 	{
-	  if (curpen == 3) 
+	  if (cur_pen == 3) 
 	  penedge = 0;
-	  else if (curpathtype == 0) 
+	  else if (cur_path_type == 0) 
 	  switch (mem[q].hhfield.b1) 
 	  {case 1 : 
 	  case 5 : 
-	    penedge = compromise (mem[mem[mem[curpen + 1].hhfield 
+	    penedge = compromise (mem[mem[mem[cur_pen + 1].hhfield 
 	  .v.RH].hhfield.lhfield + 1].cint , - (integer) mem[mem[
-	    mem[curpen + 4].hhfield.v.RH].hhfield.lhfield + 1].cint 
-	  );
+	    mem[cur_pen + 4].hhfield.v.RH].hhfield.lhfield + 1].cint 
+	 );
 	    break;
 	  case 4 : 
 	  case 8 : 
-	    penedge = - (integer) compromise (mem[mem[mem[curpen + 1]
+	    penedge = - (integer) compromise (mem[mem[mem[cur_pen + 1]
 	    .hhfield.v.RH].hhfield.lhfield + 1].cint , - (integer) mem[
-	    mem[mem[curpen + 4].hhfield.v.RH].hhfield.lhfield + 1]
+	    mem[mem[cur_pen + 4].hhfield.v.RH].hhfield.lhfield + 1]
 	    .cint);
 	    break;
 	  case 6 : 
 	  case 2 : 
-	    penedge = compromise (mem[mem[mem[curpen + 2].hhfield 
+	    penedge = compromise (mem[mem[mem[cur_pen + 2].hhfield 
 	  .v.RH].hhfield.lhfield + 1].cint , - (integer) mem[mem[
-	    mem[curpen + 3].hhfield.v.RH].hhfield.lhfield + 1].cint 
-	  );
+	    mem[cur_pen + 3].hhfield.v.RH].hhfield.lhfield + 1].cint 
+	 );
 	    break;
 	  case 7 : 
 	  case 3 : 
-	    penedge = - (integer) compromise (mem[mem[mem[curpen + 2]
+	    penedge = - (integer) compromise (mem[mem[mem[cur_pen + 2]
 	    .hhfield.v.RH].hhfield.lhfield + 1].cint , - (integer) mem[
-	    mem[mem[curpen + 3].hhfield.v.RH].hhfield.lhfield + 1]
+	    mem[mem[cur_pen + 3].hhfield.v.RH].hhfield.lhfield + 1]
 	    .cint);
 	    break;
 	  } 
 	  else if (mem[q].hhfield.b1 <= 4) 
-	  penedge = mem[mem[mem[curpen + mem[q].hhfield.b1]
+	  penedge = mem[mem[mem[cur_pen + mem[q].hhfield.b1]
 	  .hhfield.v.RH].hhfield.lhfield + 1].cint;
-	  else penedge = - (integer) mem[mem[mem[curpen + mem[q]
+	  else penedge = - (integer) mem[mem[mem[cur_pen + mem[q]
 	  .hhfield.b1].hhfield.v.RH].hhfield.lhfield + 1].cint;
 	  if (odd (mem[q].hhfield.b1)) 
-	  a = goodval (b , penedge + halfp (curgran));
-	  else a = goodval (b - 1 , penedge + halfp (curgran));
+	  a = goodval (b , penedge + halfp (cur_gran));
+	  else a = goodval (b - 1 , penedge + halfp (cur_gran));
 	} 
 	else a = b;
       } 
@@ -8692,19 +8692,19 @@ diaground (void)
       beforeandafter (b , a , q);
     } 
     p = q;
-  } while (!(p == curspec));
-  if (curroundingptr > 0) 
+  } while (!(p == cur_spec));
+  if (cur_rounding_ptr > 0) 
   {
-    p = nodetoround[0];
+    p = node_to_round[0];
     firstx = mem[p + 1].cint;
     firsty = mem[p + 2].cint;
-    before[curroundingptr] = before[0];
-    nodetoround[curroundingptr] = nodetoround[0];
+    before[cur_rounding_ptr] = before[0];
+    node_to_round[cur_rounding_ptr] = node_to_round[0];
     do {
-	after[curroundingptr] = after[0];
+	after[cur_rounding_ptr] = after[0];
       allsafe = true;
       nexta = after[0];
-      {register integer for_end; k = 0;for_end = curroundingptr - 1; if (
+      {register integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (
       k <= for_end) do 
 	{
 	  a = nexta;
@@ -8714,11 +8714,11 @@ diaground (void)
 	  bb = before[k + 1];
 	  if ((a != b) || (aa != bb)) 
 	  {
-	    p = nodetoround[k];
-	    pp = nodetoround[k + 1];
+	    p = node_to_round[k];
+	    pp = node_to_round[k + 1];
 	    if (aa == bb) 
 	    {
-	      if (pp == nodetoround[0]) 
+	      if (pp == node_to_round[0]) 
 	      unskew (firstx , firsty , mem[pp].hhfield.b1);
 	      else unskew (mem[pp + 1].cint , mem[pp + 2].cint , mem 
 	    [pp].hhfield.b1);
@@ -8742,7 +8742,7 @@ diaground (void)
 		b = - (integer) b;
 		a = - (integer) a;
 	      } 
-	      if (pp == nodetoround[0]) 
+	      if (pp == node_to_round[0]) 
 	      dd = firsty - bb;
 	      else dd = mem[pp + 2].cint - bb;
 	      if (odd (aa - bb)) {
@@ -8766,7 +8766,7 @@ diaground (void)
 	    {
 	      allsafe = false;
 	      after[k] = before[k];
-	      if (k == curroundingptr - 1) 
+	      if (k == cur_rounding_ptr - 1) 
 	      after[0] = before[0];
 	      else after[k + 1] = before[k + 1];
 	    } 
@@ -8774,7 +8774,7 @@ diaground (void)
 	} 
       while (k++ < for_end);} 
     } while (!(allsafe));
-    {register integer for_end; k = 0;for_end = curroundingptr - 1; if (k 
+    {register integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k 
     <= for_end) do 
       {
 	a = after[k];
@@ -8783,11 +8783,11 @@ diaground (void)
 	bb = before[k + 1];
 	if ((a != b) || (aa != bb)) 
 	{
-	  p = nodetoround[k];
-	  pp = nodetoround[k + 1];
+	  p = node_to_round[k];
+	  pp = node_to_round[k + 1];
 	  if (aa == bb) 
 	  {
-	    if (pp == nodetoround[0]) 
+	    if (pp == node_to_round[0]) 
 	    unskew (firstx , firsty , mem[pp].hhfield.b1);
 	    else unskew (mem[pp + 1].cint , mem[pp + 2].cint , mem[
 	    pp].hhfield.b1);
@@ -8811,7 +8811,7 @@ diaground (void)
 	      b = - (integer) b;
 	      a = - (integer) a;
 	    } 
-	    if (pp == nodetoround[0]) 
+	    if (pp == node_to_round[0]) 
 	    dd = firsty - bb;
 	    else dd = mem[pp + 2].cint - bb;
 	    if (odd (aa - bb)) {
@@ -8887,82 +8887,82 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
   boolean clockwise;
   integer dx1, dy1, dx2, dy2;
   integer dmax, del;
-  curspec = h;
+  cur_spec = h;
   if (tracing > 0) 
-  print_path (curspec , 559 , true);
-  maxallowed = 268402687L - safetymargin;
-  p = curspec;
+  print_path (cur_spec , 559 , true);
+  max_allowed = 268402687L - safetymargin;
+  p = cur_spec;
   k = 1;
   chopped = 0;
-  dmax = half (maxallowed);
+  dmax = half (max_allowed);
   do {
       if (abs (mem[p + 3].cint) >= dmax) { 
-      if (abs (mem[p + 3].cint) > maxallowed) 
+      if (abs (mem[p + 3].cint) > max_allowed) 
       {
 	chopped = 1;
 	if (mem[p + 3].cint > 0) 
-	mem[p + 3].cint = maxallowed;
-	else mem[p + 3].cint = - (integer) maxallowed;
+	mem[p + 3].cint = max_allowed;
+	else mem[p + 3].cint = - (integer) max_allowed;
       } 
       else if (chopped == 0) 
       chopped = -1;
     } 
     if (abs (mem[p + 4].cint) >= dmax) {
 	
-      if (abs (mem[p + 4].cint) > maxallowed) 
+      if (abs (mem[p + 4].cint) > max_allowed) 
       {
 	chopped = 1;
 	if (mem[p + 4].cint > 0) 
-	mem[p + 4].cint = maxallowed;
-	else mem[p + 4].cint = - (integer) maxallowed;
+	mem[p + 4].cint = max_allowed;
+	else mem[p + 4].cint = - (integer) max_allowed;
       } 
       else if (chopped == 0) 
       chopped = -1;
     } 
     if (abs (mem[p + 1].cint) >= dmax) {
 	
-      if (abs (mem[p + 1].cint) > maxallowed) 
+      if (abs (mem[p + 1].cint) > max_allowed) 
       {
 	chopped = 1;
 	if (mem[p + 1].cint > 0) 
-	mem[p + 1].cint = maxallowed;
-	else mem[p + 1].cint = - (integer) maxallowed;
+	mem[p + 1].cint = max_allowed;
+	else mem[p + 1].cint = - (integer) max_allowed;
       } 
       else if (chopped == 0) 
       chopped = -1;
     } 
     if (abs (mem[p + 2].cint) >= dmax) {
 	
-      if (abs (mem[p + 2].cint) > maxallowed) 
+      if (abs (mem[p + 2].cint) > max_allowed) 
       {
 	chopped = 1;
 	if (mem[p + 2].cint > 0) 
-	mem[p + 2].cint = maxallowed;
-	else mem[p + 2].cint = - (integer) maxallowed;
+	mem[p + 2].cint = max_allowed;
+	else mem[p + 2].cint = - (integer) max_allowed;
       } 
       else if (chopped == 0) 
       chopped = -1;
     } 
     if (abs (mem[p + 5].cint) >= dmax) {
 	
-      if (abs (mem[p + 5].cint) > maxallowed) 
+      if (abs (mem[p + 5].cint) > max_allowed) 
       {
 	chopped = 1;
 	if (mem[p + 5].cint > 0) 
-	mem[p + 5].cint = maxallowed;
-	else mem[p + 5].cint = - (integer) maxallowed;
+	mem[p + 5].cint = max_allowed;
+	else mem[p + 5].cint = - (integer) max_allowed;
       } 
       else if (chopped == 0) 
       chopped = -1;
     } 
     if (abs (mem[p + 6].cint) >= dmax) {
 	
-      if (abs (mem[p + 6].cint) > maxallowed) 
+      if (abs (mem[p + 6].cint) > max_allowed) 
       {
 	chopped = 1;
 	if (mem[p + 6].cint > 0) 
-	mem[p + 6].cint = maxallowed;
-	else mem[p + 6].cint = - (integer) maxallowed;
+	mem[p + 6].cint = max_allowed;
+	else mem[p + 6].cint = - (integer) max_allowed;
       } 
       else if (chopped == 0) 
       chopped = -1;
@@ -8972,16 +8972,16 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
     if (k < 255) 
     incr (k);
     else k = 1;
-  } while (!(p == curspec));
+  } while (!(p == cur_spec));
   if (chopped > 0) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -9008,7 +9008,7 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
   octantsubdivide ();
   if ((internal[36] > 65536L) && (chopped == 0)) 
   diaground ();
-  p = curspec;
+  p = cur_spec;
   do {
       lab22: q = mem[p].hhfield.v.RH;
     if (p != q) 
@@ -9029,9 +9029,9 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
 		if (mem[p + 2].cint == cur_y) 
 		{
 		  removecubic (p);
-		  if (q != curspec) 
+		  if (q != cur_spec) 
 		  goto lab22;
-		  curspec = p;
+		  cur_spec = p;
 		  q = p;
 		} 
 	      } 
@@ -9041,9 +9041,9 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
       } 
     } 
     p = q;
-  } while (!(p == curspec));
-  turningnumber = 0;
-  p = curspec;
+  } while (!(p == cur_spec));
+  turning_number = 0;
+  p = cur_spec;
   q = mem[p].hhfield.v.RH;
   do {
       r = mem[q].hhfield.v.RH;
@@ -9051,8 +9051,8 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
     {
       newboundary (p , mem[p].hhfield.b1);
       s = mem[p].hhfield.v.RH;
-      o1 = octantnumber[mem[p].hhfield.b1];
-      o2 = octantnumber[mem[q].hhfield.b1];
+      o1 = octant_number[mem[p].hhfield.b1];
+      o2 = octant_number[mem[q].hhfield.b1];
       switch (o2 - o1) 
       {case 1 : 
       case -7 : 
@@ -9149,7 +9149,7 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
 	  clockwise = false;
 	  else if (del < -4684844L) 
 	  clockwise = true;
-	  else clockwise = revturns;
+	  else clockwise = rev_turns;
 	} 
 	break;
       case 6 : 
@@ -9157,7 +9157,7 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
 	clockwise = true;
 	break;
       case 0 : 
-	clockwise = revturns;
+	clockwise = rev_turns;
 	break;
       } 
       while (true) {
@@ -9185,14 +9185,14 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
 	mem[s].hhfield.v.RH = q;
 	mem[q + 3].cint = mem[q + 5].cint;
 	mem[q].hhfield.b0 = 0;
-	free_node (curspec , 7);
-	curspec = q;
+	free_node (cur_spec , 7);
+	cur_spec = q;
       } 
       p = mem[p].hhfield.v.RH;
       do {
 	  s = mem[p].hhfield.v.RH;
-	o1 = octantnumber[mem[p + 5].cint];
-	o2 = octantnumber[mem[s + 3].cint];
+	o1 = octant_number[mem[p + 5].cint];
+	o2 = octant_number[mem[s + 3].cint];
 	if (abs (o1 - o2) == 1) 
 	{
 	  if (o2 < o1) 
@@ -9204,8 +9204,8 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
 	else {
 	    
 	  if (o1 == 8) 
-	  incr (turningnumber);
-	  else decr (turningnumber);
+	  incr (turning_number);
+	  else decr (turning_number);
 	  mem[p + 6].cint = 0;
 	} 
 	mem[s + 4].cint = mem[p + 6].cint;
@@ -9214,8 +9214,8 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
     } 
     p = q;
     q = r;
-  } while (!(p == curspec));
-  while (mem[curspec].hhfield.b0 != 0) curspec = mem[curspec]
+  } while (!(p == cur_spec));
+  while (mem[cur_spec].hhfield.b0 != 0) cur_spec = mem[cur_spec]
   .hhfield.v.RH;
   if (tracing > 0) {
       
@@ -9225,7 +9225,7 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
     printspec (561);
     else printspec (562);
   } 
-  Result = curspec;
+  Result = cur_spec;
   return Result;
 } 
 void 
@@ -9235,7 +9235,7 @@ zendround (scaled x , scaled y)
   x = x + y - x_corr[octant];
   m1 = floorunscaled (x);
   n1 = floorunscaled (y);
-  if (x - 65536L * m1 >= y - 65536L * n1 + zcorr[octant]) 
+  if (x - 65536L * m1 >= y - 65536L * n1 + z_corr[octant]) 
   d1 = 1;
   else d1 = 0;
 } 
@@ -9244,7 +9244,7 @@ zfillspec (halfword h)
 {
   halfword p, q, r, s;
   if (internal[10] > 0) 
-  beginedgetracing ();
+  begin_edge_tracing ();
   p = h;
   do {
       octant = mem[p + 3].cint;
@@ -9257,29 +9257,29 @@ zfillspec (halfword h)
       n0 = n1;
       d0 = d1;
       endround (mem[q + 1].cint , mem[q + 2].cint);
-      if (n1 - n0 >= movesize) 
-      overflow (540 , movesize);
+      if (n1 - n0 >= move_size) 
+      overflow (540 , move_size);
       move[0] = d0;
-      moveptr = 0;
+      move_ptr = 0;
       r = p;
       do {
 	  s = mem[r].hhfield.v.RH;
-	makemoves (mem[r + 1].cint , mem[r + 5].cint , mem[s + 3]
+	make_moves (mem[r + 1].cint , mem[r + 5].cint , mem[s + 3]
 	.cint , mem[s + 1].cint , mem[r + 2].cint + 32768L , mem[r + 
 	6].cint + 32768L , mem[s + 4].cint + 32768L , mem[s + 2]
 	.cint + 32768L , xy_corr[octant], y_corr[octant]);
 	r = s;
       } while (!(r == q));
-      move[moveptr] = move[moveptr] - d1;
+      move[move_ptr] = move[move_ptr] - d1;
       if (internal[35] > 0) 
-      smoothmoves (0 , moveptr);
-      movetoedges (m0 , n0 , m1 , n1);
+      smooth_moves (0 , move_ptr);
+      move_to_edges (m0 , n0 , m1 , n1);
     } 
     p = mem[q].hhfield.v.RH;
   } while (!(p == h));
   toss_knot_list (h);
   if (internal[10] > 0) 
-  endedgetracing ();
+  end_edge_tracing ();
 } 
 void 
 zdupoffset (halfword w) 
@@ -9359,7 +9359,7 @@ zmakepen (halfword h)
       if (dx < dy) 
       octant = octant + 4;
       mem[q].hhfield.b1 = octant;
-      oo = octantnumber[octant];
+      oo = octant_number[octant];
       if (o > oo) 
       {
 	if (hh != 0) 
@@ -9425,7 +9425,7 @@ zmakepen (halfword h)
 	r = w;
       } 
       if ((mem[r + 2].cint != mem[mem[r].hhfield.v.RH + 2].cint 
-    ) || (n == 0)) 
+   ) || (n == 0)) 
       {
 	dupoffset (r);
 	incr (n);
@@ -9446,11 +9446,11 @@ zmakepen (halfword h)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -9472,11 +9472,11 @@ zmakepen (halfword h)
       
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -9606,7 +9606,7 @@ zfindoffset (scaled x , scaled y , halfword p)
     x = y - x;
     y = y - x;
   } 
-  if (odd (octantnumber[octant])) 
+  if (odd (octant_number[octant])) 
   s = -1;
   else s = 1;
   h = p + octant;
@@ -9727,7 +9727,7 @@ zoffsetprep (halfword c , halfword h)
   integer x0, x1, x2, y0, y1, y2;
   integer t0, t1, t2;
   integer du, dv, dx, dy;
-  integer lmaxcoef;
+  integer lmax_coef;
   integer x0a, x1a, x2a, y0a, y1a, y2a;
   fraction t;
   fraction s;
@@ -9747,22 +9747,22 @@ zoffsetprep (halfword c , halfword h)
       y0 = mem[p + 6].cint - mem[p + 2].cint;
       y2 = mem[q + 2].cint - mem[q + 4].cint;
       y1 = mem[q + 4].cint - mem[p + 6].cint;
-      lmaxcoef = abs (x0);
-      if (abs (x1) > lmaxcoef) 
-      lmaxcoef = abs (x1);
-      if (abs (x2) > lmaxcoef) 
-      lmaxcoef = abs (x2);
-      if (abs (y0) > lmaxcoef) 
-      lmaxcoef = abs (y0);
-      if (abs (y1) > lmaxcoef) 
-      lmaxcoef = abs (y1);
-      if (abs (y2) > lmaxcoef) 
-      lmaxcoef = abs (y2);
-      if (lmaxcoef == 0) 
+      lmax_coef = abs (x0);
+      if (abs (x1) > lmax_coef) 
+      lmax_coef = abs (x1);
+      if (abs (x2) > lmax_coef) 
+      lmax_coef = abs (x2);
+      if (abs (y0) > lmax_coef) 
+      lmax_coef = abs (y0);
+      if (abs (y1) > lmax_coef) 
+      lmax_coef = abs (y1);
+      if (abs (y2) > lmax_coef) 
+      lmax_coef = abs (y2);
+      if (lmax_coef == 0) 
       goto not_found;
-      while (lmaxcoef < 134217728L) {
+      while (lmax_coef < 134217728L) {
 	  
-	lmaxcoef = lmaxcoef + lmaxcoef;
+	lmax_coef = lmax_coef + lmax_coef;
 	x0 = x0 + x0;
 	x1 = x1 + x1;
 	x2 = x2 + x2;
@@ -9904,7 +9904,7 @@ zoffsetprep (halfword c , halfword h)
   } 
 } 
 void 
-zskewlineedges (halfword p , halfword w , halfword ww) 
+zskewline_edges (halfword p , halfword w , halfword ww) 
 {
   scaled x0, y0, x1, y1;
   if ((mem[w + 1].cint != mem[ww + 1].cint) || (mem[w + 2]
@@ -9929,7 +9929,7 @@ zskewlineedges (halfword p , halfword w , halfword ww)
       print_nl (261);
     } 
 #endif /* STAT */
-    lineedges (x0 , y0 , cur_x , cur_y);
+    line_edges (x0 , y0 , cur_x , cur_y);
   } 
 } 
 void 
@@ -9951,16 +9951,16 @@ zdualmoves (halfword h , halfword p , halfword q)
   octant]);
   {register integer for_end; n = 1;for_end = n1 - n0 + 1; if (n <= 
   for_end) do 
-    envmove[n] = mm1;
+    env_move[n] = mm1;
   while (n++ < for_end);} 
-  envmove[0] = mm0;
-  moveptr = 0;
+  env_move[0] = mm0;
+  move_ptr = 0;
   m = mm0;
   r = p;
   while (true) {
       
     if (r == q) 
-    smoothtop = moveptr;
+    smoothtop = move_ptr;
     while (mem[r].hhfield.b1 != k) {
 	
       xx = mem[r + 1].cint + mem[w + 1].cint;
@@ -9994,20 +9994,20 @@ zdualmoves (halfword h , halfword p , halfword q)
 	    yy = 65536L - yy;
 	    while (true) {
 		
-	      if (m < envmove[moveptr]) 
-	      envmove[moveptr] = m;
+	      if (m < env_move[move_ptr]) 
+	      env_move[move_ptr] = m;
 	      tx = takefraction (delx , makefraction (yy , dely));
 	      if (ab_vs_cd (tx , dely , delx , yy) + xy_corr[octant] > 0) 
 	      decr (tx);
 	      m = floorunscaled (xx + tx);
 	      ty = ty - 65536L;
-	      incr (moveptr);
+	      incr (move_ptr);
 	      if (ty < 65536L) 
 	      goto done1;
 	      yy = yy + 65536L;
 	    } 
-	    done1: if (m < envmove[moveptr]) 
-	    envmove[moveptr] = m;
+	    done1: if (m < env_move[move_ptr]) 
+	    env_move[move_ptr] = m;
 	  } 
 	} 
       } 
@@ -10029,50 +10029,50 @@ zdualmoves (halfword h , halfword p , halfword q)
       } 
 #endif /* STAT */
       m = floorunscaled (xp - xy_corr[octant]);
-      moveptr = floorunscaled (yp - y_corr[octant]) - n0;
-      if (m < envmove[moveptr]) 
-      envmove[moveptr] = m;
+      move_ptr = floorunscaled (yp - y_corr[octant]) - n0;
+      if (m < env_move[move_ptr]) 
+      env_move[move_ptr] = m;
     } 
     if (r == p) 
-    smoothbot = moveptr;
+    smoothbot = move_ptr;
     if (r == q) 
     goto done;
-    move[moveptr] = 1;
-    n = moveptr;
+    move[move_ptr] = 1;
+    n = move_ptr;
     s = mem[r].hhfield.v.RH;
-    makemoves (mem[r + 1].cint + mem[w + 1].cint , mem[r + 5]
+    make_moves (mem[r + 1].cint + mem[w + 1].cint , mem[r + 5]
     .cint + mem[w + 1].cint , mem[s + 3].cint + mem[w + 1].cint , 
     mem[s + 1].cint + mem[w + 1].cint , mem[r + 2].cint + mem[w 
     + 2].cint + 32768L , mem[r + 6].cint + mem[w + 2].cint + 32768L 
     , mem[s + 4].cint + mem[w + 2].cint + 32768L , mem[s + 2].cint 
     + mem[w + 2].cint + 32768L , xy_corr[octant], y_corr[octant]);
     do {
-	if (m < envmove[n]) 
-      envmove[n] = m;
+	if (m < env_move[n]) 
+      env_move[n] = m;
       m = m + move[n] - 1;
       incr (n);
-    } while (!(n > moveptr));
+    } while (!(n > move_ptr));
     r = s;
   } 
   done: 
 	;
 #ifdef TEXMF_DEBUG
-  if ((m != mm1) || (moveptr != n1 - n0)) 
+  if ((m != mm1) || (move_ptr != n1 - n0)) 
   confusion (50);
 #endif /* TEXMF_DEBUG */
-  move[0] = d0 + envmove[1] - mm0;
-  {register integer for_end; n = 1;for_end = moveptr; if (n <= for_end) 
+  move[0] = d0 + env_move[1] - mm0;
+  {register integer for_end; n = 1;for_end = move_ptr; if (n <= for_end) 
   do 
-    move[n] = envmove[n + 1] - envmove[n]+ 1;
+    move[n] = env_move[n + 1] - env_move[n]+ 1;
   while (n++ < for_end);} 
-  move[moveptr] = move[moveptr] - d1;
+  move[move_ptr] = move[move_ptr] - d1;
   if (internal[35] > 0) 
-  smoothmoves (smoothbot , smoothtop);
-  movetoedges (m0 , n0 , m1 , n1);
+  smooth_moves (smoothbot , smoothtop);
+  move_to_edges (m0 , n0 , m1 , n1);
   if (mem[q + 6].cint == 1) 
   {
     w = mem[h].hhfield.v.RH;
-    skewlineedges (q , w , mem[w].hhfield.lhfield);
+    skewline_edges (q , w , mem[w].hhfield.lhfield);
   } 
 } 
 void 
@@ -10088,11 +10088,11 @@ zfillenvelope (halfword spechead)
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
   if (internal[10] > 0) 
-  beginedgetracing ();
+  begin_edge_tracing ();
   p = spechead;
   do {
       octant = mem[p + 3].cint;
-    h = curpen + octant;
+    h = cur_pen + octant;
     q = p;
     while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
     w = mem[h].hhfield.v.RH;
@@ -10124,11 +10124,11 @@ zfillenvelope (halfword spechead)
 #endif /* STAT */
     ww = mem[h].hhfield.v.RH;
     www = ww;
-    if (odd (octantnumber[octant])) 
+    if (odd (octant_number[octant])) 
     www = mem[www].hhfield.lhfield;
     else ww = mem[ww].hhfield.lhfield;
     if (w != ww) 
-    skewlineedges (p , w , ww);
+    skewline_edges (p , w , ww);
     endround (mem[p + 1].cint + mem[ww + 1].cint , mem[p + 2]
     .cint + mem[ww + 2].cint);
     m0 = m1;
@@ -10136,12 +10136,12 @@ zfillenvelope (halfword spechead)
     d0 = d1;
     endround (mem[q + 1].cint + mem[www + 1].cint , mem[q + 2]
     .cint + mem[www + 2].cint);
-    if (n1 - n0 >= movesize) 
-    overflow (540 , movesize);
+    if (n1 - n0 >= move_size) 
+    overflow (540 , move_size);
     offsetprep (p , h);
     q = p;
     while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
-    if (odd (octantnumber[octant])) 
+    if (odd (octant_number[octant])) 
     {
       k = 0;
       w = mem[h].hhfield.v.RH;
@@ -10152,17 +10152,17 @@ zfillenvelope (halfword spechead)
       xy_corr[octant]);
       {register integer for_end; n = 0;for_end = n1 - n0; if (n <= 
       for_end) do 
-	envmove[n] = mm0;
+	env_move[n] = mm0;
       while (n++ < for_end);} 
-      envmove[n1 - n0] = mm1;
-      moveptr = 0;
+      env_move[n1 - n0] = mm1;
+      move_ptr = 0;
       m = mm0;
       r = p;
       mem[q].hhfield.b1 = mem[h].hhfield.lhfield + 1;
       while (true) {
 	  
 	if (r == q) 
-	smoothtop = moveptr;
+	smoothtop = move_ptr;
 	while (mem[r].hhfield.b1 != k) {
 	    
 	  xx = mem[r + 1].cint + mem[w + 1].cint;
@@ -10201,13 +10201,13 @@ zfillenvelope (halfword spechead)
 		  0) 
 		  decr (tx);
 		  m = floorunscaled (xx + tx);
-		  if (m > envmove[moveptr]) 
-		  envmove[moveptr] = m;
+		  if (m > env_move[move_ptr]) 
+		  env_move[move_ptr] = m;
 		  ty = ty - 65536L;
 		  if (ty < 65536L) 
 		  goto done1;
 		  yy = yy + 65536L;
-		  incr (moveptr);
+		  incr (move_ptr);
 		} 
 		done1:;
 	      } 
@@ -10231,18 +10231,18 @@ zfillenvelope (halfword spechead)
 	  } 
 #endif /* STAT */
 	  m = floorunscaled (xp - xy_corr[octant]);
-	  moveptr = floorunscaled (yp - y_corr[octant]) - n0;
-	  if (m > envmove[moveptr]) 
-	  envmove[moveptr] = m;
+	  move_ptr = floorunscaled (yp - y_corr[octant]) - n0;
+	  if (m > env_move[move_ptr]) 
+	  env_move[move_ptr] = m;
 	} 
 	if (r == p) 
-	smoothbot = moveptr;
+	smoothbot = move_ptr;
 	if (r == q) 
 	goto done;
-	move[moveptr] = 1;
-	n = moveptr;
+	move[move_ptr] = 1;
+	n = move_ptr;
 	s = mem[r].hhfield.v.RH;
-	makemoves (mem[r + 1].cint + mem[w + 1].cint , mem[r + 5]
+	make_moves (mem[r + 1].cint + mem[w + 1].cint , mem[r + 5]
 	.cint + mem[w + 1].cint , mem[s + 3].cint + mem[w + 1]
 	.cint , mem[s + 1].cint + mem[w + 1].cint , mem[r + 2]
 	.cint + mem[w + 2].cint + 32768L , mem[r + 6].cint + mem[w + 
@@ -10251,31 +10251,31 @@ zfillenvelope (halfword spechead)
 	octant], y_corr[octant]);
 	do {
 	    m = m + move[n] - 1;
-	  if (m > envmove[n]) 
-	  envmove[n] = m;
+	  if (m > env_move[n]) 
+	  env_move[n] = m;
 	  incr (n);
-	} while (!(n > moveptr));
+	} while (!(n > move_ptr));
 	r = s;
       } 
       done: 
 	;
 #ifdef TEXMF_DEBUG
-      if ((m != mm1) || (moveptr != n1 - n0)) 
+      if ((m != mm1) || (move_ptr != n1 - n0)) 
       confusion (49);
 #endif /* TEXMF_DEBUG */
-      move[0] = d0 + envmove[0] - mm0;
-      {register integer for_end; n = 1;for_end = moveptr; if (n <= 
+      move[0] = d0 + env_move[0] - mm0;
+      {register integer for_end; n = 1;for_end = move_ptr; if (n <= 
       for_end) do 
-	move[n] = envmove[n] - envmove[n - 1]+ 1;
+	move[n] = env_move[n] - env_move[n - 1]+ 1;
       while (n++ < for_end);} 
-      move[moveptr] = move[moveptr] - d1;
+      move[move_ptr] = move[move_ptr] - d1;
       if (internal[35] > 0) 
-      smoothmoves (smoothbot , smoothtop);
-      movetoedges (m0 , n0 , m1 , n1);
+      smooth_moves (smoothbot , smoothtop);
+      move_to_edges (m0 , n0 , m1 , n1);
       if (mem[q + 6].cint == 0) 
       {
 	w = mem[h].hhfield.v.RH;
-	skewlineedges (q , mem[w].hhfield.lhfield , w);
+	skewline_edges (q , mem[w].hhfield.lhfield , w);
       } 
     } 
     else dualmoves (h , p , q);
@@ -10283,7 +10283,7 @@ zfillenvelope (halfword spechead)
     p = mem[q].hhfield.v.RH;
   } while (!(p == spechead));
   if (internal[10] > 0) 
-  endedgetracing ();
+  end_edge_tracing ();
   toss_knot_list (spechead);
 } 
 halfword 
@@ -10303,8 +10303,8 @@ zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta)
     {
       beta = majoraxis;
       gamma = minoraxis;
-      nsin = 268435456L;
-      ncos = 0;
+      n_sin = 268435456L;
+      n_cos = 0;
     } 
     else {
 	
@@ -10317,15 +10317,15 @@ zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta)
       
     symmetric = false;
     n_sin_cos (theta);
-    gamma = takefraction (majoraxis , nsin);
-    delta = takefraction (minoraxis , ncos);
+    gamma = takefraction (majoraxis , n_sin);
+    delta = takefraction (minoraxis , n_cos);
     beta = pyth_add (gamma , delta);
     alpha = makefraction (gamma , beta);
     alpha = takefraction (majoraxis , alpha);
-    alpha = takefraction (alpha , ncos);
+    alpha = takefraction (alpha , n_cos);
     alpha = (alpha + 32768L) / 65536L;
-    gamma = takefraction (minoraxis , nsin);
-    gamma = pyth_add (takefraction (majoraxis , ncos) , gamma);
+    gamma = takefraction (minoraxis , n_sin);
+    gamma = pyth_add (takefraction (majoraxis , n_cos) , gamma);
   } 
   beta = (beta + 32768L) / 65536L;
   gamma = (gamma + 32768L) / 65536L;
@@ -10394,8 +10394,8 @@ zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta)
       } 
       else {
 	  
-	alpha = takefraction (u , ncos) + takefraction (v , nsin);
-	beta = takefraction (v , ncos) - takefraction (u , nsin);
+	alpha = takefraction (u , n_cos) + takefraction (v , n_sin);
+	beta = takefraction (v , n_cos) - takefraction (u , n_sin);
       } 
       alpha = makefraction (alpha , delta);
       beta = makefraction (beta , delta);
@@ -10743,809 +10743,809 @@ void
 zcubicintersection (halfword p , halfword pp) 
 {
   /* 22 45 10 */ halfword q, qq;
-  timetogo = 5000;
-  maxt = 2;
+  time_to_go = 5000;
+  max_t = 2;
   q = mem[p].hhfield.v.RH;
   qq = mem[pp].hhfield.v.RH;
-  bisectptr = 20;
-  bisectstack[bisectptr - 5] = mem[p + 5].cint - mem[p + 1].cint;
-  bisectstack[bisectptr - 4] = mem[q + 3].cint - mem[p + 5].cint;
-  bisectstack[bisectptr - 3] = mem[q + 1].cint - mem[q + 3].cint;
-  if (bisectstack[bisectptr - 5]< 0) {
+  bisect_ptr = 20;
+  bisect_stack[bisect_ptr - 5] = mem[p + 5].cint - mem[p + 1].cint;
+  bisect_stack[bisect_ptr - 4] = mem[q + 3].cint - mem[p + 5].cint;
+  bisect_stack[bisect_ptr - 3] = mem[q + 1].cint - mem[q + 3].cint;
+  if (bisect_stack[bisect_ptr - 5]< 0) {
       
-    if (bisectstack[bisectptr - 3] >= 0) 
+    if (bisect_stack[bisect_ptr - 3] >= 0) 
     {
-      if (bisectstack[bisectptr - 4]< 0) 
-      bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]+ 
-      bisectstack[bisectptr - 4];
-      else bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5];
-      bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]+ 
-      bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3];
-      if (bisectstack[bisectptr - 1]< 0) 
-      bisectstack[bisectptr - 1] = 0;
+      if (bisect_stack[bisect_ptr - 4]< 0) 
+      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ 
+      bisect_stack[bisect_ptr - 4];
+      else bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+ 
+      bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+      if (bisect_stack[bisect_ptr - 1]< 0) 
+      bisect_stack[bisect_ptr - 1] = 0;
     } 
     else {
 	
-      bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]+ 
-      bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3];
-      if (bisectstack[bisectptr - 2] > bisectstack[bisectptr - 5]) 
-      bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5];
-      bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]+ 
-      bisectstack[bisectptr - 4];
-      if (bisectstack[bisectptr - 1]< 0) 
-      bisectstack[bisectptr - 1] = 0;
+      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ 
+      bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+      if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr - 5]) 
+      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+ 
+      bisect_stack[bisect_ptr - 4];
+      if (bisect_stack[bisect_ptr - 1]< 0) 
+      bisect_stack[bisect_ptr - 1] = 0;
     } 
   } 
-  else if (bisectstack[bisectptr - 3]<= 0) 
+  else if (bisect_stack[bisect_ptr - 3]<= 0) 
   {
-    if (bisectstack[bisectptr - 4] > 0) 
-    bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]+ 
-    bisectstack[bisectptr - 4];
-    else bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5];
-    bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]+ 
-    bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3];
-    if (bisectstack[bisectptr - 2] > 0) 
-    bisectstack[bisectptr - 2] = 0;
+    if (bisect_stack[bisect_ptr - 4] > 0) 
+    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+ 
+    bisect_stack[bisect_ptr - 4];
+    else bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ 
+    bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+    if (bisect_stack[bisect_ptr - 2] > 0) 
+    bisect_stack[bisect_ptr - 2] = 0;
   } 
   else {
       
-    bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]+ 
-    bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3];
-    if (bisectstack[bisectptr - 1]< bisectstack[bisectptr - 5]) 
-    bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5];
-    bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]+ 
-    bisectstack[bisectptr - 4];
-    if (bisectstack[bisectptr - 2] > 0) 
-    bisectstack[bisectptr - 2] = 0;
+    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+ 
+    bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+    if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5]) 
+    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ 
+    bisect_stack[bisect_ptr - 4];
+    if (bisect_stack[bisect_ptr - 2] > 0) 
+    bisect_stack[bisect_ptr - 2] = 0;
   } 
-  bisectstack[bisectptr - 10] = mem[p + 6].cint - mem[p + 2].cint;
-  bisectstack[bisectptr - 9] = mem[q + 4].cint - mem[p + 6].cint;
-  bisectstack[bisectptr - 8] = mem[q + 2].cint - mem[q + 4].cint;
-  if (bisectstack[bisectptr - 10]< 0) {
+  bisect_stack[bisect_ptr - 10] = mem[p + 6].cint - mem[p + 2].cint;
+  bisect_stack[bisect_ptr - 9] = mem[q + 4].cint - mem[p + 6].cint;
+  bisect_stack[bisect_ptr - 8] = mem[q + 2].cint - mem[q + 4].cint;
+  if (bisect_stack[bisect_ptr - 10]< 0) {
       
-    if (bisectstack[bisectptr - 8] >= 0) 
+    if (bisect_stack[bisect_ptr - 8] >= 0) 
     {
-      if (bisectstack[bisectptr - 9]< 0) 
-      bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]+ 
-      bisectstack[bisectptr - 9];
-      else bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10];
-      bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]+ 
-      bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8];
-      if (bisectstack[bisectptr - 6]< 0) 
-      bisectstack[bisectptr - 6] = 0;
+      if (bisect_stack[bisect_ptr - 9]< 0) 
+      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+ 
+      bisect_stack[bisect_ptr - 9];
+      else bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+ 
+      bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+      if (bisect_stack[bisect_ptr - 6]< 0) 
+      bisect_stack[bisect_ptr - 6] = 0;
     } 
     else {
 	
-      bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]+ 
-      bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8];
-      if (bisectstack[bisectptr - 7] > bisectstack[bisectptr - 10]) 
-      bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10];
-      bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]+ 
-      bisectstack[bisectptr - 9];
-      if (bisectstack[bisectptr - 6]< 0) 
-      bisectstack[bisectptr - 6] = 0;
+      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+ 
+      bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+      if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr - 10]) 
+      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+ 
+      bisect_stack[bisect_ptr - 9];
+      if (bisect_stack[bisect_ptr - 6]< 0) 
+      bisect_stack[bisect_ptr - 6] = 0;
     } 
   } 
-  else if (bisectstack[bisectptr - 8]<= 0) 
+  else if (bisect_stack[bisect_ptr - 8]<= 0) 
   {
-    if (bisectstack[bisectptr - 9] > 0) 
-    bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]+ 
-    bisectstack[bisectptr - 9];
-    else bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10];
-    bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]+ 
-    bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8];
-    if (bisectstack[bisectptr - 7] > 0) 
-    bisectstack[bisectptr - 7] = 0;
+    if (bisect_stack[bisect_ptr - 9] > 0) 
+    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+ 
+    bisect_stack[bisect_ptr - 9];
+    else bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+ 
+    bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+    if (bisect_stack[bisect_ptr - 7] > 0) 
+    bisect_stack[bisect_ptr - 7] = 0;
   } 
   else {
       
-    bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]+ 
-    bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8];
-    if (bisectstack[bisectptr - 6]< bisectstack[bisectptr - 10]) 
-    bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10];
-    bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]+ 
-    bisectstack[bisectptr - 9];
-    if (bisectstack[bisectptr - 7] > 0) 
-    bisectstack[bisectptr - 7] = 0;
+    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+ 
+    bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+    if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr - 10]) 
+    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+ 
+    bisect_stack[bisect_ptr - 9];
+    if (bisect_stack[bisect_ptr - 7] > 0) 
+    bisect_stack[bisect_ptr - 7] = 0;
   } 
-  bisectstack[bisectptr - 15] = mem[pp + 5].cint - mem[pp + 1].cint 
+  bisect_stack[bisect_ptr - 15] = mem[pp + 5].cint - mem[pp + 1].cint 
 ;
-  bisectstack[bisectptr - 14] = mem[qq + 3].cint - mem[pp + 5].cint 
+  bisect_stack[bisect_ptr - 14] = mem[qq + 3].cint - mem[pp + 5].cint 
 ;
-  bisectstack[bisectptr - 13] = mem[qq + 1].cint - mem[qq + 3].cint 
+  bisect_stack[bisect_ptr - 13] = mem[qq + 1].cint - mem[qq + 3].cint 
 ;
-  if (bisectstack[bisectptr - 15]< 0) {
+  if (bisect_stack[bisect_ptr - 15]< 0) {
       
-    if (bisectstack[bisectptr - 13] >= 0) 
+    if (bisect_stack[bisect_ptr - 13] >= 0) 
     {
-      if (bisectstack[bisectptr - 14]< 0) 
-      bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15]+ 
-      bisectstack[bisectptr - 14];
-      else bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15];
-      bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]+ 
-      bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 13];
-      if (bisectstack[bisectptr - 11]< 0) 
-      bisectstack[bisectptr - 11] = 0;
+      if (bisect_stack[bisect_ptr - 14]< 0) 
+      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+ 
+      bisect_stack[bisect_ptr - 14];
+      else bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+ 
+      bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+      if (bisect_stack[bisect_ptr - 11]< 0) 
+      bisect_stack[bisect_ptr - 11] = 0;
     } 
     else {
 	
-      bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15]+ 
-      bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 13];
-      if (bisectstack[bisectptr - 12] > bisectstack[bisectptr - 15]) 
-      bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15];
-      bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]+ 
-      bisectstack[bisectptr - 14];
-      if (bisectstack[bisectptr - 11]< 0) 
-      bisectstack[bisectptr - 11] = 0;
+      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+ 
+      bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+      if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr - 15]) 
+      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+ 
+      bisect_stack[bisect_ptr - 14];
+      if (bisect_stack[bisect_ptr - 11]< 0) 
+      bisect_stack[bisect_ptr - 11] = 0;
     } 
   } 
-  else if (bisectstack[bisectptr - 13]<= 0) 
+  else if (bisect_stack[bisect_ptr - 13]<= 0) 
   {
-    if (bisectstack[bisectptr - 14] > 0) 
-    bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]+ 
-    bisectstack[bisectptr - 14];
-    else bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15];
-    bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15]+ 
-    bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 13];
-    if (bisectstack[bisectptr - 12] > 0) 
-    bisectstack[bisectptr - 12] = 0;
+    if (bisect_stack[bisect_ptr - 14] > 0) 
+    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+ 
+    bisect_stack[bisect_ptr - 14];
+    else bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
+    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+ 
+    bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+    if (bisect_stack[bisect_ptr - 12] > 0) 
+    bisect_stack[bisect_ptr - 12] = 0;
   } 
   else {
       
-    bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]+ 
-    bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 13];
-    if (bisectstack[bisectptr - 11]< bisectstack[bisectptr - 15]) 
-    bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15];
-    bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15]+ 
-    bisectstack[bisectptr - 14];
-    if (bisectstack[bisectptr - 12] > 0) 
-    bisectstack[bisectptr - 12] = 0;
+    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+ 
+    bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+    if (bisect_stack[bisect_ptr - 11]< bisect_stack[bisect_ptr - 15]) 
+    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
+    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+ 
+    bisect_stack[bisect_ptr - 14];
+    if (bisect_stack[bisect_ptr - 12] > 0) 
+    bisect_stack[bisect_ptr - 12] = 0;
   } 
-  bisectstack[bisectptr - 20] = mem[pp + 6].cint - mem[pp + 2].cint 
+  bisect_stack[bisect_ptr - 20] = mem[pp + 6].cint - mem[pp + 2].cint 
 ;
-  bisectstack[bisectptr - 19] = mem[qq + 4].cint - mem[pp + 6].cint 
+  bisect_stack[bisect_ptr - 19] = mem[qq + 4].cint - mem[pp + 6].cint 
 ;
-  bisectstack[bisectptr - 18] = mem[qq + 2].cint - mem[qq + 4].cint 
+  bisect_stack[bisect_ptr - 18] = mem[qq + 2].cint - mem[qq + 4].cint 
 ;
-  if (bisectstack[bisectptr - 20]< 0) {
+  if (bisect_stack[bisect_ptr - 20]< 0) {
       
-    if (bisectstack[bisectptr - 18] >= 0) 
+    if (bisect_stack[bisect_ptr - 18] >= 0) 
     {
-      if (bisectstack[bisectptr - 19]< 0) 
-      bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20]+ 
-      bisectstack[bisectptr - 19];
-      else bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20];
-      bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]+ 
-      bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 18];
-      if (bisectstack[bisectptr - 16]< 0) 
-      bisectstack[bisectptr - 16] = 0;
+      if (bisect_stack[bisect_ptr - 19]< 0) 
+      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+ 
+      bisect_stack[bisect_ptr - 19];
+      else bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+ 
+      bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+      if (bisect_stack[bisect_ptr - 16]< 0) 
+      bisect_stack[bisect_ptr - 16] = 0;
     } 
     else {
 	
-      bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20]+ 
-      bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 18];
-      if (bisectstack[bisectptr - 17] > bisectstack[bisectptr - 20]) 
-      bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20];
-      bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]+ 
-      bisectstack[bisectptr - 19];
-      if (bisectstack[bisectptr - 16]< 0) 
-      bisectstack[bisectptr - 16] = 0;
+      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+ 
+      bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+      if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr - 20]) 
+      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+ 
+      bisect_stack[bisect_ptr - 19];
+      if (bisect_stack[bisect_ptr - 16]< 0) 
+      bisect_stack[bisect_ptr - 16] = 0;
     } 
   } 
-  else if (bisectstack[bisectptr - 18]<= 0) 
+  else if (bisect_stack[bisect_ptr - 18]<= 0) 
   {
-    if (bisectstack[bisectptr - 19] > 0) 
-    bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]+ 
-    bisectstack[bisectptr - 19];
-    else bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20];
-    bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20]+ 
-    bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 18];
-    if (bisectstack[bisectptr - 17] > 0) 
-    bisectstack[bisectptr - 17] = 0;
+    if (bisect_stack[bisect_ptr - 19] > 0) 
+    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+ 
+    bisect_stack[bisect_ptr - 19];
+    else bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
+    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+ 
+    bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+    if (bisect_stack[bisect_ptr - 17] > 0) 
+    bisect_stack[bisect_ptr - 17] = 0;
   } 
   else {
       
-    bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]+ 
-    bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 18];
-    if (bisectstack[bisectptr - 16]< bisectstack[bisectptr - 20]) 
-    bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20];
-    bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20]+ 
-    bisectstack[bisectptr - 19];
-    if (bisectstack[bisectptr - 17] > 0) 
-    bisectstack[bisectptr - 17] = 0;
+    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+ 
+    bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+    if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr - 20]) 
+    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
+    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+ 
+    bisect_stack[bisect_ptr - 19];
+    if (bisect_stack[bisect_ptr - 17] > 0) 
+    bisect_stack[bisect_ptr - 17] = 0;
   } 
   delx = mem[p + 1].cint - mem[pp + 1].cint;
   dely = mem[p + 2].cint - mem[pp + 2].cint;
   tol = 0;
-  uv = bisectptr;
-  xy = bisectptr;
-  threel = 0;
-  curt = 1;
-  curtt = 1;
+  uv = bisect_ptr;
+  xy = bisect_ptr;
+  three_l = 0;
+  cur_t = 1;
+  cur_tt = 1;
   while (true) {
       
-    lab22: if (delx - tol <= bisectstack[xy - 11] - bisectstack[uv - 2]
-  ) {
+    lab22: if (delx - tol <= bisect_stack[xy - 11] - bisect_stack[uv - 2]
+ ) {
 	
-      if (delx + tol >= bisectstack[xy - 12] - bisectstack[uv - 1]) {
+      if (delx + tol >= bisect_stack[xy - 12] - bisect_stack[uv - 1]) {
 	  
-	if (dely - tol <= bisectstack[xy - 16] - bisectstack[uv - 7]) 
+	if (dely - tol <= bisect_stack[xy - 16] - bisect_stack[uv - 7]) 
 	{
-	  if (dely + tol >= bisectstack[xy - 17] - bisectstack[uv - 6]
+	  if (dely + tol >= bisect_stack[xy - 17] - bisect_stack[uv - 6]
 	) 
 	  {
-	    if (curt >= maxt) 
+	    if (cur_t >= max_t) 
 	    {
-	      if (maxt == 131072L) 
+	      if (max_t == 131072L) 
 	      {
-		curt = halfp (curt + 1);
-		curtt = halfp (curtt + 1);
+		cur_t = halfp (cur_t + 1);
+		cur_tt = halfp (cur_tt + 1);
 		goto lab10;
 	      } 
-	      maxt = maxt + maxt;
-	      apprt = curt;
-	      apprtt = curtt;
+	      max_t = max_t + max_t;
+	      appr_t = cur_t;
+	      appr_tt = cur_tt;
 	    } 
-	    bisectstack[bisectptr] = delx;
-	    bisectstack[bisectptr + 1] = dely;
-	    bisectstack[bisectptr + 2] = tol;
-	    bisectstack[bisectptr + 3] = uv;
-	    bisectstack[bisectptr + 4] = xy;
-	    bisectptr = bisectptr + 45;
-	    curt = curt + curt;
-	    curtt = curtt + curtt;
-	    bisectstack[bisectptr - 25] = bisectstack[uv - 5];
-	    bisectstack[bisectptr - 3] = bisectstack[uv - 3];
-	    bisectstack[bisectptr - 24] = half (bisectstack[bisectptr - 
-	    25]+ bisectstack[uv - 4]);
-	    bisectstack[bisectptr - 4] = half (bisectstack[bisectptr - 3 
-	  ]+ bisectstack[uv - 4]);
-	    bisectstack[bisectptr - 23] = half (bisectstack[bisectptr - 
-	    24]+ bisectstack[bisectptr - 4]);
-	    bisectstack[bisectptr - 5] = bisectstack[bisectptr - 23];
-	    if (bisectstack[bisectptr - 25]< 0) {
+	    bisect_stack[bisect_ptr] = delx;
+	    bisect_stack[bisect_ptr + 1] = dely;
+	    bisect_stack[bisect_ptr + 2] = tol;
+	    bisect_stack[bisect_ptr + 3] = uv;
+	    bisect_stack[bisect_ptr + 4] = xy;
+	    bisect_ptr = bisect_ptr + 45;
+	    cur_t = cur_t + cur_t;
+	    cur_tt = cur_tt + cur_tt;
+	    bisect_stack[bisect_ptr - 25] = bisect_stack[uv - 5];
+	    bisect_stack[bisect_ptr - 3] = bisect_stack[uv - 3];
+	    bisect_stack[bisect_ptr - 24] = half (bisect_stack[bisect_ptr - 
+	    25]+ bisect_stack[uv - 4]);
+	    bisect_stack[bisect_ptr - 4] = half (bisect_stack[bisect_ptr - 3 
+	  ]+ bisect_stack[uv - 4]);
+	    bisect_stack[bisect_ptr - 23] = half (bisect_stack[bisect_ptr - 
+	    24]+ bisect_stack[bisect_ptr - 4]);
+	    bisect_stack[bisect_ptr - 5] = bisect_stack[bisect_ptr - 23];
+	    if (bisect_stack[bisect_ptr - 25]< 0) {
 		
-	      if (bisectstack[bisectptr - 23] >= 0) 
+	      if (bisect_stack[bisect_ptr - 23] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 24]< 0) 
-		bisectstack[bisectptr - 22] = bisectstack[bisectptr - 25 
-		]+ bisectstack[bisectptr - 24];
-		else bisectstack[bisectptr - 22] = bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 24]< 0) 
+		bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25 
+		]+ bisect_stack[bisect_ptr - 24];
+		else bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr 
 		- 25];
-		bisectstack[bisectptr - 21] = bisectstack[bisectptr - 25 
-		]+ bisectstack[bisectptr - 24]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25 
+		]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 
 		23];
-		if (bisectstack[bisectptr - 21]< 0) 
-		bisectstack[bisectptr - 21] = 0;
+		if (bisect_stack[bisect_ptr - 21]< 0) 
+		bisect_stack[bisect_ptr - 21] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 22] = bisectstack[bisectptr - 25 
-		]+ bisectstack[bisectptr - 24]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25 
+		]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 
 		23];
-		if (bisectstack[bisectptr - 22] > bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 22] > bisect_stack[bisect_ptr 
 		- 25]) 
-		bisectstack[bisectptr - 22] = bisectstack[bisectptr - 25 
+		bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25 
 		];
-		bisectstack[bisectptr - 21] = bisectstack[bisectptr - 25 
-		]+ bisectstack[bisectptr - 24];
-		if (bisectstack[bisectptr - 21]< 0) 
-		bisectstack[bisectptr - 21] = 0;
+		bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25 
+		]+ bisect_stack[bisect_ptr - 24];
+		if (bisect_stack[bisect_ptr - 21]< 0) 
+		bisect_stack[bisect_ptr - 21] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 23]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 23]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 24] > 0) 
-	      bisectstack[bisectptr - 21] = bisectstack[bisectptr - 25]
-	      + bisectstack[bisectptr - 24];
-	      else bisectstack[bisectptr - 21] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 24] > 0) 
+	      bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]
+	      + bisect_stack[bisect_ptr - 24];
+	      else bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 
 	      25];
-	      bisectstack[bisectptr - 22] = bisectstack[bisectptr - 25]
-	      + bisectstack[bisectptr - 24]+ bisectstack[bisectptr - 23 
+	      bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25]
+	      + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23 
 	    ];
-	      if (bisectstack[bisectptr - 22] > 0) 
-	      bisectstack[bisectptr - 22] = 0;
+	      if (bisect_stack[bisect_ptr - 22] > 0) 
+	      bisect_stack[bisect_ptr - 22] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 21] = bisectstack[bisectptr - 25]
-	      + bisectstack[bisectptr - 24]+ bisectstack[bisectptr - 23 
+	      bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]
+	      + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23 
 	    ];
-	      if (bisectstack[bisectptr - 21]< bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 21]< bisect_stack[bisect_ptr - 
 	      25]) 
-	      bisectstack[bisectptr - 21] = bisectstack[bisectptr - 25]
-	  ;
-	      bisectstack[bisectptr - 22] = bisectstack[bisectptr - 25]
-	      + bisectstack[bisectptr - 24];
-	      if (bisectstack[bisectptr - 22] > 0) 
-	      bisectstack[bisectptr - 22] = 0;
+	      bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]
+	;
+	      bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25]
+	      + bisect_stack[bisect_ptr - 24];
+	      if (bisect_stack[bisect_ptr - 22] > 0) 
+	      bisect_stack[bisect_ptr - 22] = 0;
 	    } 
-	    if (bisectstack[bisectptr - 5]< 0) {
+	    if (bisect_stack[bisect_ptr - 5]< 0) {
 		
-	      if (bisectstack[bisectptr - 3] >= 0) 
+	      if (bisect_stack[bisect_ptr - 3] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 4]< 0) 
-		bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]
-		+ bisectstack[bisectptr - 4];
-		else bisectstack[bisectptr - 2] = bisectstack[bisectptr - 
+		if (bisect_stack[bisect_ptr - 4]< 0) 
+		bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]
+		+ bisect_stack[bisect_ptr - 4];
+		else bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 
 		5];
-		bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]
-		+ bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3 
+		bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]
+		+ bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3 
 		];
-		if (bisectstack[bisectptr - 1]< 0) 
-		bisectstack[bisectptr - 1] = 0;
+		if (bisect_stack[bisect_ptr - 1]< 0) 
+		bisect_stack[bisect_ptr - 1] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]
-		+ bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3 
+		bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]
+		+ bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3 
 		];
-		if (bisectstack[bisectptr - 2] > bisectstack[bisectptr - 
+		if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr - 
 		5]) 
-		bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]
+		bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]
 		;
-		bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]
-		+ bisectstack[bisectptr - 4];
-		if (bisectstack[bisectptr - 1]< 0) 
-		bisectstack[bisectptr - 1] = 0;
+		bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]
+		+ bisect_stack[bisect_ptr - 4];
+		if (bisect_stack[bisect_ptr - 1]< 0) 
+		bisect_stack[bisect_ptr - 1] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 3]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 3]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 4] > 0) 
-	      bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]+ 
-	      bisectstack[bisectptr - 4];
-	      else bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5 
+	      if (bisect_stack[bisect_ptr - 4] > 0) 
+	      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+ 
+	      bisect_stack[bisect_ptr - 4];
+	      else bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5 
 	    ];
-	      bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]+ 
-	      bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3];
-	      if (bisectstack[bisectptr - 2] > 0) 
-	      bisectstack[bisectptr - 2] = 0;
+	      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ 
+	      bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+	      if (bisect_stack[bisect_ptr - 2] > 0) 
+	      bisect_stack[bisect_ptr - 2] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5]+ 
-	      bisectstack[bisectptr - 4]+ bisectstack[bisectptr - 3];
-	      if (bisectstack[bisectptr - 1]< bisectstack[bisectptr - 5 
+	      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+ 
+	      bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+	      if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5 
 	    ]) 
-	      bisectstack[bisectptr - 1] = bisectstack[bisectptr - 5];
-	      bisectstack[bisectptr - 2] = bisectstack[bisectptr - 5]+ 
-	      bisectstack[bisectptr - 4];
-	      if (bisectstack[bisectptr - 2] > 0) 
-	      bisectstack[bisectptr - 2] = 0;
+	      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+	      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ 
+	      bisect_stack[bisect_ptr - 4];
+	      if (bisect_stack[bisect_ptr - 2] > 0) 
+	      bisect_stack[bisect_ptr - 2] = 0;
 	    } 
-	    bisectstack[bisectptr - 30] = bisectstack[uv - 10];
-	    bisectstack[bisectptr - 8] = bisectstack[uv - 8];
-	    bisectstack[bisectptr - 29] = half (bisectstack[bisectptr - 
-	    30]+ bisectstack[uv - 9]);
-	    bisectstack[bisectptr - 9] = half (bisectstack[bisectptr - 8 
-	  ]+ bisectstack[uv - 9]);
-	    bisectstack[bisectptr - 28] = half (bisectstack[bisectptr - 
-	    29]+ bisectstack[bisectptr - 9]);
-	    bisectstack[bisectptr - 10] = bisectstack[bisectptr - 28];
-	    if (bisectstack[bisectptr - 30]< 0) {
+	    bisect_stack[bisect_ptr - 30] = bisect_stack[uv - 10];
+	    bisect_stack[bisect_ptr - 8] = bisect_stack[uv - 8];
+	    bisect_stack[bisect_ptr - 29] = half (bisect_stack[bisect_ptr - 
+	    30]+ bisect_stack[uv - 9]);
+	    bisect_stack[bisect_ptr - 9] = half (bisect_stack[bisect_ptr - 8 
+	  ]+ bisect_stack[uv - 9]);
+	    bisect_stack[bisect_ptr - 28] = half (bisect_stack[bisect_ptr - 
+	    29]+ bisect_stack[bisect_ptr - 9]);
+	    bisect_stack[bisect_ptr - 10] = bisect_stack[bisect_ptr - 28];
+	    if (bisect_stack[bisect_ptr - 30]< 0) {
 		
-	      if (bisectstack[bisectptr - 28] >= 0) 
+	      if (bisect_stack[bisect_ptr - 28] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 29]< 0) 
-		bisectstack[bisectptr - 27] = bisectstack[bisectptr - 30 
-		]+ bisectstack[bisectptr - 29];
-		else bisectstack[bisectptr - 27] = bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 29]< 0) 
+		bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30 
+		]+ bisect_stack[bisect_ptr - 29];
+		else bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr 
 		- 30];
-		bisectstack[bisectptr - 26] = bisectstack[bisectptr - 30 
-		]+ bisectstack[bisectptr - 29]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30 
+		]+ bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 
 		28];
-		if (bisectstack[bisectptr - 26]< 0) 
-		bisectstack[bisectptr - 26] = 0;
+		if (bisect_stack[bisect_ptr - 26]< 0) 
+		bisect_stack[bisect_ptr - 26] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 27] = bisectstack[bisectptr - 30 
-		]+ bisectstack[bisectptr - 29]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30 
+		]+ bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 
 		28];
-		if (bisectstack[bisectptr - 27] > bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 27] > bisect_stack[bisect_ptr 
 		- 30]) 
-		bisectstack[bisectptr - 27] = bisectstack[bisectptr - 30 
+		bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30 
 		];
-		bisectstack[bisectptr - 26] = bisectstack[bisectptr - 30 
-		]+ bisectstack[bisectptr - 29];
-		if (bisectstack[bisectptr - 26]< 0) 
-		bisectstack[bisectptr - 26] = 0;
+		bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30 
+		]+ bisect_stack[bisect_ptr - 29];
+		if (bisect_stack[bisect_ptr - 26]< 0) 
+		bisect_stack[bisect_ptr - 26] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 28]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 28]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 29] > 0) 
-	      bisectstack[bisectptr - 26] = bisectstack[bisectptr - 30]
-	      + bisectstack[bisectptr - 29];
-	      else bisectstack[bisectptr - 26] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 29] > 0) 
+	      bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]
+	      + bisect_stack[bisect_ptr - 29];
+	      else bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 
 	      30];
-	      bisectstack[bisectptr - 27] = bisectstack[bisectptr - 30]
-	      + bisectstack[bisectptr - 29]+ bisectstack[bisectptr - 28 
+	      bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30]
+	      + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28 
 	    ];
-	      if (bisectstack[bisectptr - 27] > 0) 
-	      bisectstack[bisectptr - 27] = 0;
+	      if (bisect_stack[bisect_ptr - 27] > 0) 
+	      bisect_stack[bisect_ptr - 27] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 26] = bisectstack[bisectptr - 30]
-	      + bisectstack[bisectptr - 29]+ bisectstack[bisectptr - 28 
+	      bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]
+	      + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28 
 	    ];
-	      if (bisectstack[bisectptr - 26]< bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 26]< bisect_stack[bisect_ptr - 
 	      30]) 
-	      bisectstack[bisectptr - 26] = bisectstack[bisectptr - 30]
-	  ;
-	      bisectstack[bisectptr - 27] = bisectstack[bisectptr - 30]
-	      + bisectstack[bisectptr - 29];
-	      if (bisectstack[bisectptr - 27] > 0) 
-	      bisectstack[bisectptr - 27] = 0;
+	      bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]
+	;
+	      bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30]
+	      + bisect_stack[bisect_ptr - 29];
+	      if (bisect_stack[bisect_ptr - 27] > 0) 
+	      bisect_stack[bisect_ptr - 27] = 0;
 	    } 
-	    if (bisectstack[bisectptr - 10]< 0) {
+	    if (bisect_stack[bisect_ptr - 10]< 0) {
 		
-	      if (bisectstack[bisectptr - 8] >= 0) 
+	      if (bisect_stack[bisect_ptr - 8] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 9]< 0) 
-		bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]
-		+ bisectstack[bisectptr - 9];
-		else bisectstack[bisectptr - 7] = bisectstack[bisectptr - 
+		if (bisect_stack[bisect_ptr - 9]< 0) 
+		bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]
+		+ bisect_stack[bisect_ptr - 9];
+		else bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 
 		10];
-		bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]
-		+ bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8 
+		bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]
+		+ bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8 
 		];
-		if (bisectstack[bisectptr - 6]< 0) 
-		bisectstack[bisectptr - 6] = 0;
+		if (bisect_stack[bisect_ptr - 6]< 0) 
+		bisect_stack[bisect_ptr - 6] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]
-		+ bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8 
+		bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]
+		+ bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8 
 		];
-		if (bisectstack[bisectptr - 7] > bisectstack[bisectptr - 
+		if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr - 
 		10]) 
-		bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]
+		bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]
 		;
-		bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]
-		+ bisectstack[bisectptr - 9];
-		if (bisectstack[bisectptr - 6]< 0) 
-		bisectstack[bisectptr - 6] = 0;
+		bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]
+		+ bisect_stack[bisect_ptr - 9];
+		if (bisect_stack[bisect_ptr - 6]< 0) 
+		bisect_stack[bisect_ptr - 6] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 8]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 8]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 9] > 0) 
-	      bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]+ 
-	      bisectstack[bisectptr - 9];
-	      else bisectstack[bisectptr - 6] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 9] > 0) 
+	      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+ 
+	      bisect_stack[bisect_ptr - 9];
+	      else bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 
 	      10];
-	      bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]+ 
-	      bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8];
-	      if (bisectstack[bisectptr - 7] > 0) 
-	      bisectstack[bisectptr - 7] = 0;
+	      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+ 
+	      bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+	      if (bisect_stack[bisect_ptr - 7] > 0) 
+	      bisect_stack[bisect_ptr - 7] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10]+ 
-	      bisectstack[bisectptr - 9]+ bisectstack[bisectptr - 8];
-	      if (bisectstack[bisectptr - 6]< bisectstack[bisectptr - 
+	      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+ 
+	      bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+	      if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr - 
 	      10]) 
-	      bisectstack[bisectptr - 6] = bisectstack[bisectptr - 10];
-	      bisectstack[bisectptr - 7] = bisectstack[bisectptr - 10]+ 
-	      bisectstack[bisectptr - 9];
-	      if (bisectstack[bisectptr - 7] > 0) 
-	      bisectstack[bisectptr - 7] = 0;
+	      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+	      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+ 
+	      bisect_stack[bisect_ptr - 9];
+	      if (bisect_stack[bisect_ptr - 7] > 0) 
+	      bisect_stack[bisect_ptr - 7] = 0;
 	    } 
-	    bisectstack[bisectptr - 35] = bisectstack[xy - 15];
-	    bisectstack[bisectptr - 13] = bisectstack[xy - 13];
-	    bisectstack[bisectptr - 34] = half (bisectstack[bisectptr - 
-	    35]+ bisectstack[xy - 14]);
-	    bisectstack[bisectptr - 14] = half (bisectstack[bisectptr - 
-	    13]+ bisectstack[xy - 14]);
-	    bisectstack[bisectptr - 33] = half (bisectstack[bisectptr - 
-	    34]+ bisectstack[bisectptr - 14]);
-	    bisectstack[bisectptr - 15] = bisectstack[bisectptr - 33];
-	    if (bisectstack[bisectptr - 35]< 0) {
+	    bisect_stack[bisect_ptr - 35] = bisect_stack[xy - 15];
+	    bisect_stack[bisect_ptr - 13] = bisect_stack[xy - 13];
+	    bisect_stack[bisect_ptr - 34] = half (bisect_stack[bisect_ptr - 
+	    35]+ bisect_stack[xy - 14]);
+	    bisect_stack[bisect_ptr - 14] = half (bisect_stack[bisect_ptr - 
+	    13]+ bisect_stack[xy - 14]);
+	    bisect_stack[bisect_ptr - 33] = half (bisect_stack[bisect_ptr - 
+	    34]+ bisect_stack[bisect_ptr - 14]);
+	    bisect_stack[bisect_ptr - 15] = bisect_stack[bisect_ptr - 33];
+	    if (bisect_stack[bisect_ptr - 35]< 0) {
 		
-	      if (bisectstack[bisectptr - 33] >= 0) 
+	      if (bisect_stack[bisect_ptr - 33] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 34]< 0) 
-		bisectstack[bisectptr - 32] = bisectstack[bisectptr - 35 
-		]+ bisectstack[bisectptr - 34];
-		else bisectstack[bisectptr - 32] = bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 34]< 0) 
+		bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35 
+		]+ bisect_stack[bisect_ptr - 34];
+		else bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr 
 		- 35];
-		bisectstack[bisectptr - 31] = bisectstack[bisectptr - 35 
-		]+ bisectstack[bisectptr - 34]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35 
+		]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 
 		33];
-		if (bisectstack[bisectptr - 31]< 0) 
-		bisectstack[bisectptr - 31] = 0;
+		if (bisect_stack[bisect_ptr - 31]< 0) 
+		bisect_stack[bisect_ptr - 31] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 32] = bisectstack[bisectptr - 35 
-		]+ bisectstack[bisectptr - 34]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35 
+		]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 
 		33];
-		if (bisectstack[bisectptr - 32] > bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 32] > bisect_stack[bisect_ptr 
 		- 35]) 
-		bisectstack[bisectptr - 32] = bisectstack[bisectptr - 35 
+		bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35 
 		];
-		bisectstack[bisectptr - 31] = bisectstack[bisectptr - 35 
-		]+ bisectstack[bisectptr - 34];
-		if (bisectstack[bisectptr - 31]< 0) 
-		bisectstack[bisectptr - 31] = 0;
+		bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35 
+		]+ bisect_stack[bisect_ptr - 34];
+		if (bisect_stack[bisect_ptr - 31]< 0) 
+		bisect_stack[bisect_ptr - 31] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 33]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 33]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 34] > 0) 
-	      bisectstack[bisectptr - 31] = bisectstack[bisectptr - 35]
-	      + bisectstack[bisectptr - 34];
-	      else bisectstack[bisectptr - 31] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 34] > 0) 
+	      bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]
+	      + bisect_stack[bisect_ptr - 34];
+	      else bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 
 	      35];
-	      bisectstack[bisectptr - 32] = bisectstack[bisectptr - 35]
-	      + bisectstack[bisectptr - 34]+ bisectstack[bisectptr - 33 
+	      bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]
+	      + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33 
 	    ];
-	      if (bisectstack[bisectptr - 32] > 0) 
-	      bisectstack[bisectptr - 32] = 0;
+	      if (bisect_stack[bisect_ptr - 32] > 0) 
+	      bisect_stack[bisect_ptr - 32] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 31] = bisectstack[bisectptr - 35]
-	      + bisectstack[bisectptr - 34]+ bisectstack[bisectptr - 33 
+	      bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]
+	      + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33 
 	    ];
-	      if (bisectstack[bisectptr - 31]< bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 31]< bisect_stack[bisect_ptr - 
 	      35]) 
-	      bisectstack[bisectptr - 31] = bisectstack[bisectptr - 35]
-	  ;
-	      bisectstack[bisectptr - 32] = bisectstack[bisectptr - 35]
-	      + bisectstack[bisectptr - 34];
-	      if (bisectstack[bisectptr - 32] > 0) 
-	      bisectstack[bisectptr - 32] = 0;
+	      bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]
+	;
+	      bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]
+	      + bisect_stack[bisect_ptr - 34];
+	      if (bisect_stack[bisect_ptr - 32] > 0) 
+	      bisect_stack[bisect_ptr - 32] = 0;
 	    } 
-	    if (bisectstack[bisectptr - 15]< 0) {
+	    if (bisect_stack[bisect_ptr - 15]< 0) {
 		
-	      if (bisectstack[bisectptr - 13] >= 0) 
+	      if (bisect_stack[bisect_ptr - 13] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 14]< 0) 
-		bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15 
-		]+ bisectstack[bisectptr - 14];
-		else bisectstack[bisectptr - 12] = bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 14]< 0) 
+		bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15 
+		]+ bisect_stack[bisect_ptr - 14];
+		else bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr 
 		- 15];
-		bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15 
-		]+ bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15 
+		]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 
 		13];
-		if (bisectstack[bisectptr - 11]< 0) 
-		bisectstack[bisectptr - 11] = 0;
+		if (bisect_stack[bisect_ptr - 11]< 0) 
+		bisect_stack[bisect_ptr - 11] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15 
-		]+ bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15 
+		]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 
 		13];
-		if (bisectstack[bisectptr - 12] > bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr 
 		- 15]) 
-		bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15 
+		bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15 
 		];
-		bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15 
-		]+ bisectstack[bisectptr - 14];
-		if (bisectstack[bisectptr - 11]< 0) 
-		bisectstack[bisectptr - 11] = 0;
+		bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15 
+		]+ bisect_stack[bisect_ptr - 14];
+		if (bisect_stack[bisect_ptr - 11]< 0) 
+		bisect_stack[bisect_ptr - 11] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 13]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 13]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 14] > 0) 
-	      bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]
-	      + bisectstack[bisectptr - 14];
-	      else bisectstack[bisectptr - 11] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 14] > 0) 
+	      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]
+	      + bisect_stack[bisect_ptr - 14];
+	      else bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 
 	      15];
-	      bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15]
-	      + bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 13 
+	      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]
+	      + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13 
 	    ];
-	      if (bisectstack[bisectptr - 12] > 0) 
-	      bisectstack[bisectptr - 12] = 0;
+	      if (bisect_stack[bisect_ptr - 12] > 0) 
+	      bisect_stack[bisect_ptr - 12] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]
-	      + bisectstack[bisectptr - 14]+ bisectstack[bisectptr - 13 
+	      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]
+	      + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13 
 	    ];
-	      if (bisectstack[bisectptr - 11]< bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 11]< bisect_stack[bisect_ptr - 
 	      15]) 
-	      bisectstack[bisectptr - 11] = bisectstack[bisectptr - 15]
-	  ;
-	      bisectstack[bisectptr - 12] = bisectstack[bisectptr - 15]
-	      + bisectstack[bisectptr - 14];
-	      if (bisectstack[bisectptr - 12] > 0) 
-	      bisectstack[bisectptr - 12] = 0;
+	      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]
+	;
+	      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]
+	      + bisect_stack[bisect_ptr - 14];
+	      if (bisect_stack[bisect_ptr - 12] > 0) 
+	      bisect_stack[bisect_ptr - 12] = 0;
 	    } 
-	    bisectstack[bisectptr - 40] = bisectstack[xy - 20];
-	    bisectstack[bisectptr - 18] = bisectstack[xy - 18];
-	    bisectstack[bisectptr - 39] = half (bisectstack[bisectptr - 
-	    40]+ bisectstack[xy - 19]);
-	    bisectstack[bisectptr - 19] = half (bisectstack[bisectptr - 
-	    18]+ bisectstack[xy - 19]);
-	    bisectstack[bisectptr - 38] = half (bisectstack[bisectptr - 
-	    39]+ bisectstack[bisectptr - 19]);
-	    bisectstack[bisectptr - 20] = bisectstack[bisectptr - 38];
-	    if (bisectstack[bisectptr - 40]< 0) {
+	    bisect_stack[bisect_ptr - 40] = bisect_stack[xy - 20];
+	    bisect_stack[bisect_ptr - 18] = bisect_stack[xy - 18];
+	    bisect_stack[bisect_ptr - 39] = half (bisect_stack[bisect_ptr - 
+	    40]+ bisect_stack[xy - 19]);
+	    bisect_stack[bisect_ptr - 19] = half (bisect_stack[bisect_ptr - 
+	    18]+ bisect_stack[xy - 19]);
+	    bisect_stack[bisect_ptr - 38] = half (bisect_stack[bisect_ptr - 
+	    39]+ bisect_stack[bisect_ptr - 19]);
+	    bisect_stack[bisect_ptr - 20] = bisect_stack[bisect_ptr - 38];
+	    if (bisect_stack[bisect_ptr - 40]< 0) {
 		
-	      if (bisectstack[bisectptr - 38] >= 0) 
+	      if (bisect_stack[bisect_ptr - 38] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 39]< 0) 
-		bisectstack[bisectptr - 37] = bisectstack[bisectptr - 40 
-		]+ bisectstack[bisectptr - 39];
-		else bisectstack[bisectptr - 37] = bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 39]< 0) 
+		bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40 
+		]+ bisect_stack[bisect_ptr - 39];
+		else bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr 
 		- 40];
-		bisectstack[bisectptr - 36] = bisectstack[bisectptr - 40 
-		]+ bisectstack[bisectptr - 39]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40 
+		]+ bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 
 		38];
-		if (bisectstack[bisectptr - 36]< 0) 
-		bisectstack[bisectptr - 36] = 0;
+		if (bisect_stack[bisect_ptr - 36]< 0) 
+		bisect_stack[bisect_ptr - 36] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 37] = bisectstack[bisectptr - 40 
-		]+ bisectstack[bisectptr - 39]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40 
+		]+ bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 
 		38];
-		if (bisectstack[bisectptr - 37] > bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 37] > bisect_stack[bisect_ptr 
 		- 40]) 
-		bisectstack[bisectptr - 37] = bisectstack[bisectptr - 40 
+		bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40 
 		];
-		bisectstack[bisectptr - 36] = bisectstack[bisectptr - 40 
-		]+ bisectstack[bisectptr - 39];
-		if (bisectstack[bisectptr - 36]< 0) 
-		bisectstack[bisectptr - 36] = 0;
+		bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40 
+		]+ bisect_stack[bisect_ptr - 39];
+		if (bisect_stack[bisect_ptr - 36]< 0) 
+		bisect_stack[bisect_ptr - 36] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 38]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 38]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 39] > 0) 
-	      bisectstack[bisectptr - 36] = bisectstack[bisectptr - 40]
-	      + bisectstack[bisectptr - 39];
-	      else bisectstack[bisectptr - 36] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 39] > 0) 
+	      bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]
+	      + bisect_stack[bisect_ptr - 39];
+	      else bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 
 	      40];
-	      bisectstack[bisectptr - 37] = bisectstack[bisectptr - 40]
-	      + bisectstack[bisectptr - 39]+ bisectstack[bisectptr - 38 
+	      bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40]
+	      + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38 
 	    ];
-	      if (bisectstack[bisectptr - 37] > 0) 
-	      bisectstack[bisectptr - 37] = 0;
+	      if (bisect_stack[bisect_ptr - 37] > 0) 
+	      bisect_stack[bisect_ptr - 37] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 36] = bisectstack[bisectptr - 40]
-	      + bisectstack[bisectptr - 39]+ bisectstack[bisectptr - 38 
+	      bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]
+	      + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38 
 	    ];
-	      if (bisectstack[bisectptr - 36]< bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 36]< bisect_stack[bisect_ptr - 
 	      40]) 
-	      bisectstack[bisectptr - 36] = bisectstack[bisectptr - 40]
-	  ;
-	      bisectstack[bisectptr - 37] = bisectstack[bisectptr - 40]
-	      + bisectstack[bisectptr - 39];
-	      if (bisectstack[bisectptr - 37] > 0) 
-	      bisectstack[bisectptr - 37] = 0;
+	      bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]
+	;
+	      bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40]
+	      + bisect_stack[bisect_ptr - 39];
+	      if (bisect_stack[bisect_ptr - 37] > 0) 
+	      bisect_stack[bisect_ptr - 37] = 0;
 	    } 
-	    if (bisectstack[bisectptr - 20]< 0) {
+	    if (bisect_stack[bisect_ptr - 20]< 0) {
 		
-	      if (bisectstack[bisectptr - 18] >= 0) 
+	      if (bisect_stack[bisect_ptr - 18] >= 0) 
 	      {
-		if (bisectstack[bisectptr - 19]< 0) 
-		bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20 
-		]+ bisectstack[bisectptr - 19];
-		else bisectstack[bisectptr - 17] = bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 19]< 0) 
+		bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20 
+		]+ bisect_stack[bisect_ptr - 19];
+		else bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr 
 		- 20];
-		bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20 
-		]+ bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20 
+		]+ bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 
 		18];
-		if (bisectstack[bisectptr - 16]< 0) 
-		bisectstack[bisectptr - 16] = 0;
+		if (bisect_stack[bisect_ptr - 16]< 0) 
+		bisect_stack[bisect_ptr - 16] = 0;
 	      } 
 	      else {
 		  
-		bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20 
-		]+ bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 
+		bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20 
+		]+ bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 
 		18];
-		if (bisectstack[bisectptr - 17] > bisectstack[bisectptr 
+		if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr 
 		- 20]) 
-		bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20 
+		bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20 
 		];
-		bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20 
-		]+ bisectstack[bisectptr - 19];
-		if (bisectstack[bisectptr - 16]< 0) 
-		bisectstack[bisectptr - 16] = 0;
+		bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20 
+		]+ bisect_stack[bisect_ptr - 19];
+		if (bisect_stack[bisect_ptr - 16]< 0) 
+		bisect_stack[bisect_ptr - 16] = 0;
 	      } 
 	    } 
-	    else if (bisectstack[bisectptr - 18]<= 0) 
+	    else if (bisect_stack[bisect_ptr - 18]<= 0) 
 	    {
-	      if (bisectstack[bisectptr - 19] > 0) 
-	      bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]
-	      + bisectstack[bisectptr - 19];
-	      else bisectstack[bisectptr - 16] = bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 19] > 0) 
+	      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]
+	      + bisect_stack[bisect_ptr - 19];
+	      else bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 
 	      20];
-	      bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20]
-	      + bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 18 
+	      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]
+	      + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18 
 	    ];
-	      if (bisectstack[bisectptr - 17] > 0) 
-	      bisectstack[bisectptr - 17] = 0;
+	      if (bisect_stack[bisect_ptr - 17] > 0) 
+	      bisect_stack[bisect_ptr - 17] = 0;
 	    } 
 	    else {
 		
-	      bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]
-	      + bisectstack[bisectptr - 19]+ bisectstack[bisectptr - 18 
+	      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]
+	      + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18 
 	    ];
-	      if (bisectstack[bisectptr - 16]< bisectstack[bisectptr - 
+	      if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr - 
 	      20]) 
-	      bisectstack[bisectptr - 16] = bisectstack[bisectptr - 20]
-	  ;
-	      bisectstack[bisectptr - 17] = bisectstack[bisectptr - 20]
-	      + bisectstack[bisectptr - 19];
-	      if (bisectstack[bisectptr - 17] > 0) 
-	      bisectstack[bisectptr - 17] = 0;
+	      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]
+	;
+	      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]
+	      + bisect_stack[bisect_ptr - 19];
+	      if (bisect_stack[bisect_ptr - 17] > 0) 
+	      bisect_stack[bisect_ptr - 17] = 0;
 	    } 
-	    uv = bisectptr - 20;
-	    xy = bisectptr - 20;
+	    uv = bisect_ptr - 20;
+	    xy = bisect_ptr - 20;
 	    delx = delx + delx;
 	    dely = dely + dely;
-	    tol = tol - threel + tolstep;
+	    tol = tol - three_l + tol_step;
 	    tol = tol + tol;
-	    threel = threel + tolstep;
+	    three_l = three_l + tol_step;
 	    goto lab22;
 	  } 
 	} 
       } 
     } 
-    if (timetogo > 0) 
-    decr (timetogo);
+    if (time_to_go > 0) 
+    decr (time_to_go);
     else {
 	
-      while (apprt < 65536L) {
+      while (appr_t < 65536L) {
 	  
-	apprt = apprt + apprt;
-	apprtt = apprtt + apprtt;
+	appr_t = appr_t + appr_t;
+	appr_tt = appr_tt + appr_tt;
       } 
-      curt = apprt;
-      curtt = apprtt;
+      cur_t = appr_t;
+      cur_tt = appr_tt;
       goto lab10;
     } 
-    not_found: if (odd (curtt)) {
+    not_found: if (odd (cur_tt)) {
 	
-      if (odd (curt)) 
+      if (odd (cur_t)) 
       {
-	curt = halfp (curt);
-	curtt = halfp (curtt);
-	if (curt == 0) 
+	cur_t = halfp (cur_t);
+	cur_tt = halfp (cur_tt);
+	if (cur_t == 0) 
 	goto lab10;
-	bisectptr = bisectptr - 45;
-	threel = threel - tolstep;
-	delx = bisectstack[bisectptr];
-	dely = bisectstack[bisectptr + 1];
-	tol = bisectstack[bisectptr + 2];
-	uv = bisectstack[bisectptr + 3];
-	xy = bisectstack[bisectptr + 4];
+	bisect_ptr = bisect_ptr - 45;
+	three_l = three_l - tol_step;
+	delx = bisect_stack[bisect_ptr];
+	dely = bisect_stack[bisect_ptr + 1];
+	tol = bisect_stack[bisect_ptr + 2];
+	uv = bisect_stack[bisect_ptr + 3];
+	xy = bisect_stack[bisect_ptr + 4];
 	goto not_found;
       } 
       else {
 	  
-	incr (curt);
-	delx = delx + bisectstack[uv - 5]+ bisectstack[uv - 4]+ 
-	bisectstack[uv - 3];
-	dely = dely + bisectstack[uv - 10]+ bisectstack[uv - 9]+ 
-	bisectstack[uv - 8];
+	incr (cur_t);
+	delx = delx + bisect_stack[uv - 5]+ bisect_stack[uv - 4]+ 
+	bisect_stack[uv - 3];
+	dely = dely + bisect_stack[uv - 10]+ bisect_stack[uv - 9]+ 
+	bisect_stack[uv - 8];
 	uv = uv + 20;
-	decr (curtt);
+	decr (cur_tt);
 	xy = xy - 20;
-	delx = delx + bisectstack[xy - 15]+ bisectstack[xy - 14]+ 
-	bisectstack[xy - 13];
-	dely = dely + bisectstack[xy - 20]+ bisectstack[xy - 19]+ 
-	bisectstack[xy - 18];
+	delx = delx + bisect_stack[xy - 15]+ bisect_stack[xy - 14]+ 
+	bisect_stack[xy - 13];
+	dely = dely + bisect_stack[xy - 20]+ bisect_stack[xy - 19]+ 
+	bisect_stack[xy - 18];
       } 
     } 
     else {
 	
-      incr (curtt);
-      tol = tol + threel;
-      delx = delx - bisectstack[xy - 15] - bisectstack[xy - 14] - 
-      bisectstack[xy - 13];
-      dely = dely - bisectstack[xy - 20] - bisectstack[xy - 19] - 
-      bisectstack[xy - 18];
+      incr (cur_tt);
+      tol = tol + three_l;
+      delx = delx - bisect_stack[xy - 15] - bisect_stack[xy - 14] - 
+      bisect_stack[xy - 13];
+      dely = dely - bisect_stack[xy - 20] - bisect_stack[xy - 19] - 
+      bisect_stack[xy - 18];
       xy = xy + 20;
     } 
   } 
@@ -11572,7 +11572,7 @@ zpathintersection (halfword h , halfword hh)
     mem[hh + 4].cint = mem[hh + 2].cint;
     mem[hh].hhfield.b1 = 1;
   } 
-  tolstep = 0;
+  tol_step = 0;
   do {
       n = -65536L;
     p = h;
@@ -11585,10 +11585,10 @@ zpathintersection (halfword h , halfword hh)
 	    if (mem[pp].hhfield.b1 != 0) 
 	  {
 	    cubicintersection (p , pp);
-	    if (curt > 0) 
+	    if (cur_t > 0) 
 	    {
-	      curt = curt + n;
-	      curtt = curtt + nn;
+	      cur_t = cur_t + n;
+	      cur_tt = cur_tt + nn;
 	      goto lab10;
 	    } 
 	  } 
@@ -11599,14 +11599,14 @@ zpathintersection (halfword h , halfword hh)
       n = n + 65536L;
       p = mem[p].hhfield.v.RH;
     } while (!(p == h));
-    tolstep = tolstep + 3;
-  } while (!(tolstep > 3));
-  curt = -65536L;
-  curtt = -65536L;
+    tol_step = tol_step + 3;
+  } while (!(tol_step > 3));
+  cur_t = -65536L;
+  cur_tt = -65536L;
   lab10:;
 } 
 void 
-zopenawindow (windownumber k , scaled r0 , scaled c0 , scaled r1 , scaled c1 
+zopenawindow (window_number k , scaled r0 , scaled c0 , scaled r1 , scaled c1 
 , scaled x , scaled y) 
 {
   integer m, n;
@@ -11634,70 +11634,70 @@ zopenawindow (windownumber k , scaled r0 , scaled c0 , scaled r1 , scaled c1
     c0 = c1;
     else c1 = c0;
   } 
-  windowopen[k] = true;
-  incr (windowtime[k]);
-  leftcol[k] = c0;
-  rightcol[k] = c1;
-  toprow[k] = r0;
-  botrow[k] = r1;
+  window_open[k] = true;
+  incr (window_time[k]);
+  left_col[k] = c0;
+  right_col[k] = c1;
+  top_row[k] = r0;
+  bot_row[k] = r1;
   m = roundunscaled (x);
   n = roundunscaled (y) - 1;
-  mwindow[k] = c0 - m;
-  nwindow[k] = r0 + n;
+  m_window[k] = c0 - m;
+  n_window[k] = r0 + n;
   {
-    if (!screenstarted) 
+    if (!screen_started) 
     {
-      screenOK = initscreen ();
-      screenstarted = true;
+      screen_OK = initscreen ();
+      screen_started = true;
     } 
   } 
-  if (screenOK) 
+  if (screen_OK) 
   {
     blankrectangle (c0 , c1 , r0 , r1);
     updatescreen ();
   } 
 } 
 void 
-zdispedges (windownumber k) 
+zdispedges (window_number k) 
 {
   /* 30 40 */ halfword p, q;
   boolean alreadythere;
   integer r;
-  screencol n;
+  screen_col n;
   integer w, ww;
-  pixelcolor b;
+  pixel_color b;
   integer m, mm;
   integer d;
   integer madjustment;
   integer rightedge;
-  screencol mincol;
-  if (screenOK) {
+  screen_col mincol;
+  if (screen_OK) {
       
-    if (leftcol[k]< rightcol[k]) {
+    if (left_col[k]< right_col[k]) {
 	
-      if (toprow[k]< botrow[k]) 
+      if (top_row[k]< bot_row[k]) 
       {
 	alreadythere = false;
-	if (mem[curedges + 3].hhfield.v.RH == k) {
+	if (mem[cur_edges + 3].hhfield.v.RH == k) {
 	    
-	  if (mem[curedges + 4].cint == windowtime[k]) 
+	  if (mem[cur_edges + 4].cint == window_time[k]) 
 	  alreadythere = true;
 	} 
 	if (!alreadythere) 
-	blankrectangle (leftcol[k], rightcol[k], toprow[k], 
-	botrow[k]);
-	madjustment = mwindow[k] - mem[curedges + 3].hhfield.lhfield;
-	rightedge = 8 * (rightcol[k] - madjustment);
-	mincol = leftcol[k];
-	p = mem[curedges].hhfield.v.RH;
-	r = nwindow[k] - (mem[curedges + 1].hhfield.lhfield - 4096) 
+	blankrectangle (left_col[k], right_col[k], top_row[k], 
+	bot_row[k]);
+	madjustment = m_window[k] - mem[cur_edges + 3].hhfield.lhfield;
+	rightedge = 8 * (right_col[k] - madjustment);
+	mincol = left_col[k];
+	p = mem[cur_edges].hhfield.v.RH;
+	r = n_window[k] - (mem[cur_edges + 1].hhfield.lhfield - 4096) 
 	;
-	while ((p != curedges) && (r >= toprow[k])) {
+	while ((p != cur_edges) && (r >= top_row[k])) {
 	    
-	  if (r < botrow[k]) 
+	  if (r < bot_row[k]) 
 	  {
 	    if (mem[p + 1].hhfield.lhfield > 1) 
-	    sortedges (p);
+	    sort_edges (p);
 	    else if (mem[p + 1].hhfield.lhfield == 1) {
 		
 	      if (alreadythere) 
@@ -11709,7 +11709,7 @@ zdispedges (windownumber k)
 	    m = -1;
 	    w = 0;
 	    q = mem[p + 1].hhfield.v.RH;
-	    rowtransition[0] = mincol;
+	    row_transition[0] = mincol;
 	    while (true) {
 		
 	      if (q == memtop) 
@@ -11734,7 +11734,7 @@ zdispedges (windownumber k)
 			else b = 1;
 		      } 
 		      else incr (n);
-		      rowtransition[n] = m;
+		      row_transition[n] = m;
 		    } 
 		  } 
 		} 
@@ -11745,7 +11745,7 @@ zdispedges (windownumber k)
 		    if (n == 0) 
 		    b = 1;
 		    incr (n);
-		    rowtransition[n] = m;
+		    row_transition[n] = m;
 		  } 
 		} 
 		m = mm;
@@ -11765,26 +11765,26 @@ zdispedges (windownumber k)
 		else b = 0;
 	      } 
 	      incr (n);
-	      rowtransition[n] = rightcol[k];
+	      row_transition[n] = right_col[k];
 	    } 
 	    else if (n == 0) 
 	    goto done;
-	    paintrow (r , b , rowtransition , n);
+	    paintrow (r , b , row_transition , n);
 	    done:;
 	  } 
 	  p = mem[p].hhfield.v.RH;
 	  decr (r);
 	} 
 	updatescreen ();
-	incr (windowtime[k]);
-	mem[curedges + 3].hhfield.v.RH = k;
-	mem[curedges + 4].cint = windowtime[k];
+	incr (window_time[k]);
+	mem[cur_edges + 3].hhfield.v.RH = k;
+	mem[cur_edges + 4].cint = window_time[k];
       } 
     } 
   } 
 } 
 fraction 
-zmaxcoef (halfword p) 
+zmax_coef (halfword p) 
 {
   register fraction Result; fraction x;
   x = 0;
@@ -11827,10 +11827,10 @@ zpplusq (halfword p , halfword q , small_number t)
 	  
 	if (abs (v) >= 626349397L) {
 	    
-	  if (watchcoefs) 
+	  if (watch_coefs) 
 	  {
 	    mem[qq].hhfield.b0 = 0;
-	    fixneeded = true;
+	    fix_needed = true;
 	  } 
 	} 
 	mem[r].hhfield.v.RH = s;
@@ -11860,7 +11860,7 @@ zpplusq (halfword p , halfword q , small_number t)
   done: mem[p + 1].cint = slow_add (mem[p + 1].cint , mem[q + 1]
   .cint);
   mem[r].hhfield.v.RH = p;
-  depfinal = p;
+  dep_final = p;
   Result = mem[memtop - 1].hhfield.v.RH;
   return Result;
 } 
@@ -11894,7 +11894,7 @@ visscaled)
 	
       if (abs (w) >= 626349397L) 
       {
-	fixneeded = true;
+	fix_needed = true;
 	mem[mem[p].hhfield.lhfield].hhfield.b0 = 0;
       } 
       mem[r].hhfield.v.RH = p;
@@ -11943,17 +11943,17 @@ znewdep (halfword q , halfword p)
   mem[q + 1].hhfield.v.RH = p;
   mem[q + 1].hhfield.lhfield = 13;
   r = mem[13].hhfield.v.RH;
-  mem[depfinal].hhfield.v.RH = r;
-  mem[r + 1].hhfield.lhfield = depfinal;
+  mem[dep_final].hhfield.v.RH = r;
+  mem[r + 1].hhfield.lhfield = dep_final;
   mem[13].hhfield.v.RH = q;
 } 
 halfword 
 zconstdependency (scaled v) 
 {
-  register halfword Result; depfinal = get_node (2);
-  mem[depfinal + 1].cint = v;
-  mem[depfinal].hhfield.lhfield = 0;
-  Result = depfinal;
+  register halfword Result; dep_final = get_node (2);
+  mem[dep_final + 1].cint = v;
+  mem[dep_final].hhfield.lhfield = 0;
+  Result = dep_final;
   return Result;
 } 
 halfword 
@@ -11967,7 +11967,7 @@ zsingledependency (halfword p)
   else {
       
     q = get_node (2);
-    mem[q + 1].cint = twotothe[28 - m];
+    mem[q + 1].cint = two_to_the[28 - m];
     mem[q].hhfield.lhfield = p;
     mem[q].hhfield.v.RH = constdependency (0);
     Result = q;
@@ -11979,15 +11979,15 @@ zcopydeplist (halfword p)
 {
   /* 30 */ register halfword Result; halfword q;
   q = get_node (2);
-  depfinal = q;
+  dep_final = q;
   while (true) {
       
-    mem[depfinal].hhfield.lhfield = mem[p].hhfield.lhfield;
-    mem[depfinal + 1].cint = mem[p + 1].cint;
-    if (mem[depfinal].hhfield.lhfield == 0) 
+    mem[dep_final].hhfield.lhfield = mem[p].hhfield.lhfield;
+    mem[dep_final + 1].cint = mem[p + 1].cint;
+    if (mem[dep_final].hhfield.lhfield == 0) 
     goto done;
-    mem[depfinal].hhfield.v.RH = get_node (2);
-    depfinal = mem[depfinal].hhfield.v.RH;
+    mem[dep_final].hhfield.v.RH = get_node (2);
+    dep_final = mem[dep_final].hhfield.v.RH;
     p = mem[p].hhfield.v.RH;
   } 
   done: Result = q;
@@ -12092,7 +12092,7 @@ zlineareq (halfword p , small_number t)
     do {
 	if (n > 30) 
       w = 0;
-      else w = mem[r + 1].cint / twotothe[n];
+      else w = mem[r + 1].cint / two_to_the[n];
       if ((abs (w) <= 1342) && (mem[r].hhfield.lhfield != 0)) 
       {
 	mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
@@ -12127,7 +12127,7 @@ zlineareq (halfword p , small_number t)
   else {
       
     mem[x].hhfield.b0 = 17;
-    depfinal = finalnode;
+    dep_final = finalnode;
     newdep (x , p);
     if (cur_exp == x) {
 	
@@ -12135,7 +12135,7 @@ zlineareq (halfword p , small_number t)
       cur_type = 17;
     } 
   } 
-  if (fixneeded) 
+  if (fix_needed) 
   fix_dependencies ();
 } 
 halfword 
@@ -12173,8 +12173,8 @@ znonlineareq (integer v , halfword p , boolean flushp)
       {
 	mem[q + 1].cint = v;
 	{
-	  if (strref[v]< 127) 
-	  incr (strref[v]);
+	  if (str_ref[v]< 127) 
+	  incr (str_ref[v]);
 	} 
       } 
       break;
@@ -12188,7 +12188,7 @@ znonlineareq (integer v , halfword p , boolean flushp)
       mem[q + 1].cint = copypath (v);
       break;
     case 11 : 
-      mem[q + 1].cint = copyedges (v);
+      mem[q + 1].cint = copy_edges (v);
       break;
     } 
     q = r;
@@ -12207,10 +12207,10 @@ zringmerge (halfword p , halfword q)
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -12239,7 +12239,7 @@ zringmerge (halfword p , halfword q)
   lab10:;
 } 
 void 
-zshowcmdmod (integer c , integer m) 
+zshow_cmd_mod (integer c , integer m) 
 {
   begin_diagnostic ();
   print_nl (123);
@@ -12250,32 +12250,32 @@ zshowcmdmod (integer c , integer m)
 void 
 showcontext (void) 
 {
-  /* 30 */ unsigned char oldsetting;
+  /* 30 */ unsigned char old_setting;
   integer i;
   integer l;
   integer m;
   integer n;
   integer p;
   integer q;
-  fileptr = inputptr;
-  inputstack[fileptr] = curinput;
+  file_ptr = input_ptr;
+  input_stack[file_ptr] = cur_input;
   while (true) {
       
-    curinput = inputstack[fileptr];
-    if ((fileptr == inputptr) || (curinput.indexfield <= 15) || (
-    curinput.indexfield != 19) || (curinput.locfield != 0)) 
+    cur_input = input_stack[file_ptr];
+    if ((file_ptr == input_ptr) || (cur_input.index_field <= 15) || (
+    cur_input.index_field != 19) || (cur_input.loc_field != 0)) 
     {
       tally = 0;
-      oldsetting = selector;
-      if ((curinput.indexfield <= 15)) 
+      old_setting = selector;
+      if ((cur_input.index_field <= 15)) 
       {
-	if (curinput .namefield <= 1) {
+	if (cur_input .name_field <= 1) {
 	    
-	  if ((curinput .namefield == 0) && (fileptr == 0)) 
+	  if ((cur_input .name_field == 0) && (file_ptr == 0)) 
 	  print_nl (604);
 	  else print_nl (605);
 	} 
-	else if (curinput .namefield == 2) 
+	else if (cur_input .name_field == 2) 
 	print_nl (606);
 	else {
 	    
@@ -12287,18 +12287,18 @@ showcontext (void)
 	  l = tally;
 	  tally = 0;
 	  selector = 4;
-	  trickcount = 1000000L;
+	  trick_count = 1000000L;
 	} 
-	if (curinput .limitfield > 0) 
-	{register integer for_end; i = curinput .startfield;for_end = 
-	curinput .limitfield - 1; if (i <= for_end) do 
+	if (cur_input .limit_field > 0) 
+	{register integer for_end; i = cur_input .start_field;for_end = 
+	cur_input .limit_field - 1; if (i <= for_end) do 
 	  {
-	    if (i == curinput.locfield) 
+	    if (i == cur_input.loc_field) 
 	    {
-	      firstcount = tally;
-	      trickcount = tally + 1 + errorline - halferrorline;
-	      if (trickcount < errorline) 
-	      trickcount = errorline;
+	      first_count = tally;
+	      trick_count = tally + 1 + errorline - halferrorline;
+	      if (trick_count < errorline) 
+	      trick_count = errorline;
 	    } 
 	    print (buffer[i]);
 	  } 
@@ -12306,14 +12306,14 @@ showcontext (void)
       } 
       else {
 	  
-	switch (curinput.indexfield) 
+	switch (cur_input.index_field) 
 	{case 16 : 
 	  print_nl (608);
 	  break;
 	case 17 : 
 	  {
 	    print_nl (613);
-	    p = paramstack[curinput .limitfield];
+	    p = param_stack[cur_input .limit_field];
 	    if (p != 0) {
 		
 	      if (mem[p].hhfield.v.RH == 1) 
@@ -12327,7 +12327,7 @@ showcontext (void)
 	  print_nl (609);
 	  break;
 	case 19 : 
-	  if (curinput.locfield == 0) 
+	  if (cur_input.loc_field == 0) 
 	  print_nl (610);
 	  else print_nl (611);
 	  break;
@@ -12337,20 +12337,20 @@ showcontext (void)
 	case 21 : 
 	  {
 	    print_ln ();
-	    if (curinput .namefield != 0) 
-	    slow_print (hash[curinput .namefield].v.RH);
+	    if (cur_input .name_field != 0) 
+	    slow_print (hash[cur_input .name_field].v.RH);
 	    else {
 		
-	      p = paramstack[curinput .limitfield];
+	      p = param_stack[cur_input .limit_field];
 	      if (p == 0) 
-	      show_token_list (paramstack[curinput .limitfield + 1], 0 , 20 
+	      show_token_list (param_stack[cur_input .limit_field + 1], 0 , 20 
 	      , tally);
 	      else {
 		  
 		q = p;
 		while (mem[q].hhfield.v.RH != 0) q = mem[q].hhfield 
 		.v.RH;
-		mem[q].hhfield.v.RH = paramstack[curinput .limitfield + 
+		mem[q].hhfield.v.RH = param_stack[cur_input .limit_field + 
 		1];
 		show_token_list (p , 0 , 20 , tally);
 		mem[q].hhfield.v.RH = 0;
@@ -12367,98 +12367,98 @@ showcontext (void)
 	  l = tally;
 	  tally = 0;
 	  selector = 4;
-	  trickcount = 1000000L;
+	  trick_count = 1000000L;
 	} 
-	if (curinput.indexfield != 21) 
-	show_token_list (curinput .startfield , curinput.locfield , 100000L , 
+	if (cur_input.index_field != 21) 
+	show_token_list (cur_input .start_field , cur_input.loc_field , 100000L , 
 	0);
-	else show_macro (curinput .startfield , curinput.locfield , 100000L) 
+	else show_macro (cur_input .start_field , cur_input.loc_field , 100000L) 
 	;
       } 
-      selector = oldsetting;
-      if (trickcount == 1000000L) 
+      selector = old_setting;
+      if (trick_count == 1000000L) 
       {
-	firstcount = tally;
-	trickcount = tally + 1 + errorline - halferrorline;
-	if (trickcount < errorline) 
-	trickcount = errorline;
+	first_count = tally;
+	trick_count = tally + 1 + errorline - halferrorline;
+	if (trick_count < errorline) 
+	trick_count = errorline;
       } 
-      if (tally < trickcount) 
-      m = tally - firstcount;
-      else m = trickcount - firstcount;
-      if (l + firstcount <= halferrorline) 
+      if (tally < trick_count) 
+      m = tally - first_count;
+      else m = trick_count - first_count;
+      if (l + first_count <= halferrorline) 
       {
 	p = 0;
-	n = l + firstcount;
+	n = l + first_count;
       } 
       else {
 	  
 	print (276);
-	p = l + firstcount - halferrorline + 3;
+	p = l + first_count - halferrorline + 3;
 	n = halferrorline;
       } 
-      {register integer for_end; q = p;for_end = firstcount - 1; if (q <= 
+      {register integer for_end; q = p;for_end = first_count - 1; if (q <= 
       for_end) do 
-	print_char (trickbuf[q % errorline]);
+	print_char (trick_buf[q % errorline]);
       while (q++ < for_end);} 
       print_ln ();
       {register integer for_end; q = 1;for_end = n; if (q <= for_end) do 
 	print_char (32);
       while (q++ < for_end);} 
       if (m + n <= errorline) 
-      p = firstcount + m;
-      else p = firstcount + (errorline - n - 3);
-      {register integer for_end; q = firstcount;for_end = p - 1; if (q <= 
+      p = first_count + m;
+      else p = first_count + (errorline - n - 3);
+      {register integer for_end; q = first_count;for_end = p - 1; if (q <= 
       for_end) do 
-	print_char (trickbuf[q % errorline]);
+	print_char (trick_buf[q % errorline]);
       while (q++ < for_end);} 
       if (m + n > errorline) 
       print (276);
     } 
-    if ((curinput.indexfield <= 15)) {
+    if ((cur_input.index_field <= 15)) {
 	
-      if ((curinput .namefield > 2) || (fileptr == 0)) 
+      if ((cur_input .name_field > 2) || (file_ptr == 0)) 
       goto done;
     } 
-    decr (fileptr);
+    decr (file_ptr);
   } 
-  done: curinput = inputstack[inputptr];
+  done: cur_input = input_stack[input_ptr];
 } 
 void 
 zbegintokenlist (halfword p , quarterword t) 
 {
   {
-    if (inputptr > maxinstack) 
+    if (input_ptr > max_in_stack) 
     {
-      maxinstack = inputptr;
-      if (inputptr == stacksize) 
-      overflow (615 , stacksize);
+      max_in_stack = input_ptr;
+      if (input_ptr == stack_size) 
+      overflow (615 , stack_size);
     } 
-    inputstack[inputptr] = curinput;
-    incr (inputptr);
+    input_stack[input_ptr] = cur_input;
+    incr (input_ptr);
   } 
-  curinput .startfield = p;
-  curinput.indexfield = t;
-  curinput .limitfield = paramptr;
-  curinput.locfield = p;
+  cur_input .start_field = p;
+  cur_input.index_field = t;
+  cur_input .limit_field = param_ptr;
+  cur_input.loc_field = p;
 } 
 void 
 endtokenlist (void) 
 {
   /* 30 */ halfword p;
-  if (curinput.indexfield >= 19) {
+  if (cur_input.index_field >= 19) {
       
-    if (curinput.indexfield <= 20) 
+    if (cur_input.index_field <= 20) 
     {
-      flush_token_list (curinput .startfield);
+      flush_token_list (cur_input .start_field);
       goto done;
     } 
-    else delete_mac_ref (curinput .startfield);
+    else delete_mac_ref (cur_input .start_field);
   } 
-  while (paramptr > curinput .limitfield) {
+  while (param_ptr > cur_input .limit_field) {
       
-    decr (paramptr);
-    p = paramstack[paramptr];
+    decr (param_ptr);
+    p = param_stack[param_ptr];
     if (p != 0) {
 	
       if (mem[p].hhfield.v.RH == 1) 
@@ -12471,8 +12471,8 @@ endtokenlist (void)
   } 
   done: {
       
-    decr (inputptr);
-    curinput = inputstack[inputptr];
+    decr (input_ptr);
+    cur_input = input_stack[input_ptr];
   } 
   {
     if (interrupt != 0) 
@@ -12499,7 +12499,7 @@ zinstall (halfword r , halfword q)
   else if (mem[q].hhfield.b0 == 19) 
   {
     p = singledependency (q);
-    if (p == depfinal) 
+    if (p == dep_final) 
     {
       mem[r].hhfield.b0 = 16;
       mem[r + 1].cint = 0;
@@ -12539,8 +12539,8 @@ zmakeexpcopy (halfword p)
     {
       cur_exp = mem[p + 1].cint;
       {
-	if (strref[cur_exp]< 127) 
-	incr (strref[cur_exp]);
+	if (str_ref[cur_exp]< 127) 
+	incr (str_ref[cur_exp]);
       } 
     } 
     break;
@@ -12551,7 +12551,7 @@ zmakeexpcopy (halfword p)
     } 
     break;
   case 11 : 
-    cur_exp = copyedges (mem[p + 1].cint);
+    cur_exp = copy_edges (mem[p + 1].cint);
     break;
   case 9 : 
   case 8 : 
@@ -12566,8 +12566,8 @@ zmakeexpcopy (halfword p)
       mem[t].hhfield.b1 = 11;
       mem[t].hhfield.b0 = cur_type;
       init_big_node (t);
-      q = mem[p + 1].cint + bignodesize[cur_type];
-      r = mem[t + 1].cint + bignodesize[cur_type];
+      q = mem[p + 1].cint + big_node_size[cur_type];
+      r = mem[t + 1].cint + big_node_size[cur_type];
       do {
 	  q = q - 2;
 	r = r - 2;
@@ -12583,11 +12583,11 @@ zmakeexpcopy (halfword p)
   case 15 : 
     {
       {
-	if (serialno > 2147483583L) 
-	overflow (588 , serialno / 64);
+	if (serial_no > 2147483583L) 
+	overflow (588 , serial_no / 64);
 	mem[p].hhfield.b0 = 19;
-	serialno = serialno + 64;
-	mem[p + 1].cint = serialno;
+	serial_no = serial_no + 64;
+	mem[p + 1].cint = serial_no;
       } 
       goto lab20;
     } 
@@ -12595,7 +12595,7 @@ zmakeexpcopy (halfword p)
   case 19 : 
     {
       q = singledependency (p);
-      if (q == depfinal) 
+      if (q == dep_final) 
       {
 	cur_type = 16;
 	cur_exp = 0;
@@ -12614,18 +12614,18 @@ zmakeexpcopy (halfword p)
   } 
 } 
 halfword 
-curtok (void) 
+cur_tok (void) 
 {
   register halfword Result; halfword p;
   small_number savetype;
   integer saveexp;
-  if (cursym == 0) {
+  if (cur_sym == 0) {
       
-    if (curcmd == 38) 
+    if (cur_cmd == 38) 
     {
       savetype = cur_type;
       saveexp = cur_exp;
-      makeexpcopy (curmod);
+      makeexpcopy (cur_mod);
       p = stash_cur_exp ();
       mem[p].hhfield.v.RH = 0;
       cur_type = savetype;
@@ -12634,9 +12634,9 @@ curtok (void)
     else {
 	
       p = get_node (2);
-      mem[p + 1].cint = curmod;
+      mem[p + 1].cint = cur_mod;
       mem[p].hhfield.b1 = 12;
-      if (curcmd == 42) 
+      if (cur_cmd == 42) 
       mem[p].hhfield.b0 = 16;
       else mem[p].hhfield.b0 = 4;
     } 
@@ -12653,11 +12653,11 @@ curtok (void)
 	mem[p].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-	incr (dynused);
+	incr (dyn_used);
 #endif /* STAT */
       } 
     } 
-    mem[p].hhfield.lhfield = cursym;
+    mem[p].hhfield.lhfield = cur_sym;
   } 
   Result = p;
   return Result;
@@ -12666,71 +12666,71 @@ void
 backinput (void) 
 {
   halfword p;
-  p = curtok ();
-  while ((curinput.indexfield > 15) && (curinput.locfield == 0)) 
+  p = cur_tok ();
+  while ((cur_input.index_field > 15) && (cur_input.loc_field == 0)) 
   endtokenlist ();
   begintokenlist (p , 19);
 } 
 void 
 backerror (void) 
 {
-  OKtointerrupt = false;
+  OK_to_interrupt = false;
   backinput ();
-  OKtointerrupt = true;
+  OK_to_interrupt = true;
   error ();
 } 
 void 
 inserror (void) 
 {
-  OKtointerrupt = false;
+  OK_to_interrupt = false;
   backinput ();
-  curinput.indexfield = 20;
-  OKtointerrupt = true;
+  cur_input.index_field = 20;
+  OK_to_interrupt = true;
   error ();
 } 
 void 
 beginfilereading (void) 
 {
-  if (inopen == 15) 
+  if (in_open == 15) 
   overflow (616 , 15);
   if (first == bufsize) 
   overflow (256 , bufsize);
-  incr (inopen);
+  incr (in_open);
   {
-    if (inputptr > maxinstack) 
+    if (input_ptr > max_in_stack) 
     {
-      maxinstack = inputptr;
-      if (inputptr == stacksize) 
-      overflow (615 , stacksize);
+      max_in_stack = input_ptr;
+      if (input_ptr == stack_size) 
+      overflow (615 , stack_size);
     } 
-    inputstack[inputptr] = curinput;
-    incr (inputptr);
+    input_stack[input_ptr] = cur_input;
+    incr (input_ptr);
   } 
-  curinput.indexfield = inopen;
-  linestack[curinput.indexfield] = line;
-  curinput .startfield = first;
-  curinput .namefield = 0;
+  cur_input.index_field = in_open;
+  line_stack[cur_input.index_field] = line;
+  cur_input .start_field = first;
+  cur_input .name_field = 0;
 } 
 void 
 endfilereading (void) 
 {
-  first = curinput .startfield;
-  line = linestack[curinput.indexfield];
-  if (curinput.indexfield != inopen) 
+  first = cur_input .start_field;
+  line = line_stack[cur_input.index_field];
+  if (cur_input.index_field != in_open) 
   confusion (617);
-  if (curinput .namefield > 2) 
-  aclose (inputfile[curinput.indexfield]);
+  if (cur_input .name_field > 2) 
+  aclose (input_file[cur_input.index_field]);
   {
-    decr (inputptr);
-    curinput = inputstack[inputptr];
+    decr (input_ptr);
+    cur_input = input_stack[input_ptr];
   } 
-  decr (inopen);
+  decr (in_open);
 } 
 void 
 clearforerrorprompt (void) 
 {
-  while ((curinput.indexfield <= 15) && (curinput .namefield == 0) && 
-  (inputptr > 0) && (curinput.locfield == curinput .limitfield)) 
+  while ((cur_input.index_field <= 15) && (cur_input .name_field == 0) && 
+  (input_ptr > 0) && (cur_input.loc_field == cur_input .limit_field)) 
   endfilereading ();
   print_ln ();
 } 
@@ -12738,28 +12738,28 @@ boolean
 checkoutervalidity (void) 
 {
   register boolean Result; halfword p;
-  if (scannerstatus == 0) 
+  if (scanner_status == 0) 
   Result = true;
   else {
       
-    deletionsallowed = false;
-    if (cursym != 0) 
+    deletions_allowed = false;
+    if (cur_sym != 0) 
     {
       p = get_avail ();
-      mem[p].hhfield.lhfield = cursym;
+      mem[p].hhfield.lhfield = cur_sym;
       begintokenlist (p , 19);
     } 
-    if (scannerstatus > 1) 
+    if (scanner_status > 1) 
     {
       runaway ();
-      if (cursym == 0) 
+      if (cur_sym == 0) 
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -12776,10 +12776,10 @@ checkoutervalidity (void)
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -12800,24 +12800,24 @@ checkoutervalidity (void)
 	help_line[1] = 628;
 	help_line[0] = 629;
       } 
-      switch (scannerstatus) 
+      switch (scanner_status) 
       {case 2 : 
 	{
 	  print (630);
 	  help_line[3] = 631;
-	  cursym = 9763;
+	  cur_sym = 9763;
 	} 
 	break;
       case 3 : 
 	{
 	  print (632);
 	  help_line[3] = 633;
-	  if (warninginfo == 0) 
-	  cursym = 9767;
+	  if (warning_info == 0) 
+	  cur_sym = 9767;
 	  else {
 	      
-	    cursym = 9759;
-	    eqtb[9759].v.RH = warninginfo;
+	    cur_sym = 9759;
+	    eqtb[9759].v.RH = warning_info;
 	  } 
 	} 
 	break;
@@ -12825,19 +12825,19 @@ checkoutervalidity (void)
       case 5 : 
 	{
 	  print (634);
-	  if (scannerstatus == 5) 
-	  slow_print (hash[warninginfo].v.RH);
-	  else print_variable_name (warninginfo);
-	  cursym = 9765;
+	  if (scanner_status == 5) 
+	  slow_print (hash[warning_info].v.RH);
+	  else print_variable_name (warning_info);
+	  cur_sym = 9765;
 	} 
 	break;
       case 6 : 
 	{
 	  print (635);
-	  slow_print (hash[warninginfo].v.RH);
+	  slow_print (hash[warning_info].v.RH);
 	  print (636);
 	  help_line[3] = 637;
-	  cursym = 9764;
+	  cur_sym = 9764;
 	} 
 	break;
       } 
@@ -12848,10 +12848,10 @@ checkoutervalidity (void)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -12863,19 +12863,19 @@ checkoutervalidity (void)
 	  print (618);
 	} 
       } 
-      print_int (warninginfo);
+      print_int (warning_info);
       {
 	help_ptr = 3;
 	help_line[2] = 619;
 	help_line[1] = 620;
 	help_line[0] = 621;
       } 
-      if (cursym == 0) 
+      if (cur_sym == 0) 
       help_line[2] = 622;
-      cursym = 9766;
+      cur_sym = 9766;
       inserror ();
     } 
-    deletionsallowed = true;
+    deletions_allowed = true;
     Result = false;
   } 
   return Result;
@@ -12887,11 +12887,11 @@ getnext (void)
   ASCII_code c;
   ASCII_code cclass;
   integer n, f;
-  lab20: cursym = 0;
-  if ((curinput.indexfield <= 15)) 
+  lab20: cur_sym = 0;
+  if ((cur_input.index_field <= 15)) 
   {
-    lab25: c = buffer[curinput.locfield];
-    incr (curinput.locfield);
+    lab25: c = buffer[cur_input.loc_field];
+    incr (cur_input.loc_field);
     cclass = char_class[c];
     switch (cclass) 
     {case 0 : 
@@ -12899,7 +12899,7 @@ getnext (void)
       break;
     case 1 : 
       {
-	cclass = char_class[buffer[curinput.locfield]];
+	cclass = char_class[buffer[cur_input.loc_field]];
 	if (cclass > 1) 
 	goto lab25;
 	else if (cclass < 1) 
@@ -12914,34 +12914,34 @@ getnext (void)
       break;
     case 3 : 
       {
-	if (curinput .namefield > 2) 
+	if (cur_input .name_field > 2) 
 	{
 	  incr (line);
-	  first = curinput .startfield;
-	  if (!forceeof) 
+	  first = cur_input .start_field;
+	  if (!force_eof) 
 	  {
-	    if (inputln (inputfile[curinput.indexfield], true)) 
+	    if (inputln (input_file[cur_input.index_field], true)) 
 	    firmuptheline ();
-	    else forceeof = true;
+	    else force_eof = true;
 	  } 
-	  if (forceeof) 
+	  if (force_eof) 
 	  {
 	    print_char (41);
-	    decr (openparens);
+	    decr (open_parens);
 	    fflush (stdout);
-	    forceeof = false;
+	    force_eof = false;
 	    endfilereading ();
 	    if (checkoutervalidity ()) 
 	    goto lab20;
 	    else goto lab20;
 	  } 
-	  buffer[curinput .limitfield] = 37;
-	  first = curinput .limitfield + 1;
-	  curinput.locfield = curinput .startfield;
+	  buffer[cur_input .limit_field] = 37;
+	  first = cur_input .limit_field + 1;
+	  cur_input.loc_field = cur_input .start_field;
 	} 
 	else {
 	    
-	  if (inputptr > 0) 
+	  if (input_ptr > 0) 
 	  {
 	    endfilereading ();
 	    goto lab20;
@@ -12950,19 +12950,19 @@ getnext (void)
 	  open_log_file ();
 	  if (interaction > 1) 
 	  {
-	    if (curinput .limitfield == curinput .startfield) 
+	    if (cur_input .limit_field == cur_input .start_field) 
 	    print_nl (652);
 	    print_ln ();
-	    first = curinput .startfield;
+	    first = cur_input .start_field;
 	    {
-	  ;
+	;
 	      print (42);
 	      term_input ();
 	    } 
-	    curinput .limitfield = last;
-	    buffer[curinput .limitfield] = 37;
-	    first = curinput .limitfield + 1;
-	    curinput.locfield = curinput .startfield;
+	    cur_input .limit_field = last;
+	    buffer[cur_input .limit_field] = 37;
+	    first = cur_input .limit_field + 1;
+	    cur_input.loc_field = cur_input .start_field;
 	  } 
 	  else fatal_error (653);
 	} 
@@ -12975,25 +12975,25 @@ getnext (void)
       break;
     case 4 : 
       {
-	if (buffer[curinput.locfield] == 34) 
-	curmod = 261;
+	if (buffer[cur_input.loc_field] == 34) 
+	cur_mod = 261;
 	else {
 	    
-	  k = curinput.locfield;
-	  buffer[curinput .limitfield + 1] = 34;
+	  k = cur_input.loc_field;
+	  buffer[cur_input .limit_field + 1] = 34;
 	  do {
-	      incr (curinput.locfield);
-	  } while (!(buffer[curinput.locfield] == 34));
-	  if (curinput.locfield > curinput .limitfield) 
+	      incr (cur_input.loc_field);
+	  } while (!(buffer[cur_input.loc_field] == 34));
+	  if (cur_input.loc_field > cur_input .limit_field) 
 	  {
-	    curinput.locfield = curinput .limitfield;
+	    cur_input.loc_field = cur_input .limit_field;
 	    {
 	      if (interaction == 3) 
-	  ;
-	      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	;
+	      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	      {
 		print_nl (261);
-		print (fullsourcefilenamestack[inopen]);
+		print (fullsourcefilenamestack[in_open]);
 		print (58);
 		print_int (line);
 		print (262);
@@ -13011,22 +13011,22 @@ getnext (void)
 	      help_line[1] = 647;
 	      help_line[0] = 648;
 	    } 
-	    deletionsallowed = false;
+	    deletions_allowed = false;
 	    error ();
-	    deletionsallowed = true;
+	    deletions_allowed = true;
 	    goto lab20;
 	  } 
-	  if ((curinput.locfield == k + 1) && ((str_start[buffer[k]
+	  if ((cur_input.loc_field == k + 1) && ((str_start[buffer[k]
 	  + 1] - str_start[buffer[k]]) == 1)) 
-	  curmod = buffer[k];
+	  cur_mod = buffer[k];
 	  else {
 	      
 	    {
-	      if (pool_ptr + curinput.locfield - k > max_pool_ptr) 
+	      if (pool_ptr + cur_input.loc_field - k > max_pool_ptr) 
 	      {
-		if (pool_ptr + curinput.locfield - k > pool_size) 
+		if (pool_ptr + cur_input.loc_field - k > pool_size) 
 		overflow (257 , pool_size - init_pool_ptr);
-		max_pool_ptr = pool_ptr + curinput.locfield - k;
+		max_pool_ptr = pool_ptr + cur_input.loc_field - k;
 	      } 
 	    } 
 	    do {
@@ -13035,12 +13035,12 @@ getnext (void)
 		incr (pool_ptr);
 	      } 
 	      incr (k);
-	    } while (!(k == curinput.locfield));
-	    curmod = make_string ();
+	    } while (!(k == cur_input.loc_field));
+	    cur_mod = make_string ();
 	  } 
 	} 
-	incr (curinput.locfield);
-	curcmd = 39;
+	incr (cur_input.loc_field);
+	cur_cmd = 39;
 	goto lab10;
       } 
       break;
@@ -13049,7 +13049,7 @@ getnext (void)
     case 7 : 
     case 8 : 
       {
-	k = curinput.locfield - 1;
+	k = cur_input.loc_field - 1;
 	goto found;
       } 
       break;
@@ -13058,10 +13058,10 @@ getnext (void)
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -13078,44 +13078,44 @@ getnext (void)
 	  help_line[1] = 643;
 	  help_line[0] = 644;
 	} 
-	deletionsallowed = false;
+	deletions_allowed = false;
 	error ();
-	deletionsallowed = true;
+	deletions_allowed = true;
 	goto lab20;
       } 
       break;
       default: 
-  ;
+;
       break;
     } 
-    k = curinput.locfield - 1;
-    while (char_class[buffer[curinput.locfield]] == cclass) incr (
-    curinput.locfield);
+    k = cur_input.loc_field - 1;
+    while (char_class[buffer[cur_input.loc_field]] == cclass) incr (
+    cur_input.loc_field);
     goto found;
     lab85: n = c - 48;
-    while (char_class[buffer[curinput.locfield]] == 0) {
+    while (char_class[buffer[cur_input.loc_field]] == 0) {
 	
       if (n < 4096) 
-      n = 10 * n + buffer[curinput.locfield] - 48;
-      incr (curinput.locfield);
+      n = 10 * n + buffer[cur_input.loc_field] - 48;
+      incr (cur_input.loc_field);
     } 
-    if (buffer[curinput.locfield] == 46) {
+    if (buffer[cur_input.loc_field] == 46) {
 	
-      if (char_class[buffer[curinput.locfield + 1]] == 0) 
+      if (char_class[buffer[cur_input.loc_field + 1]] == 0) 
       goto done;
     } 
     f = 0;
     goto lab87;
-    done: incr (curinput.locfield);
+    done: incr (cur_input.loc_field);
     lab86: k = 0;
     do {
 	if (k < 17) 
       {
-	dig[k] = buffer[curinput.locfield] - 48;
+	dig[k] = buffer[cur_input.loc_field] - 48;
 	incr (k);
       } 
-      incr (curinput.locfield);
-    } while (!(char_class[buffer[curinput.locfield]]!= 0));
+      incr (cur_input.loc_field);
+    } while (!(char_class[buffer[cur_input.loc_field]]!= 0));
     f = round_decimals (k);
     if (f == 65536L) 
     {
@@ -13123,16 +13123,16 @@ getnext (void)
       f = 0;
     } 
     lab87: if (n < 4096) 
-    curmod = n * 65536L + f;
+    cur_mod = n * 65536L + f;
     else {
 	
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -13149,60 +13149,60 @@ getnext (void)
 	help_line[1] = 650;
 	help_line[0] = 651;
       } 
-      deletionsallowed = false;
+      deletions_allowed = false;
       error ();
-      deletionsallowed = true;
-      curmod = 268435455L;
+      deletions_allowed = true;
+      cur_mod = 268435455L;
     } 
-    curcmd = 42;
+    cur_cmd = 42;
     goto lab10;
-    found: cursym = id_lookup (k , curinput.locfield - k);
+    found: cur_sym = id_lookup (k , cur_input.loc_field - k);
   } 
-  else if (curinput.locfield >= himemmin) 
+  else if (cur_input.loc_field >= hi_mem_min) 
   {
-    cursym = mem[curinput.locfield].hhfield.lhfield;
-    curinput.locfield = mem[curinput.locfield].hhfield.v.RH;
-    if (cursym >= 9770) {
+    cur_sym = mem[cur_input.loc_field].hhfield.lhfield;
+    cur_input.loc_field = mem[cur_input.loc_field].hhfield.v.RH;
+    if (cur_sym >= 9770) {
 	
-      if (cursym >= 9920) 
+      if (cur_sym >= 9920) 
       {
-	if (cursym >= 10070) 
-	cursym = cursym - 150;
-	begintokenlist (paramstack[curinput .limitfield + cursym - (9920) 
+	if (cur_sym >= 10070) 
+	cur_sym = cur_sym - 150;
+	begintokenlist (param_stack[cur_input .limit_field + cur_sym - (9920) 
 	], 18);
 	goto lab20;
       } 
       else {
 	  
-	curcmd = 38;
-	curmod = paramstack[curinput .limitfield + cursym - (9770)];
-	cursym = 0;
+	cur_cmd = 38;
+	cur_mod = param_stack[cur_input .limit_field + cur_sym - (9770)];
+	cur_sym = 0;
 	goto lab10;
       } 
     } 
   } 
-  else if (curinput.locfield > 0) 
+  else if (cur_input.loc_field > 0) 
   {
-    if (mem[curinput.locfield].hhfield.b1 == 12) 
+    if (mem[cur_input.loc_field].hhfield.b1 == 12) 
     {
-      curmod = mem[curinput.locfield + 1].cint;
-      if (mem[curinput.locfield].hhfield.b0 == 16) 
-      curcmd = 42;
+      cur_mod = mem[cur_input.loc_field + 1].cint;
+      if (mem[cur_input.loc_field].hhfield.b0 == 16) 
+      cur_cmd = 42;
       else {
 	  
-	curcmd = 39;
+	cur_cmd = 39;
 	{
-	  if (strref[curmod]< 127) 
-	  incr (strref[curmod]);
+	  if (str_ref[cur_mod]< 127) 
+	  incr (str_ref[cur_mod]);
 	} 
       } 
     } 
     else {
 	
-      curmod = curinput.locfield;
-      curcmd = 38;
+      cur_mod = cur_input.loc_field;
+      cur_cmd = 38;
     } 
-    curinput.locfield = mem[curinput.locfield].hhfield.v.RH;
+    cur_input.loc_field = mem[cur_input.loc_field].hhfield.v.RH;
     goto lab10;
   } 
   else {
@@ -13210,12 +13210,12 @@ getnext (void)
     endtokenlist ();
     goto lab20;
   } 
-  curcmd = eqtb[cursym].lhfield;
-  curmod = eqtb[cursym].v.RH;
-  if (curcmd >= 86) {
+  cur_cmd = eqtb[cur_sym].lhfield;
+  cur_mod = eqtb[cur_sym].v.RH;
+  if (cur_cmd >= 86) {
       
     if (checkoutervalidity ()) 
-    curcmd = curcmd - 86;
+    cur_cmd = cur_cmd - 86;
     else goto lab20;
   } 
   lab10:;
@@ -13224,19 +13224,19 @@ void
 firmuptheline (void) 
 {
   integer k;
-  curinput .limitfield = last;
+  cur_input .limit_field = last;
   if (internal[31] > 0) {
       
     if (interaction > 1) 
     {
-  ;
+;
       print_ln ();
-      if (curinput .startfield < curinput .limitfield) 
-      {register integer for_end; k = curinput .startfield;for_end = 
-      curinput .limitfield - 1; if (k <= for_end) do 
+      if (cur_input .start_field < cur_input .limit_field) 
+      {register integer for_end; k = cur_input .start_field;for_end = 
+      cur_input .limit_field - 1; if (k <= for_end) do 
 	print (buffer[k]);
       while (k++ < for_end);} 
-      first = curinput .limitfield;
+      first = cur_input .limit_field;
       {
 	;
 	print (654);
@@ -13246,9 +13246,9 @@ firmuptheline (void)
       {
 	{register integer for_end; k = first;for_end = last - 1; if (k <= 
 	for_end) do 
-	  buffer[k + curinput .startfield - first] = buffer[k];
+	  buffer[k + cur_input .start_field - first] = buffer[k];
 	while (k++ < for_end);} 
-	curinput .limitfield = curinput .startfield + last - first;
+	cur_input .limit_field = cur_input .start_field + last - first;
       } 
     } 
   } 
@@ -13266,25 +13266,25 @@ small_number suffixcount)
   while (true) {
       
     getnext ();
-    if (cursym > 0) 
+    if (cur_sym > 0) 
     {
       {
 	q = substlist;
 	while (q != 0) {
 	    
-	  if (mem[q].hhfield.lhfield == cursym) 
+	  if (mem[q].hhfield.lhfield == cur_sym) 
 	  {
-	    cursym = mem[q + 1].cint;
-	    curcmd = 7;
+	    cur_sym = mem[q + 1].cint;
+	    cur_cmd = 7;
 	    goto found;
 	  } 
 	  q = mem[q].hhfield.v.RH;
 	} 
 	found:;
       } 
-      if (curcmd == terminator) {
+      if (cur_cmd == terminator) {
 	  
-	if (curmod > 0) 
+	if (cur_mod > 0) 
 	incr (balance);
 	else {
 	    
@@ -13293,15 +13293,15 @@ small_number suffixcount)
 	  goto done;
 	} 
       } 
-      else if (curcmd == 61) 
+      else if (cur_cmd == 61) 
       {
-	if (curmod == 0) 
+	if (cur_mod == 0) 
 	getnext ();
-	else if (curmod <= suffixcount) 
-	cursym = 9919 + curmod;
+	else if (cur_mod <= suffixcount) 
+	cur_sym = 9919 + cur_mod;
       } 
     } 
-    mem[p].hhfield.v.RH = curtok ();
+    mem[p].hhfield.v.RH = cur_tok ();
     p = mem[p].hhfield.v.RH;
   } 
   done: mem[p].hhfield.v.RH = tailend;
@@ -13313,15 +13313,15 @@ void
 getsymbol (void) 
 {
   /* 20 */ lab20: getnext ();
-  if ((cursym == 0) || (cursym > 9757)) 
+  if ((cur_sym == 0) || (cur_sym > 9757)) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -13339,18 +13339,18 @@ getsymbol (void)
       help_line[1] = 668;
       help_line[0] = 669;
     } 
-    if (cursym > 0) 
+    if (cur_sym > 0) 
     help_line[2] = 670;
-    else if (curcmd == 39) 
+    else if (cur_cmd == 39) 
     {
-      if (strref[curmod]< 127) {
+      if (str_ref[cur_mod]< 127) {
 	  
-	if (strref[curmod] > 1) 
-	decr (strref[curmod]);
-	else flush_string (curmod);
+	if (str_ref[cur_mod] > 1) 
+	decr (str_ref[cur_mod]);
+	else flush_string (cur_mod);
       } 
     } 
-    cursym = 9757;
+    cur_sym = 9757;
     inserror ();
     goto lab20;
   } 
@@ -13359,14 +13359,14 @@ void
 getclearsymbol (void) 
 {
   getsymbol ();
-  clearsymbol (cursym , false);
+  clearsymbol (cur_sym , false);
 } 
 void 
 checkequals (void) 
 {
-  if (curcmd != 51) {
+  if (cur_cmd != 51) {
       
-    if (curcmd != 77) 
+    if (cur_cmd != 77) 
     {
       missing_err (61);
       {
@@ -13386,41 +13386,41 @@ makeopdef (void)
 {
   commandcode m;
   halfword p, q, r;
-  m = curmod;
+  m = cur_mod;
   getsymbol ();
   q = get_node (2);
-  mem[q].hhfield.lhfield = cursym;
+  mem[q].hhfield.lhfield = cur_sym;
   mem[q + 1].cint = 9770;
   getclearsymbol ();
-  warninginfo = cursym;
+  warning_info = cur_sym;
   getsymbol ();
   p = get_node (2);
-  mem[p].hhfield.lhfield = cursym;
+  mem[p].hhfield.lhfield = cur_sym;
   mem[p + 1].cint = 9771;
   mem[p].hhfield.v.RH = q;
   getnext ();
   checkequals ();
-  scannerstatus = 5;
+  scanner_status = 5;
   q = get_avail ();
   mem[q].hhfield.lhfield = 0;
   r = get_avail ();
   mem[q].hhfield.v.RH = r;
   mem[r].hhfield.lhfield = 0;
   mem[r].hhfield.v.RH = scantoks (16 , p , 0 , 0);
-  scannerstatus = 0;
-  eqtb[warninginfo].lhfield = m;
-  eqtb[warninginfo].v.RH = q;
+  scanner_status = 0;
+  eqtb[warning_info].lhfield = m;
+  eqtb[warning_info].v.RH = q;
   getxnext ();
 } 
 void 
 zcheckdelimiter (halfword ldelim , halfword rdelim) 
 {
-  /* 10 */ if (curcmd == 62) {
+  /* 10 */ if (cur_cmd == 62) {
       
-    if (curmod == ldelim) 
+    if (cur_mod == ldelim) 
     goto lab10;
   } 
-  if (cursym != rdelim) 
+  if (cur_sym != rdelim) 
   {
     missing_err (hash[rdelim].v.RH);
     {
@@ -13434,11 +13434,11 @@ zcheckdelimiter (halfword ldelim , halfword rdelim)
       
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -13469,8 +13469,8 @@ scandeclaredvariable (void)
   halfword h, t;
   halfword l;
   getsymbol ();
-  x = cursym;
-  if (curcmd != 41) 
+  x = cur_sym;
+  if (cur_cmd != 41) 
   clearsymbol (x , false);
   h = get_avail ();
   mem[h].hhfield.lhfield = x;
@@ -13478,31 +13478,31 @@ scandeclaredvariable (void)
   while (true) {
       
     getxnext ();
-    if (cursym == 0) 
+    if (cur_sym == 0) 
     goto done;
-    if (curcmd != 41) {
+    if (cur_cmd != 41) {
 	
-      if (curcmd != 40) {
+      if (cur_cmd != 40) {
 	  
-	if (curcmd == 63) 
+	if (cur_cmd == 63) 
 	{
-	  l = cursym;
+	  l = cur_sym;
 	  getxnext ();
-	  if (curcmd != 64) 
+	  if (cur_cmd != 64) 
 	  {
 	    backinput ();
-	    cursym = l;
-	    curcmd = 63;
+	    cur_sym = l;
+	    cur_cmd = 63;
 	    goto done;
 	  } 
-	  else cursym = 0;
+	  else cur_sym = 0;
 	} 
 	else goto done;
       } 
     } 
     mem[t].hhfield.v.RH = get_avail ();
     t = mem[t].hhfield.v.RH;
-    mem[t].hhfield.lhfield = cursym;
+    mem[t].hhfield.lhfield = cur_sym;
   } 
   done: if (eqtb[x].lhfield % 86 != 41) 
   clearsymbol (x , false);
@@ -13523,7 +13523,7 @@ scandef (void)
   halfword p;
   halfword base;
   halfword ldelim, rdelim;
-  m = curmod;
+  m = cur_mod;
   c = 0;
   mem[memtop - 2].hhfield.v.RH = 0;
   q = get_avail ();
@@ -13532,29 +13532,29 @@ scandef (void)
   if (m == 1) 
   {
     getclearsymbol ();
-    warninginfo = cursym;
+    warning_info = cur_sym;
     getnext ();
-    scannerstatus = 5;
+    scanner_status = 5;
     n = 0;
-    eqtb[warninginfo].lhfield = 10;
-    eqtb[warninginfo].v.RH = q;
+    eqtb[warning_info].lhfield = 10;
+    eqtb[warning_info].v.RH = q;
   } 
   else {
       
     p = scandeclaredvariable ();
     flushvariable (eqtb[mem[p].hhfield.lhfield].v.RH , mem[p]
     .hhfield.v.RH , true);
-    warninginfo = find_variable (p);
+    warning_info = find_variable (p);
     flush_list (p);
-    if (warninginfo == 0) 
+    if (warning_info == 0) 
     {
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -13572,38 +13572,38 @@ scandef (void)
 	help_line[0] = 684;
       } 
       error ();
-      warninginfo = 21;
+      warning_info = 21;
     } 
-    scannerstatus = 4;
+    scanner_status = 4;
     n = 2;
-    if (curcmd == 61) {
+    if (cur_cmd == 61) {
 	
-      if (curmod == 3) 
+      if (cur_mod == 3) 
       {
 	n = 3;
 	getnext ();
       } 
     } 
-    mem[warninginfo].hhfield.b0 = 20 + n;
-    mem[warninginfo + 1].cint = q;
+    mem[warning_info].hhfield.b0 = 20 + n;
+    mem[warning_info + 1].cint = q;
   } 
   k = n;
-  if (curcmd == 31) 
+  if (cur_cmd == 31) 
   do {
-      ldelim = cursym;
-    rdelim = curmod;
+      ldelim = cur_sym;
+    rdelim = cur_mod;
     getnext ();
-    if ((curcmd == 56) && (curmod >= 9770)) 
-    base = curmod;
+    if ((cur_cmd == 56) && (cur_mod >= 9770)) 
+    base = cur_mod;
     else {
 	
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -13629,31 +13629,31 @@ scandef (void)
       getsymbol ();
       p = get_node (2);
       mem[p + 1].cint = base + k;
-      mem[p].hhfield.lhfield = cursym;
+      mem[p].hhfield.lhfield = cur_sym;
       if (k == 150) 
       overflow (687 , 150);
       incr (k);
       mem[p].hhfield.v.RH = r;
       r = p;
       getnext ();
-    } while (!(curcmd != 82));
+    } while (!(cur_cmd != 82));
     checkdelimiter (ldelim , rdelim);
     getnext ();
-  } while (!(curcmd != 31));
-  if (curcmd == 56) 
+  } while (!(cur_cmd != 31));
+  if (cur_cmd == 56) 
   {
     p = get_node (2);
-    if (curmod < 9770) 
+    if (cur_mod < 9770) 
     {
-      c = curmod;
+      c = cur_mod;
       mem[p + 1].cint = 9770 + k;
     } 
     else {
 	
-      mem[p + 1].cint = curmod + k;
-      if (curmod == 9770) 
+      mem[p + 1].cint = cur_mod + k;
+      if (cur_mod == 9770) 
       c = 4;
-      else if (curmod == 9920) 
+      else if (cur_mod == 9920) 
       c = 6;
       else c = 7;
     } 
@@ -13661,13 +13661,13 @@ scandef (void)
     overflow (687 , 150);
     incr (k);
     getsymbol ();
-    mem[p].hhfield.lhfield = cursym;
+    mem[p].hhfield.lhfield = cur_sym;
     mem[p].hhfield.v.RH = r;
     r = p;
     getnext ();
     if (c == 4) {
 	
-      if (curcmd == 69) 
+      if (cur_cmd == 69) 
       {
 	c = 5;
 	p = get_node (2);
@@ -13675,7 +13675,7 @@ scandef (void)
 	overflow (687 , 150);
 	mem[p + 1].cint = 9770 + k;
 	getsymbol ();
-	mem[p].hhfield.lhfield = cursym;
+	mem[p].hhfield.lhfield = cur_sym;
 	mem[p].hhfield.v.RH = r;
 	r = p;
 	getnext ();
@@ -13691,15 +13691,15 @@ scandef (void)
   else {
       
     q = get_avail ();
-    mem[q].hhfield.lhfield = bgloc;
+    mem[q].hhfield.lhfield = bg_loc;
     mem[p].hhfield.v.RH = q;
     p = get_avail ();
-    mem[p].hhfield.lhfield = egloc;
+    mem[p].hhfield.lhfield = eg_loc;
     mem[q].hhfield.v.RH = scantoks (16 , r , p , n);
   } 
-  if (warninginfo == 21) 
+  if (warning_info == 21) 
   flush_token_list (mem[22].cint);
-  scannerstatus = 0;
+  scanner_status = 0;
   getxnext ();
 } 
 void 
@@ -13744,8 +13744,8 @@ zscantextarg (halfword ldelim , halfword rdelim)
 {
   /* 30 */ integer balance;
   halfword p;
-  warninginfo = ldelim;
-  scannerstatus = 3;
+  warning_info = ldelim;
+  scanner_status = 3;
   p = memtop - 2;
   balance = 1;
   mem[memtop - 2].hhfield.v.RH = 0;
@@ -13754,39 +13754,39 @@ zscantextarg (halfword ldelim , halfword rdelim)
     getnext ();
     if (ldelim == 0) 
     {
-      if (curcmd > 82) 
+      if (cur_cmd > 82) 
       {
 	if (balance == 1) 
 	goto done;
-	else if (curcmd == 84) 
+	else if (cur_cmd == 84) 
 	decr (balance);
       } 
-      else if (curcmd == 32) 
+      else if (cur_cmd == 32) 
       incr (balance);
     } 
     else {
 	
-      if (curcmd == 62) 
+      if (cur_cmd == 62) 
       {
-	if (curmod == ldelim) 
+	if (cur_mod == ldelim) 
 	{
 	  decr (balance);
 	  if (balance == 0) 
 	  goto done;
 	} 
       } 
-      else if (curcmd == 31) {
+      else if (cur_cmd == 31) {
 	  
-	if (curmod == rdelim) 
+	if (cur_mod == rdelim) 
 	incr (balance);
       } 
     } 
-    mem[p].hhfield.v.RH = curtok ();
+    mem[p].hhfield.v.RH = cur_tok ();
     p = mem[p].hhfield.v.RH;
   } 
   done: cur_exp = mem[memtop - 2].hhfield.v.RH;
   cur_type = 20;
-  scannerstatus = 0;
+  scanner_status = 0;
 } 
 void 
 zmacrocall (halfword defref , halfword arglist , halfword macroname) 
@@ -13831,21 +13831,21 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
     } 
     end_diagnostic (false);
   } 
-  curcmd = 83;
+  cur_cmd = 83;
   while (mem[r].hhfield.lhfield >= 9770) {
       
-    if (curcmd != 82) 
+    if (cur_cmd != 82) 
     {
       getxnext ();
-      if (curcmd != 31) 
+      if (cur_cmd != 31) 
       {
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -13875,11 +13875,11 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	  cur_type = 16;
 	} 
 	backerror ();
-	curcmd = 62;
+	cur_cmd = 62;
 	goto found;
       } 
-      ldelim = cursym;
-      rdelim = curmod;
+      ldelim = cur_sym;
+      rdelim = cur_mod;
     } 
     if (mem[r].hhfield.lhfield >= 10070) 
     scantextarg (ldelim , rdelim);
@@ -13887,12 +13887,12 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	
       getxnext ();
       if (mem[r].hhfield.lhfield >= 9920) 
-      scansuffix ();
+      scan_suffix ();
       else scan_expression ();
     } 
-    if (curcmd != 82) {
+    if (cur_cmd != 82) {
 	
-      if ((curcmd != 62) || (curmod != ldelim)) {
+      if ((cur_cmd != 62) || (cur_mod != ldelim)) {
 	  
 	if (mem[mem[r].hhfield.v.RH].hhfield.lhfield >= 9770) 
 	{
@@ -13904,7 +13904,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	    help_line[0] = 708;
 	  } 
 	  backerror ();
-	  curcmd = 82;
+	  cur_cmd = 82;
 	} 
 	else {
 	    
@@ -13939,15 +13939,15 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
     } 
     r = mem[r].hhfield.v.RH;
   } 
-  if (curcmd == 82) 
+  if (cur_cmd == 82) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -13979,19 +13979,19 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
       getxnext ();
       if (mem[r].hhfield.lhfield != 6) {
 	  
-	if ((curcmd == 51) || (curcmd == 77)) 
+	if ((cur_cmd == 51) || (cur_cmd == 77)) 
 	getxnext ();
       } 
     } 
     switch (mem[r].hhfield.lhfield) 
     {case 1 : 
-      scanprimary ();
+      scan_primary ();
       break;
     case 2 : 
-      scansecondary ();
+      scan_secondary ();
       break;
     case 3 : 
-      scantertiary ();
+      scan_tertiary ();
       break;
     case 4 : 
       scan_expression ();
@@ -14012,7 +14012,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	else mem[tail].hhfield.v.RH = p;
 	tail = p;
 	incr (n);
-	if (curcmd != 69) 
+	if (cur_cmd != 69) 
 	{
 	  missing_err (479);
 	  print (716);
@@ -14024,23 +14024,23 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	  backerror ();
 	} 
 	getxnext ();
-	scanprimary ();
+	scan_primary ();
       } 
       break;
     case 6 : 
       {
-	if (curcmd != 31) 
+	if (cur_cmd != 31) 
 	ldelim = 0;
 	else {
 	    
-	  ldelim = cursym;
-	  rdelim = curmod;
+	  ldelim = cur_sym;
+	  rdelim = cur_mod;
 	  getxnext ();
 	} 
-	scansuffix ();
+	scan_suffix ();
 	if (ldelim != 0) 
 	{
-	  if ((curcmd != 62) || (curmod != ldelim)) 
+	  if ((cur_cmd != 62) || (cur_mod != ldelim)) 
 	  {
 	    missing_err (hash[rdelim].v.RH);
 	    {
@@ -14079,23 +14079,23 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
     } 
   } 
   r = mem[r].hhfield.v.RH;
-  while ((curinput.indexfield > 15) && (curinput.locfield == 0)) 
+  while ((cur_input.index_field > 15) && (cur_input.loc_field == 0)) 
   endtokenlist ();
-  if (paramptr + n > maxparamstack) 
+  if (param_ptr + n > max_param_stack) 
   {
-    maxparamstack = paramptr + n;
-    if (maxparamstack > 150) 
+    max_param_stack = param_ptr + n;
+    if (max_param_stack > 150) 
     overflow (687 , 150);
   } 
   begintokenlist (defref , 21);
-  curinput .namefield = macroname;
-  curinput.locfield = r;
+  cur_input .name_field = macroname;
+  cur_input.loc_field = r;
   if (n > 0) 
   {
     p = arglist;
     do {
-	paramstack[paramptr] = mem[p].hhfield.lhfield;
-      incr (paramptr);
+	param_stack[param_ptr] = mem[p].hhfield.lhfield;
+      incr (param_ptr);
       p = mem[p].hhfield.v.RH;
     } while (!(p == 0));
     flush_list (arglist);
@@ -14109,21 +14109,21 @@ expand (void)
   pool_pointer j;
   if (internal[7] > 65536L) {
       
-    if (curcmd != 10) 
-    showcmdmod (curcmd , curmod);
+    if (cur_cmd != 10) 
+    show_cmd_mod (cur_cmd , cur_mod);
   } 
-  switch (curcmd) 
+  switch (cur_cmd) 
   {case 1 : 
     conditional ();
     break;
   case 2 : 
-    if (curmod > iflimit) {
+    if (cur_mod > if_limit) {
 	
-      if (iflimit == 1) 
+      if (if_limit == 1) 
       {
 	missing_err (58);
 	backinput ();
-	cursym = 9762;
+	cur_sym = 9762;
 	inserror ();
       } 
       else {
@@ -14131,10 +14131,10 @@ expand (void)
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -14146,7 +14146,7 @@ expand (void)
 	    print (724);
 	  } 
 	} 
-	print_cmd_mod (2 , curmod);
+	print_cmd_mod (2 , cur_mod);
 	{
 	  help_ptr = 1;
 	  help_line[0] = 725;
@@ -14156,32 +14156,32 @@ expand (void)
     } 
     else {
 	
-      while (curmod != 2) passtext ();
+      while (cur_mod != 2) passtext ();
       {
-	p = condptr;
-	ifline = mem[p + 1].cint;
-	curif = mem[p].hhfield.b1;
-	iflimit = mem[p].hhfield.b0;
-	condptr = mem[p].hhfield.v.RH;
+	p = cond_ptr;
+	if_line = mem[p + 1].cint;
+	cur_if = mem[p].hhfield.b1;
+	if_limit = mem[p].hhfield.b0;
+	cond_ptr = mem[p].hhfield.v.RH;
 	free_node (p , 2);
       } 
     } 
     break;
   case 3 : 
-    if (curmod > 0) 
-    forceeof = true;
+    if (cur_mod > 0) 
+    force_eof = true;
     else start_input ();
     break;
   case 4 : 
-    if (curmod == 0) 
+    if (cur_mod == 0) 
     {
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -14204,17 +14204,17 @@ expand (void)
     break;
   case 5 : 
     {
-      while ((curinput.indexfield > 15) && (curinput.locfield == 0)) 
+      while ((cur_input.index_field > 15) && (cur_input.loc_field == 0)) 
       endtokenlist ();
-      if (loopptr == 0) 
+      if (loop_ptr == 0) 
       {
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -14238,20 +14238,20 @@ expand (void)
     break;
   case 6 : 
     {
-      getboolean ();
+      get_boolean ();
       if (internal[7] > 65536L) 
-      showcmdmod (33 , cur_exp);
+      show_cmd_mod (33 , cur_exp);
       if (cur_exp == 30) {
 	  
-	if (loopptr == 0) 
+	if (loop_ptr == 0) 
 	{
 	  {
 	    if (interaction == 3) 
 	;
-	    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	    {
 	      print_nl (261);
-	      print (fullsourcefilenamestack[inopen]);
+	      print (fullsourcefilenamestack[in_open]);
 	      print (58);
 	      print_int (line);
 	      print (262);
@@ -14267,7 +14267,7 @@ expand (void)
 	    help_ptr = 1;
 	    help_line[0] = 696;
 	  } 
-	  if (curcmd == 83) 
+	  if (cur_cmd == 83) 
 	  error ();
 	  else backerror ();
 	} 
@@ -14275,21 +14275,21 @@ expand (void)
 	    
 	  p = 0;
 	  do {
-	      if ((curinput.indexfield <= 15)) 
+	      if ((cur_input.index_field <= 15)) 
 	    endfilereading ();
 	    else {
 		
-	      if (curinput.indexfield <= 17) 
-	      p = curinput .startfield;
+	      if (cur_input.index_field <= 17) 
+	      p = cur_input .start_field;
 	      endtokenlist ();
 	    } 
 	  } while (!(p != 0));
-	  if (p != mem[loopptr].hhfield.lhfield) 
+	  if (p != mem[loop_ptr].hhfield.lhfield) 
 	  fatal_error (699);
 	  stop_iteration ();
 	} 
       } 
-      else if (curcmd != 83) 
+      else if (cur_cmd != 83) 
       {
 	missing_err (59);
 	{
@@ -14307,9 +14307,9 @@ expand (void)
   case 9 : 
     {
       getnext ();
-      p = curtok ();
+      p = cur_tok ();
       getnext ();
-      if (curcmd < 11) 
+      if (cur_cmd < 11) 
       expand ();
       else backinput ();
       begintokenlist (p , 19);
@@ -14318,7 +14318,7 @@ expand (void)
   case 8 : 
     {
       getxnext ();
-      scanprimary ();
+      scan_primary ();
       if (cur_type != 4) 
       {
 	disp_err (0 , 700);
@@ -14335,35 +14335,35 @@ expand (void)
 	if ((str_start[cur_exp + 1] - str_start[cur_exp]) > 0) 
 	{
 	  beginfilereading ();
-	  curinput .namefield = 2;
+	  cur_input .name_field = 2;
 	  k = first + (str_start[cur_exp + 1] - str_start[cur_exp]);
-	  if (k >= maxbufstack) 
+	  if (k >= max_buf_stack) 
 	  {
 	    if (k >= bufsize) 
 	    {
-	      maxbufstack = bufsize;
+	      max_buf_stack = bufsize;
 	      overflow (256 , bufsize);
 	    } 
-	    maxbufstack = k + 1;
+	    max_buf_stack = k + 1;
 	  } 
 	  j = str_start[cur_exp];
-	  curinput .limitfield = k;
-	  while (first < curinput .limitfield) {
+	  cur_input .limit_field = k;
+	  while (first < cur_input .limit_field) {
 	      
 	    buffer[first] = str_pool[j];
 	    incr (j);
 	    incr (first);
 	  } 
-	  buffer[curinput .limitfield] = 37;
-	  first = curinput .limitfield + 1;
-	  curinput.locfield = curinput .startfield;
+	  buffer[cur_input .limit_field] = 37;
+	  first = cur_input .limit_field + 1;
+	  cur_input.loc_field = cur_input .start_field;
 	  flush_cur_exp (0);
 	} 
       } 
     } 
     break;
   case 10 : 
-    macrocall (curmod , 0 , cursym);
+    macrocall (cur_mod , 0 , cur_sym);
     break;
   } 
 } 
@@ -14372,73 +14372,73 @@ getxnext (void)
 {
   halfword saveexp;
   getnext ();
-  if (curcmd < 11) 
+  if (cur_cmd < 11) 
   {
     saveexp = stash_cur_exp ();
     do {
-	if (curcmd == 10) 
-      macrocall (curmod , 0 , cursym);
+	if (cur_cmd == 10) 
+      macrocall (cur_mod , 0 , cur_sym);
       else expand ();
       getnext ();
-    } while (!(curcmd >= 11));
+    } while (!(cur_cmd >= 11));
     unstash_cur_exp (saveexp);
   } 
 } 
 void 
 zstackargument (halfword p) 
 {
-  if (paramptr == maxparamstack) 
+  if (param_ptr == max_param_stack) 
   {
-    incr (maxparamstack);
-    if (maxparamstack > 150) 
+    incr (max_param_stack);
+    if (max_param_stack > 150) 
     overflow (687 , 150);
   } 
-  paramstack[paramptr] = p;
-  incr (paramptr);
+  param_stack[param_ptr] = p;
+  incr (param_ptr);
 } 
 void 
 passtext (void) 
 {
   /* 30 */ integer l;
-  scannerstatus = 1;
+  scanner_status = 1;
   l = 0;
-  warninginfo = line;
+  warning_info = line;
   while (true) {
       
     getnext ();
-    if (curcmd <= 2) {
+    if (cur_cmd <= 2) {
 	
-      if (curcmd < 2) 
+      if (cur_cmd < 2) 
       incr (l);
       else {
 	  
 	if (l == 0) 
 	goto done;
-	if (curmod == 2) 
+	if (cur_mod == 2) 
 	decr (l);
       } 
     } 
-    else if (curcmd == 39) 
+    else if (cur_cmd == 39) 
     {
-      if (strref[curmod]< 127) {
+      if (str_ref[cur_mod]< 127) {
 	  
-	if (strref[curmod] > 1) 
-	decr (strref[curmod]);
-	else flush_string (curmod);
+	if (str_ref[cur_mod] > 1) 
+	decr (str_ref[cur_mod]);
+	else flush_string (cur_mod);
       } 
     } 
   } 
-  done: scannerstatus = 0;
+  done: scanner_status = 0;
 } 
 void 
-zchangeiflimit (small_number l , halfword p) 
+zchangeif_limit (small_number l , halfword p) 
 {
   /* 10 */ halfword q;
-  if (p == condptr) 
-  iflimit = l;
+  if (p == cond_ptr) 
+  if_limit = l;
   else {
       
-    q = condptr;
+    q = cond_ptr;
     while (true) {
 	
       if (q == 0) 
@@ -14456,7 +14456,7 @@ zchangeiflimit (small_number l , halfword p)
 void 
 checkcolon (void) 
 {
-  if (curcmd != 81) 
+  if (cur_cmd != 81) 
   {
     missing_err (58);
     {
@@ -14470,23 +14470,23 @@ checkcolon (void)
 void 
 conditional (void) 
 {
-  /* 10 30 21 40 */ halfword savecondptr;
-  unsigned char newiflimit;
+  /* 10 30 21 40 */ halfword savecond_ptr;
+  unsigned char newif_limit;
   halfword p;
   {
     p = get_node (2);
-    mem[p].hhfield.v.RH = condptr;
-    mem[p].hhfield.b0 = iflimit;
-    mem[p].hhfield.b1 = curif;
-    mem[p + 1].cint = ifline;
-    condptr = p;
-    iflimit = 1;
-    ifline = line;
-    curif = 1;
+    mem[p].hhfield.v.RH = cond_ptr;
+    mem[p].hhfield.b0 = if_limit;
+    mem[p].hhfield.b1 = cur_if;
+    mem[p + 1].cint = if_line;
+    cond_ptr = p;
+    if_limit = 1;
+    if_line = line;
+    cur_if = 1;
   } 
-  savecondptr = condptr;
-  lab21: getboolean ();
-  newiflimit = 4;
+  savecond_ptr = cond_ptr;
+  lab21: get_boolean ();
+  newif_limit = 4;
   if (internal[7] > 65536L) 
   {
     begin_diagnostic ();
@@ -14498,41 +14498,41 @@ conditional (void)
   found: checkcolon ();
   if (cur_exp == 30) 
   {
-    changeiflimit (newiflimit , savecondptr);
+    changeif_limit (newif_limit , savecond_ptr);
     goto lab10;
   } 
   while (true) {
       
     passtext ();
-    if (condptr == savecondptr) 
+    if (cond_ptr == savecond_ptr) 
     goto done;
-    else if (curmod == 2) 
+    else if (cur_mod == 2) 
     {
-      p = condptr;
-      ifline = mem[p + 1].cint;
-      curif = mem[p].hhfield.b1;
-      iflimit = mem[p].hhfield.b0;
-      condptr = mem[p].hhfield.v.RH;
+      p = cond_ptr;
+      if_line = mem[p + 1].cint;
+      cur_if = mem[p].hhfield.b1;
+      if_limit = mem[p].hhfield.b0;
+      cond_ptr = mem[p].hhfield.v.RH;
       free_node (p , 2);
     } 
   } 
-  done: curif = curmod;
-  ifline = line;
-  if (curmod == 2) 
+  done: cur_if = cur_mod;
+  if_line = line;
+  if (cur_mod == 2) 
   {
-    p = condptr;
-    ifline = mem[p + 1].cint;
-    curif = mem[p].hhfield.b1;
-    iflimit = mem[p].hhfield.b0;
-    condptr = mem[p].hhfield.v.RH;
+    p = cond_ptr;
+    if_line = mem[p + 1].cint;
+    cur_if = mem[p].hhfield.b1;
+    if_limit = mem[p].hhfield.b0;
+    cond_ptr = mem[p].hhfield.v.RH;
     free_node (p , 2);
   } 
-  else if (curmod == 4) 
+  else if (cur_mod == 4) 
   goto lab21;
   else {
       
     cur_exp = 30;
-    newiflimit = 2;
+    newif_limit = 2;
     getxnext ();
     goto found;
   } 
@@ -14559,8 +14559,8 @@ beginiteration (void)
   /* 22 30 40 */ halfword m;
   halfword n;
   halfword p, q, s, pp;
-  m = curmod;
-  n = cursym;
+  m = cur_mod;
+  n = cur_sym;
   s = get_node (2);
   if (m == 1) 
   {
@@ -14571,10 +14571,10 @@ beginiteration (void)
   } 
   getsymbol ();
   p = get_node (2);
-  mem[p].hhfield.lhfield = cursym;
+  mem[p].hhfield.lhfield = cur_sym;
   mem[p + 1].cint = m;
   getxnext ();
-  if ((curcmd != 51) && (curcmd != 77)) 
+  if ((cur_cmd != 51) && (cur_cmd != 77)) 
   {
     missing_err (61);
     {
@@ -14591,16 +14591,16 @@ beginiteration (void)
   do {
       getxnext ();
     if (m != 9770) 
-    scansuffix ();
+    scan_suffix ();
     else {
 	
-      if (curcmd >= 81) {
+      if (cur_cmd >= 81) {
 	  
-	if (curcmd <= 82) 
+	if (cur_cmd <= 82) 
 	goto lab22;
       } 
       scan_expression ();
-      if (curcmd == 74) {
+      if (cur_cmd == 74) {
 	  
 	if (q == s + 1) 
 	{
@@ -14613,7 +14613,7 @@ beginiteration (void)
 	  if (cur_type != 16) 
 	  bad_for (738);
 	  mem[pp + 2].cint = cur_exp;
-	  if (curcmd != 75) 
+	  if (cur_cmd != 75) 
 	  {
 	    missing_err (490);
 	    {
@@ -14639,9 +14639,9 @@ beginiteration (void)
     mem[q].hhfield.lhfield = cur_exp;
     cur_type = 1;
     lab22:;
-  } while (!(curcmd != 82));
+  } while (!(cur_cmd != 82));
   done:;
-  found: if (curcmd != 81) 
+  found: if (cur_cmd != 81) 
   {
     missing_err (58);
     {
@@ -14654,19 +14654,19 @@ beginiteration (void)
   } 
   q = get_avail ();
   mem[q].hhfield.lhfield = 9758;
-  scannerstatus = 6;
-  warninginfo = n;
+  scanner_status = 6;
+  warning_info = n;
   mem[s].hhfield.lhfield = scantoks (4 , p , q , 0);
-  scannerstatus = 0;
-  mem[s].hhfield.v.RH = loopptr;
-  loopptr = s;
+  scanner_status = 0;
+  mem[s].hhfield.v.RH = loop_ptr;
+  loop_ptr = s;
   resumeiteration ();
 } 
 void 
 resumeiteration (void) 
 {
   /* 45 10 */ halfword p, q;
-  p = mem[loopptr + 1].hhfield.lhfield;
+  p = mem[loop_ptr + 1].hhfield.lhfield;
   if (p > 1) 
   {
     cur_exp = mem[p + 1].cint;
@@ -14679,26 +14679,26 @@ resumeiteration (void)
   } 
   else if (p < 1) 
   {
-    p = mem[loopptr + 1].hhfield.v.RH;
+    p = mem[loop_ptr + 1].hhfield.v.RH;
     if (p == 0) 
     goto not_found;
-    mem[loopptr + 1].hhfield.v.RH = mem[p].hhfield.v.RH;
+    mem[loop_ptr + 1].hhfield.v.RH = mem[p].hhfield.v.RH;
     q = mem[p].hhfield.lhfield;
     {
       mem[p].hhfield.v.RH = avail;
       avail = p;
 	;
 #ifdef STAT
-      decr (dynused);
+      decr (dyn_used);
 #endif /* STAT */
     } 
   } 
   else {
       
-    begintokenlist (mem[loopptr].hhfield.lhfield , 16);
+    begintokenlist (mem[loop_ptr].hhfield.lhfield , 16);
     goto lab10;
   } 
-  begintokenlist (mem[loopptr].hhfield.lhfield , 17);
+  begintokenlist (mem[loop_ptr].hhfield.lhfield , 17);
   stackargument (q);
   if (internal[7] > 65536L) 
   {
@@ -14718,12 +14718,12 @@ void
 stop_iteration (void) 
 {
   halfword p, q;
-  p = mem[loopptr + 1].hhfield.lhfield;
+  p = mem[loop_ptr + 1].hhfield.lhfield;
   if (p > 1) 
   free_node (p , 4);
   else if (p < 1) 
   {
-    q = mem[loopptr + 1].hhfield.v.RH;
+    q = mem[loop_ptr + 1].hhfield.v.RH;
     while (q != 0) {
 	
       p = mem[q].hhfield.lhfield;
@@ -14743,13 +14743,13 @@ stop_iteration (void)
 	avail = p;
 	;
 #ifdef STAT
-	decr (dynused);
+	decr (dyn_used);
 #endif /* STAT */
       } 
     } 
   } 
-  p = loopptr;
-  loopptr = mem[p].hhfield.v.RH;
+  p = loop_ptr;
+  loop_ptr = mem[p].hhfield.v.RH;
   flush_token_list (mem[p].hhfield.lhfield);
   free_node (p , 2);
 } 
@@ -14801,11 +14801,11 @@ end_name (void)
 {
   boolean mustquote;
   pool_pointer j, s, t;
-  if (str_ptr + 3 > maxstr_ptr) 
+  if (str_ptr + 3 > max_str_ptr) 
   {
-    if (str_ptr + 3 > maxstrings) 
-    overflow (258 , maxstrings - initstr_ptr);
-    maxstr_ptr = str_ptr + 3;
+    if (str_ptr + 3 > max_strings) 
+    overflow (258 , max_strings - init_str_ptr);
+    max_str_ptr = str_ptr + 3;
   } 
   {
     if (pool_ptr + 6 > max_pool_ptr) 
@@ -14850,7 +14850,7 @@ end_name (void)
     str_start[str_ptr] = area_delimiter + 1;
   } 
   if (ext_delimiter == 0) 
-  curext = 261;
+  cur_ext = 261;
   else {
       
     mustquote = false;
@@ -14877,7 +14877,7 @@ end_name (void)
       pool_ptr = pool_ptr + 2;
       ext_delimiter = ext_delimiter + 2;
     } 
-    curname = str_ptr;
+    cur_name = str_ptr;
     incr (str_ptr);
     str_start[str_ptr] = ext_delimiter;
   } 
@@ -14901,8 +14901,8 @@ end_name (void)
     pool_ptr = pool_ptr + 2;
   } 
   if (ext_delimiter == 0) 
-  curname = make_string ();
-  else curext = make_string ();
+  cur_name = make_string ();
+  else cur_ext = make_string ();
 } 
 void 
 zpackfilename (str_number n , str_number a , str_number e) 
@@ -14953,9 +14953,9 @@ zpackfilename (str_number n , str_number a , str_number e)
     } 
   while (j++ < for_end);} 
   if (k <= maxint) 
-  namelength = k;
-  else namelength = maxint;
-  name_of_file[namelength + 1] = 0;
+  name_length = k;
+  else name_length = maxint;
+  name_of_file[name_length + 1] = 0;
 } 
 void 
 zpackbufferedname (small_number n , integer a , integer b) 
@@ -14971,7 +14971,7 @@ zpackbufferedname (small_number n , integer a , integer b)
   name_of_file = xmallocarray (ASCII_code , n + (b - a + 1) + 6);
   {register integer for_end; j = 1;for_end = n; if (j <= for_end) do 
     {
-      c = xord[ucharcast (MFbasedefault[j])];
+      c = xord[ucharcast (MF_base_default[j])];
       if (!(c == 34)) 
       {
 	incr (k);
@@ -14994,7 +14994,7 @@ zpackbufferedname (small_number n , integer a , integer b)
   {register integer for_end; j = basedefaultlength - 4;for_end = 
   basedefaultlength; if (j <= for_end) do 
     {
-      c = xord[ucharcast (MFbasedefault[j])];
+      c = xord[ucharcast (MF_base_default[j])];
       if (!(c == 34)) 
       {
 	incr (k);
@@ -15004,19 +15004,19 @@ zpackbufferedname (small_number n , integer a , integer b)
     } 
   while (j++ < for_end);} 
   if (k <= maxint) 
-  namelength = k;
-  else namelength = maxint;
-  name_of_file[namelength + 1] = 0;
+  name_length = k;
+  else name_length = maxint;
+  name_of_file[name_length + 1] = 0;
 } 
 str_number 
 makenamestring (void) 
 {
   register str_number Result; integer k;
-  if ((pool_ptr + namelength > pool_size) || (str_ptr == maxstrings)) 
+  if ((pool_ptr + name_length > pool_size) || (str_ptr == max_strings)) 
   Result = 63;
   else {
       
-    {register integer for_end; k = 1;for_end = namelength; if (k <= 
+    {register integer for_end; k = 1;for_end = name_length; if (k <= 
     for_end) do 
       {
 	str_pool[pool_ptr] = xord[name_of_file[k]];
@@ -15028,26 +15028,26 @@ makenamestring (void)
   k = 1;
   begin_name ();
   stopatspace = false;
-  while ((k <= namelength) && (more_name (name_of_file[k]))) incr (k 
+  while ((k <= name_length) && (more_name (name_of_file[k]))) incr (k 
 );
   stopatspace = true;
   end_name ();
   return Result;
 } 
 str_number 
-zamakenamestring (alphafile f) 
+zamakenamestring (alpha_file f) 
 {
   register str_number Result; Result = makenamestring ();
   return Result;
 } 
 str_number 
-zbmakenamestring (bytefile f) 
+zbmakenamestring (byte_file f) 
 {
   register str_number Result; Result = makenamestring ();
   return Result;
 } 
 str_number 
-zwmakenamestring (wordfile f) 
+zwmakenamestring (word_file f) 
 {
   register str_number Result; Result = makenamestring ();
   return Result;
@@ -15056,42 +15056,42 @@ void
 scan_file_name (void) 
 {
   /* 30 */ begin_name ();
-  while ((buffer[curinput.locfield] == 32) || (buffer[curinput 
- .locfield] == 9)) incr (curinput.locfield);
+  while ((buffer[cur_input.loc_field] == 32) || (buffer[cur_input 
+ .loc_field] == 9)) incr (cur_input.loc_field);
   while (true) {
       
-    if ((buffer[curinput.locfield] == 59) || (buffer[curinput 
-   .locfield] == 37)) 
+    if ((buffer[cur_input.loc_field] == 59) || (buffer[cur_input 
+   .loc_field] == 37)) 
     goto done;
-    if (!more_name (buffer[curinput.locfield])) 
+    if (!more_name (buffer[cur_input.loc_field])) 
     goto done;
-    incr (curinput.locfield);
+    incr (cur_input.loc_field);
   } 
   done: end_name ();
 } 
 void 
-zpackjobname (str_number s) 
+zpackjob_name (str_number s) 
 {
   cur_area = 261;
-  curext = s;
-  curname = jobname;
-  packfilename (curname , cur_area , curext);
+  cur_ext = s;
+  cur_name = job_name;
+  packfilename (cur_name , cur_area , cur_ext);
 } 
 void 
 zpromptfilename (str_number s , str_number e) 
 {
   /* 30 */ integer k;
-  str_number savedcurname;
+  str_number savedcur_name;
   if (interaction == 2) 
 ;
   if (s == 743) 
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -15107,10 +15107,10 @@ zpromptfilename (str_number s , str_number e)
       
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -15122,7 +15122,7 @@ zpromptfilename (str_number s , str_number e)
       print (745);
     } 
   } 
-  print_file_name (curname , cur_area , curext);
+  print_file_name (cur_name , cur_area , cur_ext);
   print (746);
   if (e == 747) 
   showcontext ();
@@ -15130,7 +15130,7 @@ zpromptfilename (str_number s , str_number e)
   print (s);
   if (interaction < 2) 
   fatal_error (749);
-  savedcurname = curname;
+  savedcur_name = cur_name;
   {
 ;
     print (262);
@@ -15140,7 +15140,7 @@ zpromptfilename (str_number s , str_number e)
     begin_name ();
     k = first;
     while (((buffer[k] == 32) || (buffer[k] == 9)) && (k < last 
-  )) incr (k);
+ )) incr (k);
     while (true) {
 	
       if (k == last) 
@@ -15151,38 +15151,38 @@ zpromptfilename (str_number s , str_number e)
     } 
     done: end_name ();
   } 
-  if (curext == 261) 
-  curext = e;
-  if ((str_start[curname + 1] - str_start[curname]) == 0) 
-  curname = savedcurname;
-  packfilename (curname , cur_area , curext);
+  if (cur_ext == 261) 
+  cur_ext = e;
+  if ((str_start[cur_name + 1] - str_start[cur_name]) == 0) 
+  cur_name = savedcur_name;
+  packfilename (cur_name , cur_area , cur_ext);
 } 
 void 
 open_log_file (void) 
 {
-  unsigned char oldsetting;
+  unsigned char old_setting;
   integer k;
   integer l;
   integer m;
   constcstring months;
-  oldsetting = selector;
-  if (jobname == 0) 
-  jobname = getjobname (750);
-  packjobname (751);
+  old_setting = selector;
+  if (job_name == 0) 
+  job_name = getjob_name (750);
+  packjob_name (751);
   recorderchangefilename (stringcast (name_of_file + 1));
-  packjobname (752);
-  while (!aopenout (logfile)) {
+  packjob_name (752);
+  while (!aopenout (log_file)) {
       
     selector = 1;
     promptfilename (754 , 752);
   } 
-  texmflogname = amakenamestring (logfile);
+  texmflogname = amakenamestring (log_file);
   selector = 2;
-  logopened = true;
+  log_opened = true;
   {
-    Fputs (logfile ,  "This is METAFONT, Version 2.7182818");
-    Fputs (logfile ,  versionstring);
-    slow_print (baseident);
+    Fputs (log_file ,  "This is METAFONT, Version 2.7182818");
+    Fputs (log_file ,  versionstring);
+    slow_print (base_ident);
     print (755);
     print_int (roundunscaled (internal[16]));
     print_char (32);
@@ -15190,7 +15190,7 @@ open_log_file (void)
     m = roundunscaled (internal[15]);
     {register integer for_end; k = 3 * m - 2;for_end = 3 * m; if (k <= 
     for_end) do 
-      putc (months[k],  logfile);
+      putc (months[k],  log_file);
     while (k++ < for_end);} 
     print_char (32);
     print_int (roundunscaled (internal[14]));
@@ -15201,35 +15201,35 @@ open_log_file (void)
     print_dd (m % 60);
     if (translatefilename) 
     {
-      putc ('\n',  logfile);
-      putc ('(' ,  logfile);
-      fputs (translatefilename , logfile);
-      putc (')' ,  logfile);
+      putc ('\n',  log_file);
+      putc ('(' ,  log_file);
+      fputs (translatefilename , log_file);
+      putc (')' ,  log_file);
     } 
   } 
-  inputstack[inputptr] = curinput;
+  input_stack[input_ptr] = cur_input;
   print_nl (753);
-  l = inputstack[0].limitfield - 1;
+  l = input_stack[0].limit_field - 1;
   {register integer for_end; k = 1;for_end = l; if (k <= for_end) do 
     print (buffer[k]);
   while (k++ < for_end);} 
   print_ln ();
-  selector = oldsetting + 2;
+  selector = old_setting + 2;
 } 
 void 
 start_input (void) 
 {
-  /* 30 */ while ((curinput.indexfield > 15) && (curinput.locfield == 
+  /* 30 */ while ((cur_input.index_field > 15) && (cur_input.loc_field == 
   0)) endtokenlist ();
-  if ((curinput.indexfield > 15)) 
+  if ((cur_input.index_field > 15)) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -15249,54 +15249,54 @@ start_input (void)
     } 
     error ();
   } 
-  if ((curinput.indexfield <= 15)) 
+  if ((cur_input.index_field <= 15)) 
   scan_file_name ();
   else {
       
-    curname = 261;
-    curext = 261;
+    cur_name = 261;
+    cur_ext = 261;
     cur_area = 261;
   } 
-  packfilename (curname , cur_area , curext);
+  packfilename (cur_name , cur_area , cur_ext);
   while (true) {
       
     beginfilereading ();
-    if (curext == 747) 
+    if (cur_ext == 747) 
     {
-      curext = 261;
-      packfilename (curname , cur_area , curext);
+      cur_ext = 261;
+      packfilename (cur_name , cur_area , cur_ext);
     } 
-    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (inputfile 
-  [curinput.indexfield], kpsemfformat)) 
+    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file 
+  [cur_input.index_field], kpsemfformat)) 
     goto done;
     endfilereading ();
     promptfilename (743 , 747);
   } 
-  done: curinput .namefield = amakenamestring (inputfile[curinput 
- .indexfield]);
-  strref[curname] = 127;
-  if (jobname == 0) 
+  done: cur_input .name_field = amakenamestring (input_file[cur_input 
+ .index_field]);
+  str_ref[cur_name] = 127;
+  if (job_name == 0) 
   {
-    jobname = getjobname (curname);
+    job_name = getjob_name (cur_name);
     open_log_file ();
   } 
-  if (term_offset + (str_start[curinput .namefield + 1] - str_start[
-  curinput .namefield]) > maxprintline - 2) 
+  if (term_offset + (str_start[cur_input .name_field + 1] - str_start[
+  cur_input .name_field]) > maxprintline - 2) 
   print_ln ();
   else if ((term_offset > 0) || (file_offset > 0)) 
   print_char (32);
   print_char (40);
-  incr (openparens);
-  slow_print (curinput .namefield);
+  incr (open_parens);
+  slow_print (cur_input .name_field);
   fflush (stdout);
   {
     line = 1;
-    if (inputln (inputfile[curinput.indexfield], false)) 
+    if (inputln (input_file[cur_input.index_field], false)) 
 ;
     firmuptheline ();
-    buffer[curinput .limitfield] = 37;
-    first = curinput .limitfield + 1;
-    curinput.locfield = curinput .startfield;
+    buffer[cur_input .limit_field] = 37;
+    first = cur_input .limit_field + 1;
+    cur_input.loc_field = cur_input .start_field;
   } 
 } 
 void 
@@ -15306,10 +15306,10 @@ zbadexp (str_number s)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -15322,7 +15322,7 @@ zbadexp (str_number s)
     } 
   } 
   print (770);
-  print_cmd_mod (curcmd , curmod);
+  print_cmd_mod (cur_cmd , cur_mod);
   print_char (39);
   {
     help_ptr = 4;
@@ -15332,14 +15332,14 @@ zbadexp (str_number s)
     help_line[0] = 774;
   } 
   backinput ();
-  cursym = 0;
-  curcmd = 42;
-  curmod = 0;
+  cur_sym = 0;
+  cur_cmd = 42;
+  cur_mod = 0;
   inserror ();
-  saveflag = varflag;
-  varflag = 0;
+  saveflag = var_flag;
+  var_flag = 0;
   getxnext ();
-  varflag = saveflag;
+  var_flag = saveflag;
 } 
 void 
 zstashin (halfword p) 
@@ -15353,7 +15353,7 @@ zstashin (halfword p)
     if (cur_type == 19) 
     {
       q = singledependency (cur_exp);
-      if (q == depfinal) 
+      if (q == dep_final) 
       {
 	mem[p].hhfield.b0 = 16;
 	mem[p + 1].cint = 0;
@@ -15401,10 +15401,10 @@ zobliterated (halfword q)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -15450,11 +15450,11 @@ materializepen (void)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -15586,7 +15586,7 @@ scandirection (void)
   register small_number Result; unsigned char t;
   scaled x;
   getxnext ();
-  if (curcmd == 60) 
+  if (cur_cmd == 60) 
   {
     getxnext ();
     scan_expression ();
@@ -15620,7 +15620,7 @@ scandirection (void)
 	put_get_flush_error (0);
       } 
       x = cur_exp;
-      if (curcmd != 82) 
+      if (cur_cmd != 82) 
       {
 	missing_err (44);
 	{
@@ -15657,7 +15657,7 @@ scandirection (void)
       cur_exp = n_arg (cur_x , cur_y);
     } 
   } 
-  if (curcmd != 65) 
+  if (cur_cmd != 65) 
   {
     missing_err (125);
     {
@@ -15677,11 +15677,11 @@ zdonullary (quarterword c)
 {
   integer k;
   {
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
   if (internal[7] > 131072L) 
-  showcmdmod (33 , c);
+  show_cmd_mod (33 , c);
   switch (c) 
   {case 30 : 
   case 31 : 
@@ -15694,7 +15694,7 @@ zdonullary (quarterword c)
     {
       cur_type = 11;
       cur_exp = get_node (6);
-      initedges (cur_exp);
+      init_edges (cur_exp);
     } 
     break;
   case 33 : 
@@ -15726,10 +15726,10 @@ zdonullary (quarterword c)
     break;
   case 34 : 
     {
-      if (jobname == 0) 
+      if (job_name == 0) 
       open_log_file ();
       cur_type = 4;
-      cur_exp = jobname;
+      cur_exp = job_name;
     } 
     break;
   case 35 : 
@@ -15737,21 +15737,21 @@ zdonullary (quarterword c)
       if (interaction <= 1) 
       fatal_error (835);
       beginfilereading ();
-      curinput .namefield = 1;
+      cur_input .name_field = 1;
       {
 	;
 	print (261);
 	term_input ();
       } 
       {
-	if (pool_ptr + last - curinput .startfield > max_pool_ptr) 
+	if (pool_ptr + last - cur_input .start_field > max_pool_ptr) 
 	{
-	  if (pool_ptr + last - curinput .startfield > pool_size) 
+	  if (pool_ptr + last - cur_input .start_field > pool_size) 
 	  overflow (257 , pool_size - init_pool_ptr);
-	  max_pool_ptr = pool_ptr + last - curinput .startfield;
+	  max_pool_ptr = pool_ptr + last - cur_input .start_field;
 	} 
       } 
-      {register integer for_end; k = curinput .startfield;for_end = last - 
+      {register integer for_end; k = cur_input .start_field;for_end = last - 
       1; if (k <= for_end) do 
 	{
 	  str_pool[pool_ptr] = buffer[k];
@@ -15765,7 +15765,7 @@ zdonullary (quarterword c)
     break;
   } 
   {
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
 } 
@@ -15913,10 +15913,10 @@ zstrtonum (quarterword c)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -15976,7 +15976,7 @@ ztestknown (quarterword c)
   case 14 : 
     {
       p = mem[cur_exp + 1].cint;
-      q = p + bignodesize[cur_type];
+      q = p + big_node_size[cur_type];
       do {
 	  q = q - 2;
 	if (mem[q].hhfield.b0 != 16) 
@@ -16001,7 +16001,7 @@ zdounary (quarterword c)
   halfword p, q;
   integer x;
   {
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
   if (internal[7] > 131072L) 
@@ -16053,7 +16053,7 @@ zdounary (quarterword c)
       cur_exp = - (integer) cur_exp;
       break;
     case 11 : 
-      negateedges (cur_exp);
+      negate_edges (cur_exp);
       break;
       default: 
       badunary (70);
@@ -16091,8 +16091,8 @@ zdounary (quarterword c)
       {
 	n_sin_cos ((cur_exp % 23592960L) * 16);
 	if (c == 62) 
-	cur_exp = roundfraction (nsin);
-	else cur_exp = roundfraction (ncos);
+	cur_exp = roundfraction (n_sin);
+	else cur_exp = roundfraction (n_cos);
       } 
       break;
     case 64 : 
@@ -16114,7 +16114,7 @@ zdounary (quarterword c)
 	cur_exp = roundunscaled (cur_exp) % 256;
 	if (cur_exp < 0) 
 	cur_exp = cur_exp + 256;
-	if (charexists[cur_exp]) 
+	if (char_exists[cur_exp]) 
 	cur_exp = 30;
 	else cur_exp = 31;
 	cur_type = 2;
@@ -16179,11 +16179,11 @@ zdounary (quarterword c)
     badunary (42);
     else {
 	
-      oldsetting = selector;
+      old_setting = selector;
       selector = 5;
       print_scaled (cur_exp);
       cur_exp = make_string ();
-      selector = oldsetting;
+      selector = old_setting;
       cur_type = 4;
     } 
     break;
@@ -16216,10 +16216,10 @@ zdounary (quarterword c)
     flush_cur_exp (0);
     else {
 	
-      curpen = 3;
-      curpathtype = 1;
+      cur_pen = 3;
+      cur_path_type = 1;
       cur_exp = makespec (cur_exp , -1879080960L , 0);
-      flush_cur_exp (turningnumber * 65536L);
+      flush_cur_exp (turning_number * 65536L);
     } 
     break;
   case 2 : 
@@ -16318,7 +16318,7 @@ zdounary (quarterword c)
   case 46 : 
     if (cur_type != 11) 
     badunary (46);
-    else flush_cur_exp (totalweight (cur_exp));
+    else flush_cur_exp (total_weight (cur_exp));
     break;
   case 43 : 
     if (cur_type == 9) 
@@ -16335,7 +16335,7 @@ zdounary (quarterword c)
     break;
   } 
   {
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
 } 
@@ -16365,7 +16365,7 @@ ztarnished (halfword p)
   /* 10 */ register halfword Result; halfword q;
   halfword r;
   q = mem[p + 1].cint;
-  r = q + bignodesize[mem[p].hhfield.b0];
+  r = q + big_node_size[mem[p].hhfield.b0];
   do {
       r = r - 2;
     if (mem[r].hhfield.b0 == 19) 
@@ -16402,7 +16402,7 @@ zdepfinish (halfword v , halfword q , small_number t)
   } 
   else if (q == 0) 
   cur_type = t;
-  if (fixneeded) 
+  if (fix_needed) 
   fix_dependencies ();
 } 
 void 
@@ -16460,7 +16460,7 @@ zaddorsubtract (halfword p , halfword q , quarterword c)
     if (mem[p].hhfield.b0 == 16) 
     {
       while (mem[v].hhfield.lhfield != 0) v = mem[v].hhfield.v.RH 
-  ;
+;
       mem[v + 1].cint = slow_add (mem[p + 1].cint , mem[v + 1]
       .cint);
     } 
@@ -16472,7 +16472,7 @@ zaddorsubtract (halfword p , halfword q , quarterword c)
       {
 	if (s == 17) {
 	    
-	  if (maxcoef (r) + maxcoef (v) < 626349397L) 
+	  if (max_coef (r) + max_coef (v) < 626349397L) 
 	  {
 	    v = pplusq (v , r , 17);
 	    goto done;
@@ -16518,7 +16518,7 @@ zdepmult (halfword p , integer v , boolean visscaled)
       
     if (visscaled) {
 	
-      if (ab_vs_cd (maxcoef (q) , abs (v) , 626349396L , 65536L) >= 0) 
+      if (ab_vs_cd (max_coef (q) , abs (v) , 626349396L , 65536L) >= 0) 
       t = 18;
     } 
   } 
@@ -16569,7 +16569,7 @@ zdepdiv (halfword p , scaled v)
   s = t;
   if (t == 17) {
       
-    if (ab_vs_cd (maxcoef (q) , 65536L , 626349396L , abs (v)) >= 0) 
+    if (ab_vs_cd (max_coef (q) , 65536L , 626349396L , abs (v)) >= 0) 
     t = 18;
   } 
   q = p_over_v (q , v , s , t);
@@ -16591,8 +16591,8 @@ zsetuptrans (quarterword c)
       if (mem[p].hhfield.b0 == 16) 
       {
 	n_sin_cos ((mem[p + 1].cint % 23592960L) * 16);
-	mem[q + 5].cint = roundfraction (ncos);
-	mem[q + 9].cint = roundfraction (nsin);
+	mem[q + 5].cint = roundfraction (n_cos);
+	mem[q + 9].cint = roundfraction (n_sin);
 	mem[q + 7].cint = - (integer) mem[q + 9].cint;
 	mem[q + 11].cint = mem[q + 5].cint;
 	goto done;
@@ -16651,7 +16651,7 @@ zsetuptrans (quarterword c)
       } 
       break;
     case 88 : 
-  ;
+;
       break;
     } 
     disp_err (p , 858);
@@ -16748,8 +16748,8 @@ zedgestrans (halfword p , quarterword c)
 {
   /* 10 */ setupknowntrans (c);
   unstash_cur_exp (p);
-  curedges = cur_exp;
-  if (mem[curedges].hhfield.v.RH == curedges) 
+  cur_edges = cur_exp;
+  if (mem[cur_edges].hhfield.v.RH == cur_edges) 
   goto lab10;
   if (txx == 0) {
       
@@ -16759,12 +16759,12 @@ zedgestrans (halfword p , quarterword c)
 	  
 	if (tyx % 65536L == 0) 
 	{
-	  xyswapedges ();
+	  xy_swap_edges ();
 	  txx = txy;
 	  tyy = tyx;
 	  txy = 0;
 	  tyx = 0;
-	  if (mem[curedges].hhfield.v.RH == curedges) 
+	  if (mem[cur_edges].hhfield.v.RH == cur_edges) 
 	  goto lab10;
 	} 
       } 
@@ -16780,42 +16780,42 @@ zedgestrans (halfword p , quarterword c)
 	{
 	  if ((txx == 0) || (tyy == 0)) 
 	  {
-	    toss_edges (curedges);
+	    toss_edges (cur_edges);
 	    cur_exp = get_node (6);
-	    initedges (cur_exp);
+	    init_edges (cur_exp);
 	  } 
 	  else {
 	      
 	    if (txx < 0) 
 	    {
-	      xreflectedges ();
+	      x_reflect_edges ();
 	      txx = - (integer) txx;
 	    } 
 	    if (tyy < 0) 
 	    {
-	      yreflectedges ();
+	      yreflect_edges ();
 	      tyy = - (integer) tyy;
 	    } 
 	    if (txx != 65536L) 
-	    xscaleedges (txx / 65536L);
+	    x_scale_edges (txx / 65536L);
 	    if (tyy != 65536L) 
-	    yscaleedges (tyy / 65536L);
+	    y_scale_edges (tyy / 65536L);
 	    tx = roundunscaled (tx);
 	    ty = roundunscaled (ty);
-	    if ((mem[curedges + 2].hhfield.lhfield + tx <= 0) || (mem 
-	  [curedges + 2].hhfield.v.RH + tx >= 8192) || (mem[curedges 
-	    + 1].hhfield.lhfield + ty <= 0) || (mem[curedges + 1]
+	    if ((mem[cur_edges + 2].hhfield.lhfield + tx <= 0) || (mem 
+	  [cur_edges + 2].hhfield.v.RH + tx >= 8192) || (mem[cur_edges 
+	    + 1].hhfield.lhfield + ty <= 0) || (mem[cur_edges + 1]
 	    .hhfield.v.RH + ty >= 8191) || (abs (tx) >= 4096) || (abs (
 	    ty) >= 4096)) 
 	    {
 	      {
 		if (interaction == 3) 
 		;
-		if ((filelineerrorstylep && !(curinput .namefield == 0)) 
+		if ((filelineerrorstylep && !(cur_input .name_field == 0)) 
 		) 
 		{
 		  print_nl (261);
-		  print (fullsourcefilenamestack[inopen]);
+		  print (fullsourcefilenamestack[in_open]);
 		  print (58);
 		  print_int (line);
 		  print (262);
@@ -16839,26 +16839,26 @@ zedgestrans (halfword p , quarterword c)
 		
 	      if (tx != 0) 
 	      {
-		if (!(abs (mem[curedges + 3].hhfield.lhfield - tx - 
+		if (!(abs (mem[cur_edges + 3].hhfield.lhfield - tx - 
 		4096) < 4096)) 
-		fixoffset ();
-		mem[curedges + 2].hhfield.lhfield = mem[curedges + 2]
+		fix_offset ();
+		mem[cur_edges + 2].hhfield.lhfield = mem[cur_edges + 2]
 		.hhfield.lhfield + tx;
-		mem[curedges + 2].hhfield.v.RH = mem[curedges + 2]
+		mem[cur_edges + 2].hhfield.v.RH = mem[cur_edges + 2]
 		.hhfield.v.RH + tx;
-		mem[curedges + 3].hhfield.lhfield = mem[curedges + 3]
+		mem[cur_edges + 3].hhfield.lhfield = mem[cur_edges + 3]
 		.hhfield.lhfield - tx;
-		mem[curedges + 4].cint = 0;
+		mem[cur_edges + 4].cint = 0;
 	      } 
 	      if (ty != 0) 
 	      {
-		mem[curedges + 1].hhfield.lhfield = mem[curedges + 1]
+		mem[cur_edges + 1].hhfield.lhfield = mem[cur_edges + 1]
 		.hhfield.lhfield + ty;
-		mem[curedges + 1].hhfield.v.RH = mem[curedges + 1]
+		mem[cur_edges + 1].hhfield.v.RH = mem[cur_edges + 1]
 		.hhfield.v.RH + ty;
-		mem[curedges + 5].hhfield.lhfield = mem[curedges + 5]
+		mem[cur_edges + 5].hhfield.lhfield = mem[cur_edges + 5]
 		.hhfield.lhfield + ty;
-		mem[curedges + 4].cint = 0;
+		mem[cur_edges + 4].cint = 0;
 	      } 
 	    } 
 	  } 
@@ -16870,10 +16870,10 @@ zedgestrans (halfword p , quarterword c)
   {
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -16934,20 +16934,20 @@ zbilin1 (halfword p , scaled t , halfword q , scaled u , scaled delta)
       mem[p + 1].cint = delta;
     } 
   } 
-  if (fixneeded) 
+  if (fix_needed) 
   fix_dependencies ();
 } 
 void 
 zaddmultdep (halfword p , scaled v , halfword r) 
 {
   if (mem[r].hhfield.b0 == 16) 
-  mem[depfinal + 1].cint = mem[depfinal + 1].cint + takescaled (mem[
+  mem[dep_final + 1].cint = mem[dep_final + 1].cint + takescaled (mem[
   r + 1].cint , v);
   else {
       
     mem[p + 1].hhfield.v.RH = p_plus_fq (mem[p + 1].hhfield.v.RH , v 
     , mem[r + 1].hhfield.v.RH , 18 , mem[r].hhfield.b0);
-    if (fixneeded) 
+    if (fix_needed) 
     fix_dependencies ();
   } 
 } 
@@ -16964,9 +16964,9 @@ zbilin2 (halfword p , halfword t , scaled v , halfword u , halfword q)
   addmultdep (p , v , u);
   if (q != 0) 
   addmultdep (p , 65536L , q);
-  if (mem[p + 1].hhfield.v.RH == depfinal) 
+  if (mem[p + 1].hhfield.v.RH == dep_final) 
   {
-    vv = mem[depfinal + 1].cint;
+    vv = mem[dep_final + 1].cint;
     recycle_value (p);
     mem[p].hhfield.b0 = 16;
     mem[p + 1].cint = vv;
@@ -16987,7 +16987,7 @@ zbigtrans (halfword p , quarterword c)
 {
   /* 10 */ halfword q, r, pp, qq;
   small_number s;
-  s = bignodesize[mem[p].hhfield.b0];
+  s = big_node_size[mem[p].hhfield.b0];
   q = mem[p + 1].cint;
   r = q + s;
   do {
@@ -17078,10 +17078,10 @@ zcat (halfword p)
   while (k++ < for_end);} 
   cur_exp = make_string ();
   {
-    if (strref[b]< 127) {
+    if (str_ref[b]< 127) {
 	
-      if (strref[b] > 1) 
-      decr (strref[b]);
+      if (str_ref[b] > 1) 
+      decr (str_ref[b]);
       else flush_string (b);
     } 
   } 
@@ -17145,10 +17145,10 @@ zchopstring (halfword p)
   while (k++ < for_end);} 
   cur_exp = make_string ();
   {
-    if (strref[s]< 127) {
+    if (str_ref[s]< 127) {
 	
-      if (strref[s] > 1) 
-      decr (strref[s]);
+      if (str_ref[s] > 1) 
+      decr (str_ref[s]);
       else flush_string (s);
     } 
   } 
@@ -17212,7 +17212,7 @@ zchoppath (halfword p)
     {
       qq = mem[q].hhfield.v.RH;
       splitcubic (q , a * 4096 , mem[qq + 1].cint , mem[qq + 2].cint 
-    );
+   );
       q = mem[q].hhfield.v.RH;
     } 
     pp = copyknot (q);
@@ -17234,7 +17234,7 @@ zchoppath (halfword p)
       ss = pp;
       pp = mem[pp].hhfield.v.RH;
       splitcubic (ss , a * 4096 , mem[pp + 1].cint , mem[pp + 2].cint 
-    );
+   );
       pp = mem[ss].hhfield.v.RH;
       free_node (ss , 7);
       if (rr == ss) 
@@ -17353,7 +17353,7 @@ zdobinary (halfword p , quarterword c)
   halfword oldp, oldexp;
   integer v;
   {
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
   if (internal[7] > 131072L) 
@@ -17413,9 +17413,9 @@ zdobinary (halfword p , quarterword c)
       if ((cur_type == 11) && (mem[p].hhfield.b0 == 11)) 
       {
 	if (c == 70) 
-	negateedges (cur_exp);
-	curedges = cur_exp;
-	mergeedges (mem[p + 1].cint);
+	negate_edges (cur_exp);
+	cur_edges = cur_exp;
+	merge_edges (mem[p + 1].cint);
       } 
       else badbinary (p , c);
     } 
@@ -17462,7 +17462,7 @@ zdobinary (halfword p , quarterword c)
       {
 	q = mem[p + 1].cint;
 	r = mem[cur_exp + 1].cint;
-	rr = r + bignodesize[cur_type] - 2;
+	rr = r + big_node_size[cur_type] - 2;
 	while (true) {
 	    
 	  addorsubtract (q , r , 70);
@@ -17709,7 +17709,7 @@ zdobinary (halfword p , quarterword c)
       if ((cur_type == 9) && (mem[p].hhfield.b0 == 9)) 
       {
 	pathintersection (mem[p + 1].cint , cur_exp);
-	pairvalue (curt , curtt);
+	pairvalue (cur_t , cur_tt);
       } 
       else badbinary (p , 92);
     } 
@@ -17719,7 +17719,7 @@ zdobinary (halfword p , quarterword c)
   free_node (p , 2);
   lab10: {
       
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
   if (oldp != 0) 
@@ -17789,19 +17789,19 @@ gf_swap (void)
 {
   if (gf_ptr > (2147483647L - gf_offset)) 
   {
-    gfprevptr = 0;
+    gf_prev_ptr = 0;
     fatal_error (1053);
   } 
   if (gf_limit == gf_buf_size) 
   {
-    write_gf (0 , halfbuf - 1);
-    gf_limit = halfbuf;
+    write_gf (0 , half_buf - 1);
+    gf_limit = half_buf;
     gf_offset = gf_offset + gf_buf_size;
     gf_ptr = 0;
   } 
   else {
       
-    write_gf (halfbuf , gf_buf_size - 1);
+    write_gf (half_buf , gf_buf_size - 1);
     gf_limit = gf_buf_size;
   } 
 } 
@@ -17980,15 +17980,15 @@ zgfstring (str_number s , str_number t)
 void 
 zgfboc (integer minm , integer maxm , integer minn , integer maxn) 
 {
-  /* 10 */ if (minm < gfminm) 
-  gfminm = minm;
-  if (maxn > gfmaxn) 
-  gfmaxn = maxn;
-  if (bocp == -1) {
+  /* 10 */ if (minm < gf_min_m) 
+  gf_min_m = minm;
+  if (maxn > gf_max_n) 
+  gf_max_n = maxn;
+  if (boc_p == -1) {
       
-    if (bocc >= 0) {
+    if (boc_c >= 0) {
 	
-      if (bocc < 256) {
+      if (boc_c < 256) {
 	  
 	if (maxm - minm >= 0) {
 	    
@@ -18013,7 +18013,7 @@ zgfboc (integer minm , integer maxm , integer minn , integer maxn)
 			  gf_swap ();
 			} 
 			{
-			  gf_buf[gf_ptr] = bocc;
+			  gf_buf[gf_ptr] = boc_c;
 			  incr (gf_ptr);
 			  if (gf_ptr == gf_limit) 
 			  gf_swap ();
@@ -18060,8 +18060,8 @@ zgfboc (integer minm , integer maxm , integer minn , integer maxn)
     if (gf_ptr == gf_limit) 
     gf_swap ();
   } 
-  gffour (bocc);
-  gffour (bocp);
+  gffour (boc_c);
+  gffour (boc_p);
   gffour (minm);
   gffour (maxm);
   gffour (minn);
@@ -18073,31 +18073,31 @@ init_gf (void)
 {
   short k;
   integer t;
-  gfminm = 4096;
-  gfmaxm = -4096;
-  gfminn = 4096;
-  gfmaxn = -4096;
+  gf_min_m = 4096;
+  gf_max_m = -4096;
+  gf_min_n = 4096;
+  gf_max_n = -4096;
   {register integer for_end; k = 0;for_end = 255; if (k <= for_end) do 
-    charptr[k] = -1;
+    char_ptr[k] = -1;
   while (k++ < for_end);} 
   if (internal[27]<= 0) 
-  gfext = 1055;
+  gf_ext = 1055;
   else {
       
-    oldsetting = selector;
+    old_setting = selector;
     selector = 5;
     print_char (46);
     print_int (makescaled (internal[27], 59429463L));
     print (1056);
-    gfext = make_string ();
-    selector = oldsetting;
+    gf_ext = make_string ();
+    selector = old_setting;
   } 
   {
-    if (jobname == 0) 
+    if (job_name == 0) 
     open_log_file ();
-    packjobname (gfext);
-    while (!bopenout (gffile)) promptfilename (756 , gfext);
-    outputfilename = bmakenamestring (gffile);
+    packjob_name (gf_ext);
+    while (!bopenout (gf_file)) promptfilename (756 , gf_ext);
+    output_file_name = bmakenamestring (gf_file);
   } 
   {
     gf_buf[gf_ptr] = 247;
@@ -18111,7 +18111,7 @@ init_gf (void)
     if (gf_ptr == gf_limit) 
     gf_swap ();
   } 
-  oldsetting = selector;
+  old_setting = selector;
   selector = 5;
   print (1054);
   print_int (roundunscaled (internal[14]));
@@ -18123,7 +18123,7 @@ init_gf (void)
   t = roundunscaled (internal[17]);
   print_dd (t / 60);
   print_dd (t % 60);
-  selector = oldsetting;
+  selector = old_setting;
   {
     gf_buf[gf_ptr] = (pool_ptr - str_start[str_ptr]);
     incr (gf_ptr);
@@ -18133,7 +18133,7 @@ init_gf (void)
   gfstring (0 , make_string ());
   decr (str_ptr);
   pool_ptr = str_start[str_ptr];
-  gfprevptr = gf_offset + gf_ptr;
+  gf_prev_ptr = gf_offset + gf_ptr;
 } 
 void 
 zshipout (eight_bits c) 
@@ -18147,7 +18147,7 @@ zshipout (eight_bits c)
   integer delta;
   integer curminm;
   integer xoff, yoff;
-  if (outputfilename == 0) 
+  if (output_file_name == 0) 
   init_gf ();
   f = roundunscaled (internal[19]);
   xoff = roundunscaled (internal[29]);
@@ -18164,9 +18164,9 @@ zshipout (eight_bits c)
     print_int (f);
   } 
   fflush (stdout);
-  bocc = 256 * f + c;
-  bocp = charptr[c];
-  charptr[c] = gfprevptr;
+  boc_c = 256 * f + c;
+  boc_p = char_ptr[c];
+  char_ptr[c] = gf_prev_ptr;
   if (internal[34] > 0) 
   {
     if (xoff != 0) 
@@ -18193,12 +18193,12 @@ zshipout (eight_bits c)
     } 
   } 
   prevn = 4096;
-  p = mem[curedges].hhfield.lhfield;
-  n = mem[curedges + 1].hhfield.v.RH - 4096;
-  while (p != curedges) {
+  p = mem[cur_edges].hhfield.lhfield;
+  n = mem[cur_edges + 1].hhfield.v.RH - 4096;
+  while (p != cur_edges) {
       
     if (mem[p + 1].hhfield.lhfield > 1) 
-    sortedges (p);
+    sort_edges (p);
     q = mem[p + 1].hhfield.v.RH;
     w = 0;
     prevm = -268435456L;
@@ -18224,11 +18224,11 @@ zshipout (eight_bits c)
 	    {
 	      if (prevn == 4096) 
 	      {
-		gfboc (mem[curedges + 2].hhfield.lhfield + xoff - 4096 , 
-		mem[curedges + 2].hhfield.v.RH + xoff - 4096 , mem[
-		curedges + 1].hhfield.lhfield + yoff - 4096 , n + yoff);
-		curminm = mem[curedges + 2].hhfield.lhfield - 4096 + mem 
-		[curedges + 3].hhfield.lhfield;
+		gfboc (mem[cur_edges + 2].hhfield.lhfield + xoff - 4096 , 
+		mem[cur_edges + 2].hhfield.v.RH + xoff - 4096 , mem[
+		cur_edges + 1].hhfield.lhfield + yoff - 4096 , n + yoff);
+		curminm = mem[cur_edges + 2].hhfield.lhfield - 4096 + mem 
+		[cur_edges + 3].hhfield.lhfield;
 	      } 
 	      else if (prevn > n + 1) 
 	      {
@@ -18301,29 +18301,29 @@ zshipout (eight_bits c)
     } while (!(mm == 268435456L));
     if (w != 0) 
     print_nl (1058);
-    if (prevm - mem[curedges + 3].hhfield.lhfield + xoff > gfmaxm) 
-    gfmaxm = prevm - mem[curedges + 3].hhfield.lhfield + xoff;
+    if (prevm - mem[cur_edges + 3].hhfield.lhfield + xoff > gf_max_m) 
+    gf_max_m = prevm - mem[cur_edges + 3].hhfield.lhfield + xoff;
     p = mem[p].hhfield.lhfield;
     decr (n);
   } 
   if (prevn == 4096) 
   {
     gfboc (0 , 0 , 0 , 0);
-    if (gfmaxm < 0) 
-    gfmaxm = 0;
-    if (gfminn > 0) 
-    gfminn = 0;
+    if (gf_max_m < 0) 
+    gf_max_m = 0;
+    if (gf_min_n > 0) 
+    gf_min_n = 0;
   } 
-  else if (prevn + yoff < gfminn) 
-  gfminn = prevn + yoff;
+  else if (prevn + yoff < gf_min_n) 
+  gf_min_n = prevn + yoff;
   {
     gf_buf[gf_ptr] = 69;
     incr (gf_ptr);
     if (gf_ptr == gf_limit) 
     gf_swap ();
   } 
-  gfprevptr = gf_offset + gf_ptr;
-  incr (totalchars);
+  gf_prev_ptr = gf_offset + gf_ptr;
+  incr (total_chars);
   print_char (93);
   fflush (stdout);
   if (internal[11] > 0) 
@@ -18350,7 +18350,7 @@ ztryeq (halfword l , halfword r)
     t = 17;
     p = singledependency (l);
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
-    q = depfinal;
+    q = dep_final;
   } 
   else {
       
@@ -18403,7 +18403,7 @@ ztryeq (halfword l , halfword r)
     copied = true;
     tt = 17;
   } 
-  watchcoefs = false;
+  watch_coefs = false;
   if (t == tt) 
   p = pplusq (p , pp , t);
   else if (t == 18) 
@@ -18419,7 +18419,7 @@ ztryeq (halfword l , halfword r)
     t = 18;
     p = pplusq (p , pp , t);
   } 
-  watchcoefs = true;
+  watch_coefs = true;
   if (copied) 
   flush_node_list (pp);
   done1:;
@@ -18430,10 +18430,10 @@ ztryeq (halfword l , halfword r)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -18460,10 +18460,10 @@ ztryeq (halfword l , halfword r)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -18538,10 +18538,10 @@ zmakeeq (halfword lhs)
 	  {
 	    if (interaction == 3) 
 	;
-	    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	    {
 	      print_nl (261);
-	      print (fullsourcefilenamestack[inopen]);
+	      print (fullsourcefilenamestack[in_open]);
 	      print (58);
 	      print_int (line);
 	      print (262);
@@ -18565,10 +18565,10 @@ zmakeeq (halfword lhs)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -18591,10 +18591,10 @@ zmakeeq (halfword lhs)
 	  
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -18643,8 +18643,8 @@ zmakeeq (halfword lhs)
   case 14 : 
     if (cur_type == t) 
     {
-      p = v + bignodesize[t];
-      q = mem[cur_exp + 1].cint + bignodesize[t];
+      p = v + big_node_size[t];
+      q = mem[cur_exp + 1].cint + big_node_size[t];
       do {
 	  p = p - 2;
 	q = q - 2;
@@ -18685,7 +18685,7 @@ zmakeeq (halfword lhs)
   put_get_error ();
   done: {
       
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
   recycle_value (lhs);
@@ -18698,11 +18698,11 @@ doequation (void)
   halfword p;
   lhs = stash_cur_exp ();
   getxnext ();
-  varflag = 77;
+  var_flag = 77;
   scan_expression ();
-  if (curcmd == 51) 
+  if (cur_cmd == 51) 
   doequation ();
-  else if (curcmd == 77) 
+  else if (cur_cmd == 77) 
   doassignment ();
   if (internal[7] > 131072L) 
   {
@@ -18747,18 +18747,18 @@ doassignment (void)
     lhs = cur_exp;
     cur_type = 1;
     getxnext ();
-    varflag = 77;
+    var_flag = 77;
     scan_expression ();
-    if (curcmd == 51) 
+    if (cur_cmd == 51) 
     doequation ();
-    else if (curcmd == 77) 
+    else if (cur_cmd == 77) 
     doassignment ();
     if (internal[7] > 131072L) 
     {
       begin_diagnostic ();
       print_nl (123);
       if (mem[lhs].hhfield.lhfield > 9769) 
-      slow_print (intname[mem[lhs].hhfield.lhfield - (9769)]);
+      slow_print (int_name[mem[lhs].hhfield.lhfield - (9769)]);
       else show_token_list (lhs , 0 , 1000 , 0);
       print (461);
       print_exp (0 , 0);
@@ -18772,7 +18772,7 @@ doassignment (void)
       else {
 	  
 	disp_err (0 , 887);
-	slow_print (intname[mem[lhs].hhfield.lhfield - (9769)]);
+	slow_print (int_name[mem[lhs].hhfield.lhfield - (9769)]);
 	print (888);
 	{
 	  help_ptr = 2;
@@ -18812,9 +18812,9 @@ dotypedeclaration (void)
   small_number t;
   halfword p;
   halfword q;
-  if (curmod >= 13) 
-  t = curmod;
-  else t = curmod + 1;
+  if (cur_mod >= 13) 
+  t = cur_mod;
+  else t = cur_mod + 1;
   do {
       p = scandeclaredvariable ();
     flushvariable (eqtb[mem[p].hhfield.lhfield].v.RH , mem[p]
@@ -18830,10 +18830,10 @@ dotypedeclaration (void)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -18853,15 +18853,15 @@ dotypedeclaration (void)
       put_get_error ();
     } 
     flush_list (p);
-    if (curcmd < 82) 
+    if (cur_cmd < 82) 
     {
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -18881,31 +18881,31 @@ dotypedeclaration (void)
 	help_line[1] = 907;
 	help_line[0] = 908;
       } 
-      if (curcmd == 42) 
+      if (cur_cmd == 42) 
       help_line[2] = 909;
       put_get_error ();
-      scannerstatus = 2;
+      scanner_status = 2;
       do {
 	  getnext ();
-	if (curcmd == 39) 
+	if (cur_cmd == 39) 
 	{
-	  if (strref[curmod]< 127) {
+	  if (str_ref[cur_mod]< 127) {
 	      
-	    if (strref[curmod] > 1) 
-	    decr (strref[curmod]);
-	    else flush_string (curmod);
+	    if (str_ref[cur_mod] > 1) 
+	    decr (str_ref[cur_mod]);
+	    else flush_string (cur_mod);
 	  } 
 	} 
-      } while (!(curcmd >= 82));
-      scannerstatus = 0;
+      } while (!(cur_cmd >= 82));
+      scanner_status = 0;
     } 
-  } while (!(curcmd > 82));
+  } while (!(cur_cmd > 82));
 } 
 void 
 dorandomseed (void) 
 {
   getxnext ();
-  if (curcmd != 77) 
+  if (cur_cmd != 77) 
   {
     missing_err (461);
     {
@@ -18931,13 +18931,13 @@ dorandomseed (void)
     init_randoms (cur_exp);
     if (selector >= 2) 
     {
-      oldsetting = selector;
+      old_setting = selector;
       selector = 2;
       print_nl (918);
       print_scaled (cur_exp);
       print_char (125);
       print_nl (261);
-      selector = oldsetting;
+      selector = old_setting;
     } 
   } 
 } 
@@ -18946,28 +18946,28 @@ doprotection (void)
 {
   unsigned char m;
   halfword t;
-  m = curmod;
+  m = cur_mod;
   do {
       getsymbol ();
-    t = eqtb[cursym].lhfield;
+    t = eqtb[cur_sym].lhfield;
     if (m == 0) 
     {
       if (t >= 86) 
-      eqtb[cursym].lhfield = t - 86;
+      eqtb[cur_sym].lhfield = t - 86;
     } 
     else if (t < 86) 
-    eqtb[cursym].lhfield = t + 86;
+    eqtb[cur_sym].lhfield = t + 86;
     getxnext ();
-  } while (!(curcmd != 82));
+  } while (!(cur_cmd != 82));
 } 
 void 
 defdelims (void) 
 {
   halfword ldelim, rdelim;
   getclearsymbol ();
-  ldelim = cursym;
+  ldelim = cur_sym;
   getclearsymbol ();
-  rdelim = cursym;
+  rdelim = cur_sym;
   eqtb[ldelim].lhfield = 31;
   eqtb[ldelim].v.RH = rdelim;
   eqtb[rdelim].lhfield = 62;
@@ -18978,15 +18978,15 @@ void
 dointerim (void) 
 {
   getxnext ();
-  if (curcmd != 40) 
+  if (cur_cmd != 40) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -18998,9 +18998,9 @@ dointerim (void)
 	print (924);
       } 
     } 
-    if (cursym == 0) 
+    if (cur_sym == 0) 
     print (929);
-    else slow_print (hash[cursym].v.RH);
+    else slow_print (hash[cur_sym].v.RH);
     print (930);
     {
       help_ptr = 1;
@@ -19010,7 +19010,7 @@ dointerim (void)
   } 
   else {
       
-    saveinternal (curmod);
+    saveinternal (cur_mod);
     backinput ();
   } 
   dostatement ();
@@ -19020,11 +19020,11 @@ dolet (void)
 {
   halfword l;
   getsymbol ();
-  l = cursym;
+  l = cur_sym;
   getxnext ();
-  if (curcmd != 51) {
+  if (cur_cmd != 51) {
       
-    if (curcmd != 77) 
+    if (cur_cmd != 77) 
     {
       missing_err (61);
       {
@@ -19037,38 +19037,38 @@ dolet (void)
     } 
   } 
   getsymbol ();
-  switch (curcmd) 
+  switch (cur_cmd) 
   {case 10 : 
   case 53 : 
   case 44 : 
   case 49 : 
-    incr (mem[curmod].hhfield.lhfield);
+    incr (mem[cur_mod].hhfield.lhfield);
     break;
     default: 
 ;
     break;
   } 
   clearsymbol (l , false);
-  eqtb[l].lhfield = curcmd;
-  if (curcmd == 41) 
+  eqtb[l].lhfield = cur_cmd;
+  if (cur_cmd == 41) 
   eqtb[l].v.RH = 0;
-  else eqtb[l].v.RH = curmod;
+  else eqtb[l].v.RH = cur_mod;
   getxnext ();
 } 
 void 
 donewinternal (void) 
 {
   do {
-      if (intptr == maxinternal) 
-    overflow (934 , maxinternal);
+      if (int_ptr == max_internal) 
+    overflow (934 , max_internal);
     getclearsymbol ();
-    incr (intptr);
-    eqtb[cursym].lhfield = 40;
-    eqtb[cursym].v.RH = intptr;
-    intname[intptr] = hash[cursym].v.RH;
-    internal[intptr] = 0;
+    incr (int_ptr);
+    eqtb[cur_sym].lhfield = 40;
+    eqtb[cur_sym].v.RH = int_ptr;
+    int_name[int_ptr] = hash[cur_sym].v.RH;
+    internal[int_ptr] = 0;
     getxnext ();
-  } while (!(curcmd != 82));
+  } while (!(cur_cmd != 82));
 } 
 void 
 doshow (void) 
@@ -19079,47 +19079,47 @@ doshow (void)
     print_nl (765);
     print_exp (0 , 2);
     flush_cur_exp (0);
-  } while (!(curcmd != 82));
+  } while (!(cur_cmd != 82));
 } 
 void 
 disptoken (void) 
 {
   print_nl (940);
-  if (cursym == 0) 
+  if (cur_sym == 0) 
   {
-    if (curcmd == 42) 
-    print_scaled (curmod);
-    else if (curcmd == 38) 
+    if (cur_cmd == 42) 
+    print_scaled (cur_mod);
+    else if (cur_cmd == 38) 
     {
-      gpointer = curmod;
-      printcapsule ();
+      g_pointer = cur_mod;
+      print_capsule ();
     } 
     else {
 	
       print_char (34);
-      slow_print (curmod);
+      slow_print (cur_mod);
       print_char (34);
       {
-	if (strref[curmod]< 127) {
+	if (str_ref[cur_mod]< 127) {
 	    
-	  if (strref[curmod] > 1) 
-	  decr (strref[curmod]);
-	  else flush_string (curmod);
+	  if (str_ref[cur_mod] > 1) 
+	  decr (str_ref[cur_mod]);
+	  else flush_string (cur_mod);
 	} 
       } 
     } 
   } 
   else {
       
-    slow_print (hash[cursym].v.RH);
+    slow_print (hash[cur_sym].v.RH);
     print_char (61);
-    if (eqtb[cursym].lhfield >= 86) 
+    if (eqtb[cur_sym].lhfield >= 86) 
     print (941);
-    print_cmd_mod (curcmd , curmod);
-    if (curcmd == 10) 
+    print_cmd_mod (cur_cmd , cur_mod);
+    if (cur_cmd == 10) 
     {
       print_ln ();
-      show_macro (curmod , 0 , 100000L);
+      show_macro (cur_mod , 0 , 100000L);
     } 
   } 
 } 
@@ -19130,7 +19130,7 @@ doshowtoken (void)
       getnext ();
     disptoken ();
     getxnext ();
-  } while (!(curcmd != 82));
+  } while (!(cur_cmd != 82));
 } 
 void 
 doshowstats (void) 
@@ -19138,22 +19138,22 @@ doshowstats (void)
   print_nl (950);
 	;
 #ifdef STAT
-  print_int (varused);
+  print_int (var_used);
   print_char (38);
-  print_int (dynused);
+  print_int (dyn_used);
   if (false) 
 #endif /* STAT */
   print (357);
   print (558);
-  print_int (himemmin - lomemmax - 1);
+  print_int (hi_mem_min - lo_mem_max - 1);
   print (951);
   print_ln ();
   print_nl (952);
-  print_int (str_ptr - initstr_ptr);
+  print_int (str_ptr - init_str_ptr);
   print_char (38);
   print_int (pool_ptr - init_pool_ptr);
   print (558);
-  print_int (maxstrings - maxstr_ptr);
+  print_int (max_strings - max_str_ptr);
   print_char (38);
   print_int (pool_size - max_pool_ptr);
   print (951);
@@ -19204,15 +19204,15 @@ doshowvar (void)
 {
   /* 30 */ do {
       getnext ();
-    if (cursym > 0) {
+    if (cur_sym > 0) {
 	
-      if (cursym <= 9769) {
+      if (cur_sym <= 9769) {
 	  
-	if (curcmd == 41) {
+	if (cur_cmd == 41) {
 	    
-	  if (curmod != 0) 
+	  if (cur_mod != 0) 
 	  {
-	    dispvar (curmod);
+	    dispvar (cur_mod);
 	    goto done;
 	  } 
 	} 
@@ -19220,7 +19220,7 @@ doshowvar (void)
     } 
     disptoken ();
     done: getxnext ();
-  } while (!(curcmd != 82));
+  } while (!(cur_cmd != 82));
 } 
 void 
 doshowdependencies (void) 
@@ -19237,7 +19237,7 @@ doshowdependencies (void)
       print_char (61);
       else print (768);
       print_dependency (mem[p + 1].hhfield.v.RH , mem[p].hhfield.b0 
-    );
+   );
     } 
     p = mem[p + 1].hhfield.v.RH;
     while (mem[p].hhfield.lhfield != 0) p = mem[p].hhfield.v.RH;
@@ -19250,7 +19250,7 @@ doshowwhatever (void)
 {
   if (interaction == 3) 
 ;
-  switch (curmod) 
+  switch (cur_mod) 
   {case 0 : 
     doshowtoken ();
     break;
@@ -19271,11 +19271,11 @@ doshowwhatever (void)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -19290,14 +19290,14 @@ doshowwhatever (void)
     if (interaction < 3) 
     {
       help_ptr = 0;
-      decr (errorcount);
+      decr (error_count);
     } 
     else {
 	
       help_ptr = 1;
       help_line[0] = 955;
     } 
-    if (curcmd == 83) 
+    if (cur_cmd == 83) 
     error ();
     else put_get_error ();
   } 
@@ -19307,7 +19307,7 @@ scanwith (void)
 {
   register boolean Result; small_number t;
   boolean result;
-  t = curmod;
+  t = cur_mod;
   cur_type = 1;
   getxnext ();
   scan_expression ();
@@ -19336,10 +19336,10 @@ scanwith (void)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -19366,7 +19366,7 @@ zfindedgesvar (halfword t)
 {
   halfword p;
   p = find_variable (t);
-  curedges = 0;
+  cur_edges = 0;
   if (p == 0) 
   {
     obliterated (t);
@@ -19376,11 +19376,11 @@ zfindedgesvar (halfword t)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -19403,7 +19403,7 @@ zfindedgesvar (halfword t)
     } 
     put_get_error ();
   } 
-  else curedges = mem[p + 1].cint;
+  else cur_edges = mem[p + 1].cint;
   flush_node_list (t);
 } 
 void 
@@ -19415,8 +19415,8 @@ doaddto (void)
   halfword q;
   unsigned char addtotype;
   getxnext ();
-  varflag = 68;
-  scanprimary ();
+  var_flag = 68;
+  scan_primary ();
   if (cur_type != 20) 
   {
     disp_err (0 , 971);
@@ -19432,14 +19432,14 @@ doaddto (void)
   else {
       
     lhs = cur_exp;
-    addtotype = curmod;
+    addtotype = cur_mod;
     cur_type = 1;
     getxnext ();
     scan_expression ();
     if (addtotype == 2) 
     {
       findedgesvar (lhs);
-      if (curedges == 0) 
+      if (cur_edges == 0) 
       flush_cur_exp (0);
       else if (cur_type != 11) 
       {
@@ -19453,7 +19453,7 @@ doaddto (void)
       } 
       else {
 	  
-	mergeedges (cur_exp);
+	merge_edges (cur_exp);
 	flush_cur_exp (0);
       } 
     } 
@@ -19476,29 +19476,29 @@ doaddto (void)
 	  
 	rhs = cur_exp;
 	w = 1;
-	curpen = 3;
-	while (curcmd == 66) if (scanwith ()) {
+	cur_pen = 3;
+	while (cur_cmd == 66) if (scanwith ()) {
 	    
 	  if (cur_type == 16) 
 	  w = cur_exp;
 	  else {
 	      
-	    if (mem[curpen].hhfield.lhfield == 0) 
-	    toss_pen (curpen);
-	    else decr (mem[curpen].hhfield.lhfield);
-	    curpen = cur_exp;
+	    if (mem[cur_pen].hhfield.lhfield == 0) 
+	    toss_pen (cur_pen);
+	    else decr (mem[cur_pen].hhfield.lhfield);
+	    cur_pen = cur_exp;
 	  } 
 	} 
 	findedgesvar (lhs);
-	if (curedges == 0) 
+	if (cur_edges == 0) 
 	toss_knot_list (rhs);
 	else {
 	    
 	  lhs = 0;
-	  curpathtype = addtotype;
+	  cur_path_type = addtotype;
 	  if (mem[rhs].hhfield.b0 == 0) {
 	      
-	    if (curpathtype == 0) {
+	    if (cur_path_type == 0) {
 		
 	      if (mem[rhs].hhfield.v.RH == rhs) 
 	      {
@@ -19513,10 +19513,10 @@ doaddto (void)
 		  
 		p = htapypoc (rhs);
 		q = mem[p].hhfield.v.RH;
-		mem[pathtail + 5].cint = mem[q + 5].cint;
-		mem[pathtail + 6].cint = mem[q + 6].cint;
-		mem[pathtail].hhfield.b1 = mem[q].hhfield.b1;
-		mem[pathtail].hhfield.v.RH = mem[q].hhfield.v.RH;
+		mem[path_tail + 5].cint = mem[q + 5].cint;
+		mem[path_tail + 6].cint = mem[q + 6].cint;
+		mem[path_tail].hhfield.b1 = mem[q].hhfield.b1;
+		mem[path_tail].hhfield.v.RH = mem[q].hhfield.v.RH;
 		free_node (q , 7);
 		mem[p + 5].cint = mem[rhs + 5].cint;
 		mem[p + 6].cint = mem[rhs + 6].cint;
@@ -19531,11 +19531,11 @@ doaddto (void)
 	      {
 		if (interaction == 3) 
 		;
-		if ((filelineerrorstylep && !(curinput .namefield == 0)) 
+		if ((filelineerrorstylep && !(cur_input .name_field == 0)) 
 		) 
 		{
 		  print_nl (261);
-		  print (fullsourcefilenamestack[inopen]);
+		  print (fullsourcefilenamestack[in_open]);
 		  print (58);
 		  print_int (line);
 		  print (262);
@@ -19557,24 +19557,24 @@ doaddto (void)
 	      goto not_found;
 	    } 
 	  } 
-	  else if (curpathtype == 0) 
+	  else if (cur_path_type == 0) 
 	  lhs = htapypoc (rhs);
-	  curwt = w;
-	  rhs = makespec (rhs , mem[curpen + 9].cint , internal[5]);
-	  if (turningnumber <= 0) {
+	  cur_wt = w;
+	  rhs = makespec (rhs , mem[cur_pen + 9].cint , internal[5]);
+	  if (turning_number <= 0) {
 	      
-	    if (curpathtype != 0) {
+	    if (cur_path_type != 0) {
 		
 	      if (internal[39] > 0) {
 		  
-		if ((turningnumber < 0) && (mem[curpen].hhfield.v.RH 
+		if ((turning_number < 0) && (mem[cur_pen].hhfield.v.RH 
 		== 0)) 
-		curwt = - (integer) curwt;
+		cur_wt = - (integer) cur_wt;
 		else {
 		    
-		  if (turningnumber == 0) {
+		  if (turning_number == 0) {
 		      
-		    if ((internal[39]<= 65536L) && (mem[curpen]
+		    if ((internal[39]<= 65536L) && (mem[cur_pen]
 		    .hhfield.v.RH == 0)) 
 		    goto done;
 		    else printstrange (980);
@@ -19592,24 +19592,24 @@ doaddto (void)
 	    } 
 	  } 
 	  done:;
-	  if (mem[curpen + 9].cint == 0) 
+	  if (mem[cur_pen + 9].cint == 0) 
 	  fillspec (rhs);
 	  else fillenvelope (rhs);
 	  if (lhs != 0) 
 	  {
-	    revturns = true;
-	    lhs = makespec (lhs , mem[curpen + 9].cint , internal[5]) 
+	    rev_turns = true;
+	    lhs = makespec (lhs , mem[cur_pen + 9].cint , internal[5]) 
 	;
-	    revturns = false;
-	    if (mem[curpen + 9].cint == 0) 
+	    rev_turns = false;
+	    if (mem[cur_pen + 9].cint == 0) 
 	    fillspec (lhs);
 	    else fillenvelope (lhs);
 	  } 
 	  not_found:;
 	} 
-	if (mem[curpen].hhfield.lhfield == 0) 
-	toss_pen (curpen);
-	else decr (mem[curpen].hhfield.lhfield);
+	if (mem[cur_pen].hhfield.lhfield == 0) 
+	toss_pen (cur_pen);
+	else decr (mem[cur_pen].hhfield.lhfield);
       } 
     } 
   } 
@@ -19621,11 +19621,11 @@ ztfmcheck (small_number m)
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -19637,7 +19637,7 @@ ztfmcheck (small_number m)
 	print (1001);
       } 
     } 
-    print (intname[m]);
+    print (int_name[m]);
     print (1002);
     {
       help_ptr = 1;
@@ -19656,12 +19656,12 @@ doshipout (void)
 {
   /* 10 */ integer c;
   getxnext ();
-  varflag = 83;
+  var_flag = 83;
   scan_expression ();
   if (cur_type != 20) {
       
     if (cur_type == 11) 
-    curedges = cur_exp;
+    cur_edges = cur_exp;
     else {
 	
       {
@@ -19683,7 +19683,7 @@ doshipout (void)
     findedgesvar (cur_exp);
     cur_type = 1;
   } 
-  if (curedges != 0) 
+  if (cur_edges != 0) 
   {
     c = roundunscaled (internal[18]) % 256;
     if (c < 0) 
@@ -19692,13 +19692,13 @@ doshipout (void)
     bc = c;
     if (c > ec) 
     ec = c;
-    charexists[c] = true;
-    gfdx[c] = internal[24];
-    gfdy[c] = internal[25];
-    tfmwidth[c] = tfmcheck (20);
-    tfmheight[c] = tfmcheck (21);
-    tfmdepth[c] = tfmcheck (22);
-    tfmitalcorr[c] = tfmcheck (23);
+    char_exists[c] = true;
+    gf_dx[c] = internal[24];
+    gf_dy[c] = internal[25];
+    tfm_width[c] = tfmcheck (20);
+    tfm_height[c] = tfmcheck (21);
+    tfm_depth[c] = tfmcheck (22);
+    tfm_ital_corr[c] = tfmcheck (23);
     if (internal[34] >= 0) 
     shipout (c);
   } 
@@ -19710,8 +19710,8 @@ dodisplay (void)
 {
   /* 45 50 10 */ halfword e;
   getxnext ();
-  varflag = 73;
-  scanprimary ();
+  var_flag = 73;
+  scan_primary ();
   if (cur_type != 20) 
   {
     disp_err (0 , 971);
@@ -19737,10 +19737,10 @@ dodisplay (void)
     goto not_found;
     if (cur_exp > 15) 
     goto not_found;
-    if (!windowopen[cur_exp]) 
+    if (!window_open[cur_exp]) 
     goto not_found;
     findedgesvar (e);
-    if (curedges != 0) 
+    if (cur_edges != 0) 
     dispedges (cur_exp);
     goto lab10;
     not_found: cur_exp = cur_exp * 65536L;
@@ -19759,7 +19759,7 @@ zgetpair (commandcode c)
 {
   register boolean Result; halfword p;
   boolean b;
-  if (curcmd != c) 
+  if (cur_cmd != c) 
   Result = false;
   else {
       
@@ -19779,7 +19779,7 @@ zgetpair (commandcode c)
   return Result;
 } 
 void 
-doopenwindow (void) 
+doopen_window (void) 
 {
   /* 45 10 */ integer k;
   scaled r0, c0, r1, c1;
@@ -19808,10 +19808,10 @@ doopenwindow (void)
       
     if (interaction == 3) 
 ;
-    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
       print_nl (261);
-      print (fullsourcefilenamestack[inopen]);
+      print (fullsourcefilenamestack[in_open]);
       print (58);
       print_int (line);
       print (262);
@@ -19839,8 +19839,8 @@ docull (void)
   integer w, win, wout;
   w = 1;
   getxnext ();
-  varflag = 67;
-  scanprimary ();
+  var_flag = 67;
+  scan_primary ();
   if (cur_type != 20) 
   {
     disp_err (0 , 971);
@@ -19857,10 +19857,10 @@ docull (void)
       
     e = cur_exp;
     cur_type = 1;
-    keeping = curmod;
+    keeping = cur_mod;
     if (!getpair (67)) 
     goto not_found;
-    while ((curcmd == 66) && (curmod == 16)) if (scanwith ()) 
+    while ((cur_cmd == 66) && (cur_mod == 16)) if (scanwith ()) 
     w = cur_exp;
     if (cur_x > cur_y) 
     goto not_found;
@@ -19879,18 +19879,18 @@ docull (void)
       win = w;
     } 
     findedgesvar (e);
-    if (curedges != 0) 
-    culledges (floorunscaled (cur_x + 65535L) , floorunscaled (cur_y) , 
+    if (cur_edges != 0) 
+    cull_edges (floorunscaled (cur_x + 65535L) , floorunscaled (cur_y) , 
     wout , win);
     goto lab10;
     not_found: {
 	
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -19915,7 +19915,7 @@ void
 domessage (void) 
 {
   unsigned char m;
-  m = curmod;
+  m = cur_mod;
   getxnext ();
   scan_expression ();
   if (cur_type != 4) 
@@ -19939,10 +19939,10 @@ domessage (void)
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -19955,9 +19955,9 @@ domessage (void)
 	} 
       } 
       slow_print (cur_exp);
-      if (errhelp != 0) 
-      useerrhelp = true;
-      else if (longhelpseen) 
+      if (err_help != 0) 
+      use_err_help = true;
+      else if (long_help_seen) 
       {
 	help_ptr = 1;
 	help_line[0] = 996;
@@ -19965,7 +19965,7 @@ domessage (void)
       else {
 	  
 	if (interaction < 3) 
-	longhelpseen = true;
+	long_help_seen = true;
 	{
 	  help_ptr = 4;
 	  help_line[3] = 997;
@@ -19975,28 +19975,28 @@ domessage (void)
 	} 
       } 
       put_get_error ();
-      useerrhelp = false;
+      use_err_help = false;
     } 
     break;
   case 2 : 
     {
-      if (errhelp != 0) 
+      if (err_help != 0) 
       {
-	if (strref[errhelp]< 127) {
+	if (str_ref[err_help]< 127) {
 	    
-	  if (strref[errhelp] > 1) 
-	  decr (strref[errhelp]);
-	  else flush_string (errhelp);
+	  if (str_ref[err_help] > 1) 
+	  decr (str_ref[err_help]);
+	  else flush_string (err_help);
 	} 
       } 
       if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0) 
-      errhelp = 0;
+      err_help = 0;
       else {
 	  
-	errhelp = cur_exp;
+	err_help = cur_exp;
 	{
-	  if (strref[errhelp]< 127) 
-	  incr (strref[errhelp]);
+	  if (str_ref[err_help]< 127) 
+	  incr (str_ref[err_help]);
 	} 
       } 
     } 
@@ -20041,26 +20041,26 @@ getcode (void)
 void 
 zsettag (halfword c , small_number t , halfword r) 
 {
-  if (chartag[c] == 0) 
+  if (char_tag[c] == 0) 
   {
-    chartag[c] = t;
-    charremainder[c] = r;
+    char_tag[c] = t;
+    char_remainder[c] = r;
     if (t == 1) 
     {
-      incr (labelptr);
-      labelloc[labelptr] = r;
-      labelchar[labelptr] = c;
+      incr (label_ptr);
+      label_loc[label_ptr] = r;
+      label_char[label_ptr] = c;
     } 
   } 
   else {
       
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -20082,7 +20082,7 @@ zsettag (halfword c , small_number t , halfword r)
       print_int (c);
     } 
     print (1015);
-    switch (chartag[c]) 
+    switch (char_tag[c]) 
     {case 1 : 
       print (1016);
       break;
@@ -20107,11 +20107,11 @@ dotfmcommand (void)
   /* 22 30 */ short c, cc;
   integer k;
   integer j;
-  switch (curmod) 
+  switch (cur_mod) 
   {case 0 : 
     {
       c = getcode ();
-      while (curcmd == 81) {
+      while (cur_cmd == 81) {
 	  
 	cc = getcode ();
 	settag (c , 2 , cc);
@@ -20121,21 +20121,21 @@ dotfmcommand (void)
     break;
   case 1 : 
     {
-      lkstarted = false;
+      lk_started = false;
       lab22: getxnext ();
-      if ((curcmd == 78) && lkstarted) 
+      if ((cur_cmd == 78) && lk_started) 
       {
 	c = getcode ();
-	if (nl - skiptable[c] > 128) 
+	if (nl - skip_table[c] > 128) 
 	{
 	  {
 	    {
 	      if (interaction == 3) 
-	  ;
-	      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	;
+	      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	      {
 		print_nl (261);
-		print (fullsourcefilenamestack[inopen]);
+		print (fullsourcefilenamestack[in_open]);
 		print (58);
 		print_int (line);
 		print (262);
@@ -20152,56 +20152,56 @@ dotfmcommand (void)
 	      help_line[0] = 1036;
 	    } 
 	    error ();
-	    ll = skiptable[c];
+	    ll = skip_table[c];
 	    do {
-		lll = ligkern[ll].b0;
-	      ligkern[ll].b0 = 128;
+		lll = lig_kern[ll].b0;
+	      lig_kern[ll].b0 = 128;
 	      ll = ll - lll;
 	    } while (!(lll == 0));
 	  } 
-	  skiptable[c] = ligtablesize;
+	  skip_table[c] = lig_table_size;
 	} 
-	if (skiptable[c] == ligtablesize) 
-	ligkern[nl - 1].b0 = 0;
-	else ligkern[nl - 1].b0 = nl - skiptable[c] - 1;
-	skiptable[c] = nl - 1;
+	if (skip_table[c] == lig_table_size) 
+	lig_kern[nl - 1].b0 = 0;
+	else lig_kern[nl - 1].b0 = nl - skip_table[c] - 1;
+	skip_table[c] = nl - 1;
 	goto done;
       } 
-      if (curcmd == 79) 
+      if (cur_cmd == 79) 
       {
 	c = 256;
-	curcmd = 81;
+	cur_cmd = 81;
       } 
       else {
 	  
 	backinput ();
 	c = getcode ();
       } 
-      if ((curcmd == 81) || (curcmd == 80)) 
+      if ((cur_cmd == 81) || (cur_cmd == 80)) 
       {
-	if (curcmd == 81) {
+	if (cur_cmd == 81) {
 	    
 	  if (c == 256) 
-	  bchlabel = nl;
+	  bch_label = nl;
 	  else settag (c , 1 , nl);
 	} 
-	else if (skiptable[c]< ligtablesize) 
+	else if (skip_table[c]< lig_table_size) 
 	{
-	  ll = skiptable[c];
-	  skiptable[c] = ligtablesize;
+	  ll = skip_table[c];
+	  skip_table[c] = lig_table_size;
 	  do {
-	      lll = ligkern[ll].b0;
+	      lll = lig_kern[ll].b0;
 	    if (nl - ll > 128) 
 	    {
 	      {
 		{
 		  if (interaction == 3) 
 		;
-		  if ((filelineerrorstylep && !(curinput .namefield == 0) 
+		  if ((filelineerrorstylep && !(cur_input .name_field == 0) 
 		)) 
 		  {
 		    print_nl (261);
-		    print (fullsourcefilenamestack[inopen]);
+		    print (fullsourcefilenamestack[in_open]);
 		    print (58);
 		    print_int (line);
 		    print (262);
@@ -20220,27 +20220,27 @@ dotfmcommand (void)
 		error ();
 		ll = ll;
 		do {
-		    lll = ligkern[ll].b0;
-		  ligkern[ll].b0 = 128;
+		    lll = lig_kern[ll].b0;
+		  lig_kern[ll].b0 = 128;
 		  ll = ll - lll;
 		} while (!(lll == 0));
 	      } 
 	      goto lab22;
 	    } 
-	    ligkern[ll].b0 = nl - ll - 1;
+	    lig_kern[ll].b0 = nl - ll - 1;
 	    ll = ll - lll;
 	  } while (!(lll == 0));
 	} 
 	goto lab22;
       } 
-      if (curcmd == 76) 
+      if (cur_cmd == 76) 
       {
-	ligkern[nl].b1 = c;
-	ligkern[nl].b0 = 0;
-	if (curmod < 128) 
+	lig_kern[nl].b1 = c;
+	lig_kern[nl].b0 = 0;
+	if (cur_mod < 128) 
 	{
-	  ligkern[nl].b2 = curmod;
-	  ligkern[nl].b3 = getcode ();
+	  lig_kern[nl].b2 = cur_mod;
+	  lig_kern[nl].b3 = getcode ();
 	} 
 	else {
 	    
@@ -20261,24 +20261,24 @@ dotfmcommand (void)
 	  while (kern[k]!= cur_exp) incr (k);
 	  if (k == nk) 
 	  {
-	    if (nk == maxkerns) 
-	    overflow (1034 , maxkerns);
+	    if (nk == max_kerns) 
+	    overflow (1034 , max_kerns);
 	    incr (nk);
 	  } 
-	  ligkern[nl].b2 = 128 + (k / 256);
-	  ligkern[nl].b3 = (k % 256);
+	  lig_kern[nl].b2 = 128 + (k / 256);
+	  lig_kern[nl].b3 = (k % 256);
 	} 
-	lkstarted = true;
+	lk_started = true;
       } 
       else {
 	  
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -20295,18 +20295,18 @@ dotfmcommand (void)
 	  help_line[0] = 1024;
 	} 
 	backerror ();
-	ligkern[nl].b1 = 0;
-	ligkern[nl].b2 = 0;
-	ligkern[nl].b3 = 0;
-	ligkern[nl].b0 = 129;
+	lig_kern[nl].b1 = 0;
+	lig_kern[nl].b2 = 0;
+	lig_kern[nl].b3 = 0;
+	lig_kern[nl].b0 = 129;
       } 
-      if (nl == ligtablesize) 
-      overflow (1025 , ligtablesize);
+      if (nl == lig_table_size) 
+      overflow (1025 , lig_table_size);
       incr (nl);
-      if (curcmd == 82) 
+      if (cur_cmd == 82) 
       goto lab22;
-      if (ligkern[nl - 1].b0 < 128) 
-      ligkern[nl - 1].b0 = 128;
+      if (lig_kern[nl - 1].b0 < 128) 
+      lig_kern[nl - 1].b0 = 128;
       done:;
     } 
     break;
@@ -20316,7 +20316,7 @@ dotfmcommand (void)
       overflow (1006 , 256);
       c = getcode ();
       settag (c , 3 , ne);
-      if (curcmd != 81) 
+      if (cur_cmd != 81) 
       {
 	missing_err (58);
 	{
@@ -20326,7 +20326,7 @@ dotfmcommand (void)
 	backerror ();
       } 
       exten[ne].b0 = getcode ();
-      if (curcmd != 82) 
+      if (cur_cmd != 82) 
       {
 	missing_err (44);
 	{
@@ -20336,7 +20336,7 @@ dotfmcommand (void)
 	backerror ();
       } 
       exten[ne].b1 = getcode ();
-      if (curcmd != 82) 
+      if (cur_cmd != 82) 
       {
 	missing_err (44);
 	{
@@ -20346,7 +20346,7 @@ dotfmcommand (void)
 	backerror ();
       } 
       exten[ne].b2 = getcode ();
-      if (curcmd != 82) 
+      if (cur_cmd != 82) 
       {
 	missing_err (44);
 	{
@@ -20362,7 +20362,7 @@ dotfmcommand (void)
   case 3 : 
   case 4 : 
     {
-      c = curmod;
+      c = cur_mod;
       getxnext ();
       scan_expression ();
       if ((cur_type != 16) || (cur_exp < 32768L)) 
@@ -20378,7 +20378,7 @@ dotfmcommand (void)
       else {
 	  
 	j = roundunscaled (cur_exp);
-	if (curcmd != 81) 
+	if (cur_cmd != 81) 
 	{
 	  missing_err (58);
 	  {
@@ -20389,14 +20389,14 @@ dotfmcommand (void)
 	} 
 	if (c == 3) 
 	do {
-	    if (j > headersize) 
-	  overflow (1007 , headersize);
-	  headerbyte[j] = getcode ();
+	    if (j > header_size) 
+	  overflow (1007 , header_size);
+	  header_byte[j] = getcode ();
 	  incr (j);
-	} while (!(curcmd != 82));
+	} while (!(cur_cmd != 82));
 	else do {
-	    if (j > maxfontdimen) 
-	  overflow (1008 , maxfontdimen);
+	    if (j > max_font_dimen) 
+	  overflow (1008 , max_font_dimen);
 	  while (j > np) {
 	      
 	    incr (np);
@@ -20415,7 +20415,7 @@ dotfmcommand (void)
 	  } 
 	  param[j] = cur_exp;
 	  incr (j);
-	} while (!(curcmd != 82));
+	} while (!(cur_cmd != 82));
       } 
     } 
     break;
@@ -20425,7 +20425,7 @@ void
 dospecial (void) 
 {
   small_number m;
-  m = curmod;
+  m = cur_mod;
   getxnext ();
   scan_expression ();
   if (internal[34] >= 0) {
@@ -20441,7 +20441,7 @@ dospecial (void)
     } 
     else {
 	
-      if (outputfilename == 0) 
+      if (output_file_name == 0) 
       init_gf ();
       if (m == 4) 
       gfstring (cur_exp , 0);
@@ -20464,17 +20464,17 @@ dostatement (void)
 {
   cur_type = 1;
   getxnext ();
-  if (curcmd > 43) 
+  if (cur_cmd > 43) 
   {
-    if (curcmd < 83) 
+    if (cur_cmd < 83) 
     {
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -20486,7 +20486,7 @@ dostatement (void)
 	  print (869);
 	} 
       } 
-      print_cmd_mod (curcmd , curmod);
+      print_cmd_mod (cur_cmd , cur_mod);
       print_char (39);
       {
 	help_ptr = 5;
@@ -20500,15 +20500,15 @@ dostatement (void)
       getxnext ();
     } 
   } 
-  else if (curcmd > 30) 
+  else if (cur_cmd > 30) 
   {
-    varflag = 77;
+    var_flag = 77;
     scan_expression ();
-    if (curcmd < 84) 
+    if (cur_cmd < 84) 
     {
-      if (curcmd == 51) 
+      if (cur_cmd == 51) 
       doequation ();
-      else if (curcmd == 77) 
+      else if (cur_cmd == 77) 
       doassignment ();
       else if (cur_type == 4) 
       {
@@ -20520,7 +20520,7 @@ dostatement (void)
 	} 
 	if (internal[34] > 0) 
 	{
-	  if (outputfilename == 0) 
+	  if (output_file_name == 0) 
 	  init_gf ();
 	  gfstring (1063 , cur_exp);
 	} 
@@ -20543,15 +20543,15 @@ dostatement (void)
   else {
       
     if (internal[7] > 0) 
-    showcmdmod (curcmd , curmod);
-    switch (curcmd) 
+    show_cmd_mod (cur_cmd , cur_mod);
+    switch (cur_cmd) 
     {case 30 : 
       dotypedeclaration ();
       break;
     case 16 : 
-      if (curmod > 2) 
+      if (cur_mod > 2) 
       makeopdef ();
-      else if (curmod > 0) 
+      else if (cur_mod > 0) 
       scandef ();
       break;
     case 24 : 
@@ -20560,14 +20560,14 @@ dostatement (void)
     case 23 : 
       {
 	print_ln ();
-	interaction = curmod;
+	interaction = cur_mod;
 	if (interaction == 0) 
 	kpsemaketexdiscarderrors = 1;
 	else kpsemaketexdiscarderrors = 0;
 	if (interaction == 0) 
 	selector = 0;
 	else selector = 1;
-	if (logopened) 
+	if (log_opened) 
 	selector = selector + 2;
 	getxnext ();
       } 
@@ -20581,9 +20581,9 @@ dostatement (void)
     case 12 : 
       do {
 	  getsymbol ();
-	savevariable (cursym);
+	savevariable (cur_sym);
 	getxnext ();
-      } while (!(curcmd != 82));
+      } while (!(cur_cmd != 82));
       break;
     case 13 : 
       dointerim ();
@@ -20607,7 +20607,7 @@ dostatement (void)
       dodisplay ();
       break;
     case 28 : 
-      doopenwindow ();
+      doopen_window ();
       break;
     case 19 : 
       docull ();
@@ -20615,7 +20615,7 @@ dostatement (void)
     case 26 : 
       {
 	getsymbol ();
-	startsym = cursym;
+	start_sym = cur_sym;
 	getxnext ();
       } 
       break;
@@ -20631,15 +20631,15 @@ dostatement (void)
     } 
     cur_type = 1;
   } 
-  if (curcmd < 83) 
+  if (cur_cmd < 83) 
   {
     {
       if (interaction == 3) 
-  ;
-      if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+;
+      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
 	print_nl (261);
-	print (fullsourcefilenamestack[inopen]);
+	print (fullsourcefilenamestack[in_open]);
 	print (58);
 	print_int (line);
 	print (262);
@@ -20661,37 +20661,37 @@ dostatement (void)
       help_line[0] = 874;
     } 
     backerror ();
-    scannerstatus = 2;
+    scanner_status = 2;
     do {
 	getnext ();
-      if (curcmd == 39) 
+      if (cur_cmd == 39) 
       {
-	if (strref[curmod]< 127) {
+	if (str_ref[cur_mod]< 127) {
 	    
-	  if (strref[curmod] > 1) 
-	  decr (strref[curmod]);
-	  else flush_string (curmod);
+	  if (str_ref[cur_mod] > 1) 
+	  decr (str_ref[cur_mod]);
+	  else flush_string (cur_mod);
 	} 
       } 
-    } while (!(curcmd > 82));
-    scannerstatus = 0;
+    } while (!(cur_cmd > 82));
+    scanner_status = 0;
   } 
-  errorcount = 0;
+  error_count = 0;
 } 
 void 
 maincontrol (void) 
 {
   do {
       dostatement ();
-    if (curcmd == 84) 
+    if (cur_cmd == 84) 
     {
       {
 	if (interaction == 3) 
 	;
-	if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
 	  print_nl (261);
-	  print (fullsourcefilenamestack[inopen]);
+	  print (fullsourcefilenamestack[in_open]);
 	  print (58);
 	  print_int (line);
 	  print (262);
@@ -20710,7 +20710,7 @@ maincontrol (void)
       } 
       flush_error (0);
     } 
-  } while (!(curcmd == 85));
+  } while (!(cur_cmd == 85));
 } 
 halfword 
 zsortin (scaled v) 
@@ -20819,7 +20819,7 @@ void
 ztfmwarning (small_number m) 
 {
   print_nl (1041);
-  print (intname[m]);
+  print (int_name[m]);
   print (1042);
   print_scaled (perturbation);
   print (1043);
@@ -20836,35 +20836,35 @@ fixdesignsize (void)
     d = 8388608L;
     internal[26] = d;
   } 
-  if (headerbyte[5]< 0) {
+  if (header_byte[5]< 0) {
       
-    if (headerbyte[6]< 0) {
+    if (header_byte[6]< 0) {
 	
-      if (headerbyte[7]< 0) {
+      if (header_byte[7]< 0) {
 	  
-	if (headerbyte[8]< 0) 
+	if (header_byte[8]< 0) 
 	{
-	  headerbyte[5] = d / 1048576L;
-	  headerbyte[6] = (d / 4096) % 256;
-	  headerbyte[7] = (d / 16) % 256;
-	  headerbyte[8] = (d % 16) * 16;
+	  header_byte[5] = d / 1048576L;
+	  header_byte[6] = (d / 4096) % 256;
+	  header_byte[7] = (d / 16) % 256;
+	  header_byte[8] = (d % 16) * 16;
 	} 
       } 
     } 
   } 
-  maxtfmdimen = 16 * internal[26] - 1 - internal[26]/ 2097152L;
-  if (maxtfmdimen >= 134217728L) 
-  maxtfmdimen = 134217727L;
+  max_tfm_dimen = 16 * internal[26] - 1 - internal[26]/ 2097152L;
+  if (max_tfm_dimen >= 134217728L) 
+  max_tfm_dimen = 134217727L;
 } 
 integer 
 zdimenout (scaled x) 
 {
-  register integer Result; if (abs (x) > maxtfmdimen) 
+  register integer Result; if (abs (x) > max_tfm_dimen) 
   {
-    incr (tfmchanged);
+    incr (tfm_changed);
     if (x > 0) 
-    x = maxtfmdimen;
-    else x = - (integer) maxtfmdimen;
+    x = max_tfm_dimen;
+    else x = - (integer) max_tfm_dimen;
   } 
   x = makescaled (x * 16 , internal[26]);
   Result = x;
@@ -20876,24 +20876,24 @@ fixchecksum (void)
   /* 10 */ eight_bits k;
   eight_bits lb1, lb2, lb3, b4;
   integer x;
-  if (headerbyte[1]< 0) {
+  if (header_byte[1]< 0) {
       
-    if (headerbyte[2]< 0) {
+    if (header_byte[2]< 0) {
 	
-      if (headerbyte[3]< 0) {
+      if (header_byte[3]< 0) {
 	  
-	if (headerbyte[4]< 0) 
+	if (header_byte[4]< 0) 
 	{
 	  lb1 = bc;
 	  lb2 = ec;
 	  lb3 = bc;
 	  b4 = ec;
-	  tfmchanged = 0;
+	  tfm_changed = 0;
 	  {register integer for_end; k = bc;for_end = ec; if (k <= 
 	  for_end) do 
-	    if (charexists[k]) 
+	    if (char_exists[k]) 
 	    {
-	      x = dimenout (mem[tfmwidth[k]+ 1].cint) + (k + 4) * 
+	      x = dimenout (mem[tfm_width[k]+ 1].cint) + (k + 4) * 
 	      4194304L;
 	      lb1 = (lb1 + lb1 + x) % 255;
 	      lb2 = (lb2 + lb2 + x) % 253;
@@ -20901,71 +20901,71 @@ fixchecksum (void)
 	      b4 = (b4 + b4 + x) % 247;
 	    } 
 	  while (k++ < for_end);} 
-	  headerbyte[1] = lb1;
-	  headerbyte[2] = lb2;
-	  headerbyte[3] = lb3;
-	  headerbyte[4] = b4;
+	  header_byte[1] = lb1;
+	  header_byte[2] = lb2;
+	  header_byte[3] = lb3;
+	  header_byte[4] = b4;
 	  goto lab10;
 	} 
       } 
     } 
   } 
   {register integer for_end; k = 1;for_end = 4; if (k <= for_end) do 
-    if (headerbyte[k]< 0) 
-    headerbyte[k] = 0;
+    if (header_byte[k]< 0) 
+    header_byte[k] = 0;
   while (k++ < for_end);} 
   lab10:;
 } 
 void 
-ztfmqqqq (fourquarters x) 
+tfm_qqqq (fourquarters x) 
 {
-  putbyte (x.b0 , tfmfile);
-  putbyte (x.b1 , tfmfile);
-  putbyte (x .b2 , tfmfile);
-  putbyte (x .b3 , tfmfile);
+  putbyte (x.b0 , tfm_file);
+  putbyte (x.b1 , tfm_file);
+  putbyte (x .b2 , tfm_file);
+  putbyte (x .b3 , tfm_file);
 } 
 boolean 
-openbasefile (void) 
+open_base_file (void) 
 {
   /* 40 10 */ register boolean Result; integer j;
-  j = curinput.locfield;
-  if (buffer[curinput.locfield] == 38) 
+  j = cur_input.loc_field;
+  if (buffer[cur_input.loc_field] == 38) 
   {
-    incr (curinput.locfield);
-    j = curinput.locfield;
+    incr (cur_input.loc_field);
+    j = cur_input.loc_field;
     buffer[last] = 32;
     while (buffer[j]!= 32) incr (j);
-    packbufferedname (0 , curinput.locfield , j - 1);
-    if (wopenin (basefile)) 
+    packbufferedname (0 , cur_input.loc_field , j - 1);
+    if (wopenin (base_file)) 
     goto found;
     Fputs (stdout ,  "Sorry, I can't find the base `");
     fputs (stringcast (name_of_file + 1) , stdout);
     Fputs (stdout ,  "'; will try `");
-    fputs (MFbasedefault + 1 , stdout);
+    fputs (MF_base_default + 1 , stdout);
     fprintf (stdout , "%s\n",  "'.");
     fflush (stdout);
   } 
   packbufferedname (basedefaultlength - 5 , 1 , 0);
-  if (!wopenin (basefile)) 
+  if (!wopenin (base_file)) 
   {
 ;
     Fputs (stdout ,  "I can't find the base file `");
-    fputs (MFbasedefault + 1 , stdout);
+    fputs (MF_base_default + 1 , stdout);
     fprintf (stdout , "%s\n",  "'!");
     Result = false;
     goto lab10;
   } 
-  found: curinput.locfield = j;
+  found: cur_input.loc_field = j;
   Result = true;
   lab10:;
   return Result;
 } 
 void 
-scanprimary (void) 
+scan_primary (void) 
 {
   /* 20 30 31 32 */ halfword p, q, r;
   quarterword c;
-  unsigned char myvarflag;
+  unsigned char myvar_flag;
   halfword ldelim, rdelim;
   integer groupline;
   scaled num, denom;
@@ -20973,11 +20973,11 @@ scanprimary (void)
   small_number tt;
   halfword t;
   halfword macroref;
-  myvarflag = varflag;
-  varflag = 0;
+  myvar_flag = var_flag;
+  var_flag = 0;
   lab20: {
       
-    if (aritherror) 
+    if (arith_error) 
     clear_arith ();
   } 
 	;
@@ -20987,7 +20987,7 @@ scanprimary (void)
 #endif /* TEXMF_DEBUG */
   if (interrupt != 0) {
       
-    if (OKtointerrupt) 
+    if (OK_to_interrupt) 
     {
       backinput ();
       {
@@ -20997,14 +20997,14 @@ scanprimary (void)
       getxnext ();
     } 
   } 
-  switch (curcmd) 
+  switch (cur_cmd) 
   {case 31 : 
     {
-      ldelim = cursym;
-      rdelim = curmod;
+      ldelim = cur_sym;
+      rdelim = cur_mod;
       getxnext ();
       scan_expression ();
-      if ((curcmd == 82) && (cur_type >= 16)) 
+      if ((cur_cmd == 82) && (cur_type >= 16)) 
       {
 	p = get_node (2);
 	mem[p].hhfield.b0 = 14;
@@ -21038,25 +21038,25 @@ scanprimary (void)
     {
       groupline = line;
       if (internal[7] > 0) 
-      showcmdmod (curcmd , curmod);
+      show_cmd_mod (cur_cmd , cur_mod);
       {
 	p = get_avail ();
 	mem[p].hhfield.lhfield = 0;
-	mem[p].hhfield.v.RH = saveptr;
-	saveptr = p;
+	mem[p].hhfield.v.RH = save_ptr;
+	save_ptr = p;
       } 
       do {
 	  dostatement ();
-      } while (!(curcmd != 83));
-      if (curcmd != 84) 
+      } while (!(cur_cmd != 83));
+      if (cur_cmd != 84) 
       {
 	{
 	  if (interaction == 3) 
 	;
-	  if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
 	    print_nl (261);
-	    print (fullsourcefilenamestack[inopen]);
+	    print (fullsourcefilenamestack[in_open]);
 	    print (58);
 	    print_int (line);
 	    print (262);
@@ -21076,25 +21076,25 @@ scanprimary (void)
 	  help_line[0] = 783;
 	} 
 	backerror ();
-	curcmd = 84;
+	cur_cmd = 84;
       } 
       unsave ();
       if (internal[7] > 0) 
-      showcmdmod (curcmd , curmod);
+      show_cmd_mod (cur_cmd , cur_mod);
     } 
     break;
   case 39 : 
     {
       cur_type = 4;
-      cur_exp = curmod;
+      cur_exp = cur_mod;
     } 
     break;
   case 42 : 
     {
-      cur_exp = curmod;
+      cur_exp = cur_mod;
       cur_type = 16;
       getxnext ();
-      if (curcmd != 54) 
+      if (cur_cmd != 54) 
       {
 	num = 0;
 	denom = 0;
@@ -21102,25 +21102,25 @@ scanprimary (void)
       else {
 	  
 	getxnext ();
-	if (curcmd != 42) 
+	if (cur_cmd != 42) 
 	{
 	  backinput ();
-	  curcmd = 54;
-	  curmod = 72;
-	  cursym = 9761;
+	  cur_cmd = 54;
+	  cur_mod = 72;
+	  cur_sym = 9761;
 	  goto done;
 	} 
 	num = cur_exp;
-	denom = curmod;
+	denom = cur_mod;
 	if (denom == 0) 
 	{
 	  {
 	    if (interaction == 3) 
 	;
-	    if ((filelineerrorstylep && !(curinput .namefield == 0))) 
+	    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	    {
 	      print_nl (261);
-	      print (fullsourcefilenamestack[inopen]);
+	      print (fullsourcefilenamestack[in_open]);
 	      print (58);
 	      print_int (line);
 	      print (262);
@@ -21140,17 +21140,17 @@ scanprimary (void)
 	} 
 	else cur_exp = makescaled (num , denom);
 	{
-	  if (aritherror) 
+	  if (arith_error) 
 	  clear_arith ();
 	} 
 	getxnext ();
       } 
-      if (curcmd >= 30) {
+      if (cur_cmd >= 30) {
 	  
-	if (curcmd < 42) 
+	if (cur_cmd < 42) 
 	{
 	  p = stash_cur_exp ();
-	  scanprimary ();
+	  scan_primary ();
 	  if ((abs (num) >= abs (denom)) || (cur_type < 14)) 
 	  dobinary (p , 71);
 	  else {
@@ -21164,26 +21164,26 @@ scanprimary (void)
     } 
     break;
   case 33 : 
-    donullary (curmod);
+    donullary (cur_mod);
     break;
   case 34 : 
   case 30 : 
   case 36 : 
   case 43 : 
     {
-      c = curmod;
+      c = cur_mod;
       getxnext ();
-      scanprimary ();
+      scan_primary ();
       dounary (c);
       goto done;
     } 
     break;
   case 37 : 
     {
-      c = curmod;
+      c = cur_mod;
       getxnext ();
       scan_expression ();
-      if (curcmd != 69) 
+      if (cur_cmd != 69) 
       {
 	missing_err (479);
 	print (716);
@@ -21196,7 +21196,7 @@ scanprimary (void)
       } 
       p = stash_cur_exp ();
       getxnext ();
-      scanprimary ();
+      scan_primary ();
       dobinary (p , c);
       goto done;
     } 
@@ -21204,24 +21204,24 @@ scanprimary (void)
   case 35 : 
     {
       getxnext ();
-      scansuffix ();
-      oldsetting = selector;
+      scan_suffix ();
+      old_setting = selector;
       selector = 5;
       show_token_list (cur_exp , 0 , 100000L , 0);
       flush_token_list (cur_exp);
       cur_exp = make_string ();
-      selector = oldsetting;
+      selector = old_setting;
       cur_type = 4;
       goto done;
     } 
     break;
   case 40 : 
     {
-      q = curmod;
-      if (myvarflag == 77) 
+      q = cur_mod;
+      if (myvar_flag == 77) 
       {
 	getxnext ();
-	if (curcmd == 77) 
+	if (cur_cmd == 77) 
 	{
 	  cur_exp = get_avail ();
 	  mem[cur_exp].hhfield.lhfield = q + 9769;
@@ -21235,7 +21235,7 @@ scanprimary (void)
     } 
     break;
   case 38 : 
-    makeexpcopy (curmod);
+    makeexpcopy (cur_mod);
     break;
   case 41 : 
     {
@@ -21249,7 +21249,7 @@ scanprimary (void)
 	  mem[prehead].hhfield.v.RH = 0;
 	;
 #ifdef STAT
-	  incr (dynused);
+	  incr (dyn_used);
 #endif /* STAT */
 	} 
       } 
@@ -21258,7 +21258,7 @@ scanprimary (void)
       tt = 1;
       while (true) {
 	  
-	t = curtok ();
+	t = cur_tok ();
 	mem[tail].hhfield.v.RH = t;
 	if (tt != 0) 
 	{
@@ -21282,7 +21282,7 @@ scanprimary (void)
 		if (mem[q].hhfield.b0 != 21) 
 		goto done2;
 		q = mem[mem[q + 1].hhfield.lhfield].hhfield.v.RH;
-		if (p >= himemmin) 
+		if (p >= hi_mem_min) 
 		{
 		  do {
 		      q = mem[q].hhfield.v.RH;
@@ -21323,30 +21323,30 @@ scanprimary (void)
 	} 
 	getxnext ();
 	tail = t;
-	if (curcmd == 63) 
+	if (cur_cmd == 63) 
 	{
 	  getxnext ();
 	  scan_expression ();
-	  if (curcmd != 64) 
+	  if (cur_cmd != 64) 
 	  {
 	    backinput ();
 	    backexpr ();
-	    curcmd = 63;
-	    curmod = 0;
-	    cursym = 9760;
+	    cur_cmd = 63;
+	    cur_mod = 0;
+	    cur_sym = 9760;
 	  } 
 	  else {
 	      
 	    if (cur_type != 16) 
 	    badsubscript ();
-	    curcmd = 42;
-	    curmod = cur_exp;
-	    cursym = 0;
+	    cur_cmd = 42;
+	    cur_mod = cur_exp;
+	    cur_sym = 0;
 	  } 
 	} 
-	if (curcmd > 42) 
+	if (cur_cmd > 42) 
 	goto done1;
-	if (curcmd < 40) 
+	if (cur_cmd < 40) 
 	goto done1;
       } 
       done1: if (posthead != 0) 
@@ -21371,10 +21371,10 @@ scanprimary (void)
 	avail = prehead;
 	;
 #ifdef STAT
-	decr (dynused);
+	decr (dyn_used);
 #endif /* STAT */
       } 
-      if (curcmd == myvarflag) 
+      if (cur_cmd == myvar_flag) 
       {
 	cur_type = 20;
 	cur_exp = q;
@@ -21403,21 +21403,21 @@ scanprimary (void)
     break;
   } 
   getxnext ();
-  done: if (curcmd == 63) {
+  done: if (cur_cmd == 63) {
       
     if (cur_type >= 16) 
     {
       p = stash_cur_exp ();
       getxnext ();
       scan_expression ();
-      if (curcmd != 82) 
+      if (cur_cmd != 82) 
       {
 	{
 	  backinput ();
 	  backexpr ();
-	  curcmd = 63;
-	  curmod = 0;
-	  cursym = 9760;
+	  cur_cmd = 63;
+	  cur_mod = 0;
+	  cur_sym = 9760;
 	} 
 	unstash_cur_exp (p);
       } 
@@ -21426,7 +21426,7 @@ scanprimary (void)
 	q = stash_cur_exp ();
 	getxnext ();
 	scan_expression ();
-	if (curcmd != 64) 
+	if (cur_cmd != 64) 
 	{
 	  missing_err (93);
 	  {
@@ -21448,7 +21448,7 @@ scanprimary (void)
   } 
 } 
 void 
-scansuffix (void) 
+scan_suffix (void) 
 {
   /* 30 */ halfword h, t;
   halfword p;
@@ -21456,13 +21456,13 @@ scansuffix (void)
   t = h;
   while (true) {
       
-    if (curcmd == 63) 
+    if (cur_cmd == 63) 
     {
       getxnext ();
       scan_expression ();
       if (cur_type != 16) 
       badsubscript ();
-      if (curcmd != 64) 
+      if (cur_cmd != 64) 
       {
 	missing_err (93);
 	{
@@ -21473,15 +21473,15 @@ scansuffix (void)
 	} 
 	backerror ();
       } 
-      curcmd = 42;
-      curmod = cur_exp;
+      cur_cmd = 42;
+      cur_mod = cur_exp;
     } 
-    if (curcmd == 42) 
-    p = new_num_tok (curmod);
-    else if ((curcmd == 41) || (curcmd == 40)) 
+    if (cur_cmd == 42) 
+    p = new_num_tok (cur_mod);
+    else if ((cur_cmd == 41) || (cur_cmd == 40)) 
     {
       p = get_avail ();
-      mem[p].hhfield.lhfield = cursym;
+      mem[p].hhfield.lhfield = cur_sym;
     } 
     else goto done;
     mem[t].hhfield.v.RH = p;
@@ -21494,34 +21494,34 @@ scansuffix (void)
     avail = h;
 	;
 #ifdef STAT
-    decr (dynused);
+    decr (dyn_used);
 #endif /* STAT */
   } 
   cur_type = 20;
 } 
 void 
-scansecondary (void) 
+scan_secondary (void) 
 {
   /* 20 22 */ halfword p;
   halfword c, d;
   halfword macname;
-  lab20: if ((curcmd < 30) || (curcmd > 43)) 
+  lab20: if ((cur_cmd < 30) || (cur_cmd > 43)) 
   badexp (804);
-  scanprimary ();
-  lab22: if (curcmd <= 55) {
+  scan_primary ();
+  lab22: if (cur_cmd <= 55) {
       
-    if (curcmd >= 52) 
+    if (cur_cmd >= 52) 
     {
       p = stash_cur_exp ();
-      c = curmod;
-      d = curcmd;
+      c = cur_mod;
+      d = cur_cmd;
       if (d == 53) 
       {
-	macname = cursym;
+	macname = cur_sym;
 	incr (mem[c].hhfield.lhfield);
       } 
       getxnext ();
-      scanprimary ();
+      scan_primary ();
       if (d != 53) 
       dobinary (p , c);
       else {
@@ -21537,30 +21537,30 @@ scansecondary (void)
   } 
 } 
 void 
-scantertiary (void) 
+scan_tertiary (void) 
 {
   /* 20 22 */ halfword p;
   halfword c, d;
   halfword macname;
-  lab20: if ((curcmd < 30) || (curcmd > 43)) 
+  lab20: if ((cur_cmd < 30) || (cur_cmd > 43)) 
   badexp (805);
-  scansecondary ();
+  scan_secondary ();
   if (cur_type == 8) 
   materializepen ();
-  lab22: if (curcmd <= 45) {
+  lab22: if (cur_cmd <= 45) {
       
-    if (curcmd >= 43) 
+    if (cur_cmd >= 43) 
     {
       p = stash_cur_exp ();
-      c = curmod;
-      d = curcmd;
+      c = cur_mod;
+      d = cur_cmd;
       if (d == 44) 
       {
-	macname = cursym;
+	macname = cur_sym;
 	incr (mem[c].hhfield.lhfield);
       } 
       getxnext ();
-      scansecondary ();
+      scan_secondary ();
       if (d != 44) 
       dobinary (p , c);
       else {
@@ -21580,27 +21580,27 @@ scan_expression (void)
 {
   /* 20 30 22 25 26 10 */ halfword p, q, r, pp, qq;
   halfword c, d;
-  unsigned char myvarflag;
+  unsigned char myvar_flag;
   halfword macname;
   boolean cyclehit;
   scaled x, y;
   unsigned char t;
-  myvarflag = varflag;
-  lab20: if ((curcmd < 30) || (curcmd > 43)) 
+  myvar_flag = var_flag;
+  lab20: if ((cur_cmd < 30) || (cur_cmd > 43)) 
   badexp (808);
-  scantertiary ();
-  lab22: if (curcmd <= 51) {
+  scan_tertiary ();
+  lab22: if (cur_cmd <= 51) {
       
-    if (curcmd >= 46) {
+    if (cur_cmd >= 46) {
 	
-      if ((curcmd != 51) || (myvarflag != 77)) 
+      if ((cur_cmd != 51) || (myvar_flag != 77)) 
       {
 	p = stash_cur_exp ();
-	c = curmod;
-	d = curcmd;
+	c = cur_mod;
+	d = cur_cmd;
 	if (d == 49) 
 	{
-	  macname = cursym;
+	  macname = cur_sym;
 	  incr (mem[c].hhfield.lhfield);
 	} 
 	if ((d < 48) || ((d == 48) && ((mem[p].hhfield.b0 == 14) 
@@ -21626,7 +21626,7 @@ scan_expression (void)
 	    mem[p].hhfield.b0 = 4;
 	    mem[q].hhfield.b1 = 4;
 	  } 
-	  lab25: if (curcmd == 46) 
+	  lab25: if (cur_cmd == 46) 
 	  {
 	    t = scandirection ();
 	    if (t != 4) 
@@ -21640,17 +21640,17 @@ scan_expression (void)
 	      } 
 	    } 
 	  } 
-	  d = curcmd;
+	  d = cur_cmd;
 	  if (d == 47) 
 	  {
 	    getxnext ();
-	    if (curcmd == 58) 
+	    if (cur_cmd == 58) 
 	    {
 	      getxnext ();
-	      y = curcmd;
-	      if (curcmd == 59) 
+	      y = cur_cmd;
+	      if (cur_cmd == 59) 
 	      getxnext ();
-	      scanprimary ();
+	      scan_primary ();
 	      if ((cur_type != 16) || (cur_exp < 49152L)) 
 	      {
 		disp_err (0 , 826);
@@ -21663,13 +21663,13 @@ scan_expression (void)
 	      if (y == 59) 
 	      cur_exp = - (integer) cur_exp;
 	      mem[q + 6].cint = cur_exp;
-	      if (curcmd == 52) 
+	      if (cur_cmd == 52) 
 	      {
 		getxnext ();
-		y = curcmd;
-		if (curcmd == 59) 
+		y = cur_cmd;
+		if (cur_cmd == 59) 
 		getxnext ();
-		scanprimary ();
+		scan_primary ();
 		if ((cur_type != 16) || (cur_exp < 49152L)) 
 		{
 		  disp_err (0 , 826);
@@ -21684,16 +21684,16 @@ scan_expression (void)
 	      } 
 	      y = cur_exp;
 	    } 
-	    else if (curcmd == 57) 
+	    else if (cur_cmd == 57) 
 	    {
 	      mem[q].hhfield.b1 = 1;
 	      t = 1;
 	      getxnext ();
-	      scanprimary ();
+	      scan_primary ();
 	      knownpair ();
 	      mem[q + 5].cint = cur_x;
 	      mem[q + 6].cint = cur_y;
-	      if (curcmd != 52) 
+	      if (cur_cmd != 52) 
 	      {
 		x = mem[q + 5].cint;
 		y = mem[q + 6].cint;
@@ -21701,7 +21701,7 @@ scan_expression (void)
 	      else {
 		  
 		getxnext ();
-		scanprimary ();
+		scan_primary ();
 		knownpair ();
 		x = cur_x;
 		y = cur_y;
@@ -21714,7 +21714,7 @@ scan_expression (void)
 	      backinput ();
 	      goto done;
 	    } 
-	    if (curcmd != 47) 
+	    if (cur_cmd != 47) 
 	    {
 	      missing_err (408);
 	      {
@@ -21728,7 +21728,7 @@ scan_expression (void)
 	  else if (d != 48) 
 	  goto lab26;
 	  getxnext ();
-	  if (curcmd == 46) 
+	  if (cur_cmd == 46) 
 	  {
 	    t = scandirection ();
 	    if (mem[q].hhfield.b1 != 1) 
@@ -21740,7 +21740,7 @@ scan_expression (void)
 	    t = 4;
 	    x = 0;
 	  } 
-	  if (curcmd == 36) 
+	  if (cur_cmd == 36) 
 	  {
 	    cyclehit = true;
 	    getxnext ();
@@ -21758,7 +21758,7 @@ scan_expression (void)
 	  } 
 	  else {
 	      
-	    scantertiary ();
+	    scan_tertiary ();
 	    {
 	      if (cur_type != 9) 
 	      pp = newknot ();
@@ -21785,11 +21785,11 @@ scan_expression (void)
 		{
 		  if (interaction == 3) 
 		;
-		  if ((filelineerrorstylep && !(curinput .namefield == 0) 
+		  if ((filelineerrorstylep && !(cur_input .name_field == 0) 
 		)) 
 		  {
 		    print_nl (261);
-		    print (fullsourcefilenamestack[inopen]);
+		    print (fullsourcefilenamestack[in_open]);
 		    print (58);
 		    print_int (line);
 		    print (262);
@@ -21868,9 +21868,9 @@ scan_expression (void)
 	    } 
 	    q = qq;
 	  } 
-	  if (curcmd >= 46) {
+	  if (cur_cmd >= 46) {
 	      
-	    if (curcmd <= 48) {
+	    if (cur_cmd <= 48) {
 		
 	      if (!cyclehit) 
 	      goto lab25;
@@ -21897,14 +21897,14 @@ scan_expression (void)
 	    } 
 	    mem[q].hhfield.v.RH = p;
 	  } 
-	  makechoices (p);
+	  make_choices (p);
 	  cur_type = 9;
 	  cur_exp = p;
 	} 
 	else {
 	    
 	  getxnext ();
-	  scantertiary ();
+	  scan_tertiary ();
 	  if (d != 49) 
 	  dobinary (p , c);
 	  else {
@@ -21923,7 +21923,7 @@ scan_expression (void)
   lab10:;
 } 
 void 
-getboolean (void) 
+get_boolean (void) 
 {
   getxnext ();
   scan_expression ();
@@ -21940,19 +21940,19 @@ getboolean (void)
   } 
 } 
 void 
-printcapsule (void) 
+print_capsule (void) 
 {
   print_char (40);
-  print_exp (gpointer , 0);
+  print_exp (g_pointer , 0);
   print_char (41);
 } 
 void 
-tokenrecycle (void) 
+token_recycle (void) 
 {
-  recycle_value (gpointer);
+  recycle_value (g_pointer);
 } 
 void 
-closefilesandterminate (void) 
+close_files_and_terminate (void) 
 {
   integer k;
   integer lh;
@@ -21963,41 +21963,41 @@ closefilesandterminate (void)
 #ifdef STAT
   if (internal[12] > 0) {
       
-    if (logopened) 
+    if (log_opened) 
     {
-      { putc (' ' ,  logfile);  putc ('\n',  logfile); }
-      fprintf (logfile , "%s%s\n",  "Here is how much of METAFONT's memory" ,       " you used:");
-      fprintf (logfile , "%c%ld%s",  ' ' , (long)maxstr_ptr - initstr_ptr , " string");
-      if (maxstr_ptr != initstr_ptr + 1) 
-      putc ('s' ,  logfile);
-      fprintf (logfile , "%s%ld\n",  " out of " , (long)maxstrings - initstr_ptr);
-      fprintf (logfile , "%c%ld%s%ld\n",  ' ' , (long)max_pool_ptr - init_pool_ptr ,       " string characters out of " , (long)pool_size - init_pool_ptr);
-      fprintf (logfile , "%c%ld%s%ld\n",  ' ' , (long)lomemmax + 0 + memend - himemmin + 2 ,       " words of memory out of " , (long)memend + 1);
-      fprintf (logfile , "%c%ld%s%ld\n",  ' ' , (long)stcount , " symbolic tokens out of " , (long)9500) 
-  ;
-      fprintf (logfile , "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n",  ' ' , (long)maxinstack , "i," , (long)intptr , "n," ,       (long)maxroundingptr , "r," , (long)maxparamstack , "p," , (long)maxbufstack + 1 ,       "b stack positions out of " , (long)stacksize , "i," , (long)maxinternal , "n," ,       (long)maxwiggle , "r," , (long)150 , "p," , (long)bufsize , 'b');
+      { putc (' ' ,  log_file);  putc ('\n',  log_file); }
+      fprintf (log_file , "%s%s\n",  "Here is how much of METAFONT's memory" ,       " you used:");
+      fprintf (log_file , "%c%ld%s",  ' ' , (long)max_str_ptr - init_str_ptr , " string");
+      if (max_str_ptr != init_str_ptr + 1) 
+      putc ('s' ,  log_file);
+      fprintf (log_file , "%s%ld\n",  " out of " , (long)max_strings - init_str_ptr);
+      fprintf (log_file , "%c%ld%s%ld\n",  ' ' , (long)max_pool_ptr - init_pool_ptr ,       " string characters out of " , (long)pool_size - init_pool_ptr);
+      fprintf (log_file , "%c%ld%s%ld\n",  ' ' , (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2 ,       " words of memory out of " , (long)mem_end + 1);
+      fprintf (log_file , "%c%ld%s%ld\n",  ' ' , (long)st_count , " symbolic tokens out of " , (long)9500) 
+;
+      fprintf (log_file , "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n",  ' ' , (long)max_in_stack , "i," , (long)int_ptr , "n," ,       (long)max_rounding_ptr , "r," , (long)max_param_stack , "p," , (long)max_buf_stack + 1 ,       "b stack positions out of " , (long)stack_size , "i," , (long)max_internal , "n," ,       (long)max_wiggle , "r," , (long)150 , "p," , (long)bufsize , 'b');
     } 
   } 
 #endif /* STAT */
-  if ((gfprevptr > 0) || (internal[33] > 0)) 
+  if ((gf_prev_ptr > 0) || (internal[33] > 0)) 
   {
     rover = 23;
     mem[rover].hhfield.v.RH = 268435455L;
-    lomemmax = himemmin - 1;
-    if (lomemmax - rover > 268435455L) 
-    lomemmax = 268435455L + rover;
-    mem[rover].hhfield.lhfield = lomemmax - rover;
+    lo_mem_max = hi_mem_min - 1;
+    if (lo_mem_max - rover > 268435455L) 
+    lo_mem_max = 268435455L + rover;
+    mem[rover].hhfield.lhfield = lo_mem_max - rover;
     mem[rover + 1].hhfield.lhfield = rover;
     mem[rover + 1].hhfield.v.RH = rover;
-    mem[lomemmax].hhfield.v.RH = 0;
-    mem[lomemmax].hhfield.lhfield = 0;
+    mem[lo_mem_max].hhfield.v.RH = 0;
+    mem[lo_mem_max].hhfield.lhfield = 0;
     mem[memtop - 1].hhfield.v.RH = 19;
     {register integer for_end; k = bc;for_end = ec; if (k <= for_end) do 
-      if (charexists[k]) 
-      tfmwidth[k] = sortin (tfmwidth[k]);
+      if (char_exists[k]) 
+      tfm_width[k] = sortin (tfm_width[k]);
     while (k++ < for_end);} 
     nw = skimp (255) + 1;
-    dimenhead[1] = mem[memtop - 1].hhfield.v.RH;
+    dimen_head[1] = mem[memtop - 1].hhfield.v.RH;
     if (perturbation >= 4096) 
     tfmwarning (20);
     fixdesignsize ();
@@ -22007,53 +22007,53 @@ closefilesandterminate (void)
       mem[memtop - 1].hhfield.v.RH = 19;
       {register integer for_end; k = bc;for_end = ec; if (k <= for_end) 
       do 
-	if (charexists[k]) {
+	if (char_exists[k]) {
 	    
-	  if (tfmheight[k] == 0) 
-	  tfmheight[k] = 15;
-	  else tfmheight[k] = sortin (tfmheight[k]);
+	  if (tfm_height[k] == 0) 
+	  tfm_height[k] = 15;
+	  else tfm_height[k] = sortin (tfm_height[k]);
 	} 
       while (k++ < for_end);} 
       nh = skimp (15) + 1;
-      dimenhead[2] = mem[memtop - 1].hhfield.v.RH;
+      dimen_head[2] = mem[memtop - 1].hhfield.v.RH;
       if (perturbation >= 4096) 
       tfmwarning (21);
       mem[memtop - 1].hhfield.v.RH = 19;
       {register integer for_end; k = bc;for_end = ec; if (k <= for_end) 
       do 
-	if (charexists[k]) {
+	if (char_exists[k]) {
 	    
-	  if (tfmdepth[k] == 0) 
-	  tfmdepth[k] = 15;
-	  else tfmdepth[k] = sortin (tfmdepth[k]);
+	  if (tfm_depth[k] == 0) 
+	  tfm_depth[k] = 15;
+	  else tfm_depth[k] = sortin (tfm_depth[k]);
 	} 
       while (k++ < for_end);} 
       nd = skimp (15) + 1;
-      dimenhead[3] = mem[memtop - 1].hhfield.v.RH;
+      dimen_head[3] = mem[memtop - 1].hhfield.v.RH;
       if (perturbation >= 4096) 
       tfmwarning (22);
       mem[memtop - 1].hhfield.v.RH = 19;
       {register integer for_end; k = bc;for_end = ec; if (k <= for_end) 
       do 
-	if (charexists[k]) {
+	if (char_exists[k]) {
 	    
-	  if (tfmitalcorr[k] == 0) 
-	  tfmitalcorr[k] = 15;
-	  else tfmitalcorr[k] = sortin (tfmitalcorr[k]);
+	  if (tfm_ital_corr[k] == 0) 
+	  tfm_ital_corr[k] = 15;
+	  else tfm_ital_corr[k] = sortin (tfm_ital_corr[k]);
 	} 
       while (k++ < for_end);} 
       ni = skimp (63) + 1;
-      dimenhead[4] = mem[memtop - 1].hhfield.v.RH;
+      dimen_head[4] = mem[memtop - 1].hhfield.v.RH;
       if (perturbation >= 4096) 
       tfmwarning (23);
       internal[33] = 0;
-      if (jobname == 0) 
+      if (job_name == 0) 
       open_log_file ();
-      packjobname (1045);
-      while (!bopenout (tfmfile)) promptfilename (1046 , 1045);
-      metricfilename = bmakenamestring (tfmfile);
-      k = headersize;
-      while (headerbyte[k]< 0) decr (k);
+      packjob_name (1045);
+      while (!bopenout (tfm_file)) promptfilename (1046 , 1045);
+      metric_file_name = bmakenamestring (tfm_file);
+      k = header_size;
+      while (header_byte[k]< 0) decr (k);
       lh = (k + 3) / 4;
       if (bc > ec) 
       bc = 1;
@@ -22061,169 +22061,169 @@ closefilesandterminate (void)
       if ((bchar < 0) || (bchar > 255)) 
       {
 	bchar = -1;
-	lkstarted = false;
+	lk_started = false;
 	lkoffset = 0;
       } 
       else {
 	  
-	lkstarted = true;
+	lk_started = true;
 	lkoffset = 1;
       } 
-      k = labelptr;
-      if (labelloc[k]+ lkoffset > 255) 
+      k = label_ptr;
+      if (label_loc[k]+ lkoffset > 255) 
       {
 	lkoffset = 0;
-	lkstarted = false;
+	lk_started = false;
 	do {
-	    charremainder[labelchar[k]] = lkoffset;
-	  while (labelloc[k - 1] == labelloc[k]) {
+	    char_remainder[label_char[k]] = lkoffset;
+	  while (label_loc[k - 1] == label_loc[k]) {
 	      
 	    decr (k);
-	    charremainder[labelchar[k]] = lkoffset;
+	    char_remainder[label_char[k]] = lkoffset;
 	  } 
 	  incr (lkoffset);
 	  decr (k);
-	} while (!(lkoffset + labelloc[k]< 256));
+	} while (!(lkoffset + label_loc[k]< 256));
       } 
       if (lkoffset > 0) 
       while (k > 0) {
 	  
-	charremainder[labelchar[k]] = charremainder[labelchar[k]]
+	char_remainder[label_char[k]] = char_remainder[label_char[k]]
 	+ lkoffset;
 	decr (k);
       } 
-      if (bchlabel < ligtablesize) 
+      if (bch_label < lig_table_size) 
       {
-	ligkern[nl].b0 = 255;
-	ligkern[nl].b1 = 0;
-	ligkern[nl].b2 = ((bchlabel + lkoffset) / 256);
-	ligkern[nl].b3 = ((bchlabel + lkoffset) % 256);
+	lig_kern[nl].b0 = 255;
+	lig_kern[nl].b1 = 0;
+	lig_kern[nl].b2 = ((bch_label + lkoffset) / 256);
+	lig_kern[nl].b3 = ((bch_label + lkoffset) % 256);
 	incr (nl);
       } 
-      put2bytes (tfmfile , 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl 
+      put2bytes (tfm_file , 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl 
       + lkoffset + nk + ne + np);
-      put2bytes (tfmfile , lh);
-      put2bytes (tfmfile , bc);
-      put2bytes (tfmfile , ec);
-      put2bytes (tfmfile , nw);
-      put2bytes (tfmfile , nh);
-      put2bytes (tfmfile , nd);
-      put2bytes (tfmfile , ni);
-      put2bytes (tfmfile , nl + lkoffset);
-      put2bytes (tfmfile , nk);
-      put2bytes (tfmfile , ne);
-      put2bytes (tfmfile , np);
+      put2bytes (tfm_file , lh);
+      put2bytes (tfm_file , bc);
+      put2bytes (tfm_file , ec);
+      put2bytes (tfm_file , nw);
+      put2bytes (tfm_file , nh);
+      put2bytes (tfm_file , nd);
+      put2bytes (tfm_file , ni);
+      put2bytes (tfm_file , nl + lkoffset);
+      put2bytes (tfm_file , nk);
+      put2bytes (tfm_file , ne);
+      put2bytes (tfm_file , np);
       {register integer for_end; k = 1;for_end = 4 * lh; if (k <= 
       for_end) do 
 	{
-	  if (headerbyte[k]< 0) 
-	  headerbyte[k] = 0;
-	  putbyte (headerbyte[k], tfmfile);
+	  if (header_byte[k]< 0) 
+	  header_byte[k] = 0;
+	  putbyte (header_byte[k], tfm_file);
 	} 
       while (k++ < for_end);} 
       {register integer for_end; k = bc;for_end = ec; if (k <= for_end) 
       do 
-	if (!charexists[k]) 
-	put4bytes (tfmfile , 0);
+	if (!char_exists[k]) 
+	put4bytes (tfm_file , 0);
 	else {
 	    
-	  putbyte (mem[tfmwidth[k]].hhfield.lhfield , tfmfile);
-	  putbyte ((mem[tfmheight[k]].hhfield.lhfield) * 16 + mem[
-	  tfmdepth[k]].hhfield.lhfield , tfmfile);
-	  putbyte ((mem[tfmitalcorr[k]].hhfield.lhfield) * 4 + 
-	  chartag[k], tfmfile);
-	  putbyte (charremainder[k], tfmfile);
+	  putbyte (mem[tfm_width[k]].hhfield.lhfield , tfm_file);
+	  putbyte ((mem[tfm_height[k]].hhfield.lhfield) * 16 + mem[
+	  tfm_depth[k]].hhfield.lhfield , tfm_file);
+	  putbyte ((mem[tfm_ital_corr[k]].hhfield.lhfield) * 4 + 
+	  char_tag[k], tfm_file);
+	  putbyte (char_remainder[k], tfm_file);
 	} 
       while (k++ < for_end);} 
-      tfmchanged = 0;
+      tfm_changed = 0;
       {register integer for_end; k = 1;for_end = 4; if (k <= for_end) do 
 	{
-	  put4bytes (tfmfile , 0);
-	  p = dimenhead[k];
+	  put4bytes (tfm_file , 0);
+	  p = dimen_head[k];
 	  while (p != 19) {
 	      
-	    put4bytes (tfmfile , dimenout (mem[p + 1].cint));
+	    put4bytes (tfm_file , dimenout (mem[p + 1].cint));
 	    p = mem[p].hhfield.v.RH;
 	  } 
 	} 
       while (k++ < for_end);} 
       {register integer for_end; k = 0;for_end = 255; if (k <= for_end) 
       do 
-	if (skiptable[k]< ligtablesize) 
+	if (skip_table[k]< lig_table_size) 
 	{
 	  print_nl (1048);
 	  print_int (k);
 	  print (1049);
-	  ll = skiptable[k];
+	  ll = skip_table[k];
 	  do {
-	      lll = ligkern[ll].b0;
-	    ligkern[ll].b0 = 128;
+	      lll = lig_kern[ll].b0;
+	    lig_kern[ll].b0 = 128;
 	    ll = ll - lll;
 	  } while (!(lll == 0));
 	} 
       while (k++ < for_end);} 
-      if (lkstarted) 
+      if (lk_started) 
       {
-	putbyte (255 , tfmfile);
-	putbyte (bchar , tfmfile);
-	put2bytes (tfmfile , 0);
+	putbyte (255 , tfm_file);
+	putbyte (bchar , tfm_file);
+	put2bytes (tfm_file , 0);
       } 
       else {
 	  register integer for_end; k = 1;for_end = lkoffset; if (k <= 
       for_end) do 
 	{
-	  ll = labelloc[labelptr];
+	  ll = label_loc[label_ptr];
 	  if (bchar < 0) 
 	  {
-	    putbyte (254 , tfmfile);
-	    putbyte (0 , tfmfile);
+	    putbyte (254 , tfm_file);
+	    putbyte (0 , tfm_file);
 	  } 
 	  else {
 	      
-	    putbyte (255 , tfmfile);
-	    putbyte (bchar , tfmfile);
+	    putbyte (255 , tfm_file);
+	    putbyte (bchar , tfm_file);
 	  } 
-	  put2bytes (tfmfile , ll + lkoffset);
+	  put2bytes (tfm_file , ll + lkoffset);
 	  do {
-	      decr (labelptr);
-	  } while (!(labelloc[labelptr]< ll));
+	      decr (label_ptr);
+	  } while (!(label_loc[label_ptr]< ll));
 	} 
       while (k++ < for_end);} 
       {register integer for_end; k = 0;for_end = nl - 1; if (k <= 
       for_end) do 
-	tfmqqqq (ligkern[k]);
+	tfm_qqqq (lig_kern[k]);
       while (k++ < for_end);} 
       {register integer for_end; k = 0;for_end = nk - 1; if (k <= 
       for_end) do 
-	put4bytes (tfmfile , dimenout (kern[k]));
+	put4bytes (tfm_file , dimenout (kern[k]));
       while (k++ < for_end);} 
       {register integer for_end; k = 0;for_end = ne - 1; if (k <= 
       for_end) do 
-	tfmqqqq (exten[k]);
+	tfm_qqqq (exten[k]);
       while (k++ < for_end);} 
       {register integer for_end; k = 1;for_end = np; if (k <= for_end) do 
 	if (k == 1) {
 	    
 	  if (abs (param[1]) < 134217728L) 
-	  put4bytes (tfmfile , param[1]* 16);
+	  put4bytes (tfm_file , param[1]* 16);
 	  else {
 	      
-	    incr (tfmchanged);
+	    incr (tfm_changed);
 	    if (param[1] > 0) 
-	    put4bytes (tfmfile , 2147483647L);
-	    else put4bytes (tfmfile , -2147483647L);
+	    put4bytes (tfm_file , 2147483647L);
+	    else put4bytes (tfm_file , -2147483647L);
 	  } 
 	} 
-	else put4bytes (tfmfile , dimenout (param[k]));
+	else put4bytes (tfm_file , dimenout (param[k]));
       while (k++ < for_end);} 
-      if (tfmchanged > 0) 
+      if (tfm_changed > 0) 
       {
-	if (tfmchanged == 1) 
+	if (tfm_changed == 1) 
 	print_nl (1050);
 	else {
 	    
 	  print_nl (40);
-	  print_int (tfmchanged);
+	  print_int (tfm_changed);
 	  print (1051);
 	} 
 	print (1052);
@@ -22232,19 +22232,19 @@ closefilesandterminate (void)
 #ifdef STAT
       if (internal[12] > 0) 
       {
-	{ putc (' ' ,  logfile);  putc ('\n',  logfile); }
-	if (bchlabel < ligtablesize) 
+	{ putc (' ' ,  log_file);  putc ('\n',  log_file); }
+	if (bch_label < lig_table_size) 
 	decr (nl);
-	fprintf (logfile , "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n",  "(You used " , (long)nw , "w," , (long)nh , "h," , (long)nd , "d," ,         (long)ni , "i," , (long)nl , "l," , (long)nk , "k," , (long)ne , "e," , (long)np ,         "p metric file positions");
-	fprintf (logfile , "%s%s%ld%s%ld%s%ld%s\n",  "  out of " , "256w,16h,16d,64i," , (long)ligtablesize ,         "l," , (long)maxkerns , "k,256e," , (long)maxfontdimen , "p)");
+	fprintf (log_file , "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n",  "(You used " , (long)nw , "w," , (long)nh , "h," , (long)nd , "d," ,         (long)ni , "i," , (long)nl , "l," , (long)nk , "k," , (long)ne , "e," , (long)np ,         "p metric file positions");
+	fprintf (log_file , "%s%s%ld%s%ld%s%ld%s\n",  "  out of " , "256w,16h,16d,64i," , (long)lig_table_size ,         "l," , (long)max_kerns , "k,256e," , (long)max_font_dimen , "p)");
       } 
 #endif /* STAT */
       print_nl (1047);
-      print_file_name (0 , metricfilename , 0);
+      print_file_name (0 , metric_file_name , 0);
       print_char (46);
-      bclose (tfmfile);
+      bclose (tfm_file);
     } 
-    if (gfprevptr > 0) 
+    if (gf_prev_ptr > 0) 
     {
       {
 	gf_buf[gf_ptr] = 248;
@@ -22252,12 +22252,12 @@ closefilesandterminate (void)
 	if (gf_ptr == gf_limit) 
 	gf_swap ();
       } 
-      gffour (gfprevptr);
-      gfprevptr = gf_offset + gf_ptr - 5;
+      gffour (gf_prev_ptr);
+      gf_prev_ptr = gf_offset + gf_ptr - 5;
       gffour (internal[26]* 16);
       {register integer for_end; k = 1;for_end = 4; if (k <= for_end) do 
 	{
-	  gf_buf[gf_ptr] = headerbyte[k];
+	  gf_buf[gf_ptr] = header_byte[k];
 	  incr (gf_ptr);
 	  if (gf_ptr == gf_limit) 
 	  gf_swap ();
@@ -22265,16 +22265,16 @@ closefilesandterminate (void)
       while (k++ < for_end);} 
       gffour (internal[27]);
       gffour (internal[28]);
-      gffour (gfminm);
-      gffour (gfmaxm);
-      gffour (gfminn);
-      gffour (gfmaxn);
+      gffour (gf_min_m);
+      gffour (gf_max_m);
+      gffour (gf_min_n);
+      gffour (gf_max_n);
       {register integer for_end; k = 0;for_end = 255; if (k <= for_end) 
       do 
-	if (charexists[k]) 
+	if (char_exists[k]) 
 	{
-	  x = gfdx[k]/ 65536L;
-	  if ((gfdy[k] == 0) && (x >= 0) && (x < 256) && (gfdx[k 
+	  x = gf_dx[k]/ 65536L;
+	  if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k 
 	] == x * 65536L)) 
 	  {
 	    {
@@ -22310,11 +22310,11 @@ closefilesandterminate (void)
 	      if (gf_ptr == gf_limit) 
 	      gf_swap ();
 	    } 
-	    gffour (gfdx[k]);
-	    gffour (gfdy[k]);
+	    gffour (gf_dx[k]);
+	    gffour (gf_dy[k]);
 	  } 
-	  x = mem[tfmwidth[k]+ 1].cint;
-	  if (abs (x) > maxtfmdimen) {
+	  x = mem[tfm_width[k]+ 1].cint;
+	  if (abs (x) > max_tfm_dimen) {
 	      
 	    if (x > 0) 
 	    x = 16777215L;
@@ -22322,7 +22322,7 @@ closefilesandterminate (void)
 	  } 
 	  else x = makescaled (x * 16 , internal[26]);
 	  gffour (x);
-	  gffour (charptr[k]);
+	  gffour (char_ptr[k]);
 	} 
       while (k++ < for_end);} 
       {
@@ -22331,7 +22331,7 @@ closefilesandterminate (void)
 	if (gf_ptr == gf_limit) 
 	gf_swap ();
       } 
-      gffour (gfprevptr);
+      gffour (gf_prev_ptr);
       {
 	gf_buf[gf_ptr] = 131;
 	incr (gf_ptr);
@@ -22349,32 +22349,32 @@ closefilesandterminate (void)
 	} 
 	decr (k);
       } 
-      if (gf_limit == halfbuf) 
-      write_gf (halfbuf , gf_buf_size - 1);
+      if (gf_limit == half_buf) 
+      write_gf (half_buf , gf_buf_size - 1);
       if (gf_ptr > (2147483647L - gf_offset)) 
       {
-	gfprevptr = 0;
+	gf_prev_ptr = 0;
 	fatal_error (1053);
       } 
       if (gf_ptr > 0) 
       write_gf (0 , gf_ptr - 1);
       print_nl (1064);
-      print_file_name (0 , outputfilename , 0);
+      print_file_name (0 , output_file_name , 0);
       print (558);
-      print_int (totalchars);
-      if (totalchars != 1) 
+      print_int (total_chars);
+      if (total_chars != 1) 
       print (1065);
       else print (1066);
       print (1067);
       print_int (gf_offset + gf_ptr);
       print (1068);
-      bclose (gffile);
+      bclose (gf_file);
     } 
   } 
-  if (logopened) 
+  if (log_opened) 
   {
-    putc ('\n',  logfile);
-    aclose (logfile);
+    putc ('\n',  log_file);
+    aclose (log_file);
     selector = selector - 2;
     if (selector == 1) 
     {
@@ -22385,7 +22385,7 @@ closefilesandterminate (void)
   } 
   print_ln ();
   if ((editnamestart != 0) && (interaction > 0)) 
-  calledit (str_pool , editnamestart , editnamelength , editline);
+  calledit (str_pool , editnamestart , editname_length , editline);
 } 
 #ifdef TEXMF_DEBUG
 void 
