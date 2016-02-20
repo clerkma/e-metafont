@@ -122,7 +122,7 @@ EXTERN unsigned char str_ref[max_strings + 1];
 EXTERN alpha_file poolfile;
 #endif /* INIMF */
 
-/* 54. On-line and o-line printing. */
+/* 54. On-line and off-line printing. */
 EXTERN alpha_file log_file;
 EXTERN unsigned char selector;
 EXTERN unsigned char dig[23];

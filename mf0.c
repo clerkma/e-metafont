@@ -15508,7 +15508,7 @@ materializepen (void)
   cur_type = 6;
 } 
 void 
-knownpair (void) 
+known_pair (void) 
 {
   halfword p;
   if (cur_type != 14) 
@@ -15574,14 +15574,14 @@ newknot (void)
   mem[q].hhfield.b0 = 0;
   mem[q].hhfield.b1 = 0;
   mem[q].hhfield.v.RH = q;
-  knownpair ();
+  known_pair ();
   mem[q + 1].cint = cur_x;
   mem[q + 2].cint = cur_y;
   Result = q;
   return Result;
 } 
 small_number 
-scandirection (void) 
+scan_direction (void) 
 {
   register small_number Result; unsigned char t;
   scaled x;
@@ -15648,7 +15648,7 @@ scandirection (void)
       cur_y = cur_exp;
       cur_x = x;
     } 
-    else knownpair ();
+    else known_pair ();
     if ((cur_x == 0) && (cur_y == 0)) 
     t = 4;
     else {
@@ -15830,7 +15830,7 @@ znegatedeplist (halfword p)
   lab10:;
 } 
 void 
-pairtopath (void) 
+pair_to_path (void) 
 {
   cur_exp = newknot ();
   cur_type = 9;
@@ -16296,7 +16296,7 @@ zdounary (quarterword c)
   case 45 : 
     {
       if (cur_type == 14) 
-      pairtopath ();
+      pair_to_path ();
       if (cur_type == 9) 
       cur_type = 8;
       else badunary (45);
@@ -16330,7 +16330,7 @@ zdounary (quarterword c)
       cur_exp = p;
     } 
     else if (cur_type == 14) 
-    pairtopath ();
+    pair_to_path ();
     else badunary (43);
     break;
   } 
@@ -16340,7 +16340,7 @@ zdounary (quarterword c)
   } 
 } 
 void 
-zbadbinary (halfword p , quarterword c) 
+bad_binary (halfword p , quarterword c) 
 {
   disp_err (p , 261);
   disp_err (0 , 838);
@@ -16406,7 +16406,7 @@ zdepfinish (halfword v , halfword q , small_number t)
   fix_dependencies ();
 } 
 void 
-zaddorsubtract (halfword p , halfword q , quarterword c) 
+add_or_sub_tract (halfword p , halfword q , quarterword c) 
 {
   /* 30 10 */ small_number s, t;
   halfword r;
@@ -17417,23 +17417,23 @@ zdobinary (halfword p , quarterword c)
 	cur_edges = cur_exp;
 	merge_edges (mem[p + 1].cint);
       } 
-      else badbinary (p , c);
+      else bad_binary (p , c);
     } 
     else if (cur_type == 14) {
 	
       if (mem[p].hhfield.b0 != 14) 
-      badbinary (p , c);
+      bad_binary (p , c);
       else {
 	  
 	q = mem[p + 1].cint;
 	r = mem[cur_exp + 1].cint;
-	addorsubtract (q , r , c);
-	addorsubtract (q + 2 , r + 2 , c);
+	add_or_sub_tract (q , r , c);
+	add_or_sub_tract (q + 2 , r + 2 , c);
       } 
     } 
     else if (mem[p].hhfield.b0 == 14) 
-    badbinary (p , c);
-    else addorsubtract (p , 0 , c);
+    bad_binary (p , c);
+    else add_or_sub_tract (p , 0 , c);
     break;
   case 77 : 
   case 78 : 
@@ -17443,10 +17443,10 @@ zdobinary (halfword p , quarterword c)
   case 82 : 
     {
       if ((cur_type > 14) && (mem[p].hhfield.b0 > 14)) 
-      addorsubtract (p , 0 , 70);
+      add_or_sub_tract (p , 0 , 70);
       else if (cur_type != mem[p].hhfield.b0) 
       {
-	badbinary (p , c);
+	bad_binary (p , c);
 	goto done;
       } 
       else if (cur_type == 4) 
@@ -17465,7 +17465,7 @@ zdobinary (halfword p , quarterword c)
 	rr = r + big_node_size[cur_type] - 2;
 	while (true) {
 	    
-	  addorsubtract (q , r , 70);
+	  add_or_sub_tract (q , r , 70);
 	  if (mem[r].hhfield.b0 != 16) 
 	  goto done1;
 	  if (mem[r + 1].cint != 0) 
@@ -17481,7 +17481,7 @@ zdobinary (halfword p , quarterword c)
       flush_cur_exp (cur_exp - mem[p + 1].cint);
       else {
 	  
-	badbinary (p , c);
+	bad_binary (p , c);
 	goto done;
       } 
       if (cur_type != 16) 
@@ -17542,13 +17542,13 @@ zdobinary (halfword p , quarterword c)
   case 76 : 
   case 75 : 
     if ((mem[p].hhfield.b0 != 2) || (cur_type != 2)) 
-    badbinary (p , c);
+    bad_binary (p , c);
     else if (mem[p + 1].cint == c - 45) 
     cur_exp = mem[p + 1].cint;
     break;
   case 71 : 
     if ((cur_type < 14) || (mem[p].hhfield.b0 < 14)) 
-    badbinary (p , 71);
+    bad_binary (p , 71);
     else if ((cur_type == 16) || (mem[p].hhfield.b0 == 16)) 
     {
       if (mem[p].hhfield.b0 == 16) 
@@ -17578,11 +17578,11 @@ zdobinary (halfword p , quarterword c)
       hardtimes (p);
       goto lab10;
     } 
-    else badbinary (p , 71);
+    else bad_binary (p , 71);
     break;
   case 72 : 
     if ((cur_type != 16) || (mem[p].hhfield.b0 < 14)) 
-    badbinary (p , 72);
+    bad_binary (p , 72);
     else {
 	
       v = cur_exp;
@@ -17620,7 +17620,7 @@ zdobinary (halfword p , quarterword c)
       cur_exp = pyth_add (mem[p + 1].cint , cur_exp);
       else cur_exp = pyth_sub (mem[p + 1].cint , cur_exp);
     } 
-    else badbinary (p , c);
+    else bad_binary (p , c);
     break;
   case 84 : 
   case 85 : 
@@ -17644,25 +17644,25 @@ zdobinary (halfword p , quarterword c)
       edgestrans (p , c);
       goto lab10;
     } 
-    else badbinary (p , c);
+    else bad_binary (p , c);
     break;
   case 83 : 
     if ((cur_type == 4) && (mem[p].hhfield.b0 == 4)) 
     cat (p);
-    else badbinary (p , 83);
+    else bad_binary (p , 83);
     break;
   case 94 : 
     if (nicepair (p , mem[p].hhfield.b0) && (cur_type == 4)) 
     chopstring (mem[p + 1].cint);
-    else badbinary (p , 94);
+    else bad_binary (p , 94);
     break;
   case 95 : 
     {
       if (cur_type == 14) 
-      pairtopath ();
+      pair_to_path ();
       if (nicepair (p , mem[p].hhfield.b0) && (cur_type == 9)) 
       choppath (mem[p + 1].cint);
-      else badbinary (p , 95);
+      else bad_binary (p , 95);
     } 
     break;
   case 97 : 
@@ -17670,10 +17670,10 @@ zdobinary (halfword p , quarterword c)
   case 99 : 
     {
       if (cur_type == 14) 
-      pairtopath ();
+      pair_to_path ();
       if ((cur_type == 9) && (mem[p].hhfield.b0 == 16)) 
       findpoint (mem[p + 1].cint , c);
-      else badbinary (p , c);
+      else bad_binary (p , c);
     } 
     break;
   case 100 : 
@@ -17682,16 +17682,16 @@ zdobinary (halfword p , quarterword c)
       materializepen ();
       if ((cur_type == 6) && nicepair (p , mem[p].hhfield.b0)) 
       setupoffset (mem[p + 1].cint);
-      else badbinary (p , 100);
+      else bad_binary (p , 100);
     } 
     break;
   case 96 : 
     {
       if (cur_type == 14) 
-      pairtopath ();
+      pair_to_path ();
       if ((cur_type == 9) && nicepair (p , mem[p].hhfield.b0)) 
       setupdirectiontime (mem[p + 1].cint);
-      else badbinary (p , 96);
+      else bad_binary (p , 96);
     } 
     break;
   case 92 : 
@@ -17700,18 +17700,18 @@ zdobinary (halfword p , quarterword c)
       {
 	q = stash_cur_exp ();
 	unstash_cur_exp (p);
-	pairtopath ();
+	pair_to_path ();
 	p = stash_cur_exp ();
 	unstash_cur_exp (q);
       } 
       if (cur_type == 14) 
-      pairtopath ();
+      pair_to_path ();
       if ((cur_type == 9) && (mem[p].hhfield.b0 == 9)) 
       {
 	pathintersection (mem[p + 1].cint , cur_exp);
 	pairvalue (cur_t , cur_tt);
       } 
-      else badbinary (p , 92);
+      else bad_binary (p , 92);
     } 
     break;
   } 
@@ -18634,7 +18634,7 @@ zmakeeq (halfword lhs)
 	
       if (t == 10) 
       {
-	pairtopath ();
+	pair_to_path ();
 	goto lab20;
       } 
     } 
@@ -19124,7 +19124,7 @@ disptoken (void)
   } 
 } 
 void 
-doshowtoken (void) 
+do_show_token (void) 
 {
   do {
       getnext ();
@@ -19133,7 +19133,7 @@ doshowtoken (void)
   } while (!(cur_cmd != 82));
 } 
 void 
-doshowstats (void) 
+do_show_stats (void) 
 {
   print_nl (950);
 	;
@@ -19200,7 +19200,7 @@ zdispvar (halfword p)
   } 
 } 
 void 
-doshowvar (void) 
+do_show_var (void) 
 {
   /* 30 */ do {
       getnext ();
@@ -19223,7 +19223,7 @@ doshowvar (void)
   } while (!(cur_cmd != 82));
 } 
 void 
-doshowdependencies (void) 
+do_show_dependencies (void) 
 {
   halfword p;
   p = mem[13].hhfield.v.RH;
@@ -19246,25 +19246,25 @@ doshowdependencies (void)
   getxnext ();
 } 
 void 
-doshowwhatever (void) 
+do_show_whatever (void) 
 {
   if (interaction == 3) 
 ;
   switch (cur_mod) 
   {case 0 : 
-    doshowtoken ();
+    do_show_token ();
     break;
   case 1 : 
-    doshowstats ();
+    do_show_stats ();
     break;
   case 2 : 
     doshow ();
     break;
   case 3 : 
-    doshowvar ();
+    do_show_var ();
     break;
   case 4 : 
-    doshowdependencies ();
+    do_show_dependencies ();
     break;
   } 
   if (internal[32] > 0) 
@@ -19303,7 +19303,7 @@ doshowwhatever (void)
   } 
 } 
 boolean 
-scanwith (void) 
+scan_with (void) 
 {
   register boolean Result; small_number t;
   boolean result;
@@ -19407,7 +19407,7 @@ zfindedgesvar (halfword t)
   flush_node_list (t);
 } 
 void 
-doaddto (void) 
+do_add_to (void) 
 {
   /* 30 45 */ halfword lhs, rhs;
   integer w;
@@ -19460,7 +19460,7 @@ doaddto (void)
     else {
 	
       if (cur_type == 14) 
-      pairtopath ();
+      pair_to_path ();
       if (cur_type != 9) 
       {
 	disp_err (0 , 975);
@@ -19477,7 +19477,7 @@ doaddto (void)
 	rhs = cur_exp;
 	w = 1;
 	cur_pen = 3;
-	while (cur_cmd == 66) if (scanwith ()) {
+	while (cur_cmd == 66) if (scan_with ()) {
 	    
 	  if (cur_type == 16) 
 	  w = cur_exp;
@@ -19860,7 +19860,7 @@ docull (void)
     keeping = cur_mod;
     if (!getpair (67)) 
     goto not_found;
-    while ((cur_cmd == 66) && (cur_mod == 16)) if (scanwith ()) 
+    while ((cur_cmd == 66) && (cur_mod == 16)) if (scan_with ()) 
     w = cur_exp;
     if (cur_x > cur_y) 
     goto not_found;
@@ -20595,10 +20595,10 @@ dostatement (void)
       donewinternal ();
       break;
     case 22 : 
-      doshowwhatever ();
+      do_show_whatever ();
       break;
     case 18 : 
-      doaddto ();
+      do_add_to ();
       break;
     case 17 : 
       doshipout ();
@@ -21628,7 +21628,7 @@ scan_expression (void)
 	  } 
 	  lab25: if (cur_cmd == 46) 
 	  {
-	    t = scandirection ();
+	    t = scan_direction ();
 	    if (t != 4) 
 	    {
 	      mem[q].hhfield.b1 = t;
@@ -21690,7 +21690,7 @@ scan_expression (void)
 	      t = 1;
 	      getxnext ();
 	      scan_primary ();
-	      knownpair ();
+	      known_pair ();
 	      mem[q + 5].cint = cur_x;
 	      mem[q + 6].cint = cur_y;
 	      if (cur_cmd != 52) 
@@ -21702,7 +21702,7 @@ scan_expression (void)
 		  
 		getxnext ();
 		scan_primary ();
-		knownpair ();
+		known_pair ();
 		x = cur_x;
 		y = cur_y;
 	      } 
@@ -21730,7 +21730,7 @@ scan_expression (void)
 	  getxnext ();
 	  if (cur_cmd == 46) 
 	  {
-	    t = scandirection ();
+	    t = scan_direction ();
 	    if (mem[q].hhfield.b1 != 1) 
 	    x = cur_exp;
 	    else t = 1;
@@ -22432,7 +22432,7 @@ debughelp (void)
 	print_int (internal[n]);
 	break;
       case 7 : 
-	doshowdependencies ();
+	do_show_dependencies ();
 	break;
       case 9 : 
 	show_token_list (n , 0 , 100000L , 0);
