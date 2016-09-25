@@ -620,7 +620,7 @@ void final_cleanup (void)
   if (job_name == 0)
     open_log_file();
   while (input_ptr > 0) if ((cur_input.index_field > 15))
-    endtokenlist();
+    end_token_list();
   else end_file_reading();
   while (loop_ptr != 0) stop_iteration();
   while (open_parens > 0) {
@@ -629,7 +629,7 @@ void final_cleanup (void)
   }
   while (cond_ptr != 0) {
     print_nl(1078);
-    printcmdmod(2, cur_if);
+    print_cmd_mod(2, cur_if);
     if (if_line != 0)
     {
       print(1079);
@@ -1221,7 +1221,7 @@ lab1: selector = 1;
     cur_sym = start_sym;
     back_input();
   }
-  maincontrol();
+  main_control();
   final_cleanup();
   close_files_and_terminate();
 lab9999: {
@@ -1983,7 +1983,7 @@ void error (void)
   if (history < 2)
   history = 2;
   print_char(46);
-  showcontext ();
+  show_context ();
   if ((haltonerrorp))
   {
     history = 3;
@@ -2045,7 +2045,7 @@ void error (void)
           help_line[1] = 278;
           help_line[0] = 279;
         }
-        showcontext ();
+        show_context ();
         goto lab_continue;
       }
       break;
@@ -2301,7 +2301,7 @@ void overflow (str_number s, integer n)
   }
 }
 
-void confusion(str_number s)
+void confusion (str_number s)
 {
   normalize_selector ();
   if (history < 2)
@@ -2627,7 +2627,7 @@ scaled round_decimals (small_number k)
 }
 
 #ifdef FIXPT
-fraction zmakefraction (integer p, integer q)
+fraction make_fraction (integer p, integer q)
 {
   fraction Result; integer f;
   integer n;
@@ -2683,7 +2683,7 @@ fraction zmakefraction (integer p, integer q)
 #endif /* FIXPT */
 
 #ifdef FIXPT
-integer ztakefraction (integer q, fraction f)
+integer take_fraction (integer q, fraction f)
 {
   integer Result; integer p;
   boolean negative;
@@ -2741,7 +2741,7 @@ integer ztakefraction (integer q, fraction f)
 #endif /* FIXPT */
 
 #ifdef FIXPT
-integer ztakescaled (integer q, scaled f)
+integer take_scaled (integer q, scaled f)
 {
   integer Result; integer p;
   boolean negative;
@@ -2799,7 +2799,7 @@ integer ztakescaled (integer q, scaled f)
 #endif /* FIXPT */
 
 #ifdef FIXPT
-scaled zmake_scaled (integer p, integer q)
+scaled make_scaled (integer p, integer q)
 {
   scaled Result; integer f;
   integer n;
@@ -2857,16 +2857,16 @@ scaled zmake_scaled (integer p, integer q)
 fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
 {
   fraction Result; integer acc, num, denom;
-  acc = takefraction (st - (sf / 16), sf - (st / 16));
-  acc = takefraction (acc, ct - cf);
-  num = 536870912L + takefraction (acc, 379625062L);
-  denom = 805306368L + takefraction (ct, 497706707L) + takefraction (cf ,
+  acc = take_fraction (st - (sf / 16), sf - (st / 16));
+  acc = take_fraction (acc, ct - cf);
+  num = 536870912L + take_fraction (acc, 379625062L);
+  denom = 805306368L + take_fraction (ct, 497706707L) + take_fraction (cf ,
   307599661L);
   if (t != 65536L)
   num = make_scaled (num, t);
   if (num / 4 >= denom)
   Result = 1073741824L;
-  else Result = makefraction (num, denom);
+  else Result = make_fraction (num, denom);
   return Result;
 }
 
@@ -2975,7 +2975,7 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
   return Result;
 }
 
-scaled zsquarert (scaled x)
+scaled square_rt (scaled x)
 {
   scaled Result; small_number k;
   integer y, q;
@@ -3079,13 +3079,13 @@ integer pyth_add (integer a, integer b)
       big = true;
     }
     while (true) {
-      r = makefraction (b, a);
-      r = takefraction (r, r);
+      r = make_fraction (b, a);
+      r = take_fraction (r, r);
       if (r == 0)
       goto done;
-      r = makefraction (r, 1073741824L + r);
-      a = a + takefraction (a + a, r);
-      b = takefraction (b, r);
+      r = make_fraction (r, 1073741824L + r);
+      a = a + take_fraction (a + a, r);
+      b = take_fraction (b, r);
     }
     done:;
     if (big) {
@@ -3150,13 +3150,13 @@ integer pyth_sub (integer a, integer b)
       big = true;
     }
     while (true) {
-      r = makefraction (b, a);
-      r = takefraction (r, r);
+      r = make_fraction (b, a);
+      r = take_fraction (r, r);
       if (r == 0)
       goto done;
-      r = makefraction (r, 1073741824L - r);
-      a = a - takefraction (a + a, r);
-      b = takefraction (b, r);
+      r = make_fraction (r, 1073741824L - r);
+      a = a - take_fraction (a + a, r);
+      b = take_fraction (b, r);
     }
     done:;
     if (big)
@@ -3449,8 +3449,8 @@ void n_sin_cos(angle z)
     break;
   }
   r = pyth_add (x, y);
-  n_cos = makefraction (x, r);
-  n_sin = makefraction (y, r);
+  n_cos = make_fraction (x, r);
+  n_sin = make_fraction (y, r);
 }
 
 void new_randoms (void)
@@ -3504,7 +3504,7 @@ scaled unif_rand (scaled x)
   if (j_random == 0)
   new_randoms ();
   else decr (j_random);
-  y = takefraction (abs (x), randoms[j_random]);
+  y = take_fraction (abs (x), randoms[j_random]);
   if (y == abs (x))
   Result = 0;
   else if (x > 0)
@@ -3520,13 +3520,13 @@ scaled norm_rand (void)
       do { if (j_random == 0)
       new_randoms ();
       else decr (j_random);
-      x = takefraction (112429L, randoms[j_random] - 134217728L);
+      x = take_fraction (112429L, randoms[j_random] - 134217728L);
       if (j_random == 0)
       new_randoms ();
       else decr (j_random);
       u = randoms[j_random];
     }while (!(abs (x) < u));
-    x = makefraction (x, u);
+    x = make_fraction (x, u);
     l = 139548960L - m_log (u);
   }while (!(ab_vs_cd (1024, l, x, x) >= 0));
   Result = x;
@@ -3534,7 +3534,7 @@ scaled norm_rand (void)
 }
 
 #ifdef TEXMF_DEBUG
-void zprintword (memoryword w)
+void print_word (memoryword w)
 {
   print_int (w .cint);
   print_char(32);
@@ -3872,7 +3872,7 @@ void flush_node_list (halfword p)
 }
 
 #ifdef TEXMF_DEBUG
-void zcheckmem (boolean printlocs)
+void check_mem (boolean printlocs)
 {
   halfword p, q, r;
   boolean clobbered;
@@ -4005,7 +4005,7 @@ void zcheckmem (boolean printlocs)
 #endif /* TEXMF_DEBUG */
 
 #ifdef TEXMF_DEBUG
-void zsearchmem (halfword p)
+void search_mem (halfword p)
 {
   integer q;
   {integer for_end; q = 0;for_end = lo_mem_max; if (q <= for_end)
@@ -5719,8 +5719,8 @@ halfword p_plus_fq (halfword p, integer f, halfword q, small_number t, small_num
     goto done;
     else {
       if (tt == 17)
-      v = mem[p + 1].cint + takefraction (f, mem[q + 1].cint);
-      else v = mem[p + 1].cint + takescaled (f, mem[q + 1].cint);
+      v = mem[p + 1].cint + take_fraction (f, mem[q + 1].cint);
+      else v = mem[p + 1].cint + take_scaled (f, mem[q + 1].cint);
       mem[p + 1].cint = v;
       s = p;
       p = mem[p].hhfield.v.RH;
@@ -5745,8 +5745,8 @@ halfword p_plus_fq (halfword p, integer f, halfword q, small_number t, small_num
   else if (mem[pp + 1].cint < mem[qq + 1].cint)
   {
     if (tt == 17)
-    v = takefraction (f, mem[q + 1].cint);
-    else v = takescaled (f, mem[q + 1].cint);
+    v = take_fraction (f, mem[q + 1].cint);
+    else v = take_scaled (f, mem[q + 1].cint);
     if (abs (v) > halfp (threshold))
     {
       s = get_node (2);
@@ -5772,9 +5772,9 @@ halfword p_plus_fq (halfword p, integer f, halfword q, small_number t, small_num
     pp = mem[p].hhfield.lhfield;
   }
   done: if (t == 17)
-  mem[p + 1].cint = slow_add (mem[p + 1].cint, takefraction (mem[q
+  mem[p + 1].cint = slow_add (mem[p + 1].cint, take_fraction (mem[q
   + 1].cint, f));
-  else mem[p + 1].cint = slow_add (mem[p + 1].cint, takescaled (mem
+  else mem[p + 1].cint = slow_add (mem[p + 1].cint, take_scaled (mem
 [q + 1].cint, f));
   mem[r].hhfield.v.RH = p;
   dep_final = p;
@@ -6188,7 +6188,7 @@ void recycle_value (halfword p)
             while (r != 0) {
               q = mem[r].hhfield.lhfield;
               mem[q + 1].hhfield.v.RH = p_plus_fq (mem[q + 1].hhfield
-            .v.RH, makefraction (mem[r + 1].cint, - (integer) v), s
+            .v.RH, make_fraction (mem[r + 1].cint, - (integer) v), s
              , t, 17);
               if (mem[q + 1].hhfield.v.RH == dep_final)
               make_known (q, dep_final);
@@ -6308,13 +6308,13 @@ void put_get_error (void)
   get_x_next ();
 }
 
-void zput_get_flush_error (scaled v)
+void put_get_flush_error (scaled v)
 {
   put_get_error ();
   flush_cur_exp (v);
 }
 
-void zflushbelowvariable (halfword p)
+void flush_below_variable (halfword p)
 {
   halfword q, r;
   if (mem[p].hhfield.b0 != 21)
@@ -6322,7 +6322,7 @@ void zflushbelowvariable (halfword p)
   else {
     q = mem[p + 1].hhfield.v.RH;
     while (mem[q].hhfield.b1 == 3) {
-      flushbelowvariable (q);
+      flush_below_variable (q);
       r = q;
       q = mem[q].hhfield.v.RH;
       free_node (r, 3);
@@ -6334,7 +6334,7 @@ void zflushbelowvariable (halfword p)
     free_node (r, 2);
     else free_node (r, 3);
     do {
-        flushbelowvariable (q);
+        flush_below_variable (q);
       r = q;
       q = mem[q].hhfield.v.RH;
       free_node (r, 3);
@@ -6343,7 +6343,7 @@ void zflushbelowvariable (halfword p)
   }
 }
 
-void zflushvariable (halfword p, halfword t, boolean discardsuffixes)
+void flush_variable (halfword p, halfword t, boolean discardsuffixes)
 {
   halfword q, r;
   halfword n;
@@ -6357,7 +6357,7 @@ void zflushvariable (halfword p, halfword t, boolean discardsuffixes)
       r = p + 1;
       q = mem[r].hhfield.v.RH;
       while (mem[q].hhfield.b1 == 3) {
-        flushvariable (q, t, discardsuffixes);
+        flush_variable (q, t, discardsuffixes);
         if (t == 0) {
           if (mem[q].hhfield.b0 == 21)
           r = q;
@@ -6379,7 +6379,7 @@ void zflushvariable (halfword p, halfword t, boolean discardsuffixes)
     goto lab_exit;
   }
   if (discardsuffixes)
-  flushbelowvariable (p);
+  flush_below_variable (p);
   else {
     if (mem[p].hhfield.b0 == 21)
     p = mem[p + 1].hhfield.lhfield;
@@ -6388,7 +6388,7 @@ void zflushvariable (halfword p, halfword t, boolean discardsuffixes)
   lab_exit:;
 }
 
-small_number zundtype (halfword p)
+small_number und_type (halfword p)
 {
   small_number Result; switch (mem[p].hhfield.b0)
   {case 0 :
@@ -6431,7 +6431,7 @@ small_number zundtype (halfword p)
   return Result;
 }
 
-void zclearsymbol (halfword p, boolean saving)
+void clear_symbol (halfword p, boolean saving)
 {
   halfword q;
   q = eqtb[p].v.RH;
@@ -6448,7 +6448,7 @@ void zclearsymbol (halfword p, boolean saving)
       if (saving)
       mem[q].hhfield.b1 = 1;
       else {
-        flushbelowvariable (q);
+        flush_below_variable (q);
         free_node (q, 2);
       }
     }
@@ -6460,7 +6460,7 @@ void zclearsymbol (halfword p, boolean saving)
   eqtb[p] = eqtb[9769];
 }
 
-void zsavevariable (halfword q)
+void save_variable (halfword q)
 {
   halfword p;
   if (save_ptr != 0)
@@ -6471,10 +6471,10 @@ void zsavevariable (halfword q)
     mem[p + 1].hhfield = eqtb[q];
     save_ptr = p;
   }
-  clearsymbol (q, (save_ptr != 0));
+  clear_symbol (q, (save_ptr != 0));
 }
 
-void zsaveinternal (halfword q)
+void save_internal (halfword q)
 {
   halfword p;
   if (save_ptr != 0)
@@ -6516,7 +6516,7 @@ void unsave (void)
         print_char(125);
         end_diagnostic (false);
       }
-      clearsymbol (q, false);
+      clear_symbol (q, false);
       eqtb[q] = mem[save_ptr + 1].hhfield;
       if (eqtb[q].lhfield % 86 == 41)
       {
@@ -6541,7 +6541,7 @@ void unsave (void)
   save_ptr = p;
 }
 
-halfword zcopyknot (halfword p)
+halfword copy_knot (halfword p)
 {
   halfword Result; halfword q;
   unsigned char k;
@@ -6553,7 +6553,7 @@ halfword zcopyknot (halfword p)
   return Result;
 }
 
-halfword zcopypath (halfword p)
+halfword copy_path (halfword p)
 {
   halfword Result; halfword q, pp, qq;
   q = get_node (7);
@@ -6582,7 +6582,7 @@ halfword zcopypath (halfword p)
   return Result;
 }
 
-halfword zhtapypoc (halfword p)
+halfword htap_ypoc (halfword p)
 {
   halfword Result; halfword q, pp, qq, rr;
   q = get_node (7);
@@ -6616,27 +6616,27 @@ halfword zhtapypoc (halfword p)
 fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
 {
   fraction Result; fraction alpha, beta, num, denom, ff;
-  alpha = makefraction (65536L, atension);
-  beta = makefraction (65536L, btension);
+  alpha = make_fraction (65536L, atension);
+  beta = make_fraction (65536L, btension);
   if (alpha <= beta)
   {
-    ff = makefraction (alpha, beta);
-    ff = takefraction (ff, ff);
-    gamma = takefraction (gamma, ff);
+    ff = make_fraction (alpha, beta);
+    ff = take_fraction (ff, ff);
+    gamma = take_fraction (gamma, ff);
     beta = beta / 4096;
-    denom = takefraction (gamma, alpha) + 196608L - beta;
-    num = takefraction (gamma, 805306368L - alpha) + beta;
+    denom = take_fraction (gamma, alpha) + 196608L - beta;
+    num = take_fraction (gamma, 805306368L - alpha) + beta;
   }
   else {
-    ff = makefraction (beta, alpha);
-    ff = takefraction (ff, ff);
-    beta = takefraction (beta, ff) / 4096;
-    denom = takefraction (gamma, alpha) + (ff / 1365) - beta;
-    num = takefraction (gamma, 805306368L - alpha) + beta;
+    ff = make_fraction (beta, alpha);
+    ff = take_fraction (ff, ff);
+    beta = take_fraction (beta, ff) / 4096;
+    denom = take_fraction (gamma, alpha) + (ff / 1365) - beta;
+    num = take_fraction (gamma, 805306368L - alpha) + beta;
   }
   if (num >= denom + denom + denom + denom)
   Result = 1073741824L;
-  else Result = makefraction (num, denom);
+  else Result = make_fraction (num, denom);
   return Result;
 }
 
@@ -6652,32 +6652,32 @@ void set_controls (halfword p, halfword q, integer k)
   if ((mem[p + 6].cint < 0) || (mem[q + 4].cint < 0)) {
     if (((st >= 0) && (sf >= 0)) || ((st <= 0) && (sf <= 0)))
     {
-      sine = takefraction (abs (st), cf) + takefraction (abs (sf), ct
+      sine = take_fraction (abs (st), cf) + take_fraction (abs (sf), ct
    );
       if (sine > 0)
       {
-        sine = takefraction (sine, 268500992L);
+        sine = take_fraction (sine, 268500992L);
         if (mem[p + 6].cint < 0) {
 
           if (ab_vs_cd (abs (sf), 268435456L, rr, sine) < 0)
-          rr = makefraction (abs (sf), sine);
+          rr = make_fraction (abs (sf), sine);
         }
         if (mem[q + 4].cint < 0) {
 
           if (ab_vs_cd (abs (st), 268435456L, ss, sine) < 0)
-          ss = makefraction (abs (st), sine);
+          ss = make_fraction (abs (st), sine);
         }
       }
     }
   }
-  mem[p + 5].cint = mem[p + 1].cint + takefraction (takefraction (
-  delta_x[k], ct) - takefraction (delta_y[k], st), rr);
-  mem[p + 6].cint = mem[p + 2].cint + takefraction (takefraction (
-  delta_y[k], ct) + takefraction (delta_x[k], st), rr);
-  mem[q + 3].cint = mem[q + 1].cint - takefraction (takefraction (
-  delta_x[k], cf) + takefraction (delta_y[k], sf), ss);
-  mem[q + 4].cint = mem[q + 2].cint - takefraction (takefraction (
-  delta_y[k], cf) - takefraction (delta_x[k], sf), ss);
+  mem[p + 5].cint = mem[p + 1].cint + take_fraction (take_fraction (
+  delta_x[k], ct) - take_fraction (delta_y[k], st), rr);
+  mem[p + 6].cint = mem[p + 2].cint + take_fraction (take_fraction (
+  delta_y[k], ct) + take_fraction (delta_x[k], st), rr);
+  mem[q + 3].cint = mem[q + 1].cint - take_fraction (take_fraction (
+  delta_x[k], cf) + take_fraction (delta_y[k], sf), ss);
+  mem[q + 4].cint = mem[q + 2].cint - take_fraction (take_fraction (
+  delta_y[k], cf) - take_fraction (delta_x[k], sf), ss);
   mem[p].hhfield.b1 = 1;
   mem[q].hhfield.b0 = 1;
 }
@@ -6741,10 +6741,10 @@ void solve_choices (halfword p, halfword q, halfword n)
           1) / 3);
         }
         else {
-          ff = makefraction (65536L, 3 * rt);
-          mem[p + 5].cint = mem[p + 1].cint + takefraction (delta_x[
+          ff = make_fraction (65536L, 3 * rt);
+          mem[p + 5].cint = mem[p + 1].cint + take_fraction (delta_x[
           0], ff);
-          mem[p + 6].cint = mem[p + 2].cint + takefraction (delta_y[
+          mem[p + 6].cint = mem[p + 2].cint + take_fraction (delta_y[
           0], ff);
         }
         if (lt == 65536L)
@@ -6761,10 +6761,10 @@ void solve_choices (halfword p, halfword q, halfword n)
           1) / 3);
         }
         else {
-          ff = makefraction (65536L, 3 * lt);
-          mem[q + 3].cint = mem[q + 1].cint - takefraction (delta_x[
+          ff = make_fraction (65536L, 3 * lt);
+          mem[q + 3].cint = mem[q + 1].cint - take_fraction (delta_x[
           0], ff);
-          mem[q + 4].cint = mem[q + 2].cint - takefraction (delta_y[
+          mem[q + 4].cint = mem[q + 2].cint - take_fraction (delta_y[
           0], ff);
         }
         goto lab_exit;
@@ -6774,9 +6774,9 @@ void solve_choices (halfword p, halfword q, halfword n)
         lt = abs (mem[t + 4].cint);
         rt = abs (mem[s + 6].cint);
         if ((rt == 65536L) && (lt == 65536L))
-        uu[0] = makefraction (cc + cc + 65536L, cc + 131072L);
+        uu[0] = make_fraction (cc + cc + 65536L, cc + 131072L);
         else uu[0] = curl_ratio (cc, rt, lt);
-        vv[0] = - (integer) takefraction (psi[1], uu[0]);
+        vv[0] = - (integer) take_fraction (psi[1], uu[0]);
         ww[0] = 0;
       }
       break;
@@ -6798,9 +6798,9 @@ void solve_choices (halfword p, halfword q, halfword n)
           dd = 2 * delta[k];
         }
         else {
-          aa = makefraction (65536L, 3 * abs (mem[r + 6].cint) -
+          aa = make_fraction (65536L, 3 * abs (mem[r + 6].cint) -
           65536L);
-          dd = takefraction (delta[k], 805306368L - makefraction (65536L
+          dd = take_fraction (delta[k], 805306368L - make_fraction (65536L
          , abs (mem[r + 6].cint)));
         }
         if (abs (mem[t + 4].cint) == 65536L)
@@ -6809,44 +6809,44 @@ void solve_choices (halfword p, halfword q, halfword n)
           ee = 2 * delta[k - 1];
         }
         else {
-          bb = makefraction (65536L, 3 * abs (mem[t + 4].cint) -
+          bb = make_fraction (65536L, 3 * abs (mem[t + 4].cint) -
           65536L);
-          ee = takefraction (delta[k - 1], 805306368L - makefraction (
+          ee = take_fraction (delta[k - 1], 805306368L - make_fraction (
           65536L, abs (mem[t + 4].cint)));
         }
-        cc = 268435456L - takefraction (uu[k - 1], aa);
-        dd = takefraction (dd, cc);
+        cc = 268435456L - take_fraction (uu[k - 1], aa);
+        dd = take_fraction (dd, cc);
         lt = abs (mem[s + 4].cint);
         rt = abs (mem[s + 6].cint);
         if (lt != rt) {
           if (lt < rt)
           {
-            ff = makefraction (lt, rt);
-            ff = takefraction (ff, ff);
-            dd = takefraction (dd, ff);
+            ff = make_fraction (lt, rt);
+            ff = take_fraction (ff, ff);
+            dd = take_fraction (dd, ff);
           }
           else {
-            ff = makefraction (rt, lt);
-            ff = takefraction (ff, ff);
-            ee = takefraction (ee, ff);
+            ff = make_fraction (rt, lt);
+            ff = take_fraction (ff, ff);
+            ee = take_fraction (ee, ff);
           }
         }
-        ff = makefraction (ee, ee + dd);
-        uu[k] = takefraction (ff, bb);
-        acc = - (integer) takefraction (psi[k + 1], uu[k]);
+        ff = make_fraction (ee, ee + dd);
+        uu[k] = take_fraction (ff, bb);
+        acc = - (integer) take_fraction (psi[k + 1], uu[k]);
         if (mem[r].hhfield.b1 == 3)
         {
           ww[k] = 0;
-          vv[k] = acc - takefraction (psi[1], 268435456L - ff);
+          vv[k] = acc - take_fraction (psi[1], 268435456L - ff);
         }
         else {
-          ff = makefraction (268435456L - ff, cc);
-          acc = acc - takefraction (psi[k], ff);
-          ff = takefraction (ff, aa);
-          vv[k] = acc - takefraction (vv[k - 1], ff);
+          ff = make_fraction (268435456L - ff, cc);
+          acc = acc - take_fraction (psi[k], ff);
+          ff = take_fraction (ff, aa);
+          vv[k] = acc - take_fraction (vv[k - 1], ff);
           if (ww[k - 1] == 0)
           ww[k] = 0;
-          else ww[k] = - (integer) takefraction (ww[k - 1], ff);
+          else ww[k] = - (integer) take_fraction (ww[k - 1], ff);
         }
         if (mem[s].hhfield.b0 == 5)
         {
@@ -6856,15 +6856,15 @@ void solve_choices (halfword p, halfword q, halfword n)
               decr (k);
             if (k == 0)
             k = n;
-            aa = vv[k] - takefraction (aa, uu[k]);
-            bb = ww[k] - takefraction (bb, uu[k]);
+            aa = vv[k] - take_fraction (aa, uu[k]);
+            bb = ww[k] - take_fraction (bb, uu[k]);
           }while (!(k == n));
-          aa = makefraction (aa, 268435456L - bb);
+          aa = make_fraction (aa, 268435456L - bb);
           theta[n] = aa;
           vv[0] = aa;
           {integer for_end; k = 1;for_end = n - 1; if (k <=
           for_end) do
-            vv[k] = vv[k]+ takefraction (aa, ww[k]);
+            vv[k] = vv[k]+ take_fraction (aa, ww[k]);
           while (k++ < for_end);}
           goto found;
         }
@@ -6876,10 +6876,10 @@ void solve_choices (halfword p, halfword q, halfword n)
         lt = abs (mem[s + 4].cint);
         rt = abs (mem[r + 6].cint);
         if ((rt == 65536L) && (lt == 65536L))
-        ff = makefraction (cc + cc + 65536L, cc + 131072L);
+        ff = make_fraction (cc + cc + 65536L, cc + 131072L);
         else ff = curl_ratio (cc, lt, rt);
-        theta[n] = - (integer) makefraction (takefraction (vv[n - 1],
-        ff), 268435456L - takefraction (ff, uu[n - 1]));
+        theta[n] = - (integer) make_fraction (take_fraction (vv[n - 1],
+        ff), 268435456L - take_fraction (ff, uu[n - 1]));
         goto found;
       }
       break;
@@ -6903,7 +6903,7 @@ void solve_choices (halfword p, halfword q, halfword n)
   found: {
       integer for_end; k = n - 1;for_end = 0; if (k >=
   for_end) do
-    theta[k] = vv[k] - takefraction (theta[k + 1], uu[k]);
+    theta[k] = vv[k] - take_fraction (theta[k + 1], uu[k]);
   while (k-- > for_end);}
   s = p;
   k = 0;
@@ -6995,11 +6995,11 @@ void make_choices (halfword knots)
         delta[k] = pyth_add (delta_x[k], delta_y[k]);
         if (k > 0)
         {
-          sine = makefraction (delta_y[k - 1], delta[k - 1]);
-          cosine = makefraction (delta_x[k - 1], delta[k - 1]);
-          psi[k] = n_arg (takefraction (delta_x[k], cosine) +
-          takefraction (delta_y[k], sine), takefraction (delta_y[k],
-          cosine) - takefraction (delta_x[k], sine));
+          sine = make_fraction (delta_y[k - 1], delta[k - 1]);
+          cosine = make_fraction (delta_x[k - 1], delta[k - 1]);
+          psi[k] = n_arg (take_fraction (delta_x[k], cosine) +
+          take_fraction (delta_y[k], sine), take_fraction (delta_y[k],
+          cosine) - take_fraction (delta_x[k], sine));
         }
         incr (k);
         s = t;
@@ -7075,9 +7075,7 @@ void make_choices (halfword knots)
   }
 }
 
-void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0 ,
-scaled yy1, scaled yy2, scaled yy3, small_number xicorr, small_number
-etacorr)
+void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, scaled yy1, scaled yy2, scaled yy3, small_number xicorr, small_number etacorr)
 {
   integer x1, x2, x3, m, r, y1, y2, y3, n, s, l;
   integer q, t, u, x2a, x3a, y2a, y3a;
@@ -8205,7 +8203,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
         r = get_avail ();
         mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
         mem[p + 1].hhfield.lhfield = r;
-        tx = takefraction (delx, makefraction (y0, dely));
+        tx = take_fraction (delx, make_fraction (y0, dely));
         if (ab_vs_cd (delx, y0, dely, tx) < 0)
         decr (tx);
         mem[r].hhfield.lhfield = 8 * roundunscaled (x0 + tx) + base;
@@ -8243,7 +8241,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
         r = get_avail ();
         mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
         mem[p + 1].hhfield.lhfield = r;
-        tx = takefraction (delx, makefraction (y0, dely));
+        tx = take_fraction (delx, make_fraction (y0, dely));
         if (ab_vs_cd (delx, y0, dely, tx) < 0)
         incr (tx);
         mem[r].hhfield.lhfield = 8 * roundunscaled (x0 - tx) + base;
@@ -8535,7 +8533,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
   mem[cur_edges + 5].hhfield.v.RH = p;
 }
 
-void zskew (scaled x, scaled y, small_number octant)
+void skew (scaled x, scaled y, small_number octant)
 {
   switch (octant)
   {case 1 :
@@ -8588,8 +8586,8 @@ void zskew (scaled x, scaled y, small_number octant)
     break;
   }
 }
-void zabnegate (scaled x, scaled y, small_number octantbefore, small_number
-octantafter)
+
+void abnegate (scaled x, scaled y, small_number octantbefore, small_number octantafter)
 {
   if (odd (octantbefore) == odd (octantafter))
   cur_x = x;
@@ -8599,7 +8597,7 @@ octantafter)
   else cur_y = - (integer) y;
 }
 
-fraction zcrossingpoint (integer a, integer b, integer c)
+fraction crossing_point (integer a, integer b, integer c)
 {
   fraction Result; integer d;
   integer x, xx, x0, x1, x2;
@@ -8678,7 +8676,7 @@ fraction zcrossingpoint (integer a, integer b, integer c)
   return Result;
 }
 
-void zprintspec (str_number s)
+void print_spec (str_number s)
 {
   halfword p, q;
   small_number octant;
@@ -8721,7 +8719,7 @@ void zprintspec (str_number s)
   end_diagnostic (true);
 }
 
-void zprintstrange (str_number s)
+void print_strange (str_number s)
 {
   halfword p;
   halfword f;
@@ -8816,7 +8814,7 @@ void zprintstrange (str_number s)
   }
 }
 
-void zremovecubic (halfword p)
+void remove_cubic (halfword p)
 {
   halfword q;
   q = mem[p].hhfield.v.RH;
@@ -8829,7 +8827,7 @@ void zremovecubic (halfword p)
   free_node (q, 7);
 }
 
-void zsplitcubic (halfword p, fraction t, scaled xq, scaled yq)
+void split_cubic (halfword p, fraction t, scaled xq, scaled yq)
 {
   scaled v;
   halfword q, r;
@@ -8839,31 +8837,31 @@ void zsplitcubic (halfword p, fraction t, scaled xq, scaled yq)
   mem[r].hhfield.v.RH = q;
   mem[r].hhfield.b0 = mem[q].hhfield.b0;
   mem[r].hhfield.b1 = mem[p].hhfield.b1;
-  v = mem[p + 5].cint - takefraction (mem[p + 5].cint - mem[q + 3]
+  v = mem[p + 5].cint - take_fraction (mem[p + 5].cint - mem[q + 3]
   .cint, t);
-  mem[p + 5].cint = mem[p + 1].cint - takefraction (mem[p + 1]
+  mem[p + 5].cint = mem[p + 1].cint - take_fraction (mem[p + 1]
   .cint - mem[p + 5].cint, t);
-  mem[q + 3].cint = mem[q + 3].cint - takefraction (mem[q + 3]
+  mem[q + 3].cint = mem[q + 3].cint - take_fraction (mem[q + 3]
   .cint - xq, t);
-  mem[r + 3].cint = mem[p + 5].cint - takefraction (mem[p + 5]
+  mem[r + 3].cint = mem[p + 5].cint - take_fraction (mem[p + 5]
   .cint - v, t);
-  mem[r + 5].cint = v - takefraction (v - mem[q + 3].cint, t);
-  mem[r + 1].cint = mem[r + 3].cint - takefraction (mem[r + 3]
+  mem[r + 5].cint = v - take_fraction (v - mem[q + 3].cint, t);
+  mem[r + 1].cint = mem[r + 3].cint - take_fraction (mem[r + 3]
   .cint - mem[r + 5].cint, t);
-  v = mem[p + 6].cint - takefraction (mem[p + 6].cint - mem[q + 4]
+  v = mem[p + 6].cint - take_fraction (mem[p + 6].cint - mem[q + 4]
   .cint, t);
-  mem[p + 6].cint = mem[p + 2].cint - takefraction (mem[p + 2]
+  mem[p + 6].cint = mem[p + 2].cint - take_fraction (mem[p + 2]
   .cint - mem[p + 6].cint, t);
-  mem[q + 4].cint = mem[q + 4].cint - takefraction (mem[q + 4]
+  mem[q + 4].cint = mem[q + 4].cint - take_fraction (mem[q + 4]
   .cint - yq, t);
-  mem[r + 4].cint = mem[p + 6].cint - takefraction (mem[p + 6]
+  mem[r + 4].cint = mem[p + 6].cint - take_fraction (mem[p + 6]
   .cint - v, t);
-  mem[r + 6].cint = v - takefraction (v - mem[q + 4].cint, t);
-  mem[r + 2].cint = mem[r + 4].cint - takefraction (mem[r + 4]
+  mem[r + 6].cint = v - take_fraction (v - mem[q + 4].cint, t);
+  mem[r + 2].cint = mem[r + 4].cint - take_fraction (mem[r + 4]
   .cint - mem[r + 6].cint, t);
 }
 
-void quadrantsubdivide (void)
+void quadrant_sub_divide (void)
 {
   halfword p, q, r, s, pp, qq;
   scaled firstx, firsty;
@@ -8922,10 +8920,10 @@ void quadrantsubdivide (void)
         destx = - (integer) destx;
         mem[p].hhfield.b1 = 2;
       }
-      t = crossingpoint (del1, del2, del3);
+      t = crossing_point (del1, del2, del3);
       if (t < 268435456L)
       {
-        splitcubic (p, t, destx, desty);
+        split_cubic (p, t, destx, desty);
         r = mem[p].hhfield.v.RH;
         if (mem[r].hhfield.b1 > 1)
         mem[r].hhfield.b1 = 1;
@@ -8939,13 +8937,13 @@ void quadrantsubdivide (void)
         mem[r + 5].cint = mem[r + 1].cint;
         mem[q + 3].cint = - (integer) mem[q + 3].cint;
         destx = - (integer) destx;
-        del2 = del2 - takefraction (del2 - del3, t);
+        del2 = del2 - take_fraction (del2 - del3, t);
         if (del2 > 0)
         del2 = 0;
-        t = crossingpoint (0, - (integer) del2, - (integer) del3);
+        t = crossing_point (0, - (integer) del2, - (integer) del3);
         if (t < 268435456L)
         {
-          splitcubic (r, t, destx, desty);
+          split_cubic (r, t, destx, desty);
           s = mem[r].hhfield.v.RH;
           if (mem[s + 1].cint < destx)
           mem[s + 1].cint = destx;
@@ -9017,10 +9015,10 @@ void quadrantsubdivide (void)
           desty = - (integer) desty;
           mem[pp].hhfield.b1 = mem[pp].hhfield.b1 + 2;
         }
-        t = crossingpoint (del1, del2, del3);
+        t = crossing_point (del1, del2, del3);
         if (t < 268435456L)
         {
-          splitcubic (pp, t, destx, desty);
+          split_cubic (pp, t, destx, desty);
           r = mem[pp].hhfield.v.RH;
           if (mem[r].hhfield.b1 > 2)
           mem[r].hhfield.b1 = mem[r].hhfield.b1 - 2;
@@ -9050,13 +9048,13 @@ void quadrantsubdivide (void)
             if (mem[qq + 3].cint < mem[r + 1].cint)
             mem[qq + 3].cint = mem[r + 1].cint;
           }
-          del2 = del2 - takefraction (del2 - del3, t);
+          del2 = del2 - take_fraction (del2 - del3, t);
           if (del2 > 0)
           del2 = 0;
-          t = crossingpoint (0, - (integer) del2, - (integer) del3);
+          t = crossing_point (0, - (integer) del2, - (integer) del3);
           if (t < 268435456L)
           {
-            splitcubic (r, t, destx, desty);
+            split_cubic (r, t, destx, desty);
             s = mem[r].hhfield.v.RH;
             if (mem[s + 2].cint < desty)
             mem[s + 2].cint = desty;
@@ -9106,7 +9104,7 @@ void quadrantsubdivide (void)
       {
         if (q != p)
         {
-          removecubic (p);
+          remove_cubic (p);
           if (cur_spec != q)
           goto lab_continue;
           else {
@@ -9149,7 +9147,7 @@ void quadrantsubdivide (void)
   lab_exit:;
 }
 
-void octantsubdivide (void)
+void octant_sub_divide (void)
 {
   halfword p, q, r, s;
   scaled del1, del2, del3, del, dmax;
@@ -9214,10 +9212,10 @@ void octantsubdivide (void)
         destx = - (integer) destx;
         mem[p].hhfield.b1 = mem[p].hhfield.b1 + 4;
       }
-      t = crossingpoint (del1, del2, del3);
+      t = crossing_point (del1, del2, del3);
       if (t < 268435456L)
       {
-        splitcubic (p, t, destx, desty);
+        split_cubic (p, t, destx, desty);
         r = mem[p].hhfield.v.RH;
         if (mem[r].hhfield.b1 > 4)
         mem[r].hhfield.b1 = mem[r].hhfield.b1 - 4;
@@ -9261,13 +9259,13 @@ void octantsubdivide (void)
           if (mem[q + 4].cint < mem[r + 2].cint)
           mem[q + 4].cint = mem[r + 2].cint;
         }
-        del2 = del2 - takefraction (del2 - del3, t);
+        del2 = del2 - take_fraction (del2 - del3, t);
         if (del2 > 0)
         del2 = 0;
-        t = crossingpoint (0, - (integer) del2, - (integer) del3);
+        t = crossing_point (0, - (integer) del2, - (integer) del3);
         if (t < 268435456L)
         {
-          splitcubic (r, t, destx, desty);
+          split_cubic (r, t, destx, desty);
           s = mem[r].hhfield.v.RH;
           if (mem[s + 2].cint < mem[r + 2].cint)
           mem[s + 2].cint = mem[r + 2].cint;
@@ -9340,7 +9338,7 @@ void octantsubdivide (void)
   }while (!(p == cur_spec));
 }
 
-void makesafe (void)
+void make_safe (void)
 {
   integer k;
   boolean allsafe;
@@ -9373,7 +9371,7 @@ void makesafe (void)
   }while (!(allsafe));
 }
 
-void zbeforeandafter (scaled b, scaled a, halfword p)
+void before_and_after (scaled b, scaled a, halfword p)
 {
   if (cur_rounding_ptr == max_rounding_ptr) {
     if (max_rounding_ptr < max_wiggle)
@@ -9386,7 +9384,7 @@ void zbeforeandafter (scaled b, scaled a, halfword p)
   incr (cur_rounding_ptr);
 }
 
-scaled zgoodval (scaled b, scaled o)
+scaled good_val (scaled b, scaled o)
 {
   scaled Result; scaled a;
   a = b + o;
@@ -9399,14 +9397,14 @@ scaled zgoodval (scaled b, scaled o)
   return Result;
 }
 
-scaled zcompromise (scaled u, scaled v)
+scaled compromise (scaled u, scaled v)
 {
-  scaled Result; Result = half (goodval (u + u, - (integer) u -
+  scaled Result; Result = half (good_val (u + u, - (integer) u -
   v));
   return Result;
 }
 
-void xyround (void)
+void xy_round (void)
 {
   halfword p, q;
   scaled b, a;
@@ -9435,7 +9433,7 @@ void xyround (void)
         else if (odd (mem[q].hhfield.b1))
         penedge = mem[mem[cur_pen + 7].hhfield.v.RH + 2].cint;
         else penedge = mem[mem[cur_pen + 5].hhfield.v.RH + 2].cint;
-        a = goodval (b, penedge);
+        a = good_val (b, penedge);
       }
       else a = b;
       if (abs (a) > max_allowed) {
@@ -9443,13 +9441,13 @@ void xyround (void)
         a = max_allowed;
         else a = - (integer) max_allowed;
       }
-      beforeandafter (b, a, q);
+      before_and_after (b, a, q);
     }
     p = q;
   }while (!(p == cur_spec));
   if (cur_rounding_ptr > 0)
   {
-    makesafe ();
+    make_safe ();
     do {
         decr (cur_rounding_ptr);
       if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (
@@ -9467,16 +9465,16 @@ void xyround (void)
         }
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
         alpha = 268435456L;
-        else alpha = makefraction (after[cur_rounding_ptr + 1] - after[
+        else alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
         cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
         cur_rounding_ptr]);
         do {
-            mem[p + 1].cint = takefraction (alpha, mem[p + 1].cint
+            mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint
           - b) + a;
-          mem[p + 5].cint = takefraction (alpha, mem[p + 5].cint - b
+          mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b
         ) + a;
           p = mem[p].hhfield.v.RH;
-          mem[p + 3].cint = takefraction (alpha, mem[p + 3].cint - b
+          mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b
         ) + a;
         }while (!(p == node_to_round[cur_rounding_ptr + 1]));
       }
@@ -9502,7 +9500,7 @@ void xyround (void)
         else if (mem[q].hhfield.b1 <= 2)
         penedge = mem[mem[cur_pen + 1].hhfield.v.RH + 2].cint;
         else penedge = mem[mem[cur_pen + 2].hhfield.v.RH + 2].cint;
-        a = goodval (b, penedge);
+        a = good_val (b, penedge);
       }
       else a = b;
       if (abs (a) > max_allowed) {
@@ -9511,13 +9509,13 @@ void xyround (void)
         a = max_allowed;
         else a = - (integer) max_allowed;
       }
-      beforeandafter (b, a, q);
+      before_and_after (b, a, q);
     }
     p = q;
   }while (!(p == cur_spec));
   if (cur_rounding_ptr > 0)
   {
-    makesafe ();
+    make_safe ();
     do {
         decr (cur_rounding_ptr);
       if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (
@@ -9535,16 +9533,16 @@ void xyround (void)
         }
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
         alpha = 268435456L;
-        else alpha = makefraction (after[cur_rounding_ptr + 1] - after[
+        else alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
         cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
         cur_rounding_ptr]);
         do {
-            mem[p + 2].cint = takefraction (alpha, mem[p + 2].cint
+            mem[p + 2].cint = take_fraction (alpha, mem[p + 2].cint
           - b) + a;
-          mem[p + 6].cint = takefraction (alpha, mem[p + 6].cint - b
+          mem[p + 6].cint = take_fraction (alpha, mem[p + 6].cint - b
         ) + a;
           p = mem[p].hhfield.v.RH;
-          mem[p + 4].cint = takefraction (alpha, mem[p + 4].cint - b
+          mem[p + 4].cint = take_fraction (alpha, mem[p + 4].cint - b
         ) + a;
         }while (!(p == node_to_round[cur_rounding_ptr + 1]));
       }
@@ -9552,7 +9550,7 @@ void xyround (void)
   }
 }
 
-void diaground (void)
+void diag_round (void)
 {
   halfword p, q, pp;
   scaled b, a, bb, aa, d, c, dd, cc;
@@ -9614,13 +9612,13 @@ void diaground (void)
           else penedge = - (integer) mem[mem[mem[cur_pen + mem[q]
           .hhfield.b1].hhfield.v.RH].hhfield.lhfield + 1].cint;
           if (odd (mem[q].hhfield.b1))
-          a = goodval (b, penedge + halfp (cur_gran));
-          else a = goodval (b - 1, penedge + halfp (cur_gran));
+          a = good_val (b, penedge + halfp (cur_gran));
+          else a = good_val (b - 1, penedge + halfp (cur_gran));
         }
         else a = b;
       }
       else a = b;
-      beforeandafter (b, a, q);
+      before_and_after (b, a, q);
     }
     p = q;
   }while (!(p == cur_spec));
@@ -9757,23 +9755,23 @@ void diaground (void)
           else c = d - half (a - b);
           if (b == bb)
           alpha = 268435456L;
-          else alpha = makefraction (aa - a, bb - b);
+          else alpha = make_fraction (aa - a, bb - b);
           if (d == dd)
           beta = 268435456L;
-          else beta = makefraction (cc - c, dd - d);
+          else beta = make_fraction (cc - c, dd - d);
           do {
-              mem[p + 1].cint = takefraction (alpha, mem[p + 1]
+              mem[p + 1].cint = take_fraction (alpha, mem[p + 1]
             .cint - b) + a;
-            mem[p + 2].cint = takefraction (beta, mem[p + 2].cint -
+            mem[p + 2].cint = take_fraction (beta, mem[p + 2].cint -
             d) + c;
-            mem[p + 5].cint = takefraction (alpha, mem[p + 5].cint -
+            mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint -
             b) + a;
-            mem[p + 6].cint = takefraction (beta, mem[p + 6].cint -
+            mem[p + 6].cint = take_fraction (beta, mem[p + 6].cint -
             d) + c;
             p = mem[p].hhfield.v.RH;
-            mem[p + 3].cint = takefraction (alpha, mem[p + 3].cint -
+            mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint -
             b) + a;
-            mem[p + 4].cint = takefraction (beta, mem[p + 4].cint -
+            mem[p + 4].cint = take_fraction (beta, mem[p + 4].cint -
             d) + c;
           }while (!(p == pp));
         }
@@ -9782,7 +9780,7 @@ void diaground (void)
   }
 }
 
-void znewboundary (halfword p, small_number octant)
+void new_boundary (halfword p, small_number octant)
 {
   halfword q, r;
   q = mem[p].hhfield.v.RH;
@@ -9803,7 +9801,7 @@ void znewboundary (halfword p, small_number octant)
   mem[r + 2].cint = cur_y;
 }
 
-halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
+halfword make_spec (halfword h, scaled safetymargin, integer tracing)
 {
   halfword Result; halfword p, q, r, s;
   integer k;
@@ -9921,12 +9919,12 @@ halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
     }
     put_get_error ();
   }
-  quadrantsubdivide ();
+  quadrant_sub_divide ();
   if ((internal[36] > 0) && (chopped == 0))
-  xyround ();
-  octantsubdivide ();
+  xy_round ();
+  octant_sub_divide ();
   if ((internal[36] > 65536L) && (chopped == 0))
-  diaground ();
+  diag_round ();
   p = cur_spec;
   do {
       lab_continue: q = mem[p].hhfield.v.RH;
@@ -9943,7 +9941,7 @@ halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
               if (mem[p + 1].cint == cur_x) {
                 if (mem[p + 2].cint == cur_y)
                 {
-                  removecubic (p);
+                  remove_cubic (p);
                   if (q != cur_spec)
                   goto lab_continue;
                   cur_spec = p;
@@ -9964,7 +9962,7 @@ halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
       r = mem[q].hhfield.v.RH;
     if ((mem[p].hhfield.b1 != mem[q].hhfield.b1) || (q == r))
     {
-      newboundary (p, mem[p].hhfield.b1);
+      new_boundary (p, mem[p].hhfield.b1);
       s = mem[p].hhfield.v.RH;
       o1 = octant_number[mem[p].hhfield.b1];
       o2 = octant_number[mem[q].hhfield.b1];
@@ -10046,13 +10044,13 @@ halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
           }
           unskew (dx1, dy1, mem[p].hhfield.b1);
           del = pyth_add (cur_x, cur_y);
-          dx1 = makefraction (cur_x, del);
-          dy1 = makefraction (cur_y, del);
+          dx1 = make_fraction (cur_x, del);
+          dy1 = make_fraction (cur_y, del);
           unskew (dx2, dy2, mem[q].hhfield.b1);
           del = pyth_add (cur_x, cur_y);
-          dx2 = makefraction (cur_x, del);
-          dy2 = makefraction (cur_y, del);
-          del = takefraction (dx1, dy2) - takefraction (dx2, dy1);
+          dx2 = make_fraction (cur_x, del);
+          dy2 = make_fraction (cur_y, del);
+          del = take_fraction (dx1, dy2) - take_fraction (dx2, dy1);
           if (del > 4684844L)
           clockwise = false;
           else if (del < -4684844L)
@@ -10079,7 +10077,7 @@ halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
         else incr (o1);
         if (o1 == o2)
         goto done;
-        newboundary (s, octant_code[o1]);
+        new_boundary (s, octant_code[o1]);
         s = mem[s].hhfield.v.RH;
         mem[s + 3].cint = mem[s + 5].cint;
       }
@@ -10124,16 +10122,16 @@ halfword zmakespec (halfword h, scaled safetymargin, integer tracing)
   .hhfield.v.RH;
   if (tracing > 0) {
     if ((internal[36]<= 0) || (chopped != 0))
-    printspec (560);
+    print_spec (560);
     else if (internal[36] > 65536L)
-    printspec (561);
-    else printspec (562);
+    print_spec (561);
+    else print_spec (562);
   }
   Result = cur_spec;
   return Result;
 }
 
-void zendround (scaled x, scaled y)
+void end_round (scaled x, scaled y)
 {
   y = y + 32768L - y_corr[octant];
   x = x + y - x_corr[octant];
@@ -10144,7 +10142,7 @@ void zendround (scaled x, scaled y)
   else d1 = 0;
 }
 
-void zfillspec (halfword h)
+void fill_spec (halfword h)
 {
   halfword p, q, r, s;
   if (internal[10] > 0)
@@ -10156,11 +10154,11 @@ void zfillspec (halfword h)
     while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
     if (q != p)
     {
-      endround (mem[p + 1].cint, mem[p + 2].cint);
+      end_round (mem[p + 1].cint, mem[p + 2].cint);
       m0 = m1;
       n0 = n1;
       d0 = d1;
-      endround (mem[q + 1].cint, mem[q + 2].cint);
+      end_round (mem[q + 1].cint, mem[q + 2].cint);
       if (n1 - n0 >= move_size)
       overflow (540, move_size);
       move[0] = d0;
@@ -10186,7 +10184,7 @@ void zfillspec (halfword h)
   end_edge_tracing ();
 }
 
-void zdupoffset (halfword w)
+void dup_offset (halfword w)
 {
   halfword r;
   r = get_node (3);
@@ -10198,7 +10196,7 @@ void zdupoffset (halfword w)
   mem[w].hhfield.v.RH = r;
 }
 
-halfword zmakepen (halfword h)
+halfword make_pen (halfword h)
 {
   halfword Result; small_number o, oo, k;
   halfword p;
@@ -10322,13 +10320,13 @@ halfword zmakepen (halfword h)
       if ((mem[r + 2].cint != mem[mem[r].hhfield.v.RH + 2].cint
    ) || (n == 0))
       {
-        dupoffset (r);
+        dup_offset (r);
         incr (n);
       }
       r = mem[r].hhfield.lhfield;
       if (mem[r + 1].cint != mem[mem[r].hhfield.lhfield + 1]
       .cint)
-      dupoffset (r);
+      dup_offset (r);
       else decr (n);
       if (n >= 255)
       overflow (579, 255);
@@ -10394,7 +10392,7 @@ halfword zmakepen (halfword h)
   return Result;
 }
 
-halfword ztrivialknot (scaled x, scaled y)
+halfword trivial_knot (scaled x, scaled y)
 {
   halfword Result; halfword p;
   p = get_node (7);
@@ -10410,7 +10408,7 @@ halfword ztrivialknot (scaled x, scaled y)
   return Result;
 }
 
-halfword zmakepath (halfword penhead)
+halfword make_path (halfword penhead)
 {
   halfword Result; halfword p;
   unsigned char k;
@@ -10436,7 +10434,7 @@ halfword zmakepath (halfword penhead)
           2].cint != mem[w + 2].cint))
           {
             unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
-            mem[p].hhfield.v.RH = trivialknot (cur_x, cur_y);
+            mem[p].hhfield.v.RH = trivial_knot (cur_x, cur_y);
             p = mem[p].hhfield.v.RH;
           }
           w = ww;
@@ -10447,7 +10445,7 @@ halfword zmakepath (halfword penhead)
   if (p == memtop - 1)
   {
     w = mem[penhead + 1].hhfield.v.RH;
-    p = trivialknot (mem[w + 1].cint + mem[w + 2].cint, mem[w + 2
+    p = trivial_knot (mem[w + 1].cint + mem[w + 2].cint, mem[w + 2
   ].cint);
     mem[memtop - 1].hhfield.v.RH = p;
   }
@@ -10456,7 +10454,7 @@ halfword zmakepath (halfword penhead)
   return Result;
 }
 
-void zfindoffset (scaled x, scaled y, halfword p)
+void find_offset (scaled x, scaled y, halfword p)
 {
   unsigned char octant;
   schar s;
@@ -10513,12 +10511,12 @@ void zfindoffset (scaled x, scaled y, halfword p)
   lab_exit:;
 }
 
-void zsplitforoffset (halfword p, fraction t)
+void split_for_offset (halfword p, fraction t)
 {
   halfword q;
   halfword r;
   q = mem[p].hhfield.v.RH;
-  splitcubic (p, t, mem[q + 1].cint, mem[q + 2].cint);
+  split_cubic (p, t, mem[q + 1].cint, mem[q + 2].cint);
   r = mem[p].hhfield.v.RH;
   if (mem[r + 2].cint < mem[p + 2].cint)
   mem[r + 2].cint = mem[p + 2].cint;
@@ -10530,9 +10528,7 @@ void zsplitforoffset (halfword p, fraction t)
   mem[r + 1].cint = mem[q + 1].cint;
 }
 
-void zfinoffsetprep (halfword p, halfword k, halfword w, integer x0, integer
-x1, integer x2, integer y0, integer y1, integer y2, boolean rising ,
-integer n)
+void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1, integer x2, integer y0, integer y1, integer y2, boolean rising, integer n)
 {
   halfword ww;
   scaled du, dv;
@@ -10554,44 +10550,44 @@ integer n)
     dv = mem[ww + 2].cint - mem[w + 2].cint;
     if (abs (du) >= abs (dv))
     {
-      s = makefraction (dv, du);
-      t0 = takefraction (x0, s) - y0;
-      t1 = takefraction (x1, s) - y1;
-      t2 = takefraction (x2, s) - y2;
+      s = make_fraction (dv, du);
+      t0 = take_fraction (x0, s) - y0;
+      t1 = take_fraction (x1, s) - y1;
+      t2 = take_fraction (x2, s) - y2;
     }
     else {
-      s = makefraction (du, dv);
-      t0 = x0 - takefraction (y0, s);
-      t1 = x1 - takefraction (y1, s);
-      t2 = x2 - takefraction (y2, s);
+      s = make_fraction (du, dv);
+      t0 = x0 - take_fraction (y0, s);
+      t1 = x1 - take_fraction (y1, s);
+      t2 = x2 - take_fraction (y2, s);
     }
-    t = crossingpoint (t0, t1, t2);
+    t = crossing_point (t0, t1, t2);
     if (t >= 268435456L)
     goto lab_exit;
     {
-      splitforoffset (p, t);
+      split_for_offset (p, t);
       mem[p].hhfield.b1 = k;
       p = mem[p].hhfield.v.RH;
-      v = x0 - takefraction (x0 - x1, t);
-      x1 = x1 - takefraction (x1 - x2, t);
-      x0 = v - takefraction (v - x1, t);
-      v = y0 - takefraction (y0 - y1, t);
-      y1 = y1 - takefraction (y1 - y2, t);
-      y0 = v - takefraction (v - y1, t);
-      t1 = t1 - takefraction (t1 - t2, t);
+      v = x0 - take_fraction (x0 - x1, t);
+      x1 = x1 - take_fraction (x1 - x2, t);
+      x0 = v - take_fraction (v - x1, t);
+      v = y0 - take_fraction (y0 - y1, t);
+      y1 = y1 - take_fraction (y1 - y2, t);
+      y0 = v - take_fraction (v - y1, t);
+      t1 = t1 - take_fraction (t1 - t2, t);
       if (t1 > 0)
       t1 = 0;
-      t = crossingpoint (0, - (integer) t1, - (integer) t2);
+      t = crossing_point (0, - (integer) t1, - (integer) t2);
       if (t < 268435456L)
       {
-        splitforoffset (p, t);
+        split_for_offset (p, t);
         mem[mem[p].hhfield.v.RH].hhfield.b1 = k;
-        v = x1 - takefraction (x1 - x2, t);
-        x1 = x0 - takefraction (x0 - x1, t);
-        x2 = x1 - takefraction (x1 - v, t);
-        v = y1 - takefraction (y1 - y2, t);
-        y1 = y0 - takefraction (y0 - y1, t);
-        y2 = y1 - takefraction (y1 - v, t);
+        v = x1 - take_fraction (x1 - x2, t);
+        x1 = x0 - take_fraction (x0 - x1, t);
+        x2 = x1 - take_fraction (x1 - v, t);
+        v = y1 - take_fraction (y1 - y2, t);
+        y1 = y0 - take_fraction (y0 - y1, t);
+        y2 = y1 - take_fraction (y1 - v, t);
       }
     }
     if (rising)
@@ -10602,7 +10598,7 @@ integer n)
   lab_exit:;
 }
 
-void zoffsetprep (halfword c, halfword h)
+void offset_prep (halfword c, halfword h)
 {
   halfword n;
   halfword p, q, r, lh, ww;
@@ -10668,7 +10664,7 @@ void zoffsetprep (halfword c, halfword h)
         }
       }
       if (dx == 0)
-      finoffsetprep (p, n, mem[mem[lh].hhfield.lhfield].hhfield
+      fin_offset_prep (p, n, mem[mem[lh].hhfield.lhfield].hhfield
     .lhfield, - (integer) x0, - (integer) x1, - (integer) x2 ,
       - (integer) y0, - (integer) y1, - (integer) y2, false, n);
       else {
@@ -10695,54 +10691,54 @@ void zoffsetprep (halfword c, halfword h)
           dv = mem[ww + 2].cint - mem[w + 2].cint;
           if (abs (du) >= abs (dv))
           {
-            s = makefraction (dv, du);
-            t0 = takefraction (x0, s) - y0;
-            t1 = takefraction (x1, s) - y1;
-            t2 = takefraction (x2, s) - y2;
+            s = make_fraction (dv, du);
+            t0 = take_fraction (x0, s) - y0;
+            t1 = take_fraction (x1, s) - y1;
+            t2 = take_fraction (x2, s) - y2;
           }
           else {
-            s = makefraction (du, dv);
-            t0 = x0 - takefraction (y0, s);
-            t1 = x1 - takefraction (y1, s);
-            t2 = x2 - takefraction (y2, s);
+            s = make_fraction (du, dv);
+            t0 = x0 - take_fraction (y0, s);
+            t1 = x1 - take_fraction (y1, s);
+            t2 = x2 - take_fraction (y2, s);
           }
-          t = crossingpoint (- (integer) t0, - (integer) t1, - (integer) t2
+          t = crossing_point (- (integer) t0, - (integer) t1, - (integer) t2
         );
         }
         if (t >= 268435456L)
-        finoffsetprep (p, k, w, x0, x1, x2, y0, y1, y2, true, n);
+        fin_offset_prep (p, k, w, x0, x1, x2, y0, y1, y2, true, n);
         else {
-          splitforoffset (p, t);
+          split_for_offset (p, t);
           r = mem[p].hhfield.v.RH;
-          x1a = x0 - takefraction (x0 - x1, t);
-          x1 = x1 - takefraction (x1 - x2, t);
-          x2a = x1a - takefraction (x1a - x1, t);
-          y1a = y0 - takefraction (y0 - y1, t);
-          y1 = y1 - takefraction (y1 - y2, t);
-          y2a = y1a - takefraction (y1a - y1, t);
-          finoffsetprep (p, k, w, x0, x1a, x2a, y0, y1a, y2a, true ,
+          x1a = x0 - take_fraction (x0 - x1, t);
+          x1 = x1 - take_fraction (x1 - x2, t);
+          x2a = x1a - take_fraction (x1a - x1, t);
+          y1a = y0 - take_fraction (y0 - y1, t);
+          y1 = y1 - take_fraction (y1 - y2, t);
+          y2a = y1a - take_fraction (y1a - y1, t);
+          fin_offset_prep (p, k, w, x0, x1a, x2a, y0, y1a, y2a, true ,
           n);
           x0 = x2a;
           y0 = y2a;
-          t1 = t1 - takefraction (t1 - t2, t);
+          t1 = t1 - take_fraction (t1 - t2, t);
           if (t1 < 0)
           t1 = 0;
-          t = crossingpoint (0, t1, t2);
+          t = crossing_point (0, t1, t2);
           if (t < 268435456L)
           {
-            splitforoffset (r, t);
-            x1a = x1 - takefraction (x1 - x2, t);
-            x1 = x0 - takefraction (x0 - x1, t);
-            x0a = x1 - takefraction (x1 - x1a, t);
-            y1a = y1 - takefraction (y1 - y2, t);
-            y1 = y0 - takefraction (y0 - y1, t);
-            y0a = y1 - takefraction (y1 - y1a, t);
-            finoffsetprep (mem[r].hhfield.v.RH, k, w, x0a, x1a, x2
+            split_for_offset (r, t);
+            x1a = x1 - take_fraction (x1 - x2, t);
+            x1 = x0 - take_fraction (x0 - x1, t);
+            x0a = x1 - take_fraction (x1 - x1a, t);
+            y1a = y1 - take_fraction (y1 - y2, t);
+            y1 = y0 - take_fraction (y0 - y1, t);
+            y0a = y1 - take_fraction (y1 - y1a, t);
+            fin_offset_prep (mem[r].hhfield.v.RH, k, w, x0a, x1a, x2
            , y0a, y1a, y2, true, n);
             x2 = x0a;
             y2 = y0a;
           }
-          finoffsetprep (r, k - 1, ww, - (integer) x0, - (integer) x1 ,
+          fin_offset_prep (r, k - 1, ww, - (integer) x0, - (integer) x1 ,
           - (integer) x2, - (integer) y0, - (integer) y1, - (integer) y2 ,
           false, n);
         }
@@ -10758,7 +10754,7 @@ void zoffsetprep (halfword c, halfword h)
               if (mem[p + 1].cint == mem[r + 1].cint) {
                 if (mem[p + 2].cint == mem[r + 2].cint)
                 {
-                  removecubic (p);
+                  remove_cubic (p);
                   if (r == q)
                   q = p;
                   r = p;
@@ -10773,7 +10769,7 @@ void zoffsetprep (halfword c, halfword h)
   }
 }
 
-void zskewline_edges (halfword p, halfword w, halfword ww)
+void skew_line_edges (halfword p, halfword w, halfword ww)
 {
   scaled x0, y0, x1, y1;
   if ((mem[w + 1].cint != mem[ww + 1].cint) || (mem[w + 2]
@@ -10802,7 +10798,7 @@ void zskewline_edges (halfword p, halfword w, halfword ww)
   }
 }
 
-void zdualmoves (halfword h, halfword p, halfword q)
+void dual_moves (halfword h, halfword p, halfword q)
 {
   halfword r, s;
   integer m, n;
@@ -10862,7 +10858,7 @@ void zdualmoves (halfword h, halfword p, halfword q)
             while (true) {
               if (m < env_move[move_ptr])
               env_move[move_ptr] = m;
-              tx = takefraction (delx, makefraction (yy, dely));
+              tx = take_fraction (delx, make_fraction (yy, dely));
               if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] > 0)
               decr (tx);
               m = floorunscaled (xx + tx);
@@ -10937,11 +10933,11 @@ void zdualmoves (halfword h, halfword p, halfword q)
   if (mem[q + 6].cint == 1)
   {
     w = mem[h].hhfield.v.RH;
-    skewline_edges (q, w, mem[w].hhfield.lhfield);
+    skew_line_edges (q, w, mem[w].hhfield.lhfield);
   }
 }
 
-void zfillenvelope (halfword spechead)
+void fill_envelope (halfword spechead)
 {
   halfword p, q, r, s;
   halfword h;
@@ -10993,17 +10989,17 @@ void zfillenvelope (halfword spechead)
     www = mem[www].hhfield.lhfield;
     else ww = mem[ww].hhfield.lhfield;
     if (w != ww)
-    skewline_edges (p, w, ww);
-    endround (mem[p + 1].cint + mem[ww + 1].cint, mem[p + 2]
+    skew_line_edges (p, w, ww);
+    end_round (mem[p + 1].cint + mem[ww + 1].cint, mem[p + 2]
     .cint + mem[ww + 2].cint);
     m0 = m1;
     n0 = n1;
     d0 = d1;
-    endround (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2]
+    end_round (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2]
     .cint + mem[www + 2].cint);
     if (n1 - n0 >= move_size)
     overflow (540, move_size);
-    offsetprep (p, h);
+    offset_prep (p, h);
     q = p;
     while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
     if (odd (octant_number[octant]))
@@ -11058,7 +11054,7 @@ void zfillenvelope (halfword spechead)
                 delx = xp - xx;
                 yy = 65536L - yy;
                 while (true) {
-                  tx = takefraction (delx, makefraction (yy, dely));
+                  tx = take_fraction (delx, make_fraction (yy, dely));
                   if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] >
                   0)
                   decr (tx);
@@ -11136,10 +11132,10 @@ void zfillenvelope (halfword spechead)
       if (mem[q + 6].cint == 0)
       {
         w = mem[h].hhfield.v.RH;
-        skewline_edges (q, mem[w].hhfield.lhfield, w);
+        skew_line_edges (q, mem[w].hhfield.lhfield, w);
       }
     }
-    else dualmoves (h, p, q);
+    else dual_moves (h, p, q);
     mem[q].hhfield.b1 = 0;
     p = mem[q].hhfield.v.RH;
   }while (!(p == spechead));
@@ -11148,7 +11144,7 @@ void zfillenvelope (halfword spechead)
   toss_knot_list (spechead);
 }
 
-halfword zmakeellipse (scaled majoraxis, scaled minoraxis, angle theta)
+halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
 {
   halfword Result; halfword p, q, r, s;
   halfword h;
@@ -11176,15 +11172,15 @@ halfword zmakeellipse (scaled majoraxis, scaled minoraxis, angle theta)
   else {
     symmetric = false;
     n_sin_cos(theta);
-    gamma = takefraction (majoraxis, n_sin);
-    delta = takefraction (minoraxis, n_cos);
+    gamma = take_fraction (majoraxis, n_sin);
+    delta = take_fraction (minoraxis, n_cos);
     beta = pyth_add (gamma, delta);
-    alpha = makefraction (gamma, beta);
-    alpha = takefraction (majoraxis, alpha);
-    alpha = takefraction (alpha, n_cos);
+    alpha = make_fraction (gamma, beta);
+    alpha = take_fraction (majoraxis, alpha);
+    alpha = take_fraction (alpha, n_cos);
     alpha = (alpha + 32768L) / 65536L;
-    gamma = takefraction (minoraxis, n_sin);
-    gamma = pyth_add (takefraction (majoraxis, n_cos), gamma);
+    gamma = take_fraction (minoraxis, n_sin);
+    gamma = pyth_add (take_fraction (majoraxis, n_cos), gamma);
   }
   beta = (beta + 32768L) / 65536L;
   gamma = (gamma + 32768L) / 65536L;
@@ -11248,12 +11244,12 @@ halfword zmakeellipse (scaled majoraxis, scaled minoraxis, angle theta)
         beta = v;
       }
       else {
-        alpha = takefraction (u, n_cos) + takefraction (v, n_sin);
-        beta = takefraction (v, n_cos) - takefraction (u, n_sin);
+        alpha = take_fraction (u, n_cos) + take_fraction (v, n_sin);
+        beta = take_fraction (v, n_cos) - take_fraction (u, n_sin);
       }
-      alpha = makefraction (alpha, delta);
-      beta = makefraction (beta, delta);
-      d = pyth_add (takefraction (majoraxis, alpha), takefraction (
+      alpha = make_fraction (alpha, delta);
+      beta = make_fraction (beta, delta);
+      d = pyth_add (take_fraction (majoraxis, alpha), take_fraction (
       minoraxis, beta));
     }
     alpha = abs (u);
@@ -11264,9 +11260,9 @@ halfword zmakeellipse (scaled majoraxis, scaled minoraxis, angle theta)
       beta = abs (u);
     }
     if (internal[38]!= 0)
-    d = d - takefraction (internal[38], makefraction (beta + beta ,
+    d = d - take_fraction (internal[38], make_fraction (beta + beta ,
     delta));
-    d = takefraction ((d + 4) / 8, delta);
+    d = take_fraction ((d + 4) / 8, delta);
     alpha = alpha / 32768L;
     if (d < alpha)
     d = alpha;
@@ -11385,7 +11381,7 @@ halfword zmakeellipse (scaled majoraxis, scaled minoraxis, angle theta)
   return Result;
 }
 
-scaled zfinddirectiontime (scaled x, scaled y, halfword h)
+scaled find_direction_time (scaled x, scaled y, halfword h)
 {
   scaled Result; scaled max;
   halfword p, q;
@@ -11396,7 +11392,7 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
   fraction t;
   if (abs (x) < abs (y))
   {
-    x = makefraction (x, abs (y));
+    x = make_fraction (x, abs (y));
     if (y > 0)
     y = 268435456L;
     else y = -268435456L;
@@ -11407,7 +11403,7 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
     goto lab_exit;
   }
   else {
-    y = makefraction (y, abs (x));
+    y = make_fraction (y, abs (x));
     if (x > 0)
     x = 268435456L;
     else x = -268435456L;
@@ -11448,14 +11444,14 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
       y3 = y3 + y3;
     }
     t = x1;
-    x1 = takefraction (x1, x) + takefraction (y1, y);
-    y1 = takefraction (y1, x) - takefraction (t, y);
+    x1 = take_fraction (x1, x) + take_fraction (y1, y);
+    y1 = take_fraction (y1, x) - take_fraction (t, y);
     t = x2;
-    x2 = takefraction (x2, x) + takefraction (y2, y);
-    y2 = takefraction (y2, x) - takefraction (t, y);
+    x2 = take_fraction (x2, x) + take_fraction (y2, y);
+    y2 = take_fraction (y2, x) - take_fraction (t, y);
     t = x3;
-    x3 = takefraction (x3, x) + takefraction (y3, y);
-    y3 = takefraction (y3, x) - takefraction (t, y);
+    x3 = take_fraction (x3, x) + take_fraction (y3, y);
+    y3 = take_fraction (y3, x) - take_fraction (t, y);
     if (y1 == 0) {
       if (x1 >= 0)
       goto found;
@@ -11490,10 +11486,10 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
     {
       if (ab_vs_cd (y1, y2, 0, 0) < 0)
       {
-        t = makefraction (y1, y1 - y2);
-        x1 = x1 - takefraction (x1 - x2, t);
-        x2 = x2 - takefraction (x2 - x3, t);
-        if (x1 - takefraction (x1 - x2, t) >= 0)
+        t = make_fraction (y1, y1 - y2);
+        x1 = x1 - take_fraction (x1 - x2, t);
+        x2 = x2 - take_fraction (x2 - x3, t);
+        if (x1 - take_fraction (x1 - x2, t) >= 0)
         {
           tt = (t + 2048) / 4096;
           goto found;
@@ -11502,7 +11498,7 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
       else if (y3 == 0) {
         if (y1 == 0)
         {
-          t = crossingpoint (- (integer) x1, - (integer) x2, - (integer) x3
+          t = crossing_point (- (integer) x1, - (integer) x2, - (integer) x3
         );
           if (t <= 268435456L)
           {
@@ -11511,7 +11507,7 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
           }
           if (ab_vs_cd (x1, x3, x2, x2) <= 0)
           {
-            t = makefraction (x1, x1 - x2);
+            t = make_fraction (x1, x1 - x2);
             {
               tt = (t + 2048) / 4096;
               goto found;
@@ -11539,13 +11535,13 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
         y3 = - (integer) y3;
       }
     }
-    t = crossingpoint (y1, y2, y3);
+    t = crossing_point (y1, y2, y3);
     if (t > 268435456L)
     goto done;
-    y2 = y2 - takefraction (y2 - y3, t);
-    x1 = x1 - takefraction (x1 - x2, t);
-    x2 = x2 - takefraction (x2 - x3, t);
-    x1 = x1 - takefraction (x1 - x2, t);
+    y2 = y2 - take_fraction (y2 - y3, t);
+    x1 = x1 - take_fraction (x1 - x2, t);
+    x2 = x2 - take_fraction (x2 - x3, t);
+    x1 = x1 - take_fraction (x1 - x2, t);
     if (x1 >= 0)
     {
       tt = (t + 2048) / 4096;
@@ -11554,14 +11550,14 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
     if (y2 > 0)
     y2 = 0;
     tt = t;
-    t = crossingpoint (0, - (integer) y2, - (integer) y3);
+    t = crossing_point (0, - (integer) y2, - (integer) y3);
     if (t > 268435456L)
     goto done;
-    x1 = x1 - takefraction (x1 - x2, t);
-    x2 = x2 - takefraction (x2 - x3, t);
-    if (x1 - takefraction (x1 - x2, t) >= 0)
+    x1 = x1 - take_fraction (x1 - x2, t);
+    x2 = x2 - take_fraction (x2 - x3, t);
+    if (x1 - take_fraction (x1 - x2, t) >= 0)
     {
-      t = tt - takefraction (tt - 268435456L, t);
+      t = tt - take_fraction (tt - 268435456L, t);
       {
         tt = (t + 2048) / 4096;
         goto found;
@@ -11578,7 +11574,7 @@ scaled zfinddirectiontime (scaled x, scaled y, halfword h)
   return Result;
 }
 
-void zcubicintersection (halfword p, halfword pp)
+void cubic_intersection (halfword p, halfword pp)
 {
   halfword q, qq;
   time_to_go = 5000;
@@ -12346,7 +12342,7 @@ void zcubicintersection (halfword p, halfword pp)
   lab_exit:;
 }
 
-void zpathintersection (halfword h, halfword hh)
+void path_intersection (halfword h, halfword hh)
 {
   halfword p, pp;
   integer n, nn;
@@ -12378,7 +12374,7 @@ void zpathintersection (halfword h, halfword hh)
         do {
             if (mem[pp].hhfield.b1 != 0)
           {
-            cubicintersection (p, pp);
+            cubic_intersection (p, pp);
             if (cur_t > 0)
             {
               cur_t = cur_t + n;
@@ -12400,7 +12396,7 @@ void zpathintersection (halfword h, halfword hh)
   lab_exit:;
 }
 
-void zopenawindow (window_number k, scaled r0, scaled c0, scaled r1, scaled c1
+void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1
 , scaled x, scaled y)
 {
   integer m, n;
@@ -12450,7 +12446,7 @@ void zopenawindow (window_number k, scaled r0, scaled c0, scaled r1, scaled c1
   }
 }
 
-void zdispedges (window_number k)
+void disp_edges (window_number k)
 {
   halfword p, q;
   boolean alreadythere;
@@ -12566,7 +12562,7 @@ void zdispedges (window_number k)
   }
 }
 
-fraction zmax_coef (halfword p)
+fraction max_coef (halfword p)
 {
   fraction Result; fraction x;
   x = 0;
@@ -12579,7 +12575,7 @@ fraction zmax_coef (halfword p)
   return Result;
 }
 
-halfword zpplusq (halfword p, halfword q, small_number t)
+halfword p_plus_q (halfword p, halfword q, small_number t)
 {
   halfword Result; halfword pp, qq;
   halfword r, s;
@@ -12641,8 +12637,7 @@ halfword zpplusq (halfword p, halfword q, small_number t)
   return Result;
 }
 
-halfword zptimesv (halfword p, integer v, small_number t0, small_number t1, boolean
-visscaled)
+halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boolean visscaled)
 {
   halfword Result; halfword r, s;
   integer w;
@@ -12657,8 +12652,8 @@ visscaled)
   r = memtop - 1;
   while (mem[p].hhfield.lhfield != 0) {
     if (scalingdown)
-    w = takefraction (v, mem[p + 1].cint);
-    else w = takescaled (v, mem[p + 1].cint);
+    w = take_fraction (v, mem[p + 1].cint);
+    else w = take_scaled (v, mem[p + 1].cint);
     if (abs (w) <= threshold)
     {
       s = mem[p].hhfield.v.RH;
@@ -12679,13 +12674,13 @@ visscaled)
   }
   mem[r].hhfield.v.RH = p;
   if (visscaled)
-  mem[p + 1].cint = takescaled (mem[p + 1].cint, v);
-  else mem[p + 1].cint = takefraction (mem[p + 1].cint, v);
+  mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
+  else mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
   Result = mem[memtop - 1].hhfield.v.RH;
   return Result;
 }
 
-halfword zpwithxbecomingq (halfword p, halfword x, halfword q, small_number t)
+halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t)
 {
   halfword Result; halfword r, s;
   integer v;
@@ -12709,7 +12704,7 @@ halfword zpwithxbecomingq (halfword p, halfword x, halfword q, small_number t)
   return Result;
 }
 
-void znewdep (halfword q, halfword p)
+void new_dep (halfword q, halfword p)
 {
   halfword r;
   mem[q + 1].hhfield.v.RH = p;
@@ -12720,7 +12715,7 @@ void znewdep (halfword q, halfword p)
   mem[13].hhfield.v.RH = q;
 }
 
-halfword zconstdependency (scaled v)
+halfword const_dependency (scaled v)
 {
   halfword Result; dep_final = get_node (2);
   mem[dep_final + 1].cint = v;
@@ -12729,24 +12724,24 @@ halfword zconstdependency (scaled v)
   return Result;
 }
 
-halfword zsingledependency (halfword p)
+halfword single_dependency (halfword p)
 {
   halfword Result; halfword q;
   integer m;
   m = mem[p + 1].cint % 64;
   if (m > 28)
-  Result = constdependency (0);
+  Result = const_dependency (0);
   else {
     q = get_node (2);
     mem[q + 1].cint = two_to_the[28 - m];
     mem[q].hhfield.lhfield = p;
-    mem[q].hhfield.v.RH = constdependency (0);
+    mem[q].hhfield.v.RH = const_dependency (0);
     Result = q;
   }
   return Result;
 }
 
-halfword zcopydeplist (halfword p)
+halfword copy_dep_list (halfword p)
 {
   halfword Result; halfword q;
   q = get_node (2);
@@ -12764,7 +12759,7 @@ halfword zcopydeplist (halfword p)
   return Result;
 }
 
-void zlineareq (halfword p, small_number t)
+void linear_eq (halfword p, small_number t)
 {
   halfword q, r, s;
   halfword x;
@@ -12796,7 +12791,7 @@ void zlineareq (halfword p, small_number t)
       free_node (r, 2);
     }
     else {
-      w = makefraction (mem[r + 1].cint, v);
+      w = make_fraction (mem[r + 1].cint, v);
       if (abs (w) <= 1342)
       {
         mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
@@ -12812,7 +12807,7 @@ void zlineareq (halfword p, small_number t)
   if (t == 18)
   mem[r + 1].cint = - (integer) make_scaled (mem[r + 1].cint, v);
   else if (v != -268435456L)
-  mem[r + 1].cint = - (integer) makefraction (mem[r + 1].cint, v);
+  mem[r + 1].cint = - (integer) make_fraction (mem[r + 1].cint, v);
   finalnode = r;
   p = mem[memtop - 1].hhfield.v.RH;
   if (internal[2] > 0) {
@@ -12835,7 +12830,7 @@ void zlineareq (halfword p, small_number t)
   r = mem[13].hhfield.v.RH;
   while (r != 13) {
     s = mem[r + 1].hhfield.v.RH;
-    q = pwithxbecomingq (s, x, p, mem[r].hhfield.b0);
+    q = p_with_x_becoming_q (s, x, p, mem[r].hhfield.b0);
     if (mem[q].hhfield.lhfield == 0)
     make_known (r, q);
     else {
@@ -12888,7 +12883,7 @@ void zlineareq (halfword p, small_number t)
   else {
     mem[x].hhfield.b0 = 17;
     dep_final = finalnode;
-    newdep (x, p);
+    new_dep (x, p);
     if (cur_exp == x) {
       if (cur_type == 19)
       cur_type = 17;
@@ -12898,7 +12893,7 @@ void zlineareq (halfword p, small_number t)
   fix_dependencies ();
 }
 
-halfword znewringentry (halfword p)
+halfword new_ring_entry (halfword p)
 {
   halfword Result; halfword q;
   q = get_node (2);
@@ -12912,7 +12907,7 @@ halfword znewringentry (halfword p)
   return Result;
 }
 
-void znonlineareq (integer v, halfword p, boolean flushp)
+void non_linear_eq (integer v, halfword p, boolean flushp)
 {
   small_number t;
   halfword q, r;
@@ -12944,7 +12939,7 @@ void znonlineareq (integer v, halfword p, boolean flushp)
       }
       break;
     case 9 :
-      mem[q + 1].cint = copypath (v);
+      mem[q + 1].cint = copy_path (v);
       break;
     case 11 :
       mem[q + 1].cint = copy_edges (v);
@@ -12954,7 +12949,7 @@ void znonlineareq (integer v, halfword p, boolean flushp)
   }while (!(q == p));
 }
 
-void zringmerge (halfword p, halfword q)
+void ring_merge (halfword p, halfword q)
 {
   halfword r;
   r = mem[p + 1].cint;
@@ -12996,7 +12991,7 @@ void zringmerge (halfword p, halfword q)
   lab_exit:;
 }
 
-void zshow_cmd_mod (integer c, integer m)
+void show_cmd_mod (integer c, integer m)
 {
   begin_diagnostic ();
   print_nl(123);
@@ -13005,7 +13000,7 @@ void zshow_cmd_mod (integer c, integer m)
   end_diagnostic (false);
 }
 
-void showcontext (void)
+void show_context (void)
 {
   unsigned char old_setting;
   integer i;
@@ -13175,7 +13170,7 @@ void showcontext (void)
   done: cur_input = input_stack[input_ptr];
 }
 
-void zbegintokenlist (halfword p, quarterword t)
+void begin_token_list (halfword p, quarterword t)
 {
   {
     if (input_ptr > max_in_stack)
@@ -13193,7 +13188,7 @@ void zbegintokenlist (halfword p, quarterword t)
   cur_input.loc_field = p;
 }
 
-void endtokenlist (void)
+void end_token_list (void)
 {
   halfword p;
   if (cur_input.index_field >= 19) {
@@ -13226,15 +13221,15 @@ void endtokenlist (void)
   }
 }
 
-void zencapsulate (halfword p)
+void encapsulate (halfword p)
 {
   cur_exp = get_node (2);
   mem[cur_exp].hhfield.b0 = cur_type;
   mem[cur_exp].hhfield.b1 = 11;
-  newdep (cur_exp, p);
+  new_dep (cur_exp, p);
 }
 
-void zinstall (halfword r, halfword q)
+void install (halfword r, halfword q)
 {
   halfword p;
   if (mem[q].hhfield.b0 == 16)
@@ -13244,7 +13239,7 @@ void zinstall (halfword r, halfword q)
   }
   else if (mem[q].hhfield.b0 == 19)
   {
-    p = singledependency (q);
+    p = single_dependency (q);
     if (p == dep_final)
     {
       mem[r].hhfield.b0 = 16;
@@ -13253,16 +13248,16 @@ void zinstall (halfword r, halfword q)
     }
     else {
       mem[r].hhfield.b0 = 17;
-      newdep (r, p);
+      new_dep (r, p);
     }
   }
   else {
     mem[r].hhfield.b0 = mem[q].hhfield.b0;
-    newdep (r, copydeplist (mem[q + 1].hhfield.v.RH));
+    new_dep (r, copy_dep_list (mem[q + 1].hhfield.v.RH));
   }
 }
 
-void zmakeexpcopy (halfword p)
+void make_exp_copy (halfword p)
 {
   halfword q, r, t;
   lab_restart: cur_type = mem[p].hhfield.b0;
@@ -13277,7 +13272,7 @@ void zmakeexpcopy (halfword p)
   case 7 :
   case 12 :
   case 10 :
-    cur_exp = newringentry (p);
+    cur_exp = new_ring_entry (p);
     break;
   case 4 :
     {
@@ -13299,7 +13294,7 @@ void zmakeexpcopy (halfword p)
     break;
   case 9 :
   case 8 :
-    cur_exp = copypath (mem[p + 1].cint);
+    cur_exp = copy_path (mem[p + 1].cint);
     break;
   case 13 :
   case 14 :
@@ -13322,7 +13317,7 @@ void zmakeexpcopy (halfword p)
     break;
   case 17 :
   case 18 :
-    encapsulate (copydeplist (mem[p + 1].hhfield.v.RH));
+    encapsulate (copy_dep_list (mem[p + 1].hhfield.v.RH));
     break;
   case 15 :
     {
@@ -13338,7 +13333,7 @@ void zmakeexpcopy (halfword p)
     break;
   case 19 :
     {
-      q = singledependency (p);
+      q = single_dependency (p);
       if (q == dep_final)
       {
         cur_type = 16;
@@ -13367,7 +13362,7 @@ halfword cur_tok (void)
     {
       savetype = cur_type;
       saveexp = cur_exp;
-      makeexpcopy (cur_mod);
+      make_exp_copy (cur_mod);
       p = stash_cur_exp ();
       mem[p].hhfield.v.RH = 0;
       cur_type = savetype;
@@ -13407,8 +13402,8 @@ void back_input (void)
   halfword p;
   p = cur_tok ();
   while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
-  endtokenlist ();
-  begintokenlist (p, 19);
+  end_token_list ();
+  begin_token_list (p, 19);
 }
 
 void back_error (void)
@@ -13485,7 +13480,7 @@ boolean check_outer_validity (void)
     {
       p = get_avail ();
       mem[p].hhfield.lhfield = cur_sym;
-      begintokenlist (p, 19);
+      begin_token_list (p, 19);
     }
     if (scanner_status > 1)
     {
@@ -13891,7 +13886,7 @@ void get_next (void)
       {
         if (cur_sym >= 10070)
         cur_sym = cur_sym - 150;
-        begintokenlist (param_stack[cur_input .limit_field + cur_sym - (9920)
+        begin_token_list (param_stack[cur_input .limit_field + cur_sym - (9920)
         ], 18);
         goto lab_restart;
       }
@@ -13926,7 +13921,7 @@ void get_next (void)
     goto lab_exit;
   }
   else {
-    endtokenlist ();
+    end_token_list ();
     goto lab_restart;
   }
   cur_cmd = eqtb[cur_sym].lhfield;
@@ -14069,7 +14064,7 @@ void get_symbol (void)
 void get_clear_symbol (void)
 {
   get_symbol ();
-  clearsymbol (cur_sym, false);
+  clear_symbol (cur_sym, false);
 }
 
 void check_equals (void)
@@ -14177,7 +14172,7 @@ halfword scan_declared_variable (void)
   get_symbol ();
   x = cur_sym;
   if (cur_cmd != 41)
-  clearsymbol (x, false);
+  clear_symbol (x, false);
   h = get_avail ();
   mem[h].hhfield.lhfield = x;
   t = h;
@@ -14208,7 +14203,7 @@ halfword scan_declared_variable (void)
     mem[t].hhfield.lhfield = cur_sym;
   }
   done: if (eqtb[x].lhfield % 86 != 41)
-  clearsymbol (x, false);
+  clear_symbol (x, false);
   if (eqtb[x].v.RH == 0)
   new_root (x);
   Result = h;
@@ -14244,7 +14239,7 @@ void scan_def (void)
   }
   else {
     p = scan_declared_variable ();
-    flushvariable (eqtb[mem[p].hhfield.lhfield].v.RH, mem[p]
+    flush_variable (eqtb[mem[p].hhfield.lhfield].v.RH, mem[p]
     .hhfield.v.RH, true);
     warning_info = find_variable (p);
     flush_list (p);
@@ -14757,14 +14752,14 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
   }
   r = mem[r].hhfield.v.RH;
   while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
-  endtokenlist ();
+  end_token_list ();
   if (param_ptr + n > max_param_stack)
   {
     max_param_stack = param_ptr + n;
     if (max_param_stack > 150)
     overflow (687, 150);
   }
-  begintokenlist (defref, 21);
+  begin_token_list (defref, 21);
   cur_input .name_field = macroname;
   cur_input.loc_field = r;
   if (n > 0)
@@ -14876,7 +14871,7 @@ void expand (void)
   case 5 :
     {
       while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
-      endtokenlist ();
+      end_token_list ();
       if (loop_ptr == 0)
       {
         {
@@ -14947,7 +14942,7 @@ void expand (void)
             else {
               if (cur_input.index_field <= 17)
               p = cur_input .start_field;
-              endtokenlist ();
+              end_token_list ();
             }
           }while (!(p != 0));
           if (p != mem[loop_ptr].hhfield.lhfield)
@@ -14978,7 +14973,7 @@ void expand (void)
       if (cur_cmd < 11)
       expand ();
       else back_input ();
-      begintokenlist (p, 19);
+      begin_token_list (p, 19);
     }
     break;
   case 8 :
@@ -15347,10 +15342,10 @@ void resume_iteration (void)
     }
   }
   else {
-    begintokenlist (mem[loop_ptr].hhfield.lhfield, 16);
+    begin_token_list (mem[loop_ptr].hhfield.lhfield, 16);
     goto lab_exit;
   }
-  begintokenlist (mem[loop_ptr].hhfield.lhfield, 17);
+  begin_token_list (mem[loop_ptr].hhfield.lhfield, 17);
   stack_argument (q);
   if (internal[7] > 65536L)
   {
@@ -15653,7 +15648,7 @@ void pack_buffered_name (small_number n, integer a, integer b)
   name_of_file[name_length + 1] = 0;
 }
 
-str_number makenamestring (void)
+str_number make_name_string (void)
 {
   str_number Result; integer k;
   if ((pool_ptr + name_length > pool_size) || (str_ptr == max_strings))
@@ -15678,21 +15673,21 @@ str_number makenamestring (void)
   return Result;
 }
 
-str_number zamakenamestring (alpha_file f)
+str_number a_make_name_string (alpha_file f)
 {
-  str_number Result; Result = makenamestring ();
+  str_number Result; Result = make_name_string ();
   return Result;
 }
 
-str_number zbmakenamestring (byte_file f)
+str_number b_make_name_string (byte_file f)
 {
-  str_number Result; Result = makenamestring ();
+  str_number Result; Result = make_name_string ();
   return Result;
 }
 
-str_number zw_make_name_string (word_file f)
+str_number w_make_name_string (word_file f)
 {
-  str_number Result; Result = makenamestring ();
+  str_number Result; Result = make_name_string ();
   return Result;
 }
 
@@ -15712,7 +15707,7 @@ void scan_file_name (void)
   done: end_name ();
 }
 
-void zpack_job_name (str_number s)
+void pack_job_name (str_number s)
 {
   cur_area = 261;
   cur_ext = s;
@@ -15720,7 +15715,7 @@ void zpack_job_name (str_number s)
   pack_file_name (cur_name, cur_area, cur_ext);
 }
 
-void zprompt_file_name (str_number s, str_number e)
+void prompt_file_name (str_number s, str_number e)
 {
   integer k;
   str_number savedcur_name;
@@ -15764,7 +15759,7 @@ void zprompt_file_name (str_number s, str_number e)
   print_file_name (cur_name, cur_area, cur_ext);
   print(746);
   if (e == 747)
-  showcontext ();
+  show_context ();
   print_nl(748);
   print(s);
   if (interaction < 2)
@@ -15813,7 +15808,7 @@ void open_log_file (void)
     selector = 1;
     prompt_file_name (754, 752);
   }
-  texmflogname = amakenamestring (log_file);
+  texmflogname = a_make_name_string (log_file);
   selector = 2;
   log_opened = true;
   {
@@ -15857,7 +15852,7 @@ void open_log_file (void)
 void start_input (void)
 {
   while ((cur_input.index_field > 15) && (cur_input.loc_field ==
-  0)) endtokenlist ();
+  0)) end_token_list ();
   if ((cur_input.index_field > 15))
   {
     {
@@ -15906,7 +15901,7 @@ void start_input (void)
     end_file_reading ();
     prompt_file_name (743, 747);
   }
-  done: cur_input .name_field = amakenamestring (input_file[cur_input
+  done: cur_input .name_field = a_make_name_string (input_file[cur_input
  .index_field]);
   str_ref[cur_name] = 127;
   if (job_name == 0)
@@ -15934,7 +15929,7 @@ void start_input (void)
   }
 }
 
-void zbadexp (str_number s)
+void bad_exp (str_number s)
 {
   unsigned char saveflag;
   {
@@ -15975,7 +15970,7 @@ void zbadexp (str_number s)
   var_flag = saveflag;
 }
 
-void zstashin (halfword p)
+void stash_in (halfword p)
 {
   halfword q;
   mem[p].hhfield.b0 = cur_type;
@@ -15984,7 +15979,7 @@ void zstashin (halfword p)
   else {
     if (cur_type == 19)
     {
-      q = singledependency (cur_exp);
+      q = single_dependency (cur_exp);
       if (q == dep_final)
       {
         mem[p].hhfield.b0 = 16;
@@ -15993,7 +15988,7 @@ void zstashin (halfword p)
       }
       else {
         mem[p].hhfield.b0 = 17;
-        newdep (p, q);
+        new_dep (p, q);
       }
       recycle_value (cur_exp);
     }
@@ -16006,15 +16001,15 @@ void zstashin (halfword p)
   cur_type = 1;
 }
 
-void backexpr (void)
+void back_expr (void)
 {
   halfword p;
   p = stash_cur_exp ();
   mem[p].hhfield.v.RH = 0;
-  begintokenlist (p, 19);
+  begin_token_list (p, 19);
 }
 
-void badsubscript (void)
+void bad_sub_script (void)
 {
   disp_err (0, 786);
   {
@@ -16026,7 +16021,7 @@ void badsubscript (void)
   flush_error (0);
 }
 
-void zobliterated (halfword q)
+void obliterated (halfword q)
 {
   {
     if (interaction == 3)
@@ -16057,7 +16052,7 @@ void zobliterated (halfword q)
   }
 }
 
-void zbinarymac (halfword p, halfword c, halfword n)
+void binary_mac (halfword p, halfword c, halfword n)
 {
   halfword q, r;
   q = get_avail ();
@@ -16068,7 +16063,7 @@ void zbinarymac (halfword p, halfword c, halfword n)
   macro_call (c, q, n);
 }
 
-void materializepen (void)
+void materialize_pen (void)
 {
   scaled aminusb, aplusb, majoraxis, minoraxis;
   angle theta;
@@ -16120,7 +16115,7 @@ void materializepen (void)
     else theta = half (n_arg (txx - tyy, tyx + txy) + n_arg (txx + tyy ,
     tyx - txy));
     free_node (q, 7);
-    q = makeellipse (majoraxis, minoraxis, theta);
+    q = make_ellipse (majoraxis, minoraxis, theta);
     if ((tx != 0) || (ty != 0))
     {
       p = q;
@@ -16131,7 +16126,7 @@ void materializepen (void)
       }while (!(p == q));
     }
   }
-  cur_exp = makepen (q);
+  cur_exp = make_pen (q);
   common_ending: toss_knot_list (q);
   cur_type = 6;
 }
@@ -16192,7 +16187,7 @@ void known_pair (void)
   }
 }
 
-halfword newknot (void)
+halfword new_knot (void)
 {
   halfword Result; halfword q;
   q = get_node (7);
@@ -16296,7 +16291,7 @@ small_number scan_direction (void)
   return Result;
 }
 
-void zdonullary (quarterword c)
+void do_nullary (quarterword c)
 {
   integer k;
   {
@@ -16393,7 +16388,7 @@ void zdonullary (quarterword c)
   }
 }
 
-boolean znicepair (integer p, quarterword t)
+boolean nice_pair (integer p, quarterword t)
 {
   boolean Result; if (t == 14)
   {
@@ -16417,7 +16412,7 @@ void print_known_or_unknown_type (small_number t, integer v)
   if (t < 17) {
     if (t != 14)
     print_type (t);
-    else if (nicepair (v, 14))
+    else if (nice_pair (v, 14))
     print(336);
     else print(836);
   }
@@ -16425,7 +16420,7 @@ void print_known_or_unknown_type (small_number t, integer v)
   print_char(41);
 }
 
-void zbadunary (quarterword c)
+void bad_unary (quarterword c)
 {
   disp_err (0, 838);
   print_op (c);
@@ -16439,7 +16434,7 @@ void zbadunary (quarterword c)
   put_get_error ();
 }
 
-void znegatedeplist (halfword p)
+void negate_dep_list (halfword p)
 {
   while (true) {
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
@@ -16452,11 +16447,11 @@ void znegatedeplist (halfword p)
 
 void pair_to_path (void)
 {
-  cur_exp = newknot ();
+  cur_exp = new_knot ();
   cur_type = 9;
 }
 
-void ztakepart (quarterword c)
+void take_part (quarterword c)
 {
   halfword p;
   p = mem[cur_exp + 1].cint;
@@ -16464,11 +16459,11 @@ void ztakepart (quarterword c)
   mem[17].hhfield.b0 = cur_type;
   mem[p].hhfield.v.RH = 17;
   free_node (cur_exp, 2);
-  makeexpcopy (p + 2 * (c - 53));
+  make_exp_copy (p + 2 * (c - 53));
   recycle_value (17);
 }
 
-void zstrtonum (quarterword c)
+void str_to_num (quarterword c)
 {
   integer n;
   ASCII_code m;
@@ -16555,7 +16550,7 @@ void zstrtonum (quarterword c)
   flush_cur_exp (n * 65536L);
 }
 
-scaled pathlength (void)
+scaled path_length (void)
 {
   scaled Result; scaled n;
   halfword p;
@@ -16571,7 +16566,7 @@ scaled pathlength (void)
   return Result;
 }
 
-void ztestknown (quarterword c)
+void test_known (quarterword c)
 {
   unsigned char b;
   halfword p, q;
@@ -16611,7 +16606,7 @@ void ztestknown (quarterword c)
   cur_type = 2;
 }
 
-void zdounary (quarterword c)
+void do_unary (quarterword c)
 {
   halfword p, q;
   integer x;
@@ -16634,7 +16629,7 @@ void zdounary (quarterword c)
     if (cur_type < 14) {
 
       if (cur_type != 11)
-      badunary (69);
+      bad_unary (69);
     }
     break;
   case 70 :
@@ -16643,18 +16638,18 @@ void zdounary (quarterword c)
     case 19 :
       {
         q = cur_exp;
-        makeexpcopy (q);
+        make_exp_copy (q);
         if (cur_type == 17)
-        negatedeplist (mem[cur_exp + 1].hhfield.v.RH);
+        negate_dep_list (mem[cur_exp + 1].hhfield.v.RH);
         else if (cur_type == 14)
         {
           p = mem[cur_exp + 1].cint;
           if (mem[p].hhfield.b0 == 16)
           mem[p + 1].cint = - (integer) mem[p + 1].cint;
-          else negatedeplist (mem[p + 1].hhfield.v.RH);
+          else negate_dep_list (mem[p + 1].hhfield.v.RH);
           if (mem[p + 2].hhfield.b0 == 16)
           mem[p + 3].cint = - (integer) mem[p + 3].cint;
-          else negatedeplist (mem[p + 3].hhfield.v.RH);
+          else negate_dep_list (mem[p + 3].hhfield.v.RH);
         }
         recycle_value (q);
         free_node (q, 2);
@@ -16662,7 +16657,7 @@ void zdounary (quarterword c)
       break;
     case 17 :
     case 18 :
-      negatedeplist (mem[cur_exp + 1].hhfield.v.RH);
+      negate_dep_list (mem[cur_exp + 1].hhfield.v.RH);
       break;
     case 16 :
       cur_exp = - (integer) cur_exp;
@@ -16671,13 +16666,13 @@ void zdounary (quarterword c)
       negate_edges (cur_exp);
       break;
       default:
-      badunary (70);
+      bad_unary (70);
       break;
     }
     break;
   case 41 :
     if (cur_type != 2)
-    badunary (41);
+    bad_unary (41);
     else cur_exp = 61 - cur_exp;
     break;
   case 59 :
@@ -16690,10 +16685,10 @@ void zdounary (quarterword c)
   case 38 :
   case 66 :
     if (cur_type != 16)
-    badunary (c);
+    bad_unary (c);
     else switch (c)
     {case 59 :
-      cur_exp = squarert (cur_exp);
+      cur_exp = square_rt (cur_exp);
       break;
     case 60 :
       cur_exp = m_exp (cur_exp);
@@ -16738,7 +16733,7 @@ void zdounary (quarterword c)
     }
     break;
   case 67 :
-    if (nicepair (cur_exp, cur_type))
+    if (nice_pair (cur_exp, cur_type))
     {
       p = mem[cur_exp + 1].cint;
       x = n_arg (mem[p + 1].cint, mem[p + 3].cint);
@@ -16746,25 +16741,25 @@ void zdounary (quarterword c)
       flush_cur_exp ((x + 8) / 16);
       else flush_cur_exp (- (integer) ((- (integer) x + 8) / 16));
     }
-    else badunary (67);
+    else bad_unary (67);
     break;
   case 53 :
   case 54 :
     if ((cur_type <= 14) && (cur_type >= 13))
-    takepart (c);
-    else badunary (c);
+    take_part (c);
+    else bad_unary (c);
     break;
   case 55 :
   case 56 :
   case 57 :
   case 58 :
     if (cur_type == 13)
-    takepart (c);
-    else badunary (c);
+    take_part (c);
+    else bad_unary (c);
     break;
   case 50 :
     if (cur_type != 16)
-    badunary (50);
+    bad_unary (50);
     else {
       cur_exp = roundunscaled (cur_exp) % 256;
       cur_type = 4;
@@ -16790,7 +16785,7 @@ void zdounary (quarterword c)
     break;
   case 42 :
     if (cur_type != 16)
-    badunary (42);
+    bad_unary (42);
     else {
       old_setting = selector;
       selector = 5;
@@ -16804,33 +16799,33 @@ void zdounary (quarterword c)
   case 48 :
   case 49 :
     if (cur_type != 4)
-    badunary (c);
-    else strtonum (c);
+    bad_unary (c);
+    else str_to_num (c);
     break;
   case 51 :
     if (cur_type == 4)
     flush_cur_exp ((str_start[cur_exp + 1] - str_start[cur_exp]) * 65536L)
 ;
     else if (cur_type == 9)
-    flush_cur_exp (pathlength ());
+    flush_cur_exp (path_length ());
     else if (cur_type == 16)
     cur_exp = abs (cur_exp);
-    else if (nicepair (cur_exp, cur_type))
+    else if (nice_pair (cur_exp, cur_type))
     flush_cur_exp (pyth_add (mem[mem[cur_exp + 1].cint + 1].cint, mem[
     mem[cur_exp + 1].cint + 3].cint));
-    else badunary (c);
+    else bad_unary (c);
     break;
   case 52 :
     if (cur_type == 14)
     flush_cur_exp (0);
     else if (cur_type != 9)
-    badunary (52);
+    bad_unary (52);
     else if (mem[cur_exp].hhfield.b0 == 0)
     flush_cur_exp (0);
     else {
       cur_pen = 3;
       cur_path_type = 1;
-      cur_exp = makespec (cur_exp, -1879080960L, 0);
+      cur_exp = make_spec (cur_exp, -1879080960L, 0);
       flush_cur_exp (turning_number * 65536L);
     }
     break;
@@ -16893,7 +16888,7 @@ void zdounary (quarterword c)
     break;
   case 39 :
   case 40 :
-    testknown (c);
+    test_known (c);
     break;
   case 68 :
     {
@@ -16911,30 +16906,30 @@ void zdounary (quarterword c)
       pair_to_path ();
       if (cur_type == 9)
       cur_type = 8;
-      else badunary (45);
+      else bad_unary (45);
     }
     break;
   case 44 :
     {
       if (cur_type == 8)
-      materializepen ();
+      materialize_pen ();
       if (cur_type != 6)
-      badunary (44);
+      bad_unary (44);
       else {
-        flush_cur_exp (makepath (cur_exp));
+        flush_cur_exp (make_path (cur_exp));
         cur_type = 9;
       }
     }
     break;
   case 46 :
     if (cur_type != 11)
-    badunary (46);
+    bad_unary (46);
     else flush_cur_exp (total_weight (cur_exp));
     break;
   case 43 :
     if (cur_type == 9)
     {
-      p = htapypoc (cur_exp);
+      p = htap_ypoc (cur_exp);
       if (mem[p].hhfield.b1 == 0)
       p = mem[p].hhfield.v.RH;
       toss_knot_list (cur_exp);
@@ -16942,7 +16937,7 @@ void zdounary (quarterword c)
     }
     else if (cur_type == 14)
     pair_to_path ();
-    else badunary (43);
+    else bad_unary (43);
     break;
   }
   {
@@ -16971,7 +16966,7 @@ void bad_binary (halfword p, quarterword c)
   put_get_error ();
 }
 
-halfword ztarnished (halfword p)
+halfword tarnished (halfword p)
 {
   halfword Result; halfword q;
   halfword r;
@@ -17064,7 +17059,7 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
   }
   else {
     if (c == 70)
-    negatedeplist (v);
+    negate_dep_list (v);
     if (mem[p].hhfield.b0 == 16)
     {
       while (mem[v].hhfield.lhfield != 0) v = mem[v].hhfield.v.RH
@@ -17080,7 +17075,7 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
         if (s == 17) {
           if (max_coef (r) + max_coef (v) < 626349397L)
           {
-            v = pplusq (v, r, 17);
+            v = p_plus_q (v, r, 17);
             goto done;
           }
         }
@@ -17088,7 +17083,7 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
         v = p_over_v (v, 65536L, 17, 18);
       }
       if (s == 18)
-      v = pplusq (v, r, 18);
+      v = p_plus_q (v, r, 18);
       else v = p_plus_fq (v, 65536L, r, 18, 17);
       done: if (q != 0)
       dep_finish (v, q, t);
@@ -17101,7 +17096,7 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
   lab_exit:;
 }
 
-void zdepmult (halfword p, integer v, boolean visscaled)
+void dep_mult (halfword p, integer v, boolean visscaled)
 {
   halfword q;
   small_number s, t;
@@ -17111,8 +17106,8 @@ void zdepmult (halfword p, integer v, boolean visscaled)
   q = p;
   else {
     if (visscaled)
-    mem[p + 1].cint = takescaled (mem[p + 1].cint, v);
-    else mem[p + 1].cint = takefraction (mem[p + 1].cint, v);
+    mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
+    else mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
     goto lab_exit;
   }
   t = mem[q].hhfield.b0;
@@ -17124,12 +17119,12 @@ void zdepmult (halfword p, integer v, boolean visscaled)
       t = 18;
     }
   }
-  q = ptimesv (q, v, s, t, visscaled);
+  q = p_times_v (q, v, s, t, visscaled);
   dep_finish (q, p, t);
   lab_exit:;
 }
 
-void zhardtimes (halfword p)
+void hard_times (halfword p)
 {
   halfword q;
   halfword r;
@@ -17144,16 +17139,16 @@ void zhardtimes (halfword p)
   u = mem[r + 1].cint;
   v = mem[r + 3].cint;
   mem[r + 2].hhfield.b0 = mem[p].hhfield.b0;
-  newdep (r + 2, copydeplist (mem[p + 1].hhfield.v.RH));
+  new_dep (r + 2, copy_dep_list (mem[p + 1].hhfield.v.RH));
   mem[r].hhfield.b0 = mem[p].hhfield.b0;
   mem[r + 1] = mem[p + 1];
   mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = r;
   free_node (p, 2);
-  depmult (r, u, true);
-  depmult (r + 2, v, true);
+  dep_mult (r, u, true);
+  dep_mult (r + 2, v, true);
 }
 
-void zdepdiv (halfword p, scaled v)
+void dep_div (halfword p, scaled v)
 {
   halfword q;
   small_number s, t;
@@ -17245,7 +17240,7 @@ void setup_trans (quarterword c)
         install (q + 8, r + 2);
         if (mem[r + 2].hhfield.b0 == 16)
         mem[r + 3].cint = - (integer) mem[r + 3].cint;
-        else negatedeplist (mem[r + 3].hhfield.v.RH);
+        else negate_dep_list (mem[r + 3].hhfield.v.RH);
         install (q + 6, r + 2);
         goto done;
       }
@@ -17282,7 +17277,7 @@ void setup_trans (quarterword c)
   lab_exit:;
 }
 
-void zsetupknowntrans (quarterword c)
+void setup_known_trans (quarterword c)
 {
   setup_trans (c);
   if (cur_type != 16)
@@ -17304,20 +17299,20 @@ void zsetupknowntrans (quarterword c)
   }
 }
 
-void ztrans (halfword p, halfword q)
+void trans (halfword p, halfword q)
 {
   scaled v;
-  v = takescaled (mem[p].cint, txx) + takescaled (mem[q].cint ,
+  v = take_scaled (mem[p].cint, txx) + take_scaled (mem[q].cint ,
   txy) + tx;
-  mem[q].cint = takescaled (mem[p].cint, tyx) + takescaled (mem[
+  mem[q].cint = take_scaled (mem[p].cint, tyx) + take_scaled (mem[
   q].cint, tyy) + ty;
   mem[p].cint = v;
 }
 
-void zpathtrans (halfword p, quarterword c)
+void path_trans (halfword p, quarterword c)
 {
   halfword q;
-  setupknowntrans (c);
+  setup_known_trans (c);
   unstash_cur_exp (p);
   if (cur_type == 6)
   {
@@ -17327,7 +17322,7 @@ void zpathtrans (halfword p, quarterword c)
         goto lab_exit;
       }
     }
-    flush_cur_exp (makepath (cur_exp));
+    flush_cur_exp (make_path (cur_exp));
     cur_type = 8;
   }
   q = cur_exp;
@@ -17342,9 +17337,9 @@ void zpathtrans (halfword p, quarterword c)
   lab_exit:;
 }
 
-void zedgestrans (halfword p, quarterword c)
+void edges_trans (halfword p, quarterword c)
 {
-  setupknowntrans (c);
+  setup_known_trans (c);
   unstash_cur_exp (p);
   cur_edges = cur_exp;
   if (mem[cur_edges].hhfield.v.RH == cur_edges)
@@ -17483,20 +17478,20 @@ void zedgestrans (halfword p, quarterword c)
   lab_exit:;
 }
 
-void zbilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
+void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
 {
   halfword r;
   if (t != 65536L)
-  depmult (p, t, true);
+  dep_mult (p, t, true);
   if (u != 0) {
     if (mem[q].hhfield.b0 == 16)
-    delta = delta + takescaled (mem[q + 1].cint, u);
+    delta = delta + take_scaled (mem[q + 1].cint, u);
     else {
       if (mem[p].hhfield.b0 != 18)
       {
         if (mem[p].hhfield.b0 == 16)
-        newdep (p, constdependency (mem[p + 1].cint));
-        else mem[p + 1].hhfield.v.RH = ptimesv (mem[p + 1].hhfield
+        new_dep (p, const_dependency (mem[p + 1].cint));
+        else mem[p + 1].hhfield.v.RH = p_times_v (mem[p + 1].hhfield
         .v.RH, 65536L, 17, 18, true);
         mem[p].hhfield.b0 = 18;
       }
@@ -17522,10 +17517,10 @@ void zbilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
   fix_dependencies ();
 }
 
-void zaddmultdep (halfword p, scaled v, halfword r)
+void add_mult_dep (halfword p, scaled v, halfword r)
 {
   if (mem[r].hhfield.b0 == 16)
-  mem[dep_final + 1].cint = mem[dep_final + 1].cint + takescaled (mem[
+  mem[dep_final + 1].cint = mem[dep_final + 1].cint + take_scaled (mem[
   r + 1].cint, v);
   else {
     mem[p + 1].hhfield.v.RH = p_plus_fq (mem[p + 1].hhfield.v.RH, v
@@ -17535,18 +17530,18 @@ void zaddmultdep (halfword p, scaled v, halfword r)
   }
 }
 
-void zbilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
+void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 {
   scaled vv;
   vv = mem[p + 1].cint;
   mem[p].hhfield.b0 = 18;
-  newdep (p, constdependency (0));
+  new_dep (p, const_dependency (0));
   if (vv != 0)
-  addmultdep (p, vv, t);
+  add_mult_dep (p, vv, t);
   if (v != 0)
-  addmultdep (p, v, u);
+  add_mult_dep (p, v, u);
   if (q != 0)
-  addmultdep (p, 65536L, q);
+  add_mult_dep (p, 65536L, q);
   if (mem[p + 1].hhfield.v.RH == dep_final)
   {
     vv = mem[dep_final + 1].cint;
@@ -17556,17 +17551,17 @@ void zbilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
   }
 }
 
-void zbilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
+void bilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
 {
   if (t != 65536L)
-  delta = delta + takescaled (mem[p + 1].cint, t);
+  delta = delta + take_scaled (mem[p + 1].cint, t);
   else delta = delta + mem[p + 1].cint;
   if (u != 0)
-  mem[p + 1].cint = delta + takescaled (v, u);
+  mem[p + 1].cint = delta + take_scaled (v, u);
   else mem[p + 1].cint = delta;
 }
 
-void zbigtrans (halfword p, quarterword c)
+void big_trans (halfword p, quarterword c)
 {
   halfword q, r, pp, qq;
   small_number s;
@@ -17577,8 +17572,8 @@ void zbigtrans (halfword p, quarterword c)
       r = r - 2;
     if (mem[r].hhfield.b0 != 16)
     {
-      setupknowntrans (c);
-      makeexpcopy (p);
+      setup_known_trans (c);
+      make_exp_copy (p);
       r = mem[cur_exp + 1].cint;
       if (cur_type == 13)
       {
@@ -17595,7 +17590,7 @@ void zbigtrans (halfword p, quarterword c)
   setup_trans (c);
   if (cur_type == 16)
   {
-    makeexpcopy (p);
+    make_exp_copy (p);
     r = mem[cur_exp + 1].cint;
     if (cur_type == 13)
     {
@@ -17610,7 +17605,7 @@ void zbigtrans (halfword p, quarterword c)
   else {
     pp = stash_cur_exp ();
     qq = mem[pp + 1].cint;
-    makeexpcopy (p);
+    make_exp_copy (p);
     r = mem[cur_exp + 1].cint;
     if (cur_type == 13)
     {
@@ -17733,13 +17728,13 @@ void chop_string (halfword p)
   }
 }
 
-void zchoppath (halfword p)
+void chop_path (halfword p)
 {
   halfword q;
   halfword pp, qq, rr, ss;
   scaled a, b, k, l;
   boolean reversed;
-  l = pathlength ();
+  l = path_length ();
   a = mem[p + 1].cint;
   b = mem[p + 3].cint;
   if (a <= b)
@@ -17785,20 +17780,20 @@ void zchoppath (halfword p)
     if (a > 0)
     {
       qq = mem[q].hhfield.v.RH;
-      splitcubic (q, a * 4096, mem[qq + 1].cint, mem[qq + 2].cint
+      split_cubic (q, a * 4096, mem[qq + 1].cint, mem[qq + 2].cint
    );
       q = mem[q].hhfield.v.RH;
     }
-    pp = copyknot (q);
+    pp = copy_knot (q);
     qq = pp;
   }
   else {
-    pp = copyknot (q);
+    pp = copy_knot (q);
     qq = pp;
     do {
         q = mem[q].hhfield.v.RH;
       rr = qq;
-      qq = copyknot (q);
+      qq = copy_knot (q);
       mem[rr].hhfield.v.RH = qq;
       b = b - 65536L;
     }while (!(b <= 0));
@@ -17806,7 +17801,7 @@ void zchoppath (halfword p)
     {
       ss = pp;
       pp = mem[pp].hhfield.v.RH;
-      splitcubic (ss, a * 4096, mem[pp + 1].cint, mem[pp + 2].cint
+      split_cubic (ss, a * 4096, mem[pp + 1].cint, mem[pp + 2].cint
    );
       pp = mem[ss].hhfield.v.RH;
       free_node (ss, 7);
@@ -17818,7 +17813,7 @@ void zchoppath (halfword p)
     }
     if (b < 0)
     {
-      splitcubic (rr, (b + 65536L) * 4096, mem[qq + 1].cint, mem[
+      split_cubic (rr, (b + 65536L) * 4096, mem[qq + 1].cint, mem[
       qq + 2].cint);
       free_node (qq, 7);
       qq = mem[rr].hhfield.v.RH;
@@ -17830,13 +17825,13 @@ void zchoppath (halfword p)
   toss_knot_list (cur_exp);
   if (reversed)
   {
-    cur_exp = mem[htapypoc (pp)].hhfield.v.RH;
+    cur_exp = mem[htap_ypoc (pp)].hhfield.v.RH;
     toss_knot_list (pp);
   }
   else cur_exp = pp;
 }
 
-void zpairvalue (scaled x, scaled y)
+void pair_value (scaled x, scaled y)
 {
   halfword p;
   p = get_node (2);
@@ -17852,19 +17847,19 @@ void zpairvalue (scaled x, scaled y)
   mem[p + 3].cint = y;
 }
 
-void zsetupoffset (halfword p)
+void setup_offset (halfword p)
 {
-  findoffset (mem[p + 1].cint, mem[p + 3].cint, cur_exp);
-  pairvalue (cur_x, cur_y);
+  find_offset (mem[p + 1].cint, mem[p + 3].cint, cur_exp);
+  pair_value (cur_x, cur_y);
 }
 
-void zsetupdirectiontime (halfword p)
+void setup_direction_time (halfword p)
 {
-  flush_cur_exp (finddirectiontime (mem[p + 1].cint, mem[p + 3]
+  flush_cur_exp (find_direction_time (mem[p + 1].cint, mem[p + 3]
   .cint, cur_exp));
 }
 
-void zfindpoint (scaled v, quarterword c)
+void find_point (scaled v, quarterword c)
 {
   halfword p;
   scaled n;
@@ -17897,27 +17892,27 @@ void zfindpoint (scaled v, quarterword c)
   if (v != 0)
   {
     q = mem[p].hhfield.v.RH;
-    splitcubic (p, v * 4096, mem[q + 1].cint, mem[q + 2].cint);
+    split_cubic (p, v * 4096, mem[q + 1].cint, mem[q + 2].cint);
     p = mem[p].hhfield.v.RH;
   }
   switch (c)
   {case 97 :
-    pairvalue (mem[p + 1].cint, mem[p + 2].cint);
+    pair_value (mem[p + 1].cint, mem[p + 2].cint);
     break;
   case 98 :
     if (mem[p].hhfield.b0 == 0)
-    pairvalue (mem[p + 1].cint, mem[p + 2].cint);
-    else pairvalue (mem[p + 3].cint, mem[p + 4].cint);
+    pair_value (mem[p + 1].cint, mem[p + 2].cint);
+    else pair_value (mem[p + 3].cint, mem[p + 4].cint);
     break;
   case 99 :
     if (mem[p].hhfield.b1 == 0)
-    pairvalue (mem[p + 1].cint, mem[p + 2].cint);
-    else pairvalue (mem[p + 5].cint, mem[p + 6].cint);
+    pair_value (mem[p + 1].cint, mem[p + 2].cint);
+    else pair_value (mem[p + 5].cint, mem[p + 6].cint);
     break;
   }
 }
 
-void zdobinary (halfword p, quarterword c)
+void do_binary (halfword p, quarterword c)
 {
   halfword q, r, rr;
   halfword oldp, oldexp;
@@ -17954,7 +17949,7 @@ void zdobinary (halfword p, quarterword c)
   {
     q = stash_cur_exp ();
     oldp = p;
-    makeexpcopy (oldp);
+    make_exp_copy (oldp);
     p = stash_cur_exp ();
     unstash_cur_exp (q);
   }
@@ -17973,7 +17968,7 @@ void zdobinary (halfword p, quarterword c)
   if (oldexp != 0)
   {
     oldexp = cur_exp;
-    makeexpcopy (oldexp);
+    make_exp_copy (oldexp);
   }
   switch (c)
   {case 69 :
@@ -18041,7 +18036,7 @@ void zdobinary (halfword p, quarterword c)
           q = q + 2;
           r = r + 2;
         }
-        done1: takepart (53 + half (r - mem[cur_exp + 1].cint));
+        done1: take_part (53 + half (r - mem[cur_exp + 1].cint));
       }
       else if (cur_type == 2)
       flush_cur_exp (cur_exp - mem[p + 1].cint);
@@ -18125,20 +18120,20 @@ void zdobinary (halfword p, quarterword c)
         unstash_cur_exp (p);
       }
       if (cur_type == 16)
-      cur_exp = takescaled (cur_exp, v);
+      cur_exp = take_scaled (cur_exp, v);
       else if (cur_type == 14)
       {
         p = mem[cur_exp + 1].cint;
-        depmult (p, v, true);
-        depmult (p + 2, v, true);
+        dep_mult (p, v, true);
+        dep_mult (p + 2, v, true);
       }
-      else depmult (0, v, true);
+      else dep_mult (0, v, true);
       goto lab_exit;
     }
-    else if ((nicepair (p, mem[p].hhfield.b0) && (cur_type > 14))
-    || (nicepair (cur_exp, cur_type) && (mem[p].hhfield.b0 > 14)))
+    else if ((nice_pair (p, mem[p].hhfield.b0) && (cur_type > 14))
+    || (nice_pair (cur_exp, cur_type) && (mem[p].hhfield.b0 > 14)))
     {
-      hardtimes (p);
+      hard_times (p);
       goto lab_exit;
     }
     else bad_binary (p, 71);
@@ -18165,10 +18160,10 @@ void zdobinary (halfword p, quarterword c)
         else if (cur_type == 14)
         {
           p = mem[cur_exp + 1].cint;
-          depdiv (p, v);
-          depdiv (p + 2, v);
+          dep_div (p, v);
+          dep_div (p + 2, v);
         }
-        else depdiv (0, v);
+        else dep_div (0, v);
       }
       goto lab_exit;
     }
@@ -18193,15 +18188,15 @@ void zdobinary (halfword p, quarterword c)
     if ((mem[p].hhfield.b0 == 9) || (mem[p].hhfield.b0 == 8) ||
     (mem[p].hhfield.b0 == 6))
     {
-      pathtrans (p, c);
+      path_trans (p, c);
       goto lab_exit;
     }
     else if ((mem[p].hhfield.b0 == 14) || (mem[p].hhfield.b0 ==
     13))
-    bigtrans (p, c);
+    big_trans (p, c);
     else if (mem[p].hhfield.b0 == 11)
     {
-      edgestrans (p, c);
+      edges_trans (p, c);
       goto lab_exit;
     }
     else bad_binary (p, c);
@@ -18212,7 +18207,7 @@ void zdobinary (halfword p, quarterword c)
     else bad_binary (p, 83);
     break;
   case 94 :
-    if (nicepair (p, mem[p].hhfield.b0) && (cur_type == 4))
+    if (nice_pair (p, mem[p].hhfield.b0) && (cur_type == 4))
     chop_string (mem[p + 1].cint);
     else bad_binary (p, 94);
     break;
@@ -18220,8 +18215,8 @@ void zdobinary (halfword p, quarterword c)
     {
       if (cur_type == 14)
       pair_to_path ();
-      if (nicepair (p, mem[p].hhfield.b0) && (cur_type == 9))
-      choppath (mem[p + 1].cint);
+      if (nice_pair (p, mem[p].hhfield.b0) && (cur_type == 9))
+      chop_path (mem[p + 1].cint);
       else bad_binary (p, 95);
     }
     break;
@@ -18232,16 +18227,16 @@ void zdobinary (halfword p, quarterword c)
       if (cur_type == 14)
       pair_to_path ();
       if ((cur_type == 9) && (mem[p].hhfield.b0 == 16))
-      findpoint (mem[p + 1].cint, c);
+      find_point (mem[p + 1].cint, c);
       else bad_binary (p, c);
     }
     break;
   case 100 :
     {
       if (cur_type == 8)
-      materializepen ();
-      if ((cur_type == 6) && nicepair (p, mem[p].hhfield.b0))
-      setupoffset (mem[p + 1].cint);
+      materialize_pen ();
+      if ((cur_type == 6) && nice_pair (p, mem[p].hhfield.b0))
+      setup_offset (mem[p + 1].cint);
       else bad_binary (p, 100);
     }
     break;
@@ -18249,8 +18244,8 @@ void zdobinary (halfword p, quarterword c)
     {
       if (cur_type == 14)
       pair_to_path ();
-      if ((cur_type == 9) && nicepair (p, mem[p].hhfield.b0))
-      setupdirectiontime (mem[p + 1].cint);
+      if ((cur_type == 9) && nice_pair (p, mem[p].hhfield.b0))
+      setup_direction_time (mem[p + 1].cint);
       else bad_binary (p, 96);
     }
     break;
@@ -18268,8 +18263,8 @@ void zdobinary (halfword p, quarterword c)
       pair_to_path ();
       if ((cur_type == 9) && (mem[p].hhfield.b0 == 9))
       {
-        pathintersection (mem[p + 1].cint, cur_exp);
-        pairvalue (cur_t, cur_tt);
+        path_intersection (mem[p + 1].cint, cur_exp);
+        pair_value (cur_t, cur_tt);
       }
       else bad_binary (p, 92);
     }
@@ -18325,18 +18320,18 @@ void frac_mult (scaled n, scaled d)
   if (oldexp != 0)
   {
     oldexp = cur_exp;
-    makeexpcopy (oldexp);
+    make_exp_copy (oldexp);
   }
-  v = makefraction (n, d);
+  v = make_fraction (n, d);
   if (cur_type == 16)
-  cur_exp = takefraction (cur_exp, v);
+  cur_exp = take_fraction (cur_exp, v);
   else if (cur_type == 14)
   {
     p = mem[cur_exp + 1].cint;
-    depmult (p, v, false);
-    depmult (p + 2, v, false);
+    dep_mult (p, v, false);
+    dep_mult (p + 2, v, false);
   }
-  else depmult (0, v, false);
+  else dep_mult (0, v, false);
   if (oldexp != 0)
   {
     recycle_value (oldexp);
@@ -18364,7 +18359,7 @@ void gf_swap (void)
   }
 }
 
-void zgf_four (integer x)
+void gf_four (integer x)
 {
   if (x >= 0)
   {
@@ -18405,7 +18400,7 @@ void zgf_four (integer x)
   }
 }
 
-void zgftwo (integer x)
+void gf_two (integer x)
 {
   {
     gf_buf[gf_ptr] = x / 256;
@@ -18421,7 +18416,7 @@ void zgftwo (integer x)
   }
 }
 
-void zgfthree (integer x)
+void gf_three (integer x)
 {
   {
     gf_buf[gf_ptr] = x / 65536L;
@@ -18443,7 +18438,7 @@ void zgfthree (integer x)
   }
 }
 
-void zgf_paint (integer d)
+void gf_paint (integer d)
 {
   if (d < 64)
   {
@@ -18474,11 +18469,11 @@ void zgf_paint (integer d)
       if (gf_ptr == gf_limit)
       gf_swap ();
     }
-    gftwo (d);
+    gf_two (d);
   }
 }
 
-void zgfstring (str_number s, str_number t)
+void gf_string (str_number s, str_number t)
 {
   pool_pointer k;
   integer l;
@@ -18509,7 +18504,7 @@ void zgfstring (str_number s, str_number t)
         if (gf_ptr == gf_limit)
         gf_swap ();
       }
-      gfthree (l);
+      gf_three (l);
     }
     {integer for_end; k = str_start[s];for_end = str_start[s +
     1] - 1; if (k <= for_end) do
@@ -18533,7 +18528,7 @@ void zgfstring (str_number s, str_number t)
   while (k++ < for_end);}
 }
 
-void zgfboc (integer minm, integer maxm, integer minn, integer maxn)
+void gf_boc (integer minm, integer maxm, integer minn, integer maxn)
 {
   if (minm < gf_min_m)
   gf_min_m = minm;
@@ -18641,7 +18636,7 @@ void init_gf (void)
     open_log_file ();
     pack_job_name (gf_ext);
     while (!bopenout (gf_file)) prompt_file_name (756, gf_ext);
-    output_file_name = bmakenamestring (gf_file);
+    output_file_name = b_make_name_string (gf_file);
   }
   {
     gf_buf[gf_ptr] = 247;
@@ -18674,13 +18669,13 @@ void init_gf (void)
     if (gf_ptr == gf_limit)
     gf_swap ();
   }
-  gfstring (0, make_string ());
+  gf_string (0, make_string ());
   decr (str_ptr);
   pool_ptr = str_start[str_ptr];
   gf_prev_ptr = gf_offset + gf_ptr;
 }
 
-void zshipout (eight_bits c)
+void shipout (eight_bits c)
 {
   integer f;
   integer prevm, m, mm;
@@ -18715,7 +18710,7 @@ void zshipout (eight_bits c)
   {
     if (xoff != 0)
     {
-      gfstring (437, 0);
+      gf_string (437, 0);
       {
         gf_buf[gf_ptr] = 243;
         incr (gf_ptr);
@@ -18726,7 +18721,7 @@ void zshipout (eight_bits c)
     }
     if (yoff != 0)
     {
-      gfstring (438, 0);
+      gf_string (438, 0);
       {
         gf_buf[gf_ptr] = 243;
         incr (gf_ptr);
@@ -18766,7 +18761,7 @@ void zshipout (eight_bits c)
             {
               if (prevn == 4096)
               {
-                gfboc (mem[cur_edges + 2].hhfield.lhfield + xoff - 4096 ,
+                gf_boc (mem[cur_edges + 2].hhfield.lhfield + xoff - 4096 ,
                 mem[cur_edges + 2].hhfield.v.RH + xoff - 4096, mem[
                 cur_edges + 1].hhfield.lhfield + yoff - 4096, n + yoff);
                 curminm = mem[cur_edges + 2].hhfield.lhfield - 4096 + mem
@@ -18797,7 +18792,7 @@ void zshipout (eight_bits c)
                     if (gf_ptr == gf_limit)
                     gf_swap ();
                   }
-                  gftwo (delta);
+                  gf_two (delta);
                 }
               }
               else {
@@ -18847,7 +18842,7 @@ void zshipout (eight_bits c)
   }
   if (prevn == 4096)
   {
-    gfboc (0, 0, 0, 0);
+    gf_boc (0, 0, 0, 0);
     if (gf_max_m < 0)
     gf_max_m = 0;
     if (gf_min_n > 0)
@@ -18869,7 +18864,7 @@ void zshipout (eight_bits c)
   print_edges (1057, true, xoff, yoff);
 }
 
-void ztryeq (halfword l, halfword r)
+void try_eq (halfword l, halfword r)
 {
   halfword p;
   unsigned char t;
@@ -18881,13 +18876,13 @@ void ztryeq (halfword l, halfword r)
   if (t == 16)
   {
     t = 17;
-    p = constdependency (- (integer) mem[l + 1].cint);
+    p = const_dependency (- (integer) mem[l + 1].cint);
     q = p;
   }
   else if (t == 19)
   {
     t = 17;
-    p = singledependency (l);
+    p = single_dependency (l);
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
     q = dep_final;
   }
@@ -18915,7 +18910,7 @@ void ztryeq (halfword l, halfword r)
     else {
       tt = cur_type;
       if (tt == 19)
-      pp = singledependency (cur_exp);
+      pp = single_dependency (cur_exp);
       else pp = mem[cur_exp + 1].hhfield.v.RH;
     }
   }
@@ -18927,7 +18922,7 @@ void ztryeq (halfword l, halfword r)
   else {
     tt = mem[r].hhfield.b0;
     if (tt == 19)
-    pp = singledependency (r);
+    pp = single_dependency (r);
     else pp = mem[r + 1].hhfield.v.RH;
   }
   if (tt != 19)
@@ -18938,7 +18933,7 @@ void ztryeq (halfword l, halfword r)
   }
   watch_coefs = false;
   if (t == tt)
-  p = pplusq (p, pp, t);
+  p = p_plus_q (p, pp, t);
   else if (t == 18)
   p = p_plus_fq (p, 65536L, pp, 18, 17);
   else {
@@ -18948,7 +18943,7 @@ void ztryeq (halfword l, halfword r)
       q = mem[q].hhfield.v.RH;
     }
     t = 18;
-    p = pplusq (p, pp, t);
+    p = p_plus_q (p, pp, t);
   }
   watch_coefs = true;
   if (copied)
@@ -19014,7 +19009,7 @@ void ztryeq (halfword l, halfword r)
     free_node (p, 2);
   }
   else {
-    lineareq (p, t);
+    linear_eq (p, t);
     if (r == 0) {
       if (cur_type != 16) {
         if (mem[cur_exp].hhfield.b0 == 16)
@@ -19029,7 +19024,7 @@ void ztryeq (halfword l, halfword r)
   }
 }
 
-void zmakeeq (halfword lhs)
+void make_eq (halfword lhs)
 {
   small_number t;
   integer v;
@@ -19045,7 +19040,7 @@ void zmakeeq (halfword lhs)
   case 11 :
     if (cur_type == t + 1)
     {
-      nonlineareq (v, cur_exp, false);
+      non_linear_eq (v, cur_exp, false);
       unstash_cur_exp (cur_exp);
       goto done;
     }
@@ -19144,12 +19139,12 @@ void zmakeeq (halfword lhs)
   case 10 :
     if (cur_type == t - 1)
     {
-      nonlineareq (cur_exp, lhs, true);
+      non_linear_eq (cur_exp, lhs, true);
       goto done;
     }
     else if (cur_type == t)
     {
-      ringmerge (lhs, cur_exp);
+      ring_merge (lhs, cur_exp);
       goto done;
     }
     else if (cur_type == 14) {
@@ -19169,7 +19164,7 @@ void zmakeeq (halfword lhs)
       do {
           p = p - 2;
         q = q - 2;
-        tryeq (p, q);
+        try_eq (p, q);
       }while (!(p == v));
       goto done;
     }
@@ -19180,7 +19175,7 @@ void zmakeeq (halfword lhs)
   case 19 :
     if (cur_type >= 16)
     {
-      tryeq (lhs, 0);
+      try_eq (lhs, 0);
       goto done;
     }
     break;
@@ -19212,7 +19207,7 @@ void zmakeeq (halfword lhs)
   free_node (lhs, 2);
 }
 
-void doequation (void)
+void do_equation (void)
 {
   halfword lhs;
   halfword p;
@@ -19221,9 +19216,9 @@ void doequation (void)
   var_flag = 77;
   scan_expression ();
   if (cur_cmd == 51)
-  doequation ();
+  do_equation ();
   else if (cur_cmd == 77)
-  doassignment ();
+  do_assignment ();
   if (internal[7] > 131072L)
   {
     begin_diagnostic ();
@@ -19242,10 +19237,10 @@ void doequation (void)
       lhs = p;
     }
   }
-  makeeq (lhs);
+  make_eq (lhs);
 }
 
-void doassignment (void)
+void do_assignment (void)
 {
   halfword lhs;
   halfword p;
@@ -19259,7 +19254,7 @@ void doassignment (void)
       help_line[0] = 885;
     }
     error ();
-    doequation ();
+    do_equation ();
   }
   else {
     lhs = cur_exp;
@@ -19268,9 +19263,9 @@ void doassignment (void)
     var_flag = 77;
     scan_expression ();
     if (cur_cmd == 51)
-    doequation ();
+    do_equation ();
     else if (cur_cmd == 77)
-    doassignment ();
+    do_assignment ();
     if (internal[7] > 131072L)
     {
       begin_diagnostic ();
@@ -19303,14 +19298,14 @@ void doassignment (void)
       if (p != 0)
       {
         q = stash_cur_exp ();
-        cur_type = undtype (p);
+        cur_type = und_type (p);
         recycle_value (p);
         mem[p].hhfield.b0 = cur_type;
         mem[p + 1].cint = 0;
-        makeexpcopy (p);
+        make_exp_copy (p);
         p = stash_cur_exp ();
         unstash_cur_exp (q);
-        makeeq (p);
+        make_eq (p);
       }
       else {
         obliterated (lhs);
@@ -19321,7 +19316,7 @@ void doassignment (void)
   }
 }
 
-void dotypedeclaration (void)
+void do_type_declaration (void)
 {
   small_number t;
   halfword p;
@@ -19331,7 +19326,7 @@ void dotypedeclaration (void)
   else t = cur_mod + 1;
   do {
       p = scan_declared_variable ();
-    flushvariable (eqtb[mem[p].hhfield.lhfield].v.RH, mem[p]
+    flush_variable (eqtb[mem[p].hhfield.lhfield].v.RH, mem[p]
     .hhfield.v.RH, false);
     q = find_variable (p);
     if (q != 0)
@@ -19413,7 +19408,7 @@ void dotypedeclaration (void)
   }while (!(cur_cmd > 82));
 }
 
-void dorandomseed (void)
+void do_random_seed (void)
 {
   get_x_next ();
   if (cur_cmd != 77)
@@ -19452,7 +19447,7 @@ void dorandomseed (void)
   }
 }
 
-void doprotection (void)
+void do_protection (void)
 {
   unsigned char m;
   halfword t;
@@ -19471,7 +19466,7 @@ void doprotection (void)
   }while (!(cur_cmd != 82));
 }
 
-void defdelims (void)
+void def_delims (void)
 {
   halfword ldelim, rdelim;
   get_clear_symbol ();
@@ -19485,7 +19480,7 @@ void defdelims (void)
   get_x_next ();
 }
 
-void dointerim (void)
+void do_interim (void)
 {
   get_x_next ();
   if (cur_cmd != 40)
@@ -19518,13 +19513,13 @@ void dointerim (void)
     back_error ();
   }
   else {
-    saveinternal (cur_mod);
+    save_internal (cur_mod);
     back_input ();
   }
-  dostatement ();
+  do_statement ();
 }
 
-void dolet (void)
+void do_let (void)
 {
   halfword l;
   get_symbol ();
@@ -19555,7 +19550,7 @@ void dolet (void)
 ;
     break;
   }
-  clearsymbol (l, false);
+  clear_symbol (l, false);
   eqtb[l].lhfield = cur_cmd;
   if (cur_cmd == 41)
   eqtb[l].v.RH = 0;
@@ -19563,7 +19558,7 @@ void dolet (void)
   get_x_next ();
 }
 
-void donewinternal (void)
+void do_new_internal (void)
 {
   do {
       if (int_ptr == max_internal)
@@ -19578,7 +19573,7 @@ void donewinternal (void)
   }while (!(cur_cmd != 82));
 }
 
-void doshow (void)
+void do_show (void)
 {
   do {
       get_x_next ();
@@ -19589,7 +19584,7 @@ void doshow (void)
   }while (!(cur_cmd != 82));
 }
 
-void disptoken (void)
+void disp_token (void)
 {
   print_nl(940);
   if (cur_sym == 0)
@@ -19632,7 +19627,7 @@ void do_show_token (void)
 {
   do {
       get_next ();
-    disptoken ();
+    disp_token ();
     get_x_next ();
   }while (!(cur_cmd != 82));
 }
@@ -19665,7 +19660,7 @@ void do_show_stats (void)
   get_x_next ();
 }
 
-void zdispvar (halfword p)
+void zdisp_var (halfword p)
 {
   halfword q;
   integer n;
@@ -19673,12 +19668,12 @@ void zdispvar (halfword p)
   {
     q = mem[p + 1].hhfield.lhfield;
     do {
-        dispvar (q);
+        disp_var (q);
       q = mem[q].hhfield.v.RH;
     }while (!(q == 17));
     q = mem[p + 1].hhfield.v.RH;
     while (mem[q].hhfield.b1 == 3) {
-      dispvar (q);
+      disp_var (q);
       q = mem[q].hhfield.v.RH;
     }
   }
@@ -19712,13 +19707,13 @@ void do_show_var (void)
         if (cur_cmd == 41) {
           if (cur_mod != 0)
           {
-            dispvar (cur_mod);
+            disp_var (cur_mod);
             goto done;
           }
         }
       }
     }
-    disptoken ();
+    disp_token ();
     done: get_x_next ();
   }while (!(cur_cmd != 82));
 }
@@ -19757,7 +19752,7 @@ void do_show_whatever (void)
     do_show_stats ();
     break;
   case 2 :
-    doshow ();
+    do_show ();
     break;
   case 3 :
     do_show_var ();
@@ -19856,7 +19851,7 @@ boolean scan_with (void)
   return Result;
 }
 
-void zfindedgesvar (halfword t)
+void find_edges_var (halfword t)
 {
   halfword p;
   p = find_variable (t);
@@ -19930,7 +19925,7 @@ void do_add_to (void)
     scan_expression ();
     if (addtotype == 2)
     {
-      findedgesvar (lhs);
+      find_edges_var (lhs);
       if (cur_edges == 0)
       flush_cur_exp (0);
       else if (cur_type != 11)
@@ -19976,7 +19971,7 @@ void do_add_to (void)
             cur_pen = cur_exp;
           }
         }
-        findedgesvar (lhs);
+        find_edges_var (lhs);
         if (cur_edges == 0)
         toss_knot_list (rhs);
         else {
@@ -19994,7 +19989,7 @@ void do_add_to (void)
                 mem[rhs].hhfield.b1 = 1;
               }
               else {
-                p = htapypoc (rhs);
+                p = htap_ypoc (rhs);
                 q = mem[p].hhfield.v.RH;
                 mem[path_tail + 5].cint = mem[q + 5].cint;
                 mem[path_tail + 6].cint = mem[q + 6].cint;
@@ -20039,9 +20034,9 @@ void do_add_to (void)
             }
           }
           else if (cur_path_type == 0)
-          lhs = htapypoc (rhs);
+          lhs = htap_ypoc (rhs);
           cur_wt = w;
-          rhs = makespec (rhs, mem[cur_pen + 9].cint, internal[5]);
+          rhs = make_spec (rhs, mem[cur_pen + 9].cint, internal[5]);
           if (turning_number <= 0) {
             if (cur_path_type != 0) {
               if (internal[39] > 0) {
@@ -20053,9 +20048,9 @@ void do_add_to (void)
                     if ((internal[39]<= 65536L) && (mem[cur_pen]
                     .hhfield.v.RH == 0))
                     goto done;
-                    else printstrange (980);
+                    else print_strange (980);
                   }
-                  else printstrange (981);
+                  else print_strange (981);
                   {
                     help_ptr = 3;
                     help_line[2] = 982;
@@ -20069,17 +20064,17 @@ void do_add_to (void)
           }
           done:;
           if (mem[cur_pen + 9].cint == 0)
-          fillspec (rhs);
-          else fillenvelope (rhs);
+          fill_spec (rhs);
+          else fill_envelope (rhs);
           if (lhs != 0)
           {
             rev_turns = true;
-            lhs = makespec (lhs, mem[cur_pen + 9].cint, internal[5])
+            lhs = make_spec (lhs, mem[cur_pen + 9].cint, internal[5])
         ;
             rev_turns = false;
             if (mem[cur_pen + 9].cint == 0)
-            fillspec (lhs);
-            else fillenvelope (lhs);
+            fill_spec (lhs);
+            else fill_envelope (lhs);
           }
           not_found:;
         }
@@ -20091,7 +20086,7 @@ void do_add_to (void)
   }
 }
 
-scaled ztfmcheck (small_number m)
+scaled tfm_check (small_number m)
 {
   scaled Result; if (abs (internal[m]) >= 134217728L)
   {
@@ -20127,7 +20122,7 @@ scaled ztfmcheck (small_number m)
   return Result;
 }
 
-void doshipout (void)
+void do_shipout (void)
 {
   integer c;
   get_x_next ();
@@ -20152,7 +20147,7 @@ void doshipout (void)
     }
   }
   else {
-    findedgesvar (cur_exp);
+    find_edges_var (cur_exp);
     cur_type = 1;
   }
   if (cur_edges != 0)
@@ -20167,10 +20162,10 @@ void doshipout (void)
     char_exists[c] = true;
     gf_dx[c] = internal[24];
     gf_dy[c] = internal[25];
-    tfm_width[c] = tfmcheck (20);
-    tfm_height[c] = tfmcheck (21);
-    tfm_depth[c] = tfmcheck (22);
-    tfm_ital_corr[c] = tfmcheck (23);
+    tfm_width[c] = tfm_check (20);
+    tfm_height[c] = tfm_check (21);
+    tfm_depth[c] = tfm_check (22);
+    tfm_ital_corr[c] = tfm_check (23);
     if (internal[34] >= 0)
     shipout (c);
   }
@@ -20178,7 +20173,7 @@ void doshipout (void)
   lab_exit:;
 }
 
-void dodisplay (void)
+void do_display (void)
 {
   halfword e;
   get_x_next ();
@@ -20210,9 +20205,9 @@ void dodisplay (void)
     goto not_found;
     if (!window_open[cur_exp])
     goto not_found;
-    findedgesvar (e);
+    find_edges_var (e);
     if (cur_edges != 0)
-    dispedges (cur_exp);
+    disp_edges (cur_exp);
     goto lab_exit;
     not_found: cur_exp = cur_exp * 65536L;
     common_ending: disp_err (0, 985);
@@ -20226,7 +20221,7 @@ void dodisplay (void)
   lab_exit:;
 }
 
-boolean zgetpair (commandcode c)
+boolean get_pair (commandcode c)
 {
   boolean Result; halfword p;
   boolean b;
@@ -20235,7 +20230,7 @@ boolean zgetpair (commandcode c)
   else {
     get_x_next ();
     scan_expression ();
-    if (nicepair (cur_exp, cur_type))
+    if (nice_pair (cur_exp, cur_type))
     {
       p = mem[cur_exp + 1].cint;
       cur_x = mem[p + 1].cint;
@@ -20262,17 +20257,17 @@ void doopen_window (void)
   goto not_found;
   if (k > 15)
   goto not_found;
-  if (!getpair (70))
+  if (!get_pair (70))
   goto not_found;
   r0 = cur_x;
   c0 = cur_y;
-  if (!getpair (71))
+  if (!get_pair (71))
   goto not_found;
   r1 = cur_x;
   c1 = cur_y;
-  if (!getpair (72))
+  if (!get_pair (72))
   goto not_found;
-  openawindow (k, r0, c0, r1, c1, cur_x, cur_y);
+  open_a_window (k, r0, c0, r1, c1, cur_x, cur_y);
   goto lab_exit;
   not_found: {
     if (interaction == 3)
@@ -20300,7 +20295,7 @@ void doopen_window (void)
   lab_exit:;
 }
 
-void docull (void)
+void do_cull (void)
 {
   halfword e;
   unsigned char keeping;
@@ -20325,7 +20320,7 @@ void docull (void)
     e = cur_exp;
     cur_type = 1;
     keeping = cur_mod;
-    if (!getpair (67))
+    if (!get_pair (67))
     goto not_found;
     while ((cur_cmd == 66) && (cur_mod == 16)) if (scan_with ())
     w = cur_exp;
@@ -20344,7 +20339,7 @@ void docull (void)
       wout = 0;
       win = w;
     }
-    findedgesvar (e);
+    find_edges_var (e);
     if (cur_edges != 0)
     cull_edges (floorunscaled (cur_x + 65535L), floorunscaled (cur_y) ,
     wout, win);
@@ -20376,7 +20371,7 @@ void docull (void)
   lab_exit:;
 }
 
-void domessage (void)
+void do_message (void)
 {
   unsigned char m;
   m = cur_mod;
@@ -20465,7 +20460,7 @@ void domessage (void)
   flush_cur_exp (0);
 }
 
-eight_bits getcode (void)
+eight_bits get_code (void)
 {
   eight_bits Result; integer c;
   get_x_next ();
@@ -20497,7 +20492,7 @@ eight_bits getcode (void)
   return Result;
 }
 
-void zsettag (halfword c, small_number t, halfword r)
+void set_tag (halfword c, small_number t, halfword r)
 {
   if (char_tag[c] == 0)
   {
@@ -20557,7 +20552,7 @@ void zsettag (halfword c, small_number t, halfword r)
   }
 }
 
-void dotfmcommand (void)
+void do_tfm_command (void)
 {
   short c, cc;
   integer k;
@@ -20565,10 +20560,10 @@ void dotfmcommand (void)
   switch (cur_mod)
   {case 0 :
     {
-      c = getcode ();
+      c = get_code ();
       while (cur_cmd == 81) {
-        cc = getcode ();
-        settag (c, 2, cc);
+        cc = get_code ();
+        set_tag (c, 2, cc);
         c = cc;
       }
     }
@@ -20579,7 +20574,7 @@ void dotfmcommand (void)
       lab_continue: get_x_next ();
       if ((cur_cmd == 78) && lk_started)
       {
-        c = getcode ();
+        c = get_code ();
         if (nl - skip_table[c] > 128)
         {
           {
@@ -20627,14 +20622,14 @@ void dotfmcommand (void)
       }
       else {
         back_input ();
-        c = getcode ();
+        c = get_code ();
       }
       if ((cur_cmd == 81) || (cur_cmd == 80))
       {
         if (cur_cmd == 81) {
           if (c == 256)
           bch_label = nl;
-          else settag (c, 1, nl);
+          else set_tag (c, 1, nl);
         }
         else if (skip_table[c]< lig_table_size)
         {
@@ -20690,7 +20685,7 @@ void dotfmcommand (void)
         if (cur_mod < 128)
         {
           lig_kern[nl].b2 = cur_mod;
-          lig_kern[nl].b3 = getcode ();
+          lig_kern[nl].b3 = get_code ();
         }
         else {
           get_x_next ();
@@ -20761,8 +20756,8 @@ void dotfmcommand (void)
     {
       if (ne == 256)
       overflow (1006, 256);
-      c = getcode ();
-      settag (c, 3, ne);
+      c = get_code ();
+      set_tag (c, 3, ne);
       if (cur_cmd != 81)
       {
         missing_err (58);
@@ -20772,7 +20767,7 @@ void dotfmcommand (void)
         }
         back_error ();
       }
-      exten[ne].b0 = getcode ();
+      exten[ne].b0 = get_code ();
       if (cur_cmd != 82)
       {
         missing_err (44);
@@ -20782,7 +20777,7 @@ void dotfmcommand (void)
         }
         back_error ();
       }
-      exten[ne].b1 = getcode ();
+      exten[ne].b1 = get_code ();
       if (cur_cmd != 82)
       {
         missing_err (44);
@@ -20792,7 +20787,7 @@ void dotfmcommand (void)
         }
         back_error ();
       }
-      exten[ne].b2 = getcode ();
+      exten[ne].b2 = get_code ();
       if (cur_cmd != 82)
       {
         missing_err (44);
@@ -20802,7 +20797,7 @@ void dotfmcommand (void)
         }
         back_error ();
       }
-      exten[ne].b3 = getcode ();
+      exten[ne].b3 = get_code ();
       incr (ne);
     }
     break;
@@ -20837,7 +20832,7 @@ void dotfmcommand (void)
         do {
             if (j > header_size)
           overflow (1007, header_size);
-          header_byte[j] = getcode ();
+          header_byte[j] = get_code ();
           incr (j);
         }while (!(cur_cmd != 82));
         else do {
@@ -20867,7 +20862,7 @@ void dotfmcommand (void)
   }
 }
 
-void dospecial (void)
+void do_special (void)
 {
   small_number m;
   m = cur_mod;
@@ -20887,7 +20882,7 @@ void dospecial (void)
       if (output_file_name == 0)
       init_gf ();
       if (m == 4)
-      gfstring (cur_exp, 0);
+      gf_string (cur_exp, 0);
       else {
         {
           gf_buf[gf_ptr] = 243;
@@ -20902,7 +20897,7 @@ void dospecial (void)
   flush_cur_exp (0);
 }
 
-void dostatement (void)
+void do_statement (void)
 {
   cur_type = 1;
   get_x_next ();
@@ -20948,9 +20943,9 @@ void dostatement (void)
     if (cur_cmd < 84)
     {
       if (cur_cmd == 51)
-      doequation ();
+      do_equation ();
       else if (cur_cmd == 77)
-      doassignment ();
+      do_assignment ();
       else if (cur_type == 4)
       {
         if (internal[1] > 0)
@@ -20963,7 +20958,7 @@ void dostatement (void)
         {
           if (output_file_name == 0)
           init_gf ();
-          gfstring (1063, cur_exp);
+          gf_string (1063, cur_exp);
         }
       }
       else if (cur_type != 1)
@@ -20986,7 +20981,7 @@ void dostatement (void)
     show_cmd_mod (cur_cmd, cur_mod);
     switch (cur_cmd)
     {case 30 :
-      dotypedeclaration ();
+      do_type_declaration ();
       break;
     case 16 :
       if (cur_mod > 2)
@@ -20995,7 +20990,7 @@ void dostatement (void)
       scan_def ();
       break;
     case 24 :
-      dorandomseed ();
+      do_random_seed ();
       break;
     case 23 :
       {
@@ -21013,26 +21008,26 @@ void dostatement (void)
       }
       break;
     case 21 :
-      doprotection ();
+      do_protection ();
       break;
     case 27 :
-      defdelims ();
+      def_delims ();
       break;
     case 12 :
       do {
           get_symbol ();
-        savevariable (cur_sym);
+        save_variable (cur_sym);
         get_x_next ();
       }while (!(cur_cmd != 82));
       break;
     case 13 :
-      dointerim ();
+      do_interim ();
       break;
     case 14 :
-      dolet ();
+      do_let ();
       break;
     case 15 :
-      donewinternal ();
+      do_new_internal ();
       break;
     case 22 :
       do_show_whatever ();
@@ -21041,16 +21036,16 @@ void dostatement (void)
       do_add_to ();
       break;
     case 17 :
-      doshipout ();
+      do_shipout ();
       break;
     case 11 :
-      dodisplay ();
+      do_display ();
       break;
     case 28 :
       doopen_window ();
       break;
     case 19 :
-      docull ();
+      do_cull ();
       break;
     case 26 :
       {
@@ -21060,13 +21055,13 @@ void dostatement (void)
       }
       break;
     case 25 :
-      domessage ();
+      do_message ();
       break;
     case 20 :
-      dotfmcommand ();
+      do_tfm_command ();
       break;
     case 29 :
-      dospecial ();
+      do_special ();
       break;
     }
     cur_type = 1;
@@ -21117,10 +21112,10 @@ void dostatement (void)
   error_count = 0;
 }
 
-void maincontrol (void)
+void main_control (void)
 {
   do {
-      dostatement ();
+      do_statement ();
     if (cur_cmd == 84)
     {
       {
@@ -21150,7 +21145,7 @@ void maincontrol (void)
   }while (!(cur_cmd == 85));
 }
 
-halfword zsortin (scaled v)
+halfword sort_in (scaled v)
 {
   halfword Result; halfword p, q, r;
   p = memtop - 1;
@@ -21171,7 +21166,7 @@ halfword zsortin (scaled v)
   return Result;
 }
 
-integer zmincover (scaled d)
+integer min_cover (scaled d)
 {
   integer Result; halfword p;
   scaled l;
@@ -21192,29 +21187,29 @@ integer zmincover (scaled d)
   return Result;
 }
 
-scaled zthresholdfn (integer m)
+scaled threshold_fn (integer m)
 {
   scaled Result; scaled d;
-  excess = mincover (0) - m;
+  excess = min_cover (0) - m;
   if (excess <= 0)
   Result = 0;
   else {
     do {
         d = perturbation;
-    }while (!(mincover (d + d) <= m));
-    while (mincover (d) > m) d = perturbation;
+    }while (!(min_cover (d + d) <= m));
+    while (min_cover (d) > m) d = perturbation;
     Result = d;
   }
   return Result;
 }
 
-integer zskimp (integer m)
+integer skimp (integer m)
 {
   integer Result; scaled d;
   halfword p, q, r;
   scaled l;
   scaled v;
-  d = thresholdfn (m);
+  d = threshold_fn (m);
   perturbation = 0;
   q = memtop - 1;
   m = 0;
@@ -21249,7 +21244,7 @@ integer zskimp (integer m)
   return Result;
 }
 
-void ztfmwarning (small_number m)
+void tfmwarning (small_number m)
 {
   print_nl(1041);
   print(int_name[m]);
@@ -21287,7 +21282,7 @@ void fixdesignsize (void)
   max_tfm_dimen = 134217727L;
 }
 
-integer zdimenout (scaled x)
+integer dimenout (scaled x)
 {
   integer Result;
   if (abs (x) > max_tfm_dimen)
@@ -21410,7 +21405,7 @@ void scan_primary (void)
         ;
 #ifdef TEXMF_DEBUG
   if (panicking)
-  checkmem (false);
+  check_mem (false);
 #endif /* TEXMF_DEBUG */
   if (interrupt != 0) {
     if (OK_to_interrupt)
@@ -21437,7 +21432,7 @@ void scan_primary (void)
         mem[p].hhfield.b1 = 11;
         init_big_node (p);
         q = mem[p + 1].cint;
-        stashin (q);
+        stash_in (q);
         get_x_next ();
         scan_expression ();
         if (cur_type < 16)
@@ -21452,7 +21447,7 @@ void scan_primary (void)
           }
           put_get_flush_error (0);
         }
-        stashin (q + 2);
+        stash_in (q + 2);
         check_delimiter (ldelim, rdelim);
         cur_type = 14;
         cur_exp = p;
@@ -21472,7 +21467,7 @@ void scan_primary (void)
         save_ptr = p;
       }
       do {
-          dostatement ();
+          do_statement ();
       }while (!(cur_cmd != 83));
       if (cur_cmd != 84)
       {
@@ -21574,7 +21569,7 @@ void scan_primary (void)
           p = stash_cur_exp ();
           scan_primary ();
           if ((abs (num) >= abs (denom)) || (cur_type < 14))
-          dobinary (p, 71);
+          do_binary (p, 71);
           else {
             frac_mult (num, denom);
             free_node (p, 2);
@@ -21585,7 +21580,7 @@ void scan_primary (void)
     }
     break;
   case 33 :
-    donullary (cur_mod);
+    do_nullary (cur_mod);
     break;
   case 34 :
   case 30 :
@@ -21595,7 +21590,7 @@ void scan_primary (void)
       c = cur_mod;
       get_x_next ();
       scan_primary ();
-      dounary (c);
+      do_unary (c);
       goto done;
     }
     break;
@@ -21618,7 +21613,7 @@ void scan_primary (void)
       p = stash_cur_exp ();
       get_x_next ();
       scan_primary ();
-      dobinary (p, c);
+      do_binary (p, c);
       goto done;
     }
     break;
@@ -21656,7 +21651,7 @@ void scan_primary (void)
     }
     break;
   case 38 :
-    makeexpcopy (cur_mod);
+    make_exp_copy (cur_mod);
     break;
   case 41 :
     {
@@ -21747,14 +21742,14 @@ void scan_primary (void)
           if (cur_cmd != 64)
           {
             back_input ();
-            backexpr ();
+            back_expr ();
             cur_cmd = 63;
             cur_mod = 0;
             cur_sym = 9760;
           }
           else {
             if (cur_type != 16)
-            badsubscript ();
+            bad_sub_script ();
             cur_cmd = 42;
             cur_mod = cur_exp;
             cur_sym = 0;
@@ -21798,7 +21793,7 @@ void scan_primary (void)
       }
       p = find_variable (q);
       if (p != 0)
-      makeexpcopy (p);
+      make_exp_copy (p);
       else {
         obliterated (q);
         help_line[2] = 797;
@@ -21812,7 +21807,7 @@ void scan_primary (void)
     break;
     default:
     {
-      badexp (769);
+      bad_exp (769);
       goto lab_restart;
     }
     break;
@@ -21828,7 +21823,7 @@ void scan_primary (void)
       {
         {
           back_input ();
-          backexpr ();
+          back_expr ();
           cur_cmd = 63;
           cur_mod = 0;
           cur_sym = 9760;
@@ -21851,10 +21846,10 @@ void scan_primary (void)
           back_error ();
         }
         r = stash_cur_exp ();
-        makeexpcopy (q);
-        dobinary (r, 70);
-        dobinary (p, 71);
-        dobinary (q, 69);
+        make_exp_copy (q);
+        do_binary (r, 70);
+        do_binary (p, 71);
+        do_binary (q, 69);
         get_x_next ();
       }
     }
@@ -21873,7 +21868,7 @@ void scan_suffix (void)
       get_x_next ();
       scan_expression ();
       if (cur_type != 16)
-      badsubscript ();
+      bad_sub_script ();
       if (cur_cmd != 64)
       {
         missing_err (93);
@@ -21918,7 +21913,7 @@ void scan_secondary (void)
   halfword c, d;
   halfword macname;
   lab_restart: if ((cur_cmd < 30) || (cur_cmd > 43))
-  badexp (804);
+  bad_exp (804);
   scan_primary ();
   lab_continue: if (cur_cmd <= 55) {
     if (cur_cmd >= 52)
@@ -21934,10 +21929,10 @@ void scan_secondary (void)
       get_x_next ();
       scan_primary ();
       if (d != 53)
-      dobinary (p, c);
+      do_binary (p, c);
       else {
         back_input ();
-        binarymac (p, c, macname);
+        binary_mac (p, c, macname);
         decr (mem[c].hhfield.lhfield);
         get_x_next ();
         goto lab_restart;
@@ -21953,10 +21948,10 @@ void scan_tertiary (void)
   halfword c, d;
   halfword macname;
   lab_restart: if ((cur_cmd < 30) || (cur_cmd > 43))
-  badexp (805);
+  bad_exp (805);
   scan_secondary ();
   if (cur_type == 8)
-  materializepen ();
+  materialize_pen ();
   lab_continue: if (cur_cmd <= 45) {
     if (cur_cmd >= 43)
     {
@@ -21971,10 +21966,10 @@ void scan_tertiary (void)
       get_x_next ();
       scan_secondary ();
       if (d != 44)
-      dobinary (p, c);
+      do_binary (p, c);
       else {
         back_input ();
-        binarymac (p, c, macname);
+        binary_mac (p, c, macname);
         decr (mem[c].hhfield.lhfield);
         get_x_next ();
         goto lab_restart;
@@ -21995,7 +21990,7 @@ void scan_expression (void)
   unsigned char t;
   myvar_flag = var_flag;
   lab_restart: if ((cur_cmd < 30) || (cur_cmd > 43))
-  badexp (808);
+  bad_exp (808);
   scan_tertiary ();
   lab_continue: if (cur_cmd <= 51) {
     if (cur_cmd >= 46) {
@@ -22016,7 +22011,7 @@ void scan_expression (void)
           {
             unstash_cur_exp (p);
             if (cur_type == 14)
-            p = newknot ();
+            p = new_knot ();
             else if (cur_type == 9)
             p = cur_exp;
             else goto lab_exit;
@@ -22025,7 +22020,7 @@ void scan_expression (void)
           .v.RH;
             if (mem[p].hhfield.b0 != 0)
             {
-              r = copyknot (p);
+              r = copy_knot (p);
               mem[q].hhfield.v.RH = r;
               q = r;
             }
@@ -22163,14 +22158,14 @@ void scan_expression (void)
             scan_tertiary ();
             {
               if (cur_type != 9)
-              pp = newknot ();
+              pp = new_knot ();
               else pp = cur_exp;
               qq = pp;
               while (mem[qq].hhfield.v.RH != pp) qq = mem[qq]
               .hhfield.v.RH;
               if (mem[pp].hhfield.b0 != 0)
               {
-                r = copyknot (pp);
+                r = copy_knot (pp);
                 mem[qq].hhfield.v.RH = r;
                 qq = r;
               }
@@ -22297,10 +22292,10 @@ void scan_expression (void)
           get_x_next ();
           scan_tertiary ();
           if (d != 49)
-          dobinary (p, c);
+          do_binary (p, c);
           else {
             back_input ();
-            binarymac (p, c, macname);
+            binary_mac (p, c, macname);
             decr (mem[c].hhfield.lhfield);
             get_x_next ();
             goto lab_restart;
@@ -22383,7 +22378,7 @@ void close_files_and_terminate (void)
     mem[memtop - 1].hhfield.v.RH = 19;
     {integer for_end; k = bc;for_end = ec; if (k <= for_end) do
       if (char_exists[k])
-      tfm_width[k] = sortin (tfm_width[k]);
+      tfm_width[k] = sort_in (tfm_width[k]);
     while (k++ < for_end);}
     nw = skimp (255) + 1;
     dimen_head[1] = mem[memtop - 1].hhfield.v.RH;
@@ -22400,7 +22395,7 @@ void close_files_and_terminate (void)
 
           if (tfm_height[k] == 0)
           tfm_height[k] = 15;
-          else tfm_height[k] = sortin (tfm_height[k]);
+          else tfm_height[k] = sort_in (tfm_height[k]);
         }
       while (k++ < for_end);}
       nh = skimp (15) + 1;
@@ -22413,7 +22408,7 @@ void close_files_and_terminate (void)
         if (char_exists[k]) {
           if (tfm_depth[k] == 0)
           tfm_depth[k] = 15;
-          else tfm_depth[k] = sortin (tfm_depth[k]);
+          else tfm_depth[k] = sort_in (tfm_depth[k]);
         }
       while (k++ < for_end);}
       nd = skimp (15) + 1;
@@ -22426,7 +22421,7 @@ void close_files_and_terminate (void)
         if (char_exists[k]) {
           if (tfm_ital_corr[k] == 0)
           tfm_ital_corr[k] = 15;
-          else tfm_ital_corr[k] = sortin (tfm_ital_corr[k]);
+          else tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
         }
       while (k++ < for_end);}
       ni = skimp (63) + 1;
@@ -22438,7 +22433,7 @@ void close_files_and_terminate (void)
       open_log_file ();
       pack_job_name (1045);
       while (!bopenout (tfm_file)) prompt_file_name (1046, 1045);
-      metric_file_name = bmakenamestring (tfm_file);
+      metric_file_name = b_make_name_string (tfm_file);
       k = header_size;
       while (header_byte[k]< 0) decr (k);
       lh = (k + 3) / 4;
@@ -22785,7 +22780,7 @@ debughelp (void)
       read (stdin, n);
       switch (m)
       {case 1 :
-        printword (mem[n]);
+        print_word (mem[n]);
         break;
       case 2 :
         print_int (mem[n].hhfield.lhfield);
@@ -22816,10 +22811,10 @@ debughelp (void)
         slow_print(n);
         break;
       case 11 :
-        checkmem (n > 0);
+        check_mem (n > 0);
         break;
       case 12 :
-        searchmem (n);
+        search_mem (n);
         break;
       case 13 :
         {
