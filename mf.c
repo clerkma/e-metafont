@@ -54,14 +54,14 @@
 
 boolean get_strings_started(void)
 {
-  /* 30 10 */ register boolean Result; unsigned char k, l;
+  boolean Result; unsigned char k, l;
   str_number g;
   pool_ptr = 0;
   str_ptr = 0;
   max_pool_ptr = 0;
   max_str_ptr = 0;
   str_start[0] = 0;
-  {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+  {integer for_end; k = 0; for_end = 255; if (k <= for_end) do
   {
     if (((k < 32) || (k > 126)))
     {
@@ -114,7 +114,7 @@ boolean get_strings_started(void)
       str_pool[pool_ptr] = k;
       incr(pool_ptr);
     }
-    g = makestring();
+    g = make_string();
     str_ref[g] = 127;
   } while (k++ < for_end); }
   g = loadpoolstrings((pool_size - string_vacancies));
@@ -134,7 +134,7 @@ void sort_avail(void)
 {
   halfword p, q, r;
   halfword oldrover;
-  p = getnode(1073741824L);
+  p = get_node(1073741824L);
   p = mem[rover + 1].hhfield.v.RH;
   mem[rover + 1].hhfield.v.RH = 268435455L;
   oldrover = rover;
@@ -165,43 +165,43 @@ void sort_avail(void)
   mem[rover + 1].hhfield.lhfield = p;
 }
 
-void primitive(str_number s, halfword c, halfword o)
+void primitive (str_number s, halfword c, halfword o)
 {
   pool_pointer k;
   small_number j;
   small_number l;
   k = str_start[s];
   l = str_start[s + 1] - k;
-  {register integer for_end; j = 0; for_end = l - 1; if (j <= for_end) do
+  {integer for_end; j = 0; for_end = l - 1; if (j <= for_end) do
     buffer[j] = str_pool[k + j];
   while (j++ < for_end); }
   cur_sym = idlookup(0, l);
   if (s >= 256)
   {
-    flushstring(str_ptr - 1);
+    flush_string(str_ptr - 1);
     hash[cur_sym].v.RH = s;
   }
   eqtb[cur_sym].lhfield = c;
   eqtb[cur_sym].v.RH = o;
 }
 
-void store_base_file(void)
+void store_base_file (void)
 {
   integer k;
   halfword p, q;
   integer x;
-  fourquarters w;
+  four_quarters w;
   ASCII_code * baseengine;
   selector = 5;
   print(1073);
   print(job_name);
-  printchar(32);
-  printint(roundunscaled(internal[14]));
-  printchar(46);
-  printint(roundunscaled(internal[15]));
-  printchar(46);
-  printint(roundunscaled(internal[16]));
-  printchar(41);
+  print_char(32);
+  print_int(roundunscaled(internal[14]));
+  print_char(46);
+  print_int(roundunscaled(internal[15]));
+  print_char(46);
+  print_int(roundunscaled(internal[16]));
+  print_char(41);
   if (interaction == 0)
     selector = 2;
   else selector = 3;
@@ -213,39 +213,39 @@ void store_base_file(void)
       max_pool_ptr = pool_ptr + 1;
     }
   }
-  base_ident = makestring();
+  base_ident = make_string();
   str_ref[base_ident] = 127;
-  packjob_name(742);
-  while (!wopenout(base_file)) promptfilename(1074, 742);
-  printnl(1075);
-  slowprint(wmakenamestring(base_file));
-  flushstring(str_ptr - 1);
-  printnl(261);
-  slowprint(base_ident);
-  dumpint(1462914374L);
+  pack_job_name(742);
+  while (!w_open_out(base_file)) prompt_file_name(1074, 742);
+  print_nl(1075);
+  slow_print(w_make_name_string(base_file));
+  flush_string(str_ptr - 1);
+  print_nl(261);
+  slow_print(base_ident);
+  dump_int(1462914374L);
   x = strlen(enginename);
   baseengine = xmallocarray(ASCII_code, x + 4);
   strcpy(stringcast(baseengine), enginename);
-  {register integer for_end; k = x; for_end = x + 3; if (k <= for_end) do
+  {integer for_end; k = x; for_end = x + 3; if (k <= for_end) do
     baseengine[k] = 0;
   while (k++ < for_end); }
   x = x + 4 - (x % 4);
-  dumpint(x);
+  dump_int(x);
   dumpthings(baseengine[0], x);
   libcfree(baseengine);
-  dumpint(4795517L);
+  dump_int(4795517L);
   dumpthings(xord[0], 256);
   dumpthings(xchr[0], 256);
   dumpthings(xprn[0], 256);
-  dumpint(0);
-  dumpint(memtop);
-  dumpint(9500);
-  dumpint(7919);
-  dumpint(15);
-  dumpint(pool_ptr);
-  dumpint(str_ptr);
-  {register integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
-    dumpint(str_start[k]);
+  dump_int(0);
+  dump_int(memtop);
+  dump_int(9500);
+  dump_int(7919);
+  dump_int(15);
+  dump_int(pool_ptr);
+  dump_int(str_ptr);
+  {integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
+    dump_int(str_start[k]);
   while (k++ < for_end); }
   k = 0;
   while (k + 4 < pool_ptr) {
@@ -264,18 +264,18 @@ void store_base_file(void)
   w.b3 = str_pool[k + 3];
   dumpqqqq(w);
   println();
-  printint(str_ptr);
+  print_int(str_ptr);
   print(1070);
-  printint(pool_ptr);
+  print_int(pool_ptr);
   sort_avail();
   var_used = 0;
-  dumpint(lo_mem_max);
-  dumpint(rover);
+  dump_int(lo_mem_max);
+  dump_int(rover);
   p = 0;
   q = rover;
   x = 0;
   do {
-    { register integer for_end; k = p; for_end = q + 1; if (k <=
+    { integer for_end; k = p; for_end = q + 1; if (k <=
       for_end) do
       dumpwd(mem[k]);
     while (k++ < for_end); }
@@ -286,14 +286,14 @@ void store_base_file(void)
   } while (!(q == rover));
   var_used = var_used + lo_mem_max - p;
   dyn_used = mem_end + 1 - hi_mem_min;
-  {register integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
+  {integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
     do
       dumpwd(mem[k]);
   while (k++ < for_end); }
   x = x + lo_mem_max + 1 - p;
-  dumpint(hi_mem_min);
-  dumpint(avail);
-  {register integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
+  dump_int(hi_mem_min);
+  dump_int(avail);
+  {integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
     for_end) do
     dumpwd(mem[k]);
   while (k++ < for_end); }
@@ -304,67 +304,67 @@ void store_base_file(void)
     decr(dyn_used);
     p = mem[p].hhfield.v.RH;
   }
-  dumpint(var_used);
-  dumpint(dyn_used);
+  dump_int(var_used);
+  dump_int(dyn_used);
   println();
-  printint(x);
+  print_int(x);
   print(1071);
-  printint(var_used);
-  printchar(38);
-  printint(dyn_used);
-  dumpint(hash_used);
+  print_int(var_used);
+  print_char(38);
+  print_int(dyn_used);
+  dump_int(hash_used);
   st_count = 9756 - hash_used;
-  {register integer for_end; p = 1; for_end = hash_used; if (p <= for_end)
+  {integer for_end; p = 1; for_end = hash_used; if (p <= for_end)
     do
       if (hash[p].v.RH != 0)
       {
-        dumpint(p);
+        dump_int(p);
         dumphh(hash[p]);
         dumphh(eqtb[p]);
         incr(st_count);
       }
   while (p++ < for_end); }
-  {register integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
+  {integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
     for_end) do
   {
     dumphh(hash[p]);
     dumphh(eqtb[p]);
   } while (p++ < for_end); }
-  dumpint(st_count);
+  dump_int(st_count);
   println();
-  printint(st_count);
+  print_int(st_count);
   print(1072);
-  dumpint(int_ptr);
-  {register integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
+  dump_int(int_ptr);
+  {integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
   {
-    dumpint(internal[k]);
-    dumpint(int_name[k]);
+    dump_int(internal[k]);
+    dump_int(int_name[k]);
   } while (k++ < for_end); }
-  dumpint(start_sym);
-  dumpint(interaction);
-  dumpint(base_ident);
-  dumpint(bg_loc);
-  dumpint(eg_loc);
-  dumpint(serial_no);
-  dumpint(69069L);
+  dump_int(start_sym);
+  dump_int(interaction);
+  dump_int(base_ident);
+  dump_int(bg_loc);
+  dump_int(eg_loc);
+  dump_int(serial_no);
+  dump_int(69069L);
   internal[12] = 0;
   wclose(base_file);
 }
 
-boolean load_base_file(void)
+boolean load_base_file (void)
 {
-  /* 6666 10 */ register boolean Result; integer k;
+  boolean Result; integer k;
   halfword p, q;
   integer x;
-  fourquarters w;
+  four_quarters w;
   ASCII_code * baseengine;
   ASCII_code dummyxord;
   ASCII_code dummyxchr;
   ASCII_code dummyxprn;
-  undumpint(x);
+  undump_int(x);
   if (x != 1462914374L)
     goto lab6666;
-  undumpint(x);
+  undump_int(x);
   if ((x < 0) || (x > 256))
     goto lab6666;
   baseengine = xmallocarray(ASCII_code, x);
@@ -378,7 +378,7 @@ boolean load_base_file(void)
     goto lab6666;
   }
   libcfree(baseengine);
-  undumpint(x);
+  undump_int(x);
   if (x != 4795517L)
   {
     ;
@@ -387,13 +387,13 @@ boolean load_base_file(void)
   }
   if (translatefilename)
   {
-    {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+    {integer for_end; k = 0; for_end = 255; if (k <= for_end) do
       undumpthings(dummyxord, 1);
     while (k++ < for_end); }
-    {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+    {integer for_end; k = 0; for_end = 255; if (k <= for_end) do
       undumpthings(dummyxchr, 1);
     while (k++ < for_end); }
-    {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+    {integer for_end; k = 0; for_end = 255; if (k <= for_end) do
       undumpthings(dummyxprn, 1);
     while (k++ < for_end); }
   }
@@ -404,12 +404,12 @@ boolean load_base_file(void)
     undumpthings(xprn[0], 256);
     if (eightbitp)
     {
-      register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+      integer for_end; k = 0; for_end = 255; if (k <= for_end) do
         xprn[k] = 1;
       while (k++ < for_end);
     }
   }
-  undumpint(x);
+  undump_int(x);
   if (x != 0)
     goto lab6666;
   ;
@@ -419,23 +419,23 @@ boolean load_base_file(void)
     libcfree(mem);
   }
 #endif /* INIMF */
-  undumpint(memtop);
+  undump_int(memtop);
   if (memmax < memtop)
     memmax = memtop;
   if (1100 > memtop)
     goto lab6666;
   mem = xmallocarray(memoryword, memmax + 1);
-  undumpint(x);
+  undump_int(x);
   if (x != 9500)
     goto lab6666;
-  undumpint(x);
+  undump_int(x);
   if (x != 7919)
     goto lab6666;
-  undumpint(x);
+  undump_int(x);
   if (x != 15)
     goto lab6666;
   {
-    undumpint(x);
+    undump_int(x);
     if (x < 0)
       goto lab6666;
     if (x > pool_size)
@@ -447,7 +447,7 @@ boolean load_base_file(void)
     else pool_ptr = x;
   }
   {
-    undumpint(x);
+    undump_int(x);
     if (x < 0)
       goto lab6666;
     if (x > max_strings)
@@ -458,10 +458,10 @@ boolean load_base_file(void)
     }
     else str_ptr = x;
   }
-  {register integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
+  {integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
   {
     {
-      undumpint(x);
+      undump_int(x);
       if ((x < 0) || (x > pool_ptr))
         goto lab6666;
       else str_start[k] = x;
@@ -489,13 +489,13 @@ boolean load_base_file(void)
   max_str_ptr = str_ptr;
   max_pool_ptr = pool_ptr;
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 1022) || (x > memtop - 3))
       goto lab6666;
     else lo_mem_max = x;
   }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 23) || (x > lo_mem_max))
       goto lab6666;
     else rover = x;
@@ -503,7 +503,7 @@ boolean load_base_file(void)
   p = 0;
   q = rover;
   do {
-    { register integer for_end; k = p; for_end = q + 1; if (k <=
+    { integer for_end; k = p; for_end = q + 1; if (k <=
       for_end) do
       undumpwd(mem[k]);
     while (k++ < for_end); }
@@ -513,31 +513,31 @@ boolean load_base_file(void)
       goto lab6666;
     q = mem[q + 1].hhfield.v.RH;
   } while (!(q == rover));
-  {register integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
+  {integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
     do
       undumpwd(mem[k]);
   while (k++ < for_end); }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < lo_mem_max + 1) || (x > memtop - 2))
       goto lab6666;
     else hi_mem_min = x;
   }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 0) || (x > memtop))
       goto lab6666;
     else avail = x;
   }
   mem_end = memtop;
-  {register integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
+  {integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
     for_end) do
     undumpwd(mem[k]);
   while (k++ < for_end); }
-  undumpint(var_used);
-  undumpint(dyn_used);
+  undump_int(var_used);
+  undump_int(dyn_used);
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 1) || (x > 9757))
       goto lab6666;
     else hash_used = x;
@@ -545,7 +545,7 @@ boolean load_base_file(void)
   p = 0;
   do {
     {
-      undumpint(x);
+      undump_int(x);
       if ((x < p + 1) || (x > hash_used))
         goto lab6666;
       else p = x;
@@ -553,37 +553,37 @@ boolean load_base_file(void)
     undumphh(hash[p]);
     undumphh(eqtb[p]);
   } while (!(p == hash_used));
-  {register integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
+  {integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
     for_end) do
   {
     undumphh(hash[p]);
     undumphh(eqtb[p]);
   } while (p++ < for_end); }
-  undumpint(st_count);
+  undump_int(st_count);
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 41) || (x > max_internal))
       goto lab6666;
     else int_ptr = x;
   }
-  {register integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
+  {integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
   {
-    undumpint(internal[k]);
+    undump_int(internal[k]);
     {
-      undumpint(x);
+      undump_int(x);
       if ((x < 0) || (x > str_ptr))
         goto lab6666;
       else int_name[k] = x;
     }
   } while (k++ < for_end); }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 0) || (x > 9757))
       goto lab6666;
     else start_sym = x;
   }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 0) || (x > 3))
       goto lab6666;
     else interaction = x;
@@ -591,25 +591,25 @@ boolean load_base_file(void)
   if (interactionoption != 4)
     interaction = interactionoption;
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 0) || (x > str_ptr))
       goto lab6666;
     else base_ident = x;
   }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 1) || (x > 9769))
       goto lab6666;
     else bg_loc = x;
   }
   {
-    undumpint(x);
+    undump_int(x);
     if ((x < 1) || (x > 9769))
       goto lab6666;
     else eg_loc = x;
   }
-  undumpint(serial_no);
-  undumpint(x);
+  undump_int(serial_no);
+  undump_int(x);
   if (x != 69069L)
     goto lab6666;
   Result = true;
@@ -621,15 +621,15 @@ lab10:;
   return Result;
 }
 
-void final_cleanup(void)
+void final_cleanup (void)
 {
-  /* 10 */ small_number c;
+  small_number c;
   c = cur_mod;
   if (job_name == 0)
     open_log_file();
   while (input_ptr > 0) if ((cur_input.index_field > 15))
     endtokenlist();
-  else endfilereading();
+  else end_file_reading();
   while (loop_ptr != 0) stop_iteration();
   while (open_parens > 0) {
 
@@ -638,12 +638,12 @@ void final_cleanup(void)
   }
   while (cond_ptr != 0) {
 
-    printnl(1078);
+    print_nl(1078);
     printcmdmod(2, cur_if);
     if (if_line != 0)
     {
       print(1079);
-      printint(if_line);
+      print_int(if_line);
     }
     print(1080);
     if_line = mem[cond_ptr + 1].cint;
@@ -659,7 +659,7 @@ void final_cleanup(void)
       if (selector == 3)
       {
         selector = 1;
-        printnl(1081);
+        print_nl(1081);
         selector = 3;
       }
     }
@@ -674,13 +674,13 @@ void final_cleanup(void)
       goto lab10;
     }
 #endif /* INIMF */
-    printnl(1082);
+    print_nl(1082);
     goto lab10;
   }
 lab10:;
 }
 
-void init_prim(void)
+void init_prim (void)
 {
   primitive(409, 40, 1);
   primitive(410, 40, 2);
@@ -920,7 +920,7 @@ void init_prim(void)
   primitive(1060, 29, 16);
 }
 
-void init_tab(void)
+void init_tab (void)
 {
   integer k;
   rover = 23;
@@ -931,7 +931,7 @@ void init_tab(void)
   lo_mem_max = rover + 1000;
   mem[lo_mem_max].hhfield.v.RH = 0;
   mem[lo_mem_max].hhfield.lhfield = 0;
-  {register integer for_end; k = memtop - 2; for_end = memtop; if (k <=
+  {integer for_end; k = memtop - 2; for_end = memtop; if (k <=
     for_end) do
     mem[k] = mem[lo_mem_max];
   while (k++ < for_end); }
@@ -1002,7 +1002,7 @@ void init_tab(void)
   mem[3].hhfield.v.RH = 0;
   mem[4].hhfield.lhfield = 1;
   mem[4].hhfield.v.RH = 0;
-  {register integer for_end; k = 5; for_end = 11; if (k <= for_end) do
+  {integer for_end; k = 5; for_end = 11; if (k <= for_end) do
     mem[k] = mem[4];
   while (k++ < for_end); }
   mem[12].cint = 0;
@@ -1029,7 +1029,7 @@ void init_tab(void)
     base_ident = 1069;
 }
 
-void mainbody(void) {
+void mainbody (void) {
 
   bounddefault = 250000L;
   boundname = "main_memory";
@@ -1169,7 +1169,7 @@ lab1: selector = 1;
     fprintf(stdout, "%s%s%c\n", " (preloaded base=", dumpname, ')');
   else {
 
-    slowprint(base_ident);
+    slow_print(base_ident);
     println();
   }
   if (translatefilename)
@@ -1234,7 +1234,7 @@ lab1: selector = 1;
   if (start_sym > 0)
   {
     cur_sym = start_sym;
-    backinput();
+    back_input();
   }
   maincontrol();
   final_cleanup();
@@ -1635,7 +1635,7 @@ void print_ln (void)
   }
 }
 
-void print_char(ASCII_code s) 
+void print_char (ASCII_code s) 
 {
   switch (selector) 
   {case 3 : 
@@ -1692,7 +1692,7 @@ void print_char(ASCII_code s)
   incr (tally);
 }
 
-void print(integer s) 
+void print (integer s) 
 {
   pool_pointer j;
   if ((s < 0) || (s >= str_ptr)) 
@@ -1709,7 +1709,7 @@ void print(integer s)
   }
 }
 
-void slow_print(integer s) 
+void slow_print (integer s) 
 {
   pool_pointer j;
   if ((s < 0) || (s >= str_ptr)) 
@@ -1725,7 +1725,7 @@ void slow_print(integer s)
   }
 }
 
-void print_nl(str_number s) 
+void print_nl (str_number s) 
 {
   if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0 
 ) && (selector >= 2))) 
@@ -1774,7 +1774,7 @@ void print_int (integer n)
   print_the_digs (k);
 }
 
-void print_scaled(scaled s) 
+void print_scaled (scaled s) 
 {
   scaled delta;
   if (s < 0) 
@@ -1904,7 +1904,7 @@ void end_diagnostic (boolean blankline)
   selector = old_setting;
 }
 
-void print_diagnostic(str_number s , str_number t , boolean nuline) 
+void print_diagnostic (str_number s , str_number t , boolean nuline) 
 {
   begin_diagnostic ();
   if (nuline) 
@@ -1968,6 +1968,7 @@ void print_file_name (integer n , integer a , integer e)
   if (mustquote) 
   slow_print(34);
 }
+
 #ifdef TEXMF_DEBUG
 #endif /* TEXMF_DEBUG */
 
@@ -1995,7 +1996,7 @@ void jump_out (void)
 
 void error (void) 
 {
-  /* 22 10 */ ASCII_code c;
+  ASCII_code c;
   integer s1, s2, s3;
   pool_pointer j;
   if (history < 2) 
@@ -2009,7 +2010,7 @@ void error (void)
   }
   if (interaction == 3) 
   while (true) {
-    lab22: clearforerrorprompt ();
+    lab22: clear_for_error_prompt ();
     {
 ;
       print(265);
@@ -2043,7 +2044,7 @@ void error (void)
 	else c = c - 48;
 	while (c > 0) {
 	    
-	  getnext ();
+	  get_next ();
 	  if (cur_cmd == 39) 
 	  {
 	    if (str_ref[cur_mod]< 127) {
@@ -2135,7 +2136,7 @@ void error (void)
       break;
     case 73 : 
       {
-	beginfilereading ();
+	begin_file_reading ();
 	if (last > first + 1) 
 	{
 	  cur_input.loc_field = first + 1;
@@ -2402,7 +2403,7 @@ void confusion(str_number s)
 
 boolean init_terminal (void) 
 {
-  /* 10 */ boolean Result; topenin ();
+  boolean Result; topenin ();
   if (last > first) 
   {
     cur_input.loc_field = first;
@@ -2457,7 +2458,7 @@ str_number make_string (void)
 
 boolean str_eq_buf (str_number s , integer k) 
 {
-  /* 45 */ boolean Result; pool_pointer j;
+  boolean Result; pool_pointer j;
   boolean result;
   j = str_start[s];
   while (j < str_start[s + 1]) {
@@ -2477,7 +2478,7 @@ boolean str_eq_buf (str_number s , integer k)
 
 integer str_vs_str (str_number s , str_number t) 
 {
-  /* 10 */ integer Result; pool_pointer j, k;
+  integer Result; pool_pointer j, k;
   integer ls, lt;
   integer l;
   ls = (str_start[s + 1] - str_start[s]);
@@ -2668,8 +2669,7 @@ scaled round_decimals (small_number k)
 }
 
 #ifdef FIXPT
-fraction 
-zmakefraction (integer p , integer q) 
+fraction zmakefraction (integer p , integer q) 
 {
   fraction Result; integer f;
   integer n;
@@ -2728,8 +2728,7 @@ zmakefraction (integer p , integer q)
 #endif /* FIXPT */
 
 #ifdef FIXPT
-integer 
-ztakefraction (integer q , fraction f) 
+integer ztakefraction (integer q , fraction f) 
 {
   integer Result; integer p;
   boolean negative;
@@ -2790,8 +2789,7 @@ ztakefraction (integer q , fraction f)
 #endif /* FIXPT */
 
 #ifdef FIXPT
-integer 
-ztakescaled (integer q , scaled f) 
+integer ztakescaled (integer q , scaled f) 
 {
   integer Result; integer p;
   boolean negative;
@@ -2852,8 +2850,7 @@ ztakescaled (integer q , scaled f)
 #endif /* FIXPT */
 
 #ifdef FIXPT
-scaled 
-zmakescaled (integer p , integer q) 
+scaled zmakescaled (integer p , integer q) 
 {
   scaled Result; integer f;
   integer n;
@@ -2929,7 +2926,7 @@ fraction velocity (fraction st , fraction ct , fraction sf , fraction cf , scale
 
 integer ab_vs_cd (integer a , integer b , integer c , integer d) 
 {
-  /* 10 */ integer Result; integer q, r;
+  integer Result; integer q, r;
   if (a < 0) 
   {
     a = - (integer) a;
@@ -3129,7 +3126,7 @@ scaled zsquarert (scaled x)
 
 integer pyth_add (integer a , integer b) 
 {
-  /* 30 */ integer Result; fraction r;
+  integer Result; fraction r;
   boolean big;
   a = abs (a);
   b = abs (b);
@@ -3177,7 +3174,7 @@ integer pyth_add (integer a , integer b)
 
 integer pyth_sub (integer a , integer b) 
 {
-  /* 30 */ integer Result; fraction r;
+  integer Result; fraction r;
   boolean big;
   a = abs (a);
   b = abs (b);
@@ -3617,8 +3614,7 @@ scaled norm_rand (void)
 }
 
 #ifdef TEXMF_DEBUG
-void 
-zprintword (memoryword w) 
+void zprintword (memoryword w) 
 {
   print_int (w .cint);
   print_char(32);
@@ -3646,7 +3642,7 @@ zprintword (memoryword w)
 
 void show_token_list (integer p , integer q , integer l , integer nulltally) 
 {
-  /* 10 */ small_number cclass, c;
+  small_number cclass, c;
   integer r, v;
   cclass = 3;
   tally = nulltally;
@@ -3834,7 +3830,7 @@ halfword get_avail (void)
 
 halfword get_node (integer s) 
 {
-  /* 40 10 20 */ halfword Result; halfword p;
+  halfword Result; halfword p;
   halfword q;
   integer r;
   integer t, tt;
@@ -3930,7 +3926,7 @@ void free_node (halfword p , halfword s)
 
 void flush_list (halfword p) 
 {
-  /* 30 */ halfword q, r;
+  halfword q, r;
   if (p >= hi_mem_min) {
       
     if (p != memtop) 
@@ -3974,10 +3970,9 @@ void flush_node_list (halfword p)
 }
 
 #ifdef TEXMF_DEBUG
-void 
-zcheckmem (boolean printlocs) 
+void zcheckmem (boolean printlocs) 
 {
-  /* 31 32 */ halfword p, q, r;
+  halfword p, q, r;
   boolean clobbered;
   {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end) 
   do 
@@ -4111,8 +4106,7 @@ zcheckmem (boolean printlocs)
 #endif /* TEXMF_DEBUG */
 
 #ifdef TEXMF_DEBUG
-void 
-zsearchmem (halfword p) 
+void zsearchmem (halfword p) 
 {
   integer q;
   {integer for_end; q = 0;for_end = lo_mem_max; if (q <= for_end) 
@@ -4395,7 +4389,7 @@ void fix_date_and_time (void)
 
 halfword id_lookup (integer j , integer l) 
 {
-  /* 40 */ halfword Result; integer h;
+  halfword Result; integer h;
   halfword p;
   halfword k;
   if (l == 1) 
@@ -4935,7 +4929,7 @@ void print_cmd_mod (integer c , integer m)
 
 void show_macro (halfword p , integer q , integer l) 
 {
-  /* 10 */ halfword r;
+  halfword r;
   p = mem[p].hhfield.v.RH;
   while (mem[p].hhfield.lhfield > 7) {
       
@@ -5034,7 +5028,7 @@ void new_root (halfword x)
 
 void print_variable_name(halfword p) 
 {
-  /* 40 10 */ halfword q;
+  halfword q;
   halfword r;
   while (mem[p].hhfield.b1 >= 5) {
       
@@ -5192,7 +5186,7 @@ halfword new_structure (halfword p)
 
 halfword find_variable (halfword t) 
 {
-  /* 10 */ halfword Result; halfword p, q, r, s;
+  halfword Result; halfword p, q, r, s;
   halfword pp, qq, rr, ss;
   integer n;
   memoryword saveword;
@@ -5326,7 +5320,7 @@ halfword find_variable (halfword t)
 
 void print_path (halfword h , str_number s , boolean nuline) 
 {
-  /* 30 31 */ halfword p, q;
+  halfword p, q;
   print_diagnostic(517 , s , nuline);
   print_ln ();
   p = h;
@@ -5592,9 +5586,9 @@ void print_pen (halfword p , str_number s , boolean nuline)
   end_diagnostic (true);
 }
 
-void print_dependency(halfword p , small_number t) 
+void print_dependency (halfword p , small_number t) 
 {
-  /* 10 */ integer v;
+  integer v;
   halfword pp, q;
   pp = p;
   while (true) {
@@ -5843,7 +5837,7 @@ void disp_err (halfword p , str_number s)
 
 halfword p_plus_fq (halfword p , integer f , halfword q , small_number t , small_number tt) 
 {
-  /* 30 */ halfword Result; halfword pp, qq;
+  halfword Result; halfword pp, qq;
   halfword r, s;
   integer threshold;
   integer v;
@@ -6047,7 +6041,7 @@ void make_known (halfword p , halfword q)
 
 void fix_dependencies (void) 
 {
-  /* 30 */ halfword p, q, r, s, t;
+  halfword p, q, r, s, t;
   halfword x;
   r = mem[13].hhfield.v.RH;
   s = 0;
@@ -6169,7 +6163,7 @@ void ring_delete (halfword p)
 
 void recycle_value (halfword p) 
 {
-  /* 30 */ small_number t;
+  small_number t;
   integer v;
   integer vv;
   halfword q, r, s, pp;
@@ -6468,20 +6462,20 @@ void flush_error (scaled v)
   error ();
   flush_cur_exp (v);
 }
-void 
-put_get_error (void) 
+
+void put_get_error (void) 
 {
-  backerror ();
-  getxnext ();
+  back_error ();
+  get_x_next ();
 }
-void 
-zput_get_flush_error (scaled v) 
+
+void zput_get_flush_error (scaled v) 
 {
   put_get_error ();
   flush_cur_exp (v);
 }
-void 
-zflushbelowvariable (halfword p) 
+
+void zflushbelowvariable (halfword p) 
 {
   halfword q, r;
   if (mem[p].hhfield.b0 != 21) 
@@ -6511,10 +6505,10 @@ zflushbelowvariable (halfword p)
     mem[p].hhfield.b0 = 0;
   }
 }
-void 
-zflushvariable (halfword p , halfword t , boolean discardsuffixes) 
+
+void zflushvariable (halfword p , halfword t , boolean discardsuffixes) 
 {
-  /* 10 */ halfword q, r;
+  halfword q, r;
   halfword n;
   while (t != 0) {
       
@@ -6561,8 +6555,8 @@ zflushvariable (halfword p , halfword t , boolean discardsuffixes)
   }
   lab10:;
 }
-small_number 
-zundtype (halfword p) 
+
+small_number zundtype (halfword p) 
 {
   small_number Result; switch (mem[p].hhfield.b0) 
   {case 0 : 
@@ -6604,8 +6598,8 @@ zundtype (halfword p)
   }
   return Result;
 }
-void 
-zclearsymbol (halfword p , boolean saving) 
+
+void zclearsymbol (halfword p , boolean saving) 
 {
   halfword q;
   q = eqtb[p].v.RH;
@@ -6635,8 +6629,8 @@ zclearsymbol (halfword p , boolean saving)
   }
   eqtb[p] = eqtb[9769];
 }
-void 
-zsavevariable (halfword q) 
+
+void zsavevariable (halfword q) 
 {
   halfword p;
   if (save_ptr != 0) 
@@ -6649,8 +6643,8 @@ zsavevariable (halfword q)
   }
   clearsymbol (q , (save_ptr != 0));
 }
-void 
-zsaveinternal (halfword q) 
+
+void zsaveinternal (halfword q) 
 {
   halfword p;
   if (save_ptr != 0) 
@@ -6662,8 +6656,8 @@ zsaveinternal (halfword q)
     save_ptr = p;
   }
 }
-void 
-unsave (void) 
+
+void unsave (void) 
 {
   halfword q;
   halfword p;
@@ -6718,8 +6712,8 @@ unsave (void)
   }
   save_ptr = p;
 }
-halfword 
-zcopyknot (halfword p) 
+
+halfword zcopyknot (halfword p) 
 {
   halfword Result; halfword q;
   unsigned char k;
@@ -6730,10 +6724,10 @@ zcopyknot (halfword p)
   Result = q;
   return Result;
 }
-halfword 
-zcopypath (halfword p) 
+
+halfword zcopypath (halfword p) 
 {
-  /* 10 */ halfword Result; halfword q, pp, qq;
+  halfword Result; halfword q, pp, qq;
   q = get_node (7);
   qq = q;
   pp = p;
@@ -6760,10 +6754,10 @@ zcopypath (halfword p)
   lab10:;
   return Result;
 }
-halfword 
-zhtapypoc (halfword p) 
+
+halfword zhtapypoc (halfword p) 
 {
-  /* 10 */ halfword Result; halfword q, pp, qq, rr;
+  halfword Result; halfword q, pp, qq, rr;
   q = get_node (7);
   qq = q;
   pp = p;
@@ -6792,8 +6786,8 @@ zhtapypoc (halfword p)
   lab10:;
   return Result;
 }
-fraction 
-curl_ratio (scaled gamma , scaled atension , scaled btension) 
+
+fraction curl_ratio (scaled gamma , scaled atension , scaled btension) 
 {
   fraction Result; fraction alpha, beta, num, denom, ff;
   alpha = makefraction (65536L , atension);
@@ -6820,8 +6814,8 @@ curl_ratio (scaled gamma , scaled atension , scaled btension)
   else Result = makefraction (num , denom);
   return Result;
 }
-void 
-set_controls (halfword p , halfword q , integer k) 
+
+void set_controls (halfword p , halfword q , integer k) 
 {
   fraction rr, ss;
   scaled lt, rt;
@@ -6863,10 +6857,10 @@ set_controls (halfword p , halfword q , integer k)
   mem[p].hhfield.b1 = 1;
   mem[q].hhfield.b0 = 1;
 }
-void 
-solve_choices (halfword p , halfword q , halfword n) 
+
+void solve_choices (halfword p , halfword q , halfword n) 
 {
-  /* 40 10 */ integer k;
+  integer k;
   halfword r, s, t;
   fraction aa, bb, cc, ff, acc;
   scaled dd, ee;
@@ -7115,10 +7109,10 @@ solve_choices (halfword p , halfword q , halfword n)
   }while (!(k == n));
   lab10:;
 }
-void 
-make_choices (halfword knots) 
+
+void make_choices (halfword knots) 
 {
-  /* 30 */ halfword h;
+  halfword h;
   halfword p, q;
   integer k, n;
   halfword s, t;
@@ -7274,12 +7268,12 @@ make_choices (halfword knots)
     arith_error = false;
   }
 }
-void 
-make_moves (scaled xx0 , scaled xx1 , scaled xx2 , scaled xx3 , scaled yy0 , 
+
+void make_moves (scaled xx0 , scaled xx1 , scaled xx2 , scaled xx3 , scaled yy0 , 
 scaled yy1 , scaled yy2 , scaled yy3 , small_number xicorr , small_number 
 etacorr) 
 {
-  /* 22 30 10 */ integer x1, x2, x3, m, r, y1, y2, y3, n, s, l;
+  integer x1, x2, x3, m, r, y1, y2, y3, n, s, l;
   integer q, t, u, x2a, x3a, y2a, y3a;
   if ((xx3 < xx0) || (yy3 < yy0)) 
   confusion(109);
@@ -7434,8 +7428,8 @@ etacorr)
   }
   lab10:;
 }
-void 
-smooth_moves (integer b , integer t) 
+
+void smooth_moves (integer b , integer t) 
 {
   integer k;
   integer a, aa, aaa;
@@ -7477,8 +7471,8 @@ smooth_moves (integer b , integer t)
     }while (!(k == t));
   }
 }
-void 
-init_edges (halfword h) 
+
+void init_edges (halfword h) 
 {
   mem[h].hhfield.lhfield = h;
   mem[h].hhfield.v.RH = h;
@@ -7492,8 +7486,8 @@ init_edges (halfword h)
   mem[h + 5].hhfield.v.RH = h;
   mem[h + 5].hhfield.lhfield = 0;
 }
-void 
-fix_offset (void) 
+
+void fix_offset (void) 
 {
   halfword p, q;
   integer delta;
@@ -7517,8 +7511,8 @@ fix_offset (void)
     q = mem[q].hhfield.v.RH;
   }
 }
-void 
-edge_prep (integer ml , integer mr , integer nl , integer nr) 
+
+void edge_prep (integer ml , integer mr , integer nl , integer nr) 
 {
   halfword delta;
   integer temp;
@@ -7580,8 +7574,8 @@ edge_prep (integer ml , integer mr , integer nl , integer nr)
     mem[cur_edges + 5].hhfield.lhfield = nr + 1;
   }
 }
-halfword 
-copy_edges (halfword h) 
+
+halfword copy_edges (halfword h) 
 {
   halfword Result; halfword p, r;
   halfword hh, pp, qq, rr, ss;
@@ -7630,8 +7624,8 @@ copy_edges (halfword h)
   Result = hh;
   return Result;
 }
-void 
-reflect_edges (void) 
+
+void reflect_edges (void) 
 {
   halfword p, q, r;
   p = mem[cur_edges + 1].hhfield.lhfield;
@@ -7651,8 +7645,8 @@ reflect_edges (void)
   }while (!(q == cur_edges));
   mem[cur_edges + 4].cint = 0;
 }
-void 
-x_reflect_edges (void) 
+
+void x_reflect_edges (void) 
 {
   halfword p, q, r, s;
   integer m;
@@ -7685,8 +7679,8 @@ x_reflect_edges (void)
   }while (!(p == cur_edges));
   mem[cur_edges + 4].cint = 0;
 }
-void 
-y_scale_edges (integer s) 
+
+void y_scale_edges (integer s) 
 {
   halfword p, q, pp, r, rr, ss;
   integer t;
@@ -7767,8 +7761,8 @@ y_scale_edges (integer s)
     mem[cur_edges + 4].cint = 0;
   }
 }
-void 
-x_scale_edges (integer s) 
+
+void x_scale_edges (integer s) 
 {
   halfword p, q;
   unsigned short t;
@@ -7835,10 +7829,10 @@ x_scale_edges (integer s)
     mem[cur_edges + 4].cint = 0;
   }
 }
-void 
-negate_edges (halfword h) 
+
+void negate_edges (halfword h) 
 {
-  /* 30 */ halfword p, q, r, s, t, u;
+  halfword p, q, r, s, t, u;
   p = mem[h].hhfield.v.RH;
   while (p != h) {
       
@@ -7885,10 +7879,10 @@ negate_edges (halfword h)
   }
   mem[h + 4].cint = 0;
 }
-void 
-sort_edges (halfword h) 
+
+void sort_edges (halfword h) 
 {
-  /* 30 */ halfword k;
+  halfword k;
   halfword p, q, r, s;
   r = mem[h + 1].hhfield.lhfield;
   mem[h + 1].hhfield.lhfield = 0;
@@ -7931,10 +7925,10 @@ sort_edges (halfword h)
     done:;
   }
 }
-void 
-cull_edges (integer wlo , integer whi , integer wout , integer win) 
+
+void cull_edges (integer wlo , integer whi , integer wout , integer win) 
 {
-  /* 30 */ halfword p, q, r, s;
+  halfword p, q, r, s;
   integer w;
   integer d;
   integer m;
@@ -8061,10 +8055,10 @@ cull_edges (integer wlo , integer whi , integer wout , integer win)
   }
   mem[cur_edges + 4].cint = 0;
 }
-void 
-xy_swap_edges (void) 
+
+void xy_swap_edges (void) 
 {
-  /* 30 */ integer mmagic, nmagic;
+  integer mmagic, nmagic;
   halfword p, q, r, s;
   integer mspread;
   integer j, jj;
@@ -8216,10 +8210,10 @@ xy_swap_edges (void)
     mem[cur_edges + 4].cint = 0;
   }
 }
-void 
-merge_edges (halfword h) 
+
+void merge_edges (halfword h) 
 {
-  /* 30 */ halfword p, q, r, pp, qq, rr;
+  halfword p, q, r, pp, qq, rr;
   integer n;
   halfword k;
   integer delta;
@@ -8313,8 +8307,8 @@ merge_edges (halfword h)
     }while (!(pp == h));
   }
 }
-integer 
-total_weight (halfword h) 
+
+integer total_weight (halfword h) 
 {
   integer Result; halfword p, q;
   integer n;
@@ -8342,8 +8336,8 @@ total_weight (halfword h)
   Result = n;
   return Result;
 }
-void 
-begin_edge_tracing (void) 
+
+void begin_edge_tracing (void) 
 {
   print_diagnostic(541 , 261 , true);
   print(542);
@@ -8351,8 +8345,8 @@ begin_edge_tracing (void)
   print_char(41);
   trace_x = -4096;
 }
-void 
-trace_a_corner (void) 
+
+void trace_a_corner (void) 
 {
   if (file_offset > maxprintline - 13) 
   print_nl(261);
@@ -8363,8 +8357,8 @@ trace_a_corner (void)
   print_char(41);
   trace_y = trace_yy;
 }
-void 
-end_edge_tracing (void) 
+
+void end_edge_tracing (void) 
 {
   if (trace_x == -4096) 
   print_nl(543);
@@ -8375,8 +8369,8 @@ end_edge_tracing (void)
   }
   end_diagnostic (true);
 }
-void 
-trace_new_edge (halfword r , integer n) 
+
+void trace_new_edge (halfword r , integer n) 
 {
   integer d;
   schar w;
@@ -8417,10 +8411,10 @@ trace_new_edge (halfword r , integer n)
   }
   trace_yy = n1;
 }
-void 
-line_edges (scaled x0 , scaled y0 , scaled x1 , scaled y1) 
+
+void line_edges (scaled x0 , scaled y0 , scaled x1 , scaled y1) 
 {
-  /* 30 31 */ integer m0, n0, m1, n1;
+  integer m0, n0, m1, n1;
   scaled delx, dely;
   scaled yt;
   scaled tx;
@@ -8524,10 +8518,10 @@ line_edges (scaled x0 , scaled y0 , scaled x1 , scaled y1)
     mem[cur_edges + 5].hhfield.lhfield = n + 4096;
   }
 }
-void 
-move_to_edges (integer m0 , integer n0 , integer m1 , integer n1) 
+
+void move_to_edges (integer m0 , integer n0 , integer m1 , integer n1) 
 {
-  /* 60 61 62 63 30 */ integer delta;
+  integer delta;
   integer k;
   halfword p, r;
   integer dx;
@@ -8805,8 +8799,8 @@ move_to_edges (integer m0 , integer n0 , integer m1 , integer n1)
   done: mem[cur_edges + 5].hhfield.lhfield = n + 4096;
   mem[cur_edges + 5].hhfield.v.RH = p;
 }
-void 
-zskew (scaled x , scaled y , small_number octant) 
+
+void zskew (scaled x , scaled y , small_number octant) 
 {
   switch (octant) 
   {case 1 : 
@@ -8859,8 +8853,7 @@ zskew (scaled x , scaled y , small_number octant)
     break;
   }
 }
-void 
-zabnegate (scaled x , scaled y , small_number octantbefore , small_number 
+void zabnegate (scaled x , scaled y , small_number octantbefore , small_number 
 octantafter) 
 {
   if (odd (octantbefore) == odd (octantafter)) 
@@ -8870,10 +8863,10 @@ octantafter)
   cur_y = y;
   else cur_y = - (integer) y;
 }
-fraction 
-zcrossingpoint (integer a , integer b , integer c) 
+
+fraction zcrossingpoint (integer a , integer b , integer c) 
 {
-  /* 10 */ fraction Result; integer d;
+  fraction Result; integer d;
   integer x, xx, x0, x1, x2;
   if (a < 0) 
   {
@@ -8955,10 +8948,10 @@ zcrossingpoint (integer a , integer b , integer c)
   lab10:;
   return Result;
 }
-void 
-zprintspec (str_number s) 
+
+void zprintspec (str_number s) 
 {
-  /* 45 30 */ halfword p, q;
+  halfword p, q;
   small_number octant;
   print_diagnostic(544 , s , true);
   p = cur_spec;
@@ -9000,8 +8993,8 @@ zprintspec (str_number s)
   done: print_nl(547);
   end_diagnostic (true);
 }
-void 
-zprintstrange (str_number s) 
+
+void zprintstrange (str_number s) 
 {
   halfword p;
   halfword f;
@@ -9099,8 +9092,8 @@ zprintstrange (str_number s)
     }
   }
 }
-void 
-zremovecubic (halfword p) 
+
+void zremovecubic (halfword p) 
 {
   halfword q;
   q = mem[p].hhfield.v.RH;
@@ -9112,8 +9105,8 @@ zremovecubic (halfword p)
   mem[p + 6].cint = mem[q + 6].cint;
   free_node (q , 7);
 }
-void 
-zsplitcubic (halfword p , fraction t , scaled xq , scaled yq) 
+
+void zsplitcubic (halfword p , fraction t , scaled xq , scaled yq) 
 {
   scaled v;
   halfword q, r;
@@ -9146,10 +9139,10 @@ zsplitcubic (halfword p , fraction t , scaled xq , scaled yq)
   mem[r + 2].cint = mem[r + 4].cint - takefraction (mem[r + 4]
   .cint - mem[r + 6].cint , t);
 }
-void 
-quadrantsubdivide (void) 
+
+void quadrantsubdivide (void) 
 {
-  /* 22 10 */ halfword p, q, r, s, pp, qq;
+  halfword p, q, r, s, pp, qq;
   scaled firstx, firsty;
   scaled del1, del2, del3, del, dmax;
   fraction t;
@@ -9438,8 +9431,8 @@ quadrantsubdivide (void)
   }while (!(p == cur_spec));
   lab10:;
 }
-void 
-octantsubdivide (void) 
+
+void octantsubdivide (void) 
 {
   halfword p, q, r, s;
   scaled del1, del2, del3, del, dmax;
@@ -9634,8 +9627,8 @@ octantsubdivide (void)
     p = q;
   }while (!(p == cur_spec));
 }
-void 
-makesafe (void) 
+
+void makesafe (void) 
 {
   integer k;
   boolean allsafe;
@@ -9667,8 +9660,8 @@ makesafe (void)
     while (k++ < for_end);}
   }while (!(allsafe));
 }
-void 
-zbeforeandafter (scaled b , scaled a , halfword p) 
+
+void zbeforeandafter (scaled b , scaled a , halfword p) 
 {
   if (cur_rounding_ptr == max_rounding_ptr) {
       
@@ -9681,8 +9674,8 @@ zbeforeandafter (scaled b , scaled a , halfword p)
   node_to_round[cur_rounding_ptr] = p;
   incr (cur_rounding_ptr);
 }
-scaled 
-zgoodval (scaled b , scaled o) 
+
+scaled zgoodval (scaled b , scaled o) 
 {
   scaled Result; scaled a;
   a = b + o;
@@ -9694,15 +9687,15 @@ zgoodval (scaled b , scaled o)
   else Result = a + cur_gran;
   return Result;
 }
-scaled 
-zcompromise (scaled u , scaled v) 
+
+scaled zcompromise (scaled u , scaled v) 
 {
   scaled Result; Result = half (goodval (u + u , - (integer) u - 
   v));
   return Result;
 }
-void 
-xyround (void) 
+
+void xyround (void) 
 {
   halfword p, q;
   scaled b, a;
@@ -9850,8 +9843,8 @@ xyround (void)
     }while (!(cur_rounding_ptr == 0));
   }
 }
-void 
-diaground (void) 
+
+void diaground (void) 
 {
   halfword p, q, pp;
   scaled b, a, bb, aa, d, c, dd, cc;
@@ -10087,8 +10080,8 @@ diaground (void)
     while (k++ < for_end);}
   }
 }
-void 
-znewboundary (halfword p , small_number octant) 
+
+void znewboundary (halfword p , small_number octant) 
 {
   halfword q, r;
   q = mem[p].hhfield.v.RH;
@@ -10108,10 +10101,10 @@ znewboundary (halfword p , small_number octant)
   mem[r + 1].cint = cur_x;
   mem[r + 2].cint = cur_y;
 }
-halfword 
-zmakespec (halfword h , scaled safetymargin , integer tracing) 
+
+halfword zmakespec (halfword h , scaled safetymargin , integer tracing) 
 {
-  /* 22 30 */ halfword Result; halfword p, q, r, s;
+  halfword Result; halfword p, q, r, s;
   integer k;
   integer chopped;
   small_number o1, o2;
@@ -10459,8 +10452,8 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
   Result = cur_spec;
   return Result;
 }
-void 
-zendround (scaled x , scaled y) 
+
+void zendround (scaled x , scaled y) 
 {
   y = y + 32768L - y_corr[octant];
   x = x + y - x_corr[octant];
@@ -10470,8 +10463,8 @@ zendround (scaled x , scaled y)
   d1 = 1;
   else d1 = 0;
 }
-void 
-zfillspec (halfword h) 
+
+void zfillspec (halfword h) 
 {
   halfword p, q, r, s;
   if (internal[10] > 0) 
@@ -10512,8 +10505,8 @@ zfillspec (halfword h)
   if (internal[10] > 0) 
   end_edge_tracing ();
 }
-void 
-zdupoffset (halfword w) 
+
+void zdupoffset (halfword w) 
 {
   halfword r;
   r = get_node (3);
@@ -10524,10 +10517,10 @@ zdupoffset (halfword w)
   mem[r].hhfield.lhfield = w;
   mem[w].hhfield.v.RH = r;
 }
-halfword 
-zmakepen (halfword h) 
+
+halfword zmakepen (halfword h) 
 {
-  /* 30 31 45 40 */ halfword Result; small_number o, oo, k;
+  halfword Result; small_number o, oo, k;
   halfword p;
   halfword q, r, s, w, hh;
   integer n;
@@ -10732,8 +10725,8 @@ zmakepen (halfword h)
   Result = p;
   return Result;
 }
-halfword 
-ztrivialknot (scaled x , scaled y) 
+
+halfword ztrivialknot (scaled x , scaled y) 
 {
   halfword Result; halfword p;
   p = get_node (7);
@@ -10748,8 +10741,8 @@ ztrivialknot (scaled x , scaled y)
   Result = p;
   return Result;
 }
-halfword 
-zmakepath (halfword penhead) 
+
+halfword zmakepath (halfword penhead) 
 {
   halfword Result; halfword p;
   unsigned char k;
@@ -10794,10 +10787,10 @@ zmakepath (halfword penhead)
   Result = mem[memtop - 1].hhfield.v.RH;
   return Result;
 }
-void 
-zfindoffset (scaled x , scaled y , halfword p) 
+
+void zfindoffset (scaled x , scaled y , halfword p) 
 {
-  /* 30 10 */ unsigned char octant;
+  unsigned char octant;
   schar s;
   integer n;
   halfword h, w, ww;
@@ -10856,8 +10849,8 @@ zfindoffset (scaled x , scaled y , halfword p)
   done: unskew (mem[w + 1].cint , mem[w + 2].cint , octant);
   lab10:;
 }
-void 
-zsplitforoffset (halfword p , fraction t) 
+
+void zsplitforoffset (halfword p , fraction t) 
 {
   halfword q;
   halfword r;
@@ -10873,12 +10866,12 @@ zsplitforoffset (halfword p , fraction t)
   else if (mem[r + 1].cint > mem[q + 1].cint) 
   mem[r + 1].cint = mem[q + 1].cint;
 }
-void 
-zfinoffsetprep (halfword p , halfword k , halfword w , integer x0 , integer 
+
+void zfinoffsetprep (halfword p , halfword k , halfword w , integer x0 , integer 
 x1 , integer x2 , integer y0 , integer y1 , integer y2 , boolean rising , 
 integer n) 
 {
-  /* 10 */ halfword ww;
+  halfword ww;
   scaled du, dv;
   integer t0, t1, t2;
   fraction t;
@@ -10948,10 +10941,10 @@ integer n)
   }
   lab10:;
 }
-void 
-zoffsetprep (halfword c , halfword h) 
+
+void zoffsetprep (halfword c , halfword h) 
 {
-  /* 30 45 */ halfword n;
+  halfword n;
   halfword p, q, r, lh, ww;
   halfword k;
   halfword w;
@@ -11134,8 +11127,8 @@ zoffsetprep (halfword c , halfword h)
     }while (!(p == q));
   }
 }
-void 
-zskewline_edges (halfword p , halfword w , halfword ww) 
+
+void zskewline_edges (halfword p , halfword w , halfword ww) 
 {
   scaled x0, y0, x1, y1;
   if ((mem[w + 1].cint != mem[ww + 1].cint) || (mem[w + 2]
@@ -11163,10 +11156,10 @@ zskewline_edges (halfword p , halfword w , halfword ww)
     line_edges (x0 , y0 , cur_x , cur_y);
   }
 }
-void 
-zdualmoves (halfword h , halfword p , halfword q) 
+
+void zdualmoves (halfword h , halfword p , halfword q) 
 {
-  /* 30 31 */ halfword r, s;
+  halfword r, s;
   integer m, n;
   integer mm0, mm1;
   integer k;
@@ -11306,10 +11299,10 @@ zdualmoves (halfword h , halfword p , halfword q)
     skewline_edges (q , w , mem[w].hhfield.lhfield);
   }
 }
-void 
-zfillenvelope (halfword spechead) 
+
+void zfillenvelope (halfword spechead) 
 {
-  /* 30 31 */ halfword p, q, r, s;
+  halfword p, q, r, s;
   halfword h;
   halfword www;
   integer m, n;
@@ -11517,10 +11510,10 @@ zfillenvelope (halfword spechead)
   end_edge_tracing ();
   toss_knot_list (spechead);
 }
-halfword 
-zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta) 
+
+halfword zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta) 
 {
-  /* 30 31 40 */ halfword Result; halfword p, q, r, s;
+  halfword Result; halfword p, q, r, s;
   halfword h;
   integer alpha, beta, gamma, delta;
   integer c, d;
@@ -11765,10 +11758,10 @@ zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta)
   Result = h;
   return Result;
 }
-scaled 
-zfinddirectiontime (scaled x , scaled y , halfword h) 
+
+scaled zfinddirectiontime (scaled x , scaled y , halfword h) 
 {
-  /* 10 40 45 30 */ scaled Result; scaled max;
+  scaled Result; scaled max;
   halfword p, q;
   scaled n;
   scaled tt;
@@ -11970,10 +11963,10 @@ zfinddirectiontime (scaled x , scaled y , halfword h)
   lab10:;
   return Result;
 }
-void 
-zcubicintersection (halfword p , halfword pp) 
+
+void zcubicintersection (halfword p , halfword pp) 
 {
-  /* 22 45 10 */ halfword q, qq;
+  halfword q, qq;
   time_to_go = 5000;
   max_t = 2;
   q = mem[p].hhfield.v.RH;
@@ -12782,10 +12775,10 @@ zcubicintersection (halfword p , halfword pp)
   }
   lab10:;
 }
-void 
-zpathintersection (halfword h , halfword hh) 
+
+void zpathintersection (halfword h , halfword hh) 
 {
-  /* 10 */ halfword p, pp;
+  halfword p, pp;
   integer n, nn;
   if (mem[h].hhfield.b1 == 0) 
   {
@@ -12836,8 +12829,8 @@ zpathintersection (halfword h , halfword hh)
   cur_tt = -65536L;
   lab10:;
 }
-void 
-zopenawindow (window_number k , scaled r0 , scaled c0 , scaled r1 , scaled c1 
+
+void zopenawindow (window_number k , scaled r0 , scaled c0 , scaled r1 , scaled c1 
 , scaled x , scaled y) 
 {
   integer m, n;
@@ -12888,10 +12881,10 @@ zopenawindow (window_number k , scaled r0 , scaled c0 , scaled r1 , scaled c1
     updatescreen ();
   }
 }
-void 
-zdispedges (window_number k) 
+
+void zdispedges (window_number k) 
 {
-  /* 30 40 */ halfword p, q;
+  halfword p, q;
   boolean alreadythere;
   integer r;
   screen_col n;
@@ -13014,8 +13007,8 @@ zdispedges (window_number k)
     }
   }
 }
-fraction 
-zmax_coef (halfword p) 
+
+fraction zmax_coef (halfword p) 
 {
   fraction Result; fraction x;
   x = 0;
@@ -13028,10 +13021,10 @@ zmax_coef (halfword p)
   Result = x;
   return Result;
 }
-halfword 
-zpplusq (halfword p , halfword q , small_number t) 
+
+halfword zpplusq (halfword p , halfword q , small_number t) 
 {
-  /* 30 */ halfword Result; halfword pp, qq;
+  halfword Result; halfword pp, qq;
   halfword r, s;
   integer threshold;
   integer v;
@@ -13095,8 +13088,8 @@ zpplusq (halfword p , halfword q , small_number t)
   Result = mem[memtop - 1].hhfield.v.RH;
   return Result;
 }
-halfword 
-zptimesv (halfword p , integer v , small_number t0 , small_number t1 , boolean 
+
+halfword zptimesv (halfword p , integer v , small_number t0 , small_number t1 , boolean 
 visscaled) 
 {
   halfword Result; halfword r, s;
@@ -13141,8 +13134,8 @@ visscaled)
   Result = mem[memtop - 1].hhfield.v.RH;
   return Result;
 }
-halfword 
-zpwithxbecomingq (halfword p , halfword x , halfword q , small_number t) 
+
+halfword zpwithxbecomingq (halfword p , halfword x , halfword q , small_number t) 
 {
   halfword Result; halfword r, s;
   integer v;
@@ -13167,8 +13160,8 @@ zpwithxbecomingq (halfword p , halfword x , halfword q , small_number t)
   }
   return Result;
 }
-void 
-znewdep (halfword q , halfword p) 
+
+void znewdep (halfword q , halfword p) 
 {
   halfword r;
   mem[q + 1].hhfield.v.RH = p;
@@ -13178,8 +13171,8 @@ znewdep (halfword q , halfword p)
   mem[r + 1].hhfield.lhfield = dep_final;
   mem[13].hhfield.v.RH = q;
 }
-halfword 
-zconstdependency (scaled v) 
+
+halfword zconstdependency (scaled v) 
 {
   halfword Result; dep_final = get_node (2);
   mem[dep_final + 1].cint = v;
@@ -13187,8 +13180,8 @@ zconstdependency (scaled v)
   Result = dep_final;
   return Result;
 }
-halfword 
-zsingledependency (halfword p) 
+
+halfword zsingledependency (halfword p) 
 {
   halfword Result; halfword q;
   integer m;
@@ -13205,10 +13198,10 @@ zsingledependency (halfword p)
   }
   return Result;
 }
-halfword 
-zcopydeplist (halfword p) 
+
+halfword zcopydeplist (halfword p) 
 {
-  /* 30 */ halfword Result; halfword q;
+  halfword Result; halfword q;
   q = get_node (2);
   dep_final = q;
   while (true) {
@@ -13224,8 +13217,8 @@ zcopydeplist (halfword p)
   done: Result = q;
   return Result;
 }
-void 
-zlineareq (halfword p , small_number t) 
+
+void zlineareq (halfword p , small_number t) 
 {
   halfword q, r, s;
   halfword x;
@@ -13369,8 +13362,8 @@ zlineareq (halfword p , small_number t)
   if (fix_needed) 
   fix_dependencies ();
 }
-halfword 
-znewringentry (halfword p) 
+
+halfword znewringentry (halfword p) 
 {
   halfword Result; halfword q;
   q = get_node (2);
@@ -13383,8 +13376,8 @@ znewringentry (halfword p)
   Result = q;
   return Result;
 }
-void 
-znonlineareq (integer v , halfword p , boolean flushp) 
+
+void znonlineareq (integer v , halfword p , boolean flushp) 
 {
   small_number t;
   halfword q, r;
@@ -13425,10 +13418,10 @@ znonlineareq (integer v , halfword p , boolean flushp)
     q = r;
   }while (!(q == p));
 }
-void 
-zringmerge (halfword p , halfword q) 
+
+void zringmerge (halfword p , halfword q) 
 {
-  /* 10 */ halfword r;
+  halfword r;
   r = mem[p + 1].cint;
   while (r != p) {
       
@@ -13469,8 +13462,8 @@ zringmerge (halfword p , halfword q)
   mem[q + 1].cint = r;
   lab10:;
 }
-void 
-zshow_cmd_mod (integer c , integer m) 
+
+void zshow_cmd_mod (integer c , integer m) 
 {
   begin_diagnostic ();
   print_nl(123);
@@ -13478,10 +13471,10 @@ zshow_cmd_mod (integer c , integer m)
   print_char(125);
   end_diagnostic (false);
 }
-void 
-showcontext (void) 
+
+void showcontext (void) 
 {
-  /* 30 */ unsigned char old_setting;
+  unsigned char old_setting;
   integer i;
   integer l;
   integer m;
@@ -13655,8 +13648,8 @@ showcontext (void)
   }
   done: cur_input = input_stack[input_ptr];
 }
-void 
-zbegintokenlist (halfword p , quarterword t) 
+
+void zbegintokenlist (halfword p , quarterword t) 
 {
   {
     if (input_ptr > max_in_stack) 
@@ -13673,10 +13666,10 @@ zbegintokenlist (halfword p , quarterword t)
   cur_input .limit_field = param_ptr;
   cur_input.loc_field = p;
 }
-void 
-endtokenlist (void) 
+
+void endtokenlist (void) 
 {
-  /* 30 */ halfword p;
+  halfword p;
   if (cur_input.index_field >= 19) {
       
     if (cur_input.index_field <= 20) 
@@ -13710,16 +13703,16 @@ endtokenlist (void)
     pause_for_instructions ();
   }
 }
-void 
-zencapsulate (halfword p) 
+
+void zencapsulate (halfword p) 
 {
   cur_exp = get_node (2);
   mem[cur_exp].hhfield.b0 = cur_type;
   mem[cur_exp].hhfield.b1 = 11;
   newdep (cur_exp , p);
 }
-void 
-zinstall (halfword r , halfword q) 
+
+void zinstall (halfword r , halfword q) 
 {
   halfword p;
   if (mem[q].hhfield.b0 == 16) 
@@ -13748,10 +13741,10 @@ zinstall (halfword r , halfword q)
     newdep (r , copydeplist (mem[q + 1].hhfield.v.RH));
   }
 }
-void 
-zmakeexpcopy (halfword p) 
+
+void zmakeexpcopy (halfword p) 
 {
-  /* 20 */ halfword q, r, t;
+  halfword q, r, t;
   lab20: cur_type = mem[p].hhfield.b0;
   switch (cur_type) 
   {case 1 : 
@@ -13844,8 +13837,8 @@ zmakeexpcopy (halfword p)
     break;
   }
 }
-halfword 
-cur_tok (void) 
+
+halfword cur_tok (void) 
 {
   halfword Result; halfword p;
   small_number savetype;
@@ -13893,8 +13886,8 @@ cur_tok (void)
   Result = p;
   return Result;
 }
-void 
-backinput (void) 
+
+void back_input (void) 
 {
   halfword p;
   p = cur_tok ();
@@ -13902,25 +13895,25 @@ backinput (void)
   endtokenlist ();
   begintokenlist (p , 19);
 }
-void 
-backerror (void) 
+
+void back_error (void) 
 {
   OK_to_interrupt = false;
-  backinput ();
+  back_input ();
   OK_to_interrupt = true;
   error ();
 }
-void 
-inserror (void) 
+
+void ins_error (void) 
 {
   OK_to_interrupt = false;
-  backinput ();
+  back_input ();
   cur_input.index_field = 20;
   OK_to_interrupt = true;
   error ();
 }
-void 
-beginfilereading (void) 
+
+void begin_file_reading (void) 
 {
   if (in_open == 15) 
   overflow (616 , 15);
@@ -13942,8 +13935,8 @@ beginfilereading (void)
   cur_input .start_field = first;
   cur_input .name_field = 0;
 }
-void 
-endfilereading (void) 
+
+void end_file_reading (void) 
 {
   first = cur_input .start_field;
   line = line_stack[cur_input.index_field];
@@ -13957,16 +13950,16 @@ endfilereading (void)
   }
   decr (in_open);
 }
-void 
-clearforerrorprompt (void) 
+
+void clear_for_error_prompt (void) 
 {
   while ((cur_input.index_field <= 15) && (cur_input .name_field == 0) && 
   (input_ptr > 0) && (cur_input.loc_field == cur_input .limit_field)) 
-  endfilereading ();
+  end_file_reading ();
   print_ln ();
 }
-boolean 
-checkoutervalidity (void) 
+
+boolean check_outer_validity (void) 
 {
   boolean Result; halfword p;
   if (scanner_status == 0) 
@@ -14072,7 +14065,7 @@ checkoutervalidity (void)
 	}
 	break;
       }
-      inserror ();
+      ins_error ();
     }
     else {
 	
@@ -14104,17 +14097,17 @@ checkoutervalidity (void)
       if (cur_sym == 0) 
       help_line[2] = 622;
       cur_sym = 9766;
-      inserror ();
+      ins_error ();
     }
     deletions_allowed = true;
     Result = false;
   }
   return Result;
 }
-void 
-getnext (void) 
+
+void get_next (void) 
 {
-  /* 20 10 40 25 85 86 87 30 */ integer k;
+  integer k;
   ASCII_code c;
   ASCII_code cclass;
   integer n, f;
@@ -14152,7 +14145,7 @@ getnext (void)
 	  if (!force_eof) 
 	  {
 	    if (inputln (input_file[cur_input.index_field], true)) 
-	    firmuptheline ();
+	    firmup_the_line ();
 	    else force_eof = true;
 	  }
 	  if (force_eof) 
@@ -14161,8 +14154,8 @@ getnext (void)
 	    decr (open_parens);
 	    fflush (stdout);
 	    force_eof = false;
-	    endfilereading ();
-	    if (checkoutervalidity ()) 
+	    end_file_reading ();
+	    if (check_outer_validity ()) 
 	    goto lab20;
 	    else goto lab20;
 	  }
@@ -14174,7 +14167,7 @@ getnext (void)
 	    
 	  if (input_ptr > 0) 
 	  {
-	    endfilereading ();
+	    end_file_reading ();
 	    goto lab20;
 	  }
 	  if (selector < 2) 
@@ -14445,14 +14438,14 @@ getnext (void)
   cur_mod = eqtb[cur_sym].v.RH;
   if (cur_cmd >= 86) {
       
-    if (checkoutervalidity ()) 
+    if (check_outer_validity ()) 
     cur_cmd = cur_cmd - 86;
     else goto lab20;
   }
   lab10:;
 }
-void 
-firmuptheline (void) 
+
+void firmup_the_line (void) 
 {
   integer k;
   cur_input .limit_field = last;
@@ -14484,11 +14477,10 @@ firmuptheline (void)
     }
   }
 }
-halfword 
-zscantoks (commandcode terminator , halfword substlist , halfword tailend , 
-small_number suffixcount) 
+
+halfword scan_toks (commandcode terminator , halfword substlist , halfword tailend , small_number suffixcount) 
 {
-  /* 30 40 */ halfword Result; halfword p;
+  halfword Result; halfword p;
   halfword q;
   integer balance;
   p = memtop - 2;
@@ -14496,7 +14488,7 @@ small_number suffixcount)
   mem[memtop - 2].hhfield.v.RH = 0;
   while (true) {
       
-    getnext ();
+    get_next ();
     if (cur_sym > 0) 
     {
       {
@@ -14527,7 +14519,7 @@ small_number suffixcount)
       else if (cur_cmd == 61) 
       {
 	if (cur_mod == 0) 
-	getnext ();
+	get_next ();
 	else if (cur_mod <= suffixcount) 
 	cur_sym = 9919 + cur_mod;
       }
@@ -14540,10 +14532,10 @@ small_number suffixcount)
   Result = mem[memtop - 2].hhfield.v.RH;
   return Result;
 }
-void 
-getsymbol (void) 
+
+void get_symbol (void) 
 {
-  /* 20 */ lab20: getnext ();
+  lab20: get_next ();
   if ((cur_sym == 0) || (cur_sym > 9757)) 
   {
     {
@@ -14582,18 +14574,18 @@ getsymbol (void)
       }
     }
     cur_sym = 9757;
-    inserror ();
+    ins_error ();
     goto lab20;
   }
 }
-void 
-getclearsymbol (void) 
+
+void get_clear_symbol (void) 
 {
-  getsymbol ();
+  get_symbol ();
   clearsymbol (cur_sym , false);
 }
-void 
-checkequals (void) 
+
+void check_equals (void) 
 {
   if (cur_cmd != 51) {
       
@@ -14608,45 +14600,45 @@ checkequals (void)
 	help_line[1] = 674;
 	help_line[0] = 675;
       }
-      backerror ();
+      back_error ();
     }
   }
 }
-void 
-makeopdef (void) 
+
+void make_op_def (void) 
 {
   commandcode m;
   halfword p, q, r;
   m = cur_mod;
-  getsymbol ();
+  get_symbol ();
   q = get_node (2);
   mem[q].hhfield.lhfield = cur_sym;
   mem[q + 1].cint = 9770;
-  getclearsymbol ();
+  get_clear_symbol ();
   warning_info = cur_sym;
-  getsymbol ();
+  get_symbol ();
   p = get_node (2);
   mem[p].hhfield.lhfield = cur_sym;
   mem[p + 1].cint = 9771;
   mem[p].hhfield.v.RH = q;
-  getnext ();
-  checkequals ();
+  get_next ();
+  check_equals ();
   scanner_status = 5;
   q = get_avail ();
   mem[q].hhfield.lhfield = 0;
   r = get_avail ();
   mem[q].hhfield.v.RH = r;
   mem[r].hhfield.lhfield = 0;
-  mem[r].hhfield.v.RH = scantoks (16 , p , 0 , 0);
+  mem[r].hhfield.v.RH = scan_toks (16 , p , 0 , 0);
   scanner_status = 0;
   eqtb[warning_info].lhfield = m;
   eqtb[warning_info].v.RH = q;
-  getxnext ();
+  get_x_next ();
 }
-void 
-zcheckdelimiter (halfword ldelim , halfword rdelim) 
+
+void check_delimiter (halfword ldelim , halfword rdelim) 
 {
-  /* 10 */ if (cur_cmd == 62) {
+  if (cur_cmd == 62) {
       
     if (cur_mod == ldelim) 
     goto lab10;
@@ -14659,7 +14651,7 @@ zcheckdelimiter (halfword ldelim , halfword rdelim)
       help_line[1] = 922;
       help_line[0] = 923;
     }
-    backerror ();
+    back_error ();
   }
   else {
       
@@ -14693,13 +14685,13 @@ zcheckdelimiter (halfword ldelim , halfword rdelim)
   }
   lab10:;
 }
-halfword 
-scandeclaredvariable (void) 
+
+halfword scan_declared_variable (void) 
 {
-  /* 30 */ halfword Result; halfword x;
+  halfword Result; halfword x;
   halfword h, t;
   halfword l;
-  getsymbol ();
+  get_symbol ();
   x = cur_sym;
   if (cur_cmd != 41) 
   clearsymbol (x , false);
@@ -14708,7 +14700,7 @@ scandeclaredvariable (void)
   t = h;
   while (true) {
       
-    getxnext ();
+    get_x_next ();
     if (cur_sym == 0) 
     goto done;
     if (cur_cmd != 41) {
@@ -14718,10 +14710,10 @@ scandeclaredvariable (void)
 	if (cur_cmd == 63) 
 	{
 	  l = cur_sym;
-	  getxnext ();
+	  get_x_next ();
 	  if (cur_cmd != 64) 
 	  {
-	    backinput ();
+	    back_input ();
 	    cur_sym = l;
 	    cur_cmd = 63;
 	    goto done;
@@ -14742,8 +14734,8 @@ scandeclaredvariable (void)
   Result = h;
   return Result;
 }
-void 
-scandef (void) 
+
+void scan_def (void) 
 {
   unsigned char m;
   unsigned char n;
@@ -14762,9 +14754,9 @@ scandef (void)
   r = 0;
   if (m == 1) 
   {
-    getclearsymbol ();
+    get_clear_symbol ();
     warning_info = cur_sym;
-    getnext ();
+    get_next ();
     scanner_status = 5;
     n = 0;
     eqtb[warning_info].lhfield = 10;
@@ -14772,7 +14764,7 @@ scandef (void)
   }
   else {
       
-    p = scandeclaredvariable ();
+    p = scan_declared_variable ();
     flushvariable (eqtb[mem[p].hhfield.lhfield].v.RH , mem[p]
     .hhfield.v.RH , true);
     warning_info = find_variable (p);
@@ -14812,7 +14804,7 @@ scandef (void)
       if (cur_mod == 3) 
       {
 	n = 3;
-	getnext ();
+	get_next ();
       }
     }
     mem[warning_info].hhfield.b0 = 20 + n;
@@ -14823,7 +14815,7 @@ scandef (void)
   do {
       ldelim = cur_sym;
     rdelim = cur_mod;
-    getnext ();
+    get_next ();
     if ((cur_cmd == 56) && (cur_mod >= 9770)) 
     base = cur_mod;
     else {
@@ -14850,14 +14842,14 @@ scandef (void)
 	help_ptr = 1;
 	help_line[0] = 686;
       }
-      backerror ();
+      back_error ();
       base = 9770;
     }
     do {
 	mem[q].hhfield.v.RH = get_avail ();
       q = mem[q].hhfield.v.RH;
       mem[q].hhfield.lhfield = base + k;
-      getsymbol ();
+      get_symbol ();
       p = get_node (2);
       mem[p + 1].cint = base + k;
       mem[p].hhfield.lhfield = cur_sym;
@@ -14866,10 +14858,10 @@ scandef (void)
       incr (k);
       mem[p].hhfield.v.RH = r;
       r = p;
-      getnext ();
+      get_next ();
     }while (!(cur_cmd != 82));
-    checkdelimiter (ldelim , rdelim);
-    getnext ();
+    check_delimiter (ldelim , rdelim);
+    get_next ();
   }while (!(cur_cmd != 31));
   if (cur_cmd == 56) 
   {
@@ -14891,11 +14883,11 @@ scandef (void)
     if (k == 150) 
     overflow (687 , 150);
     incr (k);
-    getsymbol ();
+    get_symbol ();
     mem[p].hhfield.lhfield = cur_sym;
     mem[p].hhfield.v.RH = r;
     r = p;
-    getnext ();
+    get_next ();
     if (c == 4) {
 	
       if (cur_cmd == 69) 
@@ -14905,20 +14897,20 @@ scandef (void)
 	if (k == 150) 
 	overflow (687 , 150);
 	mem[p + 1].cint = 9770 + k;
-	getsymbol ();
+	get_symbol ();
 	mem[p].hhfield.lhfield = cur_sym;
 	mem[p].hhfield.v.RH = r;
 	r = p;
-	getnext ();
+	get_next ();
       }
     }
   }
-  checkequals ();
+  check_equals ();
   p = get_avail ();
   mem[p].hhfield.lhfield = c;
   mem[q].hhfield.v.RH = p;
   if (m == 1) 
-  mem[p].hhfield.v.RH = scantoks (16 , r , 0 , n);
+  mem[p].hhfield.v.RH = scan_toks (16 , r , 0 , n);
   else {
       
     q = get_avail ();
@@ -14926,15 +14918,15 @@ scandef (void)
     mem[p].hhfield.v.RH = q;
     p = get_avail ();
     mem[p].hhfield.lhfield = eg_loc;
-    mem[q].hhfield.v.RH = scantoks (16 , r , p , n);
+    mem[q].hhfield.v.RH = scan_toks (16 , r , p , n);
   }
   if (warning_info == 21) 
   flush_token_list (mem[22].cint);
   scanner_status = 0;
-  getxnext ();
+  get_x_next ();
 }
-void 
-zprintmacroname (halfword a , halfword n) 
+
+void print_macro_name (halfword a , halfword n) 
 {
   halfword p, q;
   if (n != 0) 
@@ -14956,8 +14948,8 @@ zprintmacroname (halfword a , halfword n)
     }
   }
 }
-void 
-zprintarg (halfword q , integer n , halfword b) 
+
+void print_arg (halfword q , integer n , halfword b) 
 {
   if (mem[q].hhfield.v.RH == 1) 
   print_nl(498);
@@ -14970,10 +14962,10 @@ zprintarg (halfword q , integer n , halfword b)
   print_exp (q , 1);
   else show_token_list (q , 0 , 1000 , 0);
 }
-void 
-zscantextarg (halfword ldelim , halfword rdelim) 
+
+void scan_text_arg (halfword ldelim , halfword rdelim) 
 {
-  /* 30 */ integer balance;
+  integer balance;
   halfword p;
   warning_info = ldelim;
   scanner_status = 3;
@@ -14982,7 +14974,7 @@ zscantextarg (halfword ldelim , halfword rdelim)
   mem[memtop - 2].hhfield.v.RH = 0;
   while (true) {
       
-    getnext ();
+    get_next ();
     if (ldelim == 0) 
     {
       if (cur_cmd > 82) 
@@ -15019,10 +15011,10 @@ zscantextarg (halfword ldelim , halfword rdelim)
   cur_type = 20;
   scanner_status = 0;
 }
-void 
-zmacrocall (halfword defref , halfword arglist , halfword macroname) 
+
+void macro_call (halfword defref , halfword arglist , halfword macroname) 
 {
-  /* 40 */ halfword r;
+  halfword r;
   halfword p, q;
   integer n;
   halfword ldelim, rdelim;
@@ -15045,7 +15037,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
   {
     begin_diagnostic ();
     print_ln ();
-    printmacroname (arglist , macroname);
+    print_macro_name (arglist , macroname);
     if (n == 3) 
     print(665);
     show_macro (defref , 0 , 100000L);
@@ -15055,7 +15047,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
       p = arglist;
       do {
 	  q = mem[p].hhfield.lhfield;
-	printarg (q , n , 0);
+	print_arg (q , n , 0);
 	incr (n);
 	p = mem[p].hhfield.v.RH;
       }while (!(p == 0));
@@ -15067,7 +15059,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
       
     if (cur_cmd != 82) 
     {
-      getxnext ();
+      get_x_next ();
       if (cur_cmd != 31) 
       {
 	{
@@ -15088,7 +15080,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	    print(709);
 	  }
 	}
-	printmacroname (arglist , macroname);
+	print_macro_name (arglist , macroname);
 	{
 	  help_ptr = 3;
 	  help_line[2] = 710;
@@ -15105,7 +15097,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	  cur_exp = 0;
 	  cur_type = 16;
 	}
-	backerror ();
+	back_error ();
 	cur_cmd = 62;
 	goto found;
       }
@@ -15113,10 +15105,10 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
       rdelim = cur_mod;
     }
     if (mem[r].hhfield.lhfield >= 10070) 
-    scantextarg (ldelim , rdelim);
+    scan_text_arg (ldelim , rdelim);
     else {
 	
-      getxnext ();
+      get_x_next ();
       if (mem[r].hhfield.lhfield >= 9920) 
       scan_suffix ();
       else scan_expression ();
@@ -15134,7 +15126,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	    help_line[1] = 714;
 	    help_line[0] = 708;
 	  }
-	  backerror ();
+	  back_error ();
 	  cur_cmd = 82;
 	}
 	else {
@@ -15145,7 +15137,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	    help_line[1] = 715;
 	    help_line[0] = 708;
 	  }
-	  backerror ();
+	  back_error ();
 	}
       }
     }
@@ -15158,7 +15150,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
       if (internal[9] > 0) 
       {
 	begin_diagnostic ();
-	printarg (mem[p].hhfield.lhfield , n , mem[r].hhfield 
+	print_arg (mem[p].hhfield.lhfield , n , mem[r].hhfield 
 	.lhfield);
 	end_diagnostic (false);
       }
@@ -15190,7 +15182,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	print(704);
       }
     }
-    printmacroname (arglist , macroname);
+    print_macro_name (arglist , macroname);
     print_char(59);
     print_nl(705);
     slow_print(hash[rdelim].v.RH);
@@ -15207,11 +15199,11 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
   {
     if (mem[r].hhfield.lhfield < 7) 
     {
-      getxnext ();
+      get_x_next ();
       if (mem[r].hhfield.lhfield != 6) {
 	  
 	if ((cur_cmd == 51) || (cur_cmd == 77)) 
-	getxnext ();
+	get_x_next ();
       }
     }
     switch (mem[r].hhfield.lhfield) 
@@ -15235,7 +15227,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	if (internal[9] > 0) 
 	{
 	  begin_diagnostic ();
-	  printarg (mem[p].hhfield.lhfield , n , 0);
+	  print_arg (mem[p].hhfield.lhfield , n , 0);
 	  end_diagnostic (false);
 	}
 	if (arglist == 0) 
@@ -15247,14 +15239,14 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	{
 	  missing_err (479);
 	  print(716);
-	  printmacroname (arglist , macroname);
+	  print_macro_name (arglist , macroname);
 	  {
 	    help_ptr = 1;
 	    help_line[0] = 717;
 	  }
-	  backerror ();
+	  back_error ();
 	}
-	getxnext ();
+	get_x_next ();
 	scan_primary ();
       }
       break;
@@ -15266,7 +15258,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	    
 	  ldelim = cur_sym;
 	  rdelim = cur_mod;
-	  getxnext ();
+	  get_x_next ();
 	}
 	scan_suffix ();
 	if (ldelim != 0) 
@@ -15279,17 +15271,17 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	      help_line[1] = 715;
 	      help_line[0] = 708;
 	    }
-	    backerror ();
+	    back_error ();
 	  }
-	  getxnext ();
+	  get_x_next ();
 	}
       }
       break;
     case 7 : 
-      scantextarg (0 , 0);
+      scan_text_arg (0 , 0);
       break;
     }
-    backinput ();
+    back_input ();
     {
       p = get_avail ();
       if (cur_type == 20) 
@@ -15298,7 +15290,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
       if (internal[9] > 0) 
       {
 	begin_diagnostic ();
-	printarg (mem[p].hhfield.lhfield , n , mem[r].hhfield 
+	print_arg (mem[p].hhfield.lhfield , n , mem[r].hhfield 
 	.lhfield);
 	end_diagnostic (false);
       }
@@ -15332,8 +15324,8 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
     flush_list (arglist);
   }
 }
-void 
-expand (void) 
+
+void expand (void) 
 {
   halfword p;
   integer k;
@@ -15353,9 +15345,9 @@ expand (void)
       if (if_limit == 1) 
       {
 	missing_err (58);
-	backinput ();
+	back_input ();
 	cur_sym = 9762;
-	inserror ();
+	ins_error ();
       }
       else {
 	  
@@ -15387,7 +15379,7 @@ expand (void)
     }
     else {
 	
-      while (cur_mod != 2) passtext ();
+      while (cur_mod != 2) pass_text ();
       {
 	p = cond_ptr;
 	if_line = mem[p + 1].cint;
@@ -15431,7 +15423,7 @@ expand (void)
       }
       error ();
     }
-    else beginiteration ();
+    else begin_iteration ();
     break;
   case 5 : 
     {
@@ -15464,7 +15456,7 @@ expand (void)
 	}
 	error ();
       }
-      else resumeiteration ();
+      else resume_iteration ();
     }
     break;
   case 6 : 
@@ -15500,14 +15492,14 @@ expand (void)
 	  }
 	  if (cur_cmd == 83) 
 	  error ();
-	  else backerror ();
+	  else back_error ();
 	}
 	else {
 	    
 	  p = 0;
 	  do {
 	      if ((cur_input.index_field <= 15)) 
-	    endfilereading ();
+	    end_file_reading ();
 	    else {
 		
 	      if (cur_input.index_field <= 17) 
@@ -15528,7 +15520,7 @@ expand (void)
 	  help_line[1] = 697;
 	  help_line[0] = 698;
 	}
-	backerror ();
+	back_error ();
       }
     }
     break;
@@ -15537,18 +15529,18 @@ expand (void)
     break;
   case 9 : 
     {
-      getnext ();
+      get_next ();
       p = cur_tok ();
-      getnext ();
+      get_next ();
       if (cur_cmd < 11) 
       expand ();
-      else backinput ();
+      else back_input ();
       begintokenlist (p , 19);
     }
     break;
   case 8 : 
     {
-      getxnext ();
+      get_x_next ();
       scan_primary ();
       if (cur_type != 4) 
       {
@@ -15562,10 +15554,10 @@ expand (void)
       }
       else {
 	  
-	backinput ();
+	back_input ();
 	if ((str_start[cur_exp + 1] - str_start[cur_exp]) > 0) 
 	{
-	  beginfilereading ();
+	  begin_file_reading ();
 	  cur_input .name_field = 2;
 	  k = first + (str_start[cur_exp + 1] - str_start[cur_exp]);
 	  if (k >= max_buf_stack) 
@@ -15594,29 +15586,29 @@ expand (void)
     }
     break;
   case 10 : 
-    macrocall (cur_mod , 0 , cur_sym);
+    macro_call (cur_mod , 0 , cur_sym);
     break;
   }
 }
-void 
-getxnext (void) 
+
+void get_x_next (void) 
 {
   halfword saveexp;
-  getnext ();
+  get_next ();
   if (cur_cmd < 11) 
   {
     saveexp = stash_cur_exp ();
     do {
 	if (cur_cmd == 10) 
-      macrocall (cur_mod , 0 , cur_sym);
+      macro_call (cur_mod , 0 , cur_sym);
       else expand ();
-      getnext ();
+      get_next ();
     }while (!(cur_cmd >= 11));
     unstash_cur_exp (saveexp);
   }
 }
-void 
-zstackargument (halfword p) 
+
+void stack_argument (halfword p) 
 {
   if (param_ptr == max_param_stack) 
   {
@@ -15627,16 +15619,16 @@ zstackargument (halfword p)
   param_stack[param_ptr] = p;
   incr (param_ptr);
 }
-void 
-passtext (void) 
+
+void pass_text (void) 
 {
-  /* 30 */ integer l;
+  integer l;
   scanner_status = 1;
   l = 0;
   warning_info = line;
   while (true) {
       
-    getnext ();
+    get_next ();
     if (cur_cmd <= 2) {
 	
       if (cur_cmd < 2) 
@@ -15661,10 +15653,10 @@ passtext (void)
   }
   done: scanner_status = 0;
 }
-void 
-zchangeif_limit (small_number l , halfword p) 
+
+void change_if_limit (small_number l , halfword p) 
 {
-  /* 10 */ halfword q;
+  halfword q;
   if (p == cond_ptr) 
   if_limit = l;
   else {
@@ -15684,8 +15676,8 @@ zchangeif_limit (small_number l , halfword p)
   }
   lab10:;
 }
-void 
-checkcolon (void) 
+
+void check_colon (void) 
 {
   if (cur_cmd != 81) 
   {
@@ -15695,13 +15687,13 @@ checkcolon (void)
       help_line[1] = 721;
       help_line[0] = 698;
     }
-    backerror ();
+    back_error ();
   }
 }
-void 
-conditional (void) 
+
+void conditional (void) 
 {
-  /* 10 30 21 40 */ halfword savecond_ptr;
+  halfword savecond_ptr;
   unsigned char newif_limit;
   halfword p;
   {
@@ -15726,15 +15718,15 @@ conditional (void)
     else print(723);
     end_diagnostic (false);
   }
-  found: checkcolon ();
+  found: check_colon ();
   if (cur_exp == 30) 
   {
-    changeif_limit (newif_limit , savecond_ptr);
+    change_if_limit (newif_limit , savecond_ptr);
     goto lab10;
   }
   while (true) {
       
-    passtext ();
+    pass_text ();
     if (cond_ptr == savecond_ptr) 
     goto done;
     else if (cur_mod == 2) 
@@ -15764,13 +15756,13 @@ conditional (void)
       
     cur_exp = 30;
     newif_limit = 2;
-    getxnext ();
+    get_x_next ();
     goto found;
   }
   lab10:;
 }
-void 
-bad_for (str_number s) 
+
+void bad_for (str_number s) 
 {
   disp_err (0 , 726);
   print(s);
@@ -15784,10 +15776,10 @@ bad_for (str_number s)
   }
   put_get_flush_error (0);
 }
-void 
-beginiteration (void) 
+
+void begin_iteration (void) 
 {
-  /* 22 30 40 */ halfword m;
+  halfword m;
   halfword n;
   halfword p, q, s, pp;
   m = cur_mod;
@@ -15797,14 +15789,14 @@ beginiteration (void)
   {
     mem[s + 1].hhfield.lhfield = 1;
     p = 0;
-    getxnext ();
+    get_x_next ();
     goto found;
   }
-  getsymbol ();
+  get_symbol ();
   p = get_node (2);
   mem[p].hhfield.lhfield = cur_sym;
   mem[p + 1].cint = m;
-  getxnext ();
+  get_x_next ();
   if ((cur_cmd != 51) && (cur_cmd != 77)) 
   {
     missing_err (61);
@@ -15814,13 +15806,13 @@ beginiteration (void)
       help_line[1] = 673;
       help_line[0] = 731;
     }
-    backerror ();
+    back_error ();
   }
   mem[s + 1].hhfield.lhfield = 0;
   q = s + 1;
   mem[q].hhfield.v.RH = 0;
   do {
-      getxnext ();
+      get_x_next ();
     if (m != 9770) 
     scan_suffix ();
     else {
@@ -15839,7 +15831,7 @@ beginiteration (void)
 	  bad_for (737);
 	  pp = get_node (4);
 	  mem[pp + 1].cint = cur_exp;
-	  getxnext ();
+	  get_x_next ();
 	  scan_expression ();
 	  if (cur_type != 16) 
 	  bad_for (738);
@@ -15852,9 +15844,9 @@ beginiteration (void)
 	      help_line[1] = 739;
 	      help_line[0] = 740;
 	    }
-	    backerror ();
+	    back_error ();
 	  }
-	  getxnext ();
+	  get_x_next ();
 	  scan_expression ();
 	  if (cur_type != 16) 
 	  bad_for (741);
@@ -15881,22 +15873,22 @@ beginiteration (void)
       help_line[1] = 733;
       help_line[0] = 734;
     }
-    backerror ();
+    back_error ();
   }
   q = get_avail ();
   mem[q].hhfield.lhfield = 9758;
   scanner_status = 6;
   warning_info = n;
-  mem[s].hhfield.lhfield = scantoks (4 , p , q , 0);
+  mem[s].hhfield.lhfield = scan_toks (4 , p , q , 0);
   scanner_status = 0;
   mem[s].hhfield.v.RH = loop_ptr;
   loop_ptr = s;
-  resumeiteration ();
+  resume_iteration ();
 }
-void 
-resumeiteration (void) 
+
+void resume_iteration (void) 
 {
-  /* 45 10 */ halfword p, q;
+  halfword p, q;
   p = mem[loop_ptr + 1].hhfield.lhfield;
   if (p > 1) 
   {
@@ -15930,7 +15922,7 @@ resumeiteration (void)
     goto lab10;
   }
   begintokenlist (mem[loop_ptr].hhfield.lhfield , 17);
-  stackargument (q);
+  stack_argument (q);
   if (internal[7] > 65536L) 
   {
     begin_diagnostic ();
@@ -15945,8 +15937,8 @@ resumeiteration (void)
   not_found: stop_iteration ();
   lab10:;
 }
-void 
-stop_iteration (void) 
+
+void stop_iteration (void) 
 {
   halfword p, q;
   p = mem[loop_ptr + 1].hhfield.lhfield;
@@ -15984,15 +15976,15 @@ stop_iteration (void)
   flush_token_list (mem[p].hhfield.lhfield);
   free_node (p , 2);
 }
-void 
-begin_name (void) 
+
+void begin_name (void) 
 {
   area_delimiter = 0;
   ext_delimiter = 0;
   quotedfilename = false;
 }
-boolean 
-more_name (ASCII_code c) 
+
+boolean more_name (ASCII_code c) 
 {
   boolean Result; if (c == 34) 
   {
@@ -16027,8 +16019,8 @@ more_name (ASCII_code c)
   }
   return Result;
 }
-void 
-end_name (void) 
+
+void end_name (void) 
 {
   boolean mustquote;
   pool_pointer j, s, t;
@@ -16135,8 +16127,8 @@ end_name (void)
   cur_name = make_string ();
   else cur_ext = make_string ();
 }
-void 
-zpackfilename (str_number n , str_number a , str_number e) 
+
+void pack_file_name (str_number n , str_number a , str_number e) 
 {
   integer k;
   ASCII_code c;
@@ -16188,8 +16180,8 @@ zpackfilename (str_number n , str_number a , str_number e)
   else name_length = maxint;
   name_of_file[name_length + 1] = 0;
 }
-void 
-zpackbufferedname (small_number n , integer a , integer b) 
+
+void pack_buffered_name (small_number n , integer a , integer b) 
 {
   integer k;
   ASCII_code c;
@@ -16239,8 +16231,8 @@ zpackbufferedname (small_number n , integer a , integer b)
   else name_length = maxint;
   name_of_file[name_length + 1] = 0;
 }
-str_number 
-makenamestring (void) 
+
+str_number makenamestring (void) 
 {
   str_number Result; integer k;
   if ((pool_ptr + name_length > pool_size) || (str_ptr == max_strings)) 
@@ -16265,28 +16257,28 @@ makenamestring (void)
   end_name ();
   return Result;
 }
-str_number 
-zamakenamestring (alpha_file f) 
+
+str_number zamakenamestring (alpha_file f) 
 {
   str_number Result; Result = makenamestring ();
   return Result;
 }
-str_number 
-zbmakenamestring (byte_file f) 
+
+str_number zbmakenamestring (byte_file f) 
 {
   str_number Result; Result = makenamestring ();
   return Result;
 }
-str_number 
-zwmakenamestring (word_file f) 
+
+str_number zw_make_name_string (word_file f) 
 {
   str_number Result; Result = makenamestring ();
   return Result;
 }
-void 
-scan_file_name (void) 
+
+void scan_file_name (void) 
 {
-  /* 30 */ begin_name ();
+  begin_name ();
   while ((buffer[cur_input.loc_field] == 32) || (buffer[cur_input 
  .loc_field] == 9)) incr (cur_input.loc_field);
   while (true) {
@@ -16300,18 +16292,18 @@ scan_file_name (void)
   }
   done: end_name ();
 }
-void 
-zpackjob_name (str_number s) 
+
+void zpack_job_name (str_number s) 
 {
   cur_area = 261;
   cur_ext = s;
   cur_name = job_name;
-  packfilename (cur_name , cur_area , cur_ext);
+  pack_file_name (cur_name , cur_area , cur_ext);
 }
-void 
-zpromptfilename (str_number s , str_number e) 
+
+void zprompt_file_name (str_number s , str_number e) 
 {
-  /* 30 */ integer k;
+  integer k;
   str_number savedcur_name;
   if (interaction == 2) 
 ;
@@ -16386,10 +16378,10 @@ zpromptfilename (str_number s , str_number e)
   cur_ext = e;
   if ((str_start[cur_name + 1] - str_start[cur_name]) == 0) 
   cur_name = savedcur_name;
-  packfilename (cur_name , cur_area , cur_ext);
+  pack_file_name (cur_name , cur_area , cur_ext);
 }
-void 
-open_log_file (void) 
+
+void open_log_file (void) 
 {
   unsigned char old_setting;
   integer k;
@@ -16399,13 +16391,13 @@ open_log_file (void)
   old_setting = selector;
   if (job_name == 0) 
   job_name = getjob_name (750);
-  packjob_name (751);
+  pack_job_name (751);
   recorderchangefilename (stringcast (name_of_file + 1));
-  packjob_name (752);
+  pack_job_name (752);
   while (!aopenout (log_file)) {
       
     selector = 1;
-    promptfilename (754 , 752);
+    prompt_file_name (754 , 752);
   }
   texmflogname = amakenamestring (log_file);
   selector = 2;
@@ -16447,10 +16439,10 @@ open_log_file (void)
   print_ln ();
   selector = old_setting + 2;
 }
-void 
-start_input (void) 
+
+void start_input (void) 
 {
-  /* 30 */ while ((cur_input.index_field > 15) && (cur_input.loc_field == 
+  while ((cur_input.index_field > 15) && (cur_input.loc_field == 
   0)) endtokenlist ();
   if ((cur_input.index_field > 15)) 
   {
@@ -16488,20 +16480,20 @@ start_input (void)
     cur_ext = 261;
     cur_area = 261;
   }
-  packfilename (cur_name , cur_area , cur_ext);
+  pack_file_name (cur_name , cur_area , cur_ext);
   while (true) {
       
-    beginfilereading ();
+    begin_file_reading ();
     if (cur_ext == 747) 
     {
       cur_ext = 261;
-      packfilename (cur_name , cur_area , cur_ext);
+      pack_file_name (cur_name , cur_area , cur_ext);
     }
     if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file 
   [cur_input.index_field], kpsemfformat)) 
     goto done;
-    endfilereading ();
-    promptfilename (743 , 747);
+    end_file_reading ();
+    prompt_file_name (743 , 747);
   }
   done: cur_input .name_field = amakenamestring (input_file[cur_input 
  .index_field]);
@@ -16524,14 +16516,14 @@ start_input (void)
     line = 1;
     if (inputln (input_file[cur_input.index_field], false)) 
 ;
-    firmuptheline ();
+    firmup_the_line ();
     buffer[cur_input .limit_field] = 37;
     first = cur_input .limit_field + 1;
     cur_input.loc_field = cur_input .start_field;
   }
 }
-void 
-zbadexp (str_number s) 
+
+void zbadexp (str_number s) 
 {
   unsigned char saveflag;
   {
@@ -16562,18 +16554,18 @@ zbadexp (str_number s)
     help_line[1] = 773;
     help_line[0] = 774;
   }
-  backinput ();
+  back_input ();
   cur_sym = 0;
   cur_cmd = 42;
   cur_mod = 0;
-  inserror ();
+  ins_error ();
   saveflag = var_flag;
   var_flag = 0;
-  getxnext ();
+  get_x_next ();
   var_flag = saveflag;
 }
-void 
-zstashin (halfword p) 
+
+void zstashin (halfword p) 
 {
   halfword q;
   mem[p].hhfield.b0 = cur_type;
@@ -16606,16 +16598,16 @@ zstashin (halfword p)
   }
   cur_type = 1;
 }
-void 
-backexpr (void) 
+
+void backexpr (void) 
 {
   halfword p;
   p = stash_cur_exp ();
   mem[p].hhfield.v.RH = 0;
   begintokenlist (p , 19);
 }
-void 
-badsubscript (void) 
+
+void badsubscript (void) 
 {
   disp_err (0 , 786);
   {
@@ -16626,8 +16618,8 @@ badsubscript (void)
   }
   flush_error (0);
 }
-void 
-zobliterated (halfword q) 
+
+void zobliterated (halfword q) 
 {
   {
     if (interaction == 3) 
@@ -16658,8 +16650,8 @@ zobliterated (halfword q)
     help_line[0] = 796;
   }
 }
-void 
-zbinarymac (halfword p , halfword c , halfword n) 
+
+void zbinarymac (halfword p , halfword c , halfword n) 
 {
   halfword q, r;
   q = get_avail ();
@@ -16667,12 +16659,12 @@ zbinarymac (halfword p , halfword c , halfword n)
   mem[q].hhfield.v.RH = r;
   mem[q].hhfield.lhfield = p;
   mem[r].hhfield.lhfield = stash_cur_exp ();
-  macrocall (c , q , n);
+  macro_call (c , q , n);
 }
-void 
-materializepen (void) 
+
+void materializepen (void) 
 {
-  /* 50 */ scaled aminusb, aplusb, majoraxis, minoraxis;
+  scaled aminusb, aplusb, majoraxis, minoraxis;
   angle theta;
   halfword p;
   halfword q;
@@ -16738,8 +16730,8 @@ materializepen (void)
   common_ending: toss_knot_list (q);
   cur_type = 6;
 }
-void 
-known_pair (void) 
+
+void known_pair (void) 
 {
   halfword p;
   if (cur_type != 14) 
@@ -16797,8 +16789,8 @@ known_pair (void)
     flush_cur_exp (0);
   }
 }
-halfword 
-newknot (void) 
+
+halfword newknot (void) 
 {
   halfword Result; halfword q;
   q = get_node (7);
@@ -16811,15 +16803,15 @@ newknot (void)
   Result = q;
   return Result;
 }
-small_number 
-scan_direction (void) 
+
+small_number scan_direction (void) 
 {
   small_number Result; unsigned char t;
   scaled x;
-  getxnext ();
+  get_x_next ();
   if (cur_cmd == 60) 
   {
-    getxnext ();
+    get_x_next ();
     scan_expression ();
     if ((cur_type != 16) || (cur_exp < 0)) 
     {
@@ -16859,9 +16851,9 @@ scan_direction (void)
 	  help_line[1] = 823;
 	  help_line[0] = 824;
 	}
-	backerror ();
+	back_error ();
       }
-      getxnext ();
+      get_x_next ();
       scan_expression ();
       if (cur_type != 16) 
       {
@@ -16897,14 +16889,14 @@ scan_direction (void)
       help_line[1] = 820;
       help_line[0] = 698;
     }
-    backerror ();
+    back_error ();
   }
-  getxnext ();
+  get_x_next ();
   Result = t;
   return Result;
 }
-void 
-zdonullary (quarterword c) 
+
+void zdonullary (quarterword c) 
 {
   integer k;
   {
@@ -16967,7 +16959,7 @@ zdonullary (quarterword c)
     {
       if (interaction <= 1) 
       fatal_error (835);
-      beginfilereading ();
+      begin_file_reading ();
       cur_input .name_field = 1;
       {
 	;
@@ -16989,7 +16981,7 @@ zdonullary (quarterword c)
 	  incr (pool_ptr);
 	}
       while (k++ < for_end);}
-      endfilereading ();
+      end_file_reading ();
       cur_type = 4;
       cur_exp = make_string ();
     }
@@ -17000,10 +16992,10 @@ zdonullary (quarterword c)
     clear_arith ();
   }
 }
-boolean 
-znicepair (integer p , quarterword t) 
+
+boolean znicepair (integer p , quarterword t) 
 {
-  /* 10 */ boolean Result; if (t == 14) 
+  boolean Result; if (t == 14) 
   {
     p = mem[p + 1].cint;
     if (mem[p].hhfield.b0 == 16) {
@@ -17019,8 +17011,8 @@ znicepair (integer p , quarterword t)
   lab10:;
   return Result;
 }
-void 
-zprintknownorunknowntype (small_number t , integer v) 
+
+void zprintknownorunknowntype (small_number t , integer v) 
 {
   print_char(40);
   if (t < 17) {
@@ -17034,8 +17026,8 @@ zprintknownorunknowntype (small_number t , integer v)
   else print(837);
   print_char(41);
 }
-void 
-zbadunary (quarterword c) 
+
+void zbadunary (quarterword c) 
 {
   disp_err (0 , 838);
   print_op (c);
@@ -17048,11 +17040,10 @@ zbadunary (quarterword c)
   }
   put_get_error ();
 }
-void 
-znegatedeplist (halfword p) 
+
+void znegatedeplist (halfword p) 
 {
-  /* 10 */ while (true) {
-      
+  while (true) {    
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
     if (mem[p].hhfield.lhfield == 0) 
     goto lab10;
@@ -17060,14 +17051,14 @@ znegatedeplist (halfword p)
   }
   lab10:;
 }
-void 
-pair_to_path (void) 
+
+void pair_to_path (void) 
 {
   cur_exp = newknot ();
   cur_type = 9;
 }
-void 
-ztakepart (quarterword c) 
+
+void ztakepart (quarterword c) 
 {
   halfword p;
   p = mem[cur_exp + 1].cint;
@@ -17078,8 +17069,8 @@ ztakepart (quarterword c)
   makeexpcopy (p + 2 * (c - 53));
   recycle_value (17);
 }
-void 
-zstrtonum (quarterword c) 
+
+void zstrtonum (quarterword c) 
 {
   integer n;
   ASCII_code m;
@@ -17170,8 +17161,8 @@ zstrtonum (quarterword c)
   }
   flush_cur_exp (n * 65536L);
 }
-scaled 
-pathlength (void) 
+
+scaled pathlength (void) 
 {
   scaled Result; scaled n;
   halfword p;
@@ -17186,10 +17177,10 @@ pathlength (void)
   Result = n;
   return Result;
 }
-void 
-ztestknown (quarterword c) 
+
+void ztestknown (quarterword c) 
 {
-  /* 30 */ unsigned char b;
+  unsigned char b;
   halfword p, q;
   b = 31;
   switch (cur_type) 
@@ -17226,8 +17217,8 @@ ztestknown (quarterword c)
   else flush_cur_exp (61 - b);
   cur_type = 2;
 }
-void 
-zdounary (quarterword c) 
+
+void zdounary (quarterword c) 
 {
   halfword p, q;
   integer x;
@@ -17570,8 +17561,8 @@ zdounary (quarterword c)
     clear_arith ();
   }
 }
-void 
-bad_binary (halfword p , quarterword c) 
+
+void bad_binary (halfword p , quarterword c) 
 {
   disp_err (p , 261);
   disp_err (0 , 838);
@@ -17590,10 +17581,10 @@ bad_binary (halfword p , quarterword c)
   }
   put_get_error ();
 }
-halfword 
-ztarnished (halfword p) 
+
+halfword ztarnished (halfword p) 
 {
-  /* 10 */ halfword Result; halfword q;
+  halfword Result; halfword q;
   halfword r;
   q = mem[p + 1].cint;
   r = q + big_node_size[mem[p].hhfield.b0];
@@ -17609,8 +17600,8 @@ ztarnished (halfword p)
   lab10:;
   return Result;
 }
-void 
-zdepfinish (halfword v , halfword q , small_number t) 
+
+void zdepfinish (halfword v , halfword q , small_number t) 
 {
   halfword p;
   scaled vv;
@@ -17636,10 +17627,10 @@ zdepfinish (halfword v , halfword q , small_number t)
   if (fix_needed) 
   fix_dependencies ();
 }
-void 
-add_or_sub_tract (halfword p , halfword q , quarterword c) 
+
+void add_or_sub_tract (halfword p , halfword q , quarterword c) 
 {
-  /* 30 10 */ small_number s, t;
+  small_number s, t;
   halfword r;
   integer v;
   if (q == 0) 
@@ -17726,10 +17717,10 @@ add_or_sub_tract (halfword p , halfword q , quarterword c)
   }
   lab10:;
 }
-void 
-zdepmult (halfword p , integer v , boolean visscaled) 
+
+void zdepmult (halfword p , integer v , boolean visscaled) 
 {
-  /* 10 */ halfword q;
+  halfword q;
   small_number s, t;
   if (p == 0) 
   q = cur_exp;
@@ -17757,8 +17748,8 @@ zdepmult (halfword p , integer v , boolean visscaled)
   depfinish (q , p , t);
   lab10:;
 }
-void 
-zhardtimes (halfword p) 
+
+void zhardtimes (halfword p) 
 {
   halfword q;
   halfword r;
@@ -17781,10 +17772,10 @@ zhardtimes (halfword p)
   depmult (r , u , true);
   depmult (r + 2 , v , true);
 }
-void 
-zdepdiv (halfword p , scaled v) 
+
+void zdepdiv (halfword p , scaled v) 
 {
-  /* 10 */ halfword q;
+  halfword q;
   small_number s, t;
   if (p == 0) 
   q = cur_exp;
@@ -17807,10 +17798,10 @@ zdepdiv (halfword p , scaled v)
   depfinish (q , p , t);
   lab10:;
 }
-void 
-zsetuptrans (quarterword c) 
+
+void zsetuptrans (quarterword c) 
 {
-  /* 30 10 */ halfword p, q, r;
+  halfword p, q, r;
   if ((c != 88) || (cur_type != 13)) 
   {
     p = stash_cur_exp ();
@@ -17912,8 +17903,8 @@ zsetuptrans (quarterword c)
   flush_cur_exp (0);
   lab10:;
 }
-void 
-zsetupknowntrans (quarterword c) 
+
+void zsetupknowntrans (quarterword c) 
 {
   setuptrans (c);
   if (cur_type != 16) 
@@ -17934,8 +17925,8 @@ zsetupknowntrans (quarterword c)
     ty = 0;
   }
 }
-void 
-ztrans (halfword p , halfword q) 
+
+void ztrans (halfword p , halfword q) 
 {
   scaled v;
   v = takescaled (mem[p].cint , txx) + takescaled (mem[q].cint , 
@@ -17944,10 +17935,10 @@ ztrans (halfword p , halfword q)
   q].cint , tyy) + ty;
   mem[p].cint = v;
 }
-void 
-zpathtrans (halfword p , quarterword c) 
+
+void zpathtrans (halfword p , quarterword c) 
 {
-  /* 10 */ halfword q;
+  halfword q;
   setupknowntrans (c);
   unstash_cur_exp (p);
   if (cur_type == 6) 
@@ -17974,10 +17965,10 @@ zpathtrans (halfword p , quarterword c)
   }while (!(q == cur_exp));
   lab10:;
 }
-void 
-zedgestrans (halfword p , quarterword c) 
+
+void zedgestrans (halfword p , quarterword c) 
 {
-  /* 10 */ setupknowntrans (c);
+  setupknowntrans (c);
   unstash_cur_exp (p);
   cur_edges = cur_exp;
   if (mem[cur_edges].hhfield.v.RH == cur_edges) 
@@ -18125,8 +18116,8 @@ zedgestrans (halfword p , quarterword c)
   put_get_error ();
   lab10:;
 }
-void 
-zbilin1 (halfword p , scaled t , halfword q , scaled u , scaled delta) 
+
+void zbilin1 (halfword p , scaled t , halfword q , scaled u , scaled delta) 
 {
   halfword r;
   if (t != 65536L) 
@@ -18168,8 +18159,8 @@ zbilin1 (halfword p , scaled t , halfword q , scaled u , scaled delta)
   if (fix_needed) 
   fix_dependencies ();
 }
-void 
-zaddmultdep (halfword p , scaled v , halfword r) 
+
+void zaddmultdep (halfword p , scaled v , halfword r) 
 {
   if (mem[r].hhfield.b0 == 16) 
   mem[dep_final + 1].cint = mem[dep_final + 1].cint + takescaled (mem[
@@ -18182,8 +18173,8 @@ zaddmultdep (halfword p , scaled v , halfword r)
     fix_dependencies ();
   }
 }
-void 
-zbilin2 (halfword p , halfword t , scaled v , halfword u , halfword q) 
+
+void zbilin2 (halfword p , halfword t , scaled v , halfword u , halfword q) 
 {
   scaled vv;
   vv = mem[p + 1].cint;
@@ -18203,8 +18194,8 @@ zbilin2 (halfword p , halfword t , scaled v , halfword u , halfword q)
     mem[p + 1].cint = vv;
   }
 }
-void 
-zbilin3 (halfword p , scaled t , scaled v , scaled u , scaled delta) 
+
+void zbilin3 (halfword p , scaled t , scaled v , scaled u , scaled delta) 
 {
   if (t != 65536L) 
   delta = delta + takescaled (mem[p + 1].cint , t);
@@ -18213,10 +18204,10 @@ zbilin3 (halfword p , scaled t , scaled v , scaled u , scaled delta)
   mem[p + 1].cint = delta + takescaled (v , u);
   else mem[p + 1].cint = delta;
 }
-void 
-zbigtrans (halfword p , quarterword c) 
+
+void zbigtrans (halfword p , quarterword c) 
 {
-  /* 10 */ halfword q, r, pp, qq;
+  halfword q, r, pp, qq;
   small_number s;
   s = big_node_size[mem[p].hhfield.b0];
   q = mem[p + 1].cint;
@@ -18275,8 +18266,8 @@ zbigtrans (halfword p , quarterword c)
   }
   lab10:;
 }
-void 
-zcat (halfword p) 
+
+void zcat (halfword p) 
 {
   str_number a, b;
   pool_pointer k;
@@ -18317,8 +18308,8 @@ zcat (halfword p)
     }
   }
 }
-void 
-zchopstring (halfword p) 
+
+void zchopstring (halfword p) 
 {
   integer a, b;
   integer l;
@@ -18384,8 +18375,8 @@ zchopstring (halfword p)
     }
   }
 }
-void 
-zchoppath (halfword p) 
+
+void zchoppath (halfword p) 
 {
   halfword q;
   halfword pp, qq, rr, ss;
@@ -18493,8 +18484,8 @@ zchoppath (halfword p)
   }
   else cur_exp = pp;
 }
-void 
-zpairvalue (scaled x , scaled y) 
+
+void zpairvalue (scaled x , scaled y) 
 {
   halfword p;
   p = get_node (2);
@@ -18509,20 +18500,20 @@ zpairvalue (scaled x , scaled y)
   mem[p + 2].hhfield.b0 = 16;
   mem[p + 3].cint = y;
 }
-void 
-zsetupoffset (halfword p) 
+
+void zsetupoffset (halfword p) 
 {
   findoffset (mem[p + 1].cint , mem[p + 3].cint , cur_exp);
   pairvalue (cur_x , cur_y);
 }
-void 
-zsetupdirectiontime (halfword p) 
+
+void zsetupdirectiontime (halfword p) 
 {
   flush_cur_exp (finddirectiontime (mem[p + 1].cint , mem[p + 3]
   .cint , cur_exp));
 }
-void 
-zfindpoint (scaled v , quarterword c) 
+
+void zfindpoint (scaled v , quarterword c) 
 {
   halfword p;
   scaled n;
@@ -18577,10 +18568,10 @@ zfindpoint (scaled v , quarterword c)
     break;
   }
 }
-void 
-zdobinary (halfword p , quarterword c) 
+
+void zdobinary (halfword p , quarterword c) 
 {
-  /* 30 31 10 */ halfword q, r, rr;
+  halfword q, r, rr;
   halfword oldp, oldexp;
   integer v;
   {
@@ -18964,8 +18955,8 @@ zdobinary (halfword p , quarterword c)
     free_node (oldexp , 2);
   }
 }
-void 
-zfracmult (scaled n , scaled d) 
+
+void zfracmult (scaled n , scaled d) 
 {
   halfword p;
   halfword oldexp;
@@ -19015,8 +19006,8 @@ zfracmult (scaled n , scaled d)
     free_node (oldexp , 2);
   }
 }
-void 
-gf_swap (void) 
+
+void gf_swap (void) 
 {
   if (gf_ptr > (2147483647L - gf_offset)) 
   {
@@ -19036,8 +19027,8 @@ gf_swap (void)
     gf_limit = gf_buf_size;
   }
 }
-void 
-zgffour (integer x) 
+
+void zgffour (integer x) 
 {
   if (x >= 0) 
   {
@@ -19078,8 +19069,8 @@ zgffour (integer x)
     gf_swap ();
   }
 }
-void 
-zgftwo (integer x) 
+
+void zgftwo (integer x) 
 {
   {
     gf_buf[gf_ptr] = x / 256;
@@ -19094,8 +19085,8 @@ zgftwo (integer x)
     gf_swap ();
   }
 }
-void 
-zgfthree (integer x) 
+
+void zgfthree (integer x) 
 {
   {
     gf_buf[gf_ptr] = x / 65536L;
@@ -19116,8 +19107,8 @@ zgfthree (integer x)
     gf_swap ();
   }
 }
-void 
-zgf_paint (integer d) 
+
+void zgf_paint (integer d) 
 {
   if (d < 64) 
   {
@@ -19152,8 +19143,8 @@ zgf_paint (integer d)
     gftwo (d);
   }
 }
-void 
-zgfstring (str_number s , str_number t) 
+
+void zgfstring (str_number s , str_number t) 
 {
   pool_pointer k;
   integer l;
@@ -19208,10 +19199,10 @@ zgfstring (str_number s , str_number t)
     }
   while (k++ < for_end);}
 }
-void 
-zgfboc (integer minm , integer maxm , integer minn , integer maxn) 
+
+void zgfboc (integer minm , integer maxm , integer minn , integer maxn) 
 {
-  /* 10 */ if (minm < gf_min_m) 
+  if (minm < gf_min_m) 
   gf_min_m = minm;
   if (maxn > gf_max_n) 
   gf_max_n = maxn;
@@ -19299,8 +19290,8 @@ zgfboc (integer minm , integer maxm , integer minn , integer maxn)
   gffour (maxn);
   lab10:;
 }
-void 
-init_gf (void) 
+
+void init_gf (void) 
 {
   short k;
   integer t;
@@ -19326,8 +19317,8 @@ init_gf (void)
   {
     if (job_name == 0) 
     open_log_file ();
-    packjob_name (gf_ext);
-    while (!bopenout (gf_file)) promptfilename (756 , gf_ext);
+    pack_job_name (gf_ext);
+    while (!bopenout (gf_file)) prompt_file_name (756 , gf_ext);
     output_file_name = bmakenamestring (gf_file);
   }
   {
@@ -19366,10 +19357,10 @@ init_gf (void)
   pool_ptr = str_start[str_ptr];
   gf_prev_ptr = gf_offset + gf_ptr;
 }
-void 
-zshipout (eight_bits c) 
+
+void zshipout (eight_bits c) 
 {
-  /* 30 */ integer f;
+  integer f;
   integer prevm, m, mm;
   integer prevn, n;
   halfword p, q;
@@ -19560,10 +19551,10 @@ zshipout (eight_bits c)
   if (internal[11] > 0) 
   print_edges (1057 , true , xoff , yoff);
 }
-void 
-ztryeq (halfword l , halfword r) 
+
+void ztryeq (halfword l , halfword r) 
 {
-  /* 30 31 */ halfword p;
+  halfword p;
   unsigned char t;
   halfword q;
   halfword pp;
@@ -19733,10 +19724,10 @@ ztryeq (halfword l , halfword r)
     }
   }
 }
-void 
-zmakeeq (halfword lhs) 
+
+void zmakeeq (halfword lhs) 
 {
-  /* 20 30 45 */ small_number t;
+  small_number t;
   integer v;
   halfword p, q;
   lab20: t = mem[lhs].hhfield.b0;
@@ -19922,13 +19913,13 @@ zmakeeq (halfword lhs)
   recycle_value (lhs);
   free_node (lhs , 2);
 }
-void 
-doequation (void) 
+
+void doequation (void) 
 {
   halfword lhs;
   halfword p;
   lhs = stash_cur_exp ();
-  getxnext ();
+  get_x_next ();
   var_flag = 77;
   scan_expression ();
   if (cur_cmd == 51) 
@@ -19956,8 +19947,8 @@ doequation (void)
   }
   makeeq (lhs);
 }
-void 
-doassignment (void) 
+
+void doassignment (void) 
 {
   halfword lhs;
   halfword p;
@@ -19977,7 +19968,7 @@ doassignment (void)
       
     lhs = cur_exp;
     cur_type = 1;
-    getxnext ();
+    get_x_next ();
     var_flag = 77;
     scan_expression ();
     if (cur_cmd == 51) 
@@ -20037,8 +20028,8 @@ doassignment (void)
     flush_node_list (lhs);
   }
 }
-void 
-dotypedeclaration (void) 
+
+void dotypedeclaration (void) 
 {
   small_number t;
   halfword p;
@@ -20047,7 +20038,7 @@ dotypedeclaration (void)
   t = cur_mod;
   else t = cur_mod + 1;
   do {
-      p = scandeclaredvariable ();
+      p = scan_declared_variable ();
     flushvariable (eqtb[mem[p].hhfield.lhfield].v.RH , mem[p]
     .hhfield.v.RH , false);
     q = find_variable (p);
@@ -20117,7 +20108,7 @@ dotypedeclaration (void)
       put_get_error ();
       scanner_status = 2;
       do {
-	  getnext ();
+	  get_next ();
 	if (cur_cmd == 39) 
 	{
 	  if (str_ref[cur_mod]< 127) {
@@ -20132,10 +20123,10 @@ dotypedeclaration (void)
     }
   }while (!(cur_cmd > 82));
 }
-void 
-dorandomseed (void) 
+
+void dorandomseed (void) 
 {
-  getxnext ();
+  get_x_next ();
   if (cur_cmd != 77) 
   {
     missing_err (461);
@@ -20143,9 +20134,9 @@ dorandomseed (void)
       help_ptr = 1;
       help_line[0] = 914;
     }
-    backerror ();
+    back_error ();
   }
-  getxnext ();
+  get_x_next ();
   scan_expression ();
   if (cur_type != 16) 
   {
@@ -20172,14 +20163,14 @@ dorandomseed (void)
     }
   }
 }
-void 
-doprotection (void) 
+
+void doprotection (void) 
 {
   unsigned char m;
   halfword t;
   m = cur_mod;
   do {
-      getsymbol ();
+      get_symbol ();
     t = eqtb[cur_sym].lhfield;
     if (m == 0) 
     {
@@ -20188,27 +20179,27 @@ doprotection (void)
     }
     else if (t < 86) 
     eqtb[cur_sym].lhfield = t + 86;
-    getxnext ();
+    get_x_next ();
   }while (!(cur_cmd != 82));
 }
-void 
-defdelims (void) 
+
+void defdelims (void) 
 {
   halfword ldelim, rdelim;
-  getclearsymbol ();
+  get_clear_symbol ();
   ldelim = cur_sym;
-  getclearsymbol ();
+  get_clear_symbol ();
   rdelim = cur_sym;
   eqtb[ldelim].lhfield = 31;
   eqtb[ldelim].v.RH = rdelim;
   eqtb[rdelim].lhfield = 62;
   eqtb[rdelim].v.RH = ldelim;
-  getxnext ();
+  get_x_next ();
 }
-void 
-dointerim (void) 
+
+void dointerim (void) 
 {
-  getxnext ();
+  get_x_next ();
   if (cur_cmd != 40) 
   {
     {
@@ -20237,22 +20228,22 @@ dointerim (void)
       help_ptr = 1;
       help_line[0] = 931;
     }
-    backerror ();
+    back_error ();
   }
   else {
       
     saveinternal (cur_mod);
-    backinput ();
+    back_input ();
   }
   dostatement ();
 }
-void 
-dolet (void) 
+
+void dolet (void) 
 {
   halfword l;
-  getsymbol ();
+  get_symbol ();
   l = cur_sym;
-  getxnext ();
+  get_x_next ();
   if (cur_cmd != 51) {
       
     if (cur_cmd != 77) 
@@ -20264,10 +20255,10 @@ dolet (void)
 	help_line[1] = 673;
 	help_line[0] = 933;
       }
-      backerror ();
+      back_error ();
     }
   }
-  getsymbol ();
+  get_symbol ();
   switch (cur_cmd) 
   {case 10 : 
   case 53 : 
@@ -20284,36 +20275,36 @@ dolet (void)
   if (cur_cmd == 41) 
   eqtb[l].v.RH = 0;
   else eqtb[l].v.RH = cur_mod;
-  getxnext ();
+  get_x_next ();
 }
-void 
-donewinternal (void) 
+
+void donewinternal (void) 
 {
   do {
       if (int_ptr == max_internal) 
     overflow (934 , max_internal);
-    getclearsymbol ();
+    get_clear_symbol ();
     incr (int_ptr);
     eqtb[cur_sym].lhfield = 40;
     eqtb[cur_sym].v.RH = int_ptr;
     int_name[int_ptr] = hash[cur_sym].v.RH;
     internal[int_ptr] = 0;
-    getxnext ();
+    get_x_next ();
   }while (!(cur_cmd != 82));
 }
-void 
-doshow (void) 
+
+void doshow (void) 
 {
   do {
-      getxnext ();
+      get_x_next ();
     scan_expression ();
     print_nl(765);
     print_exp (0 , 2);
     flush_cur_exp (0);
   }while (!(cur_cmd != 82));
 }
-void 
-disptoken (void) 
+
+void disptoken (void) 
 {
   print_nl(940);
   if (cur_sym == 0) 
@@ -20354,17 +20345,17 @@ disptoken (void)
     }
   }
 }
-void 
-do_show_token (void) 
+
+void do_show_token (void) 
 {
   do {
-      getnext ();
+      get_next ();
     disptoken ();
-    getxnext ();
+    get_x_next ();
   }while (!(cur_cmd != 82));
 }
-void 
-do_show_stats (void) 
+
+void do_show_stats (void) 
 {
   print_nl(950);
 	;
@@ -20389,10 +20380,10 @@ do_show_stats (void)
   print_int (pool_size - max_pool_ptr);
   print(951);
   print_ln ();
-  getxnext ();
+  get_x_next ();
 }
-void 
-zdispvar (halfword p) 
+
+void zdispvar (halfword p) 
 {
   halfword q;
   integer n;
@@ -20430,11 +20421,11 @@ zdispvar (halfword p)
     print_exp (p , 0);
   }
 }
-void 
-do_show_var (void) 
+
+void do_show_var (void) 
 {
-  /* 30 */ do {
-      getnext ();
+  do {
+      get_next ();
     if (cur_sym > 0) {
 	
       if (cur_sym <= 9769) {
@@ -20450,11 +20441,11 @@ do_show_var (void)
       }
     }
     disptoken ();
-    done: getxnext ();
+    done: get_x_next ();
   }while (!(cur_cmd != 82));
 }
-void 
-do_show_dependencies (void) 
+
+void do_show_dependencies (void) 
 {
   halfword p;
   p = mem[13].hhfield.v.RH;
@@ -20474,10 +20465,10 @@ do_show_dependencies (void)
     while (mem[p].hhfield.lhfield != 0) p = mem[p].hhfield.v.RH;
     p = mem[p].hhfield.v.RH;
   }
-  getxnext ();
+  get_x_next ();
 }
-void 
-do_show_whatever (void) 
+
+void do_show_whatever (void) 
 {
   if (interaction == 3) 
 ;
@@ -20533,14 +20524,14 @@ do_show_whatever (void)
     else put_get_error ();
   }
 }
-boolean 
-scan_with (void) 
+
+boolean scan_with (void) 
 {
   boolean Result; small_number t;
   boolean result;
   t = cur_mod;
   cur_type = 1;
-  getxnext ();
+  get_x_next ();
   scan_expression ();
   result = false;
   if (cur_type != t) 
@@ -20592,8 +20583,8 @@ scan_with (void)
   Result = result;
   return Result;
 }
-void 
-zfindedgesvar (halfword t) 
+
+void zfindedgesvar (halfword t) 
 {
   halfword p;
   p = find_variable (t);
@@ -20637,15 +20628,15 @@ zfindedgesvar (halfword t)
   else cur_edges = mem[p + 1].cint;
   flush_node_list (t);
 }
-void 
-do_add_to (void) 
+
+void do_add_to (void) 
 {
-  /* 30 45 */ halfword lhs, rhs;
+  halfword lhs, rhs;
   integer w;
   halfword p;
   halfword q;
   unsigned char addtotype;
-  getxnext ();
+  get_x_next ();
   var_flag = 68;
   scan_primary ();
   if (cur_type != 20) 
@@ -20665,7 +20656,7 @@ do_add_to (void)
     lhs = cur_exp;
     addtotype = cur_mod;
     cur_type = 1;
-    getxnext ();
+    get_x_next ();
     scan_expression ();
     if (addtotype == 2) 
     {
@@ -20845,8 +20836,8 @@ do_add_to (void)
     }
   }
 }
-scaled 
-ztfmcheck (small_number m) 
+
+scaled ztfmcheck (small_number m) 
 {
   scaled Result; if (abs (internal[m]) >= 134217728L) 
   {
@@ -20882,11 +20873,11 @@ ztfmcheck (small_number m)
   else Result = internal[m];
   return Result;
 }
-void 
-doshipout (void) 
+
+void doshipout (void) 
 {
-  /* 10 */ integer c;
-  getxnext ();
+  integer c;
+  get_x_next ();
   var_flag = 83;
   scan_expression ();
   if (cur_type != 20) {
@@ -20936,11 +20927,11 @@ doshipout (void)
   flush_cur_exp (0);
   lab10:;
 }
-void 
-dodisplay (void) 
+
+void dodisplay (void) 
 {
-  /* 45 50 10 */ halfword e;
-  getxnext ();
+  halfword e;
+  get_x_next ();
   var_flag = 73;
   scan_primary ();
   if (cur_type != 20) 
@@ -20959,7 +20950,7 @@ dodisplay (void)
       
     e = cur_exp;
     cur_type = 1;
-    getxnext ();
+    get_x_next ();
     scan_expression ();
     if (cur_type != 16) 
     goto common_ending;
@@ -20985,8 +20976,8 @@ dodisplay (void)
   }
   lab10:;
 }
-boolean 
-zgetpair (commandcode c) 
+
+boolean zgetpair (commandcode c) 
 {
   boolean Result; halfword p;
   boolean b;
@@ -20994,7 +20985,7 @@ zgetpair (commandcode c)
   Result = false;
   else {
       
-    getxnext ();
+    get_x_next ();
     scan_expression ();
     if (nicepair (cur_exp , cur_type)) 
     {
@@ -21009,12 +21000,12 @@ zgetpair (commandcode c)
   }
   return Result;
 }
-void 
-doopen_window (void) 
+
+void doopen_window (void) 
 {
-  /* 45 10 */ integer k;
+  integer k;
   scaled r0, c0, r1, c1;
-  getxnext ();
+  get_x_next ();
   scan_expression ();
   if (cur_type != 16) 
   goto not_found;
@@ -21062,14 +21053,14 @@ doopen_window (void)
   put_get_error ();
   lab10:;
 }
-void 
-docull (void) 
+
+void docull (void) 
 {
-  /* 45 10 */ halfword e;
+  halfword e;
   unsigned char keeping;
   integer w, win, wout;
   w = 1;
-  getxnext ();
+  get_x_next ();
   var_flag = 67;
   scan_primary ();
   if (cur_type != 20) 
@@ -21142,12 +21133,12 @@ docull (void)
   }
   lab10:;
 }
-void 
-domessage (void) 
+
+void domessage (void) 
 {
   unsigned char m;
   m = cur_mod;
-  getxnext ();
+  get_x_next ();
   scan_expression ();
   if (cur_type != 4) 
   {
@@ -21235,11 +21226,11 @@ domessage (void)
   }
   flush_cur_exp (0);
 }
-eight_bits 
-getcode (void) 
+
+eight_bits getcode (void) 
 {
-  /* 40 */ eight_bits Result; integer c;
-  getxnext ();
+  eight_bits Result; integer c;
+  get_x_next ();
   scan_expression ();
   if (cur_type == 16) 
   {
@@ -21269,8 +21260,8 @@ getcode (void)
   found: Result = c;
   return Result;
 }
-void 
-zsettag (halfword c , small_number t , halfword r) 
+
+void zsettag (halfword c , small_number t , halfword r) 
 {
   if (char_tag[c] == 0) 
   {
@@ -21332,10 +21323,10 @@ zsettag (halfword c , small_number t , halfword r)
     put_get_error ();
   }
 }
-void 
-dotfmcommand (void) 
+
+void dotfmcommand (void) 
 {
-  /* 22 30 */ short c, cc;
+  short c, cc;
   integer k;
   integer j;
   switch (cur_mod) 
@@ -21353,7 +21344,7 @@ dotfmcommand (void)
   case 1 : 
     {
       lk_started = false;
-      lab22: getxnext ();
+      lab22: get_x_next ();
       if ((cur_cmd == 78) && lk_started) 
       {
 	c = getcode ();
@@ -21405,7 +21396,7 @@ dotfmcommand (void)
       }
       else {
 	  
-	backinput ();
+	back_input ();
 	c = getcode ();
       }
       if ((cur_cmd == 81) || (cur_cmd == 80)) 
@@ -21475,7 +21466,7 @@ dotfmcommand (void)
 	}
 	else {
 	    
-	  getxnext ();
+	  get_x_next ();
 	  scan_expression ();
 	  if (cur_type != 16) 
 	  {
@@ -21525,7 +21516,7 @@ dotfmcommand (void)
 	  help_ptr = 1;
 	  help_line[0] = 1024;
 	}
-	backerror ();
+	back_error ();
 	lig_kern[nl].b1 = 0;
 	lig_kern[nl].b2 = 0;
 	lig_kern[nl].b3 = 0;
@@ -21554,7 +21545,7 @@ dotfmcommand (void)
 	  help_ptr = 1;
 	  help_line[0] = 1039;
 	}
-	backerror ();
+	back_error ();
       }
       exten[ne].b0 = getcode ();
       if (cur_cmd != 82) 
@@ -21564,7 +21555,7 @@ dotfmcommand (void)
 	  help_ptr = 1;
 	  help_line[0] = 1039;
 	}
-	backerror ();
+	back_error ();
       }
       exten[ne].b1 = getcode ();
       if (cur_cmd != 82) 
@@ -21574,7 +21565,7 @@ dotfmcommand (void)
 	  help_ptr = 1;
 	  help_line[0] = 1039;
 	}
-	backerror ();
+	back_error ();
       }
       exten[ne].b2 = getcode ();
       if (cur_cmd != 82) 
@@ -21584,7 +21575,7 @@ dotfmcommand (void)
 	  help_ptr = 1;
 	  help_line[0] = 1039;
 	}
-	backerror ();
+	back_error ();
       }
       exten[ne].b3 = getcode ();
       incr (ne);
@@ -21594,7 +21585,7 @@ dotfmcommand (void)
   case 4 : 
     {
       c = cur_mod;
-      getxnext ();
+      get_x_next ();
       scan_expression ();
       if ((cur_type != 16) || (cur_exp < 32768L)) 
       {
@@ -21616,7 +21607,7 @@ dotfmcommand (void)
 	    help_ptr = 1;
 	    help_line[0] = 1022;
 	  }
-	  backerror ();
+	  back_error ();
 	}
 	if (c == 3) 
 	do {
@@ -21633,7 +21624,7 @@ dotfmcommand (void)
 	    incr (np);
 	    param[np] = 0;
 	  }
-	  getxnext ();
+	  get_x_next ();
 	  scan_expression ();
 	  if (cur_type != 16) 
 	  {
@@ -21652,12 +21643,12 @@ dotfmcommand (void)
     break;
   }
 }
-void 
-dospecial (void) 
+
+void dospecial (void) 
 {
   small_number m;
   m = cur_mod;
-  getxnext ();
+  get_x_next ();
   scan_expression ();
   if (internal[34] >= 0) {
       
@@ -21690,11 +21681,11 @@ dospecial (void)
   }
   flush_cur_exp (0);
 }
-void 
-dostatement (void) 
+
+void dostatement (void) 
 {
   cur_type = 1;
-  getxnext ();
+  get_x_next ();
   if (cur_cmd > 43) 
   {
     if (cur_cmd < 83) 
@@ -21727,8 +21718,8 @@ dostatement (void)
 	help_line[1] = 873;
 	help_line[0] = 874;
       }
-      backerror ();
-      getxnext ();
+      back_error ();
+      get_x_next ();
     }
   }
   else if (cur_cmd > 30) 
@@ -21781,9 +21772,9 @@ dostatement (void)
       break;
     case 16 : 
       if (cur_mod > 2) 
-      makeopdef ();
+      make_op_def ();
       else if (cur_mod > 0) 
-      scandef ();
+      scan_def ();
       break;
     case 24 : 
       dorandomseed ();
@@ -21800,7 +21791,7 @@ dostatement (void)
 	else selector = 1;
 	if (log_opened) 
 	selector = selector + 2;
-	getxnext ();
+	get_x_next ();
       }
       break;
     case 21 : 
@@ -21811,9 +21802,9 @@ dostatement (void)
       break;
     case 12 : 
       do {
-	  getsymbol ();
+	  get_symbol ();
 	savevariable (cur_sym);
-	getxnext ();
+	get_x_next ();
       }while (!(cur_cmd != 82));
       break;
     case 13 : 
@@ -21845,9 +21836,9 @@ dostatement (void)
       break;
     case 26 : 
       {
-	getsymbol ();
+	get_symbol ();
 	start_sym = cur_sym;
-	getxnext ();
+	get_x_next ();
       }
       break;
     case 25 : 
@@ -21891,10 +21882,10 @@ dostatement (void)
       help_line[1] = 873;
       help_line[0] = 874;
     }
-    backerror ();
+    back_error ();
     scanner_status = 2;
     do {
-	getnext ();
+	get_next ();
       if (cur_cmd == 39) 
       {
 	if (str_ref[cur_mod]< 127) {
@@ -21909,8 +21900,8 @@ dostatement (void)
   }
   error_count = 0;
 }
-void 
-maincontrol (void) 
+
+void maincontrol (void) 
 {
   do {
       dostatement ();
@@ -21943,10 +21934,10 @@ maincontrol (void)
     }
   }while (!(cur_cmd == 85));
 }
-halfword 
-zsortin (scaled v) 
+
+halfword zsortin (scaled v) 
 {
-  /* 40 */ halfword Result; halfword p, q, r;
+  halfword Result; halfword p, q, r;
   p = memtop - 1;
   while (true) {
       
@@ -21965,8 +21956,8 @@ zsortin (scaled v)
   Result = mem[p].hhfield.v.RH;
   return Result;
 }
-integer 
-zmincover (scaled d) 
+
+integer zmincover (scaled d) 
 {
   integer Result; halfword p;
   scaled l;
@@ -21987,8 +21978,8 @@ zmincover (scaled d)
   Result = m;
   return Result;
 }
-scaled 
-zthresholdfn (integer m) 
+
+scaled zthresholdfn (integer m) 
 {
   scaled Result; scaled d;
   excess = mincover (0) - m;
@@ -22004,8 +21995,8 @@ zthresholdfn (integer m)
   }
   return Result;
 }
-integer 
-zskimp (integer m) 
+
+integer zskimp (integer m) 
 {
   integer Result; scaled d;
   halfword p, q, r;
@@ -22046,8 +22037,8 @@ zskimp (integer m)
   Result = m;
   return Result;
 }
-void 
-ztfmwarning (small_number m) 
+
+void ztfmwarning (small_number m) 
 {
   print_nl(1041);
   print(int_name[m]);
@@ -22055,8 +22046,8 @@ ztfmwarning (small_number m)
   print_scaled(perturbation);
   print(1043);
 }
-void 
-fixdesignsize (void) 
+
+void fixdesignsize (void) 
 {
   scaled d;
   d = internal[26];
@@ -22087,8 +22078,8 @@ fixdesignsize (void)
   if (max_tfm_dimen >= 134217728L) 
   max_tfm_dimen = 134217727L;
 }
-integer 
-zdimenout (scaled x) 
+
+integer zdimenout (scaled x) 
 {
   integer Result; if (abs (x) > max_tfm_dimen) 
   {
@@ -22101,10 +22092,10 @@ zdimenout (scaled x)
   Result = x;
   return Result;
 }
-void 
-fixchecksum (void) 
+
+void fixchecksum (void) 
 {
-  /* 10 */ eight_bits k;
+  eight_bits k;
   eight_bits lb1, lb2, lb3, b4;
   integer x;
   if (header_byte[1]< 0) {
@@ -22147,18 +22138,18 @@ fixchecksum (void)
   while (k++ < for_end);}
   lab10:;
 }
-void 
-tfm_qqqq (fourquarters x) 
+
+void tfm_qqqq (four_quarters x) 
 {
   putbyte (x.b0 , tfm_file);
   putbyte (x.b1 , tfm_file);
   putbyte (x .b2 , tfm_file);
   putbyte (x .b3 , tfm_file);
 }
-boolean 
-open_base_file (void) 
+
+boolean open_base_file (void) 
 {
-  /* 40 10 */ boolean Result; integer j;
+  boolean Result; integer j;
   j = cur_input.loc_field;
   if (buffer[cur_input.loc_field] == 38) 
   {
@@ -22166,7 +22157,7 @@ open_base_file (void)
     j = cur_input.loc_field;
     buffer[last] = 32;
     while (buffer[j]!= 32) incr (j);
-    packbufferedname (0 , cur_input.loc_field , j - 1);
+    pack_buffered_name (0 , cur_input.loc_field , j - 1);
     if (wopenin (base_file)) 
     goto found;
     Fputs (stdout ,  "Sorry, I can't find the base `");
@@ -22176,7 +22167,7 @@ open_base_file (void)
     fprintf (stdout , "%s\n",  "'.");
     fflush (stdout);
   }
-  packbufferedname (basedefaultlength - 5 , 1 , 0);
+  pack_buffered_name (basedefaultlength - 5 , 1 , 0);
   if (!wopenin (base_file)) 
   {
 ;
@@ -22191,10 +22182,10 @@ open_base_file (void)
   lab10:;
   return Result;
 }
-void 
-scan_primary (void) 
+
+void scan_primary (void) 
 {
-  /* 20 30 31 32 */ halfword p, q, r;
+  halfword p, q, r;
   quarterword c;
   unsigned char myvar_flag;
   halfword ldelim, rdelim;
@@ -22220,12 +22211,12 @@ scan_primary (void)
       
     if (OK_to_interrupt) 
     {
-      backinput ();
+      back_input ();
       {
 	if (interrupt != 0) 
 	pause_for_instructions ();
       }
-      getxnext ();
+      get_x_next ();
     }
   }
   switch (cur_cmd) 
@@ -22233,7 +22224,7 @@ scan_primary (void)
     {
       ldelim = cur_sym;
       rdelim = cur_mod;
-      getxnext ();
+      get_x_next ();
       scan_expression ();
       if ((cur_cmd == 82) && (cur_type >= 16)) 
       {
@@ -22243,7 +22234,7 @@ scan_primary (void)
 	init_big_node (p);
 	q = mem[p + 1].cint;
 	stashin (q);
-	getxnext ();
+	get_x_next ();
 	scan_expression ();
 	if (cur_type < 16) 
 	{
@@ -22258,11 +22249,11 @@ scan_primary (void)
 	  put_get_flush_error (0);
 	}
 	stashin (q + 2);
-	checkdelimiter (ldelim , rdelim);
+	check_delimiter (ldelim , rdelim);
 	cur_type = 14;
 	cur_exp = p;
       }
-      else checkdelimiter (ldelim , rdelim);
+      else check_delimiter (ldelim , rdelim);
     }
     break;
   case 32 : 
@@ -22306,7 +22297,7 @@ scan_primary (void)
 	  help_line[1] = 782;
 	  help_line[0] = 783;
 	}
-	backerror ();
+	back_error ();
 	cur_cmd = 84;
       }
       unsave ();
@@ -22324,7 +22315,7 @@ scan_primary (void)
     {
       cur_exp = cur_mod;
       cur_type = 16;
-      getxnext ();
+      get_x_next ();
       if (cur_cmd != 54) 
       {
 	num = 0;
@@ -22332,10 +22323,10 @@ scan_primary (void)
       }
       else {
 	  
-	getxnext ();
+	get_x_next ();
 	if (cur_cmd != 42) 
 	{
-	  backinput ();
+	  back_input ();
 	  cur_cmd = 54;
 	  cur_mod = 72;
 	  cur_sym = 9761;
@@ -22374,7 +22365,7 @@ scan_primary (void)
 	  if (arith_error) 
 	  clear_arith ();
 	}
-	getxnext ();
+	get_x_next ();
       }
       if (cur_cmd >= 30) {
 	  
@@ -22403,7 +22394,7 @@ scan_primary (void)
   case 43 : 
     {
       c = cur_mod;
-      getxnext ();
+      get_x_next ();
       scan_primary ();
       dounary (c);
       goto done;
@@ -22412,7 +22403,7 @@ scan_primary (void)
   case 37 : 
     {
       c = cur_mod;
-      getxnext ();
+      get_x_next ();
       scan_expression ();
       if (cur_cmd != 69) 
       {
@@ -22423,10 +22414,10 @@ scan_primary (void)
 	  help_ptr = 1;
 	  help_line[0] = 717;
 	}
-	backerror ();
+	back_error ();
       }
       p = stash_cur_exp ();
-      getxnext ();
+      get_x_next ();
       scan_primary ();
       dobinary (p , c);
       goto done;
@@ -22434,7 +22425,7 @@ scan_primary (void)
     break;
   case 35 : 
     {
-      getxnext ();
+      get_x_next ();
       scan_suffix ();
       old_setting = selector;
       selector = 5;
@@ -22451,7 +22442,7 @@ scan_primary (void)
       q = cur_mod;
       if (myvar_flag == 77) 
       {
-	getxnext ();
+	get_x_next ();
 	if (cur_cmd == 77) 
 	{
 	  cur_exp = get_avail ();
@@ -22459,7 +22450,7 @@ scan_primary (void)
 	  cur_type = 20;
 	  goto done;
 	}
-	backinput ();
+	back_input ();
       }
       cur_type = 16;
       cur_exp = internal[q];
@@ -22546,21 +22537,21 @@ scan_primary (void)
 	    .v.RH;
 	      mem[prehead].hhfield.v.RH = p;
 	      mem[p].hhfield.lhfield = t;
-	      macrocall (mem[q + 1].cint , prehead , 0);
-	      getxnext ();
+	      macro_call (mem[q + 1].cint , prehead , 0);
+	      get_x_next ();
 	      goto lab20;
 	    }
 	  }
 	}
-	getxnext ();
+	get_x_next ();
 	tail = t;
 	if (cur_cmd == 63) 
 	{
-	  getxnext ();
+	  get_x_next ();
 	  scan_expression ();
 	  if (cur_cmd != 64) 
 	  {
-	    backinput ();
+	    back_input ();
 	    backexpr ();
 	    cur_cmd = 63;
 	    cur_mod = 0;
@@ -22582,7 +22573,7 @@ scan_primary (void)
       }
       done1: if (posthead != 0) 
       {
-	backinput ();
+	back_input ();
 	p = get_avail ();
 	q = mem[posthead].hhfield.v.RH;
 	mem[prehead].hhfield.lhfield = mem[prehead].hhfield.v.RH;
@@ -22591,9 +22582,9 @@ scan_primary (void)
 	mem[posthead].hhfield.v.RH = p;
 	mem[p].hhfield.lhfield = mem[q].hhfield.v.RH;
 	mem[q].hhfield.v.RH = 0;
-	macrocall (macroref , prehead , 0);
+	macro_call (macroref , prehead , 0);
 	decr (mem[macroref].hhfield.lhfield);
-	getxnext ();
+	get_x_next ();
 	goto lab20;
       }
       q = mem[prehead].hhfield.v.RH;
@@ -22633,18 +22624,18 @@ scan_primary (void)
     }
     break;
   }
-  getxnext ();
+  get_x_next ();
   done: if (cur_cmd == 63) {
       
     if (cur_type >= 16) 
     {
       p = stash_cur_exp ();
-      getxnext ();
+      get_x_next ();
       scan_expression ();
       if (cur_cmd != 82) 
       {
 	{
-	  backinput ();
+	  back_input ();
 	  backexpr ();
 	  cur_cmd = 63;
 	  cur_mod = 0;
@@ -22655,7 +22646,7 @@ scan_primary (void)
       else {
 	  
 	q = stash_cur_exp ();
-	getxnext ();
+	get_x_next ();
 	scan_expression ();
 	if (cur_cmd != 64) 
 	{
@@ -22666,22 +22657,22 @@ scan_primary (void)
 	    help_line[1] = 802;
 	    help_line[0] = 698;
 	  }
-	  backerror ();
+	  back_error ();
 	}
 	r = stash_cur_exp ();
 	makeexpcopy (q);
 	dobinary (r , 70);
 	dobinary (p , 71);
 	dobinary (q , 69);
-	getxnext ();
+	get_x_next ();
       }
     }
   }
 }
-void 
-scan_suffix (void) 
+
+void scan_suffix (void) 
 {
-  /* 30 */ halfword h, t;
+  halfword h, t;
   halfword p;
   h = get_avail ();
   t = h;
@@ -22689,7 +22680,7 @@ scan_suffix (void)
       
     if (cur_cmd == 63) 
     {
-      getxnext ();
+      get_x_next ();
       scan_expression ();
       if (cur_type != 16) 
       badsubscript ();
@@ -22702,7 +22693,7 @@ scan_suffix (void)
 	  help_line[1] = 802;
 	  help_line[0] = 698;
 	}
-	backerror ();
+	back_error ();
       }
       cur_cmd = 42;
       cur_mod = cur_exp;
@@ -22717,7 +22708,7 @@ scan_suffix (void)
     else goto done;
     mem[t].hhfield.v.RH = p;
     t = p;
-    getxnext ();
+    get_x_next ();
   }
   done: cur_exp = mem[h].hhfield.v.RH;
   {
@@ -22730,10 +22721,10 @@ scan_suffix (void)
   }
   cur_type = 20;
 }
-void 
-scan_secondary (void) 
+
+void scan_secondary (void) 
 {
-  /* 20 22 */ halfword p;
+  halfword p;
   halfword c, d;
   halfword macname;
   lab20: if ((cur_cmd < 30) || (cur_cmd > 43)) 
@@ -22751,26 +22742,26 @@ scan_secondary (void)
 	macname = cur_sym;
 	incr (mem[c].hhfield.lhfield);
       }
-      getxnext ();
+      get_x_next ();
       scan_primary ();
       if (d != 53) 
       dobinary (p , c);
       else {
 	  
-	backinput ();
+	back_input ();
 	binarymac (p , c , macname);
 	decr (mem[c].hhfield.lhfield);
-	getxnext ();
+	get_x_next ();
 	goto lab20;
       }
       goto lab22;
     }
   }
 }
-void 
-scan_tertiary (void) 
+
+void scan_tertiary (void) 
 {
-  /* 20 22 */ halfword p;
+  halfword p;
   halfword c, d;
   halfword macname;
   lab20: if ((cur_cmd < 30) || (cur_cmd > 43)) 
@@ -22790,26 +22781,26 @@ scan_tertiary (void)
 	macname = cur_sym;
 	incr (mem[c].hhfield.lhfield);
       }
-      getxnext ();
+      get_x_next ();
       scan_secondary ();
       if (d != 44) 
       dobinary (p , c);
       else {
 	  
-	backinput ();
+	back_input ();
 	binarymac (p , c , macname);
 	decr (mem[c].hhfield.lhfield);
-	getxnext ();
+	get_x_next ();
 	goto lab20;
       }
       goto lab22;
     }
   }
 }
-void 
-scan_expression (void) 
+
+void scan_expression (void) 
 {
-  /* 20 30 22 25 26 10 */ halfword p, q, r, pp, qq;
+  halfword p, q, r, pp, qq;
   halfword c, d;
   unsigned char myvar_flag;
   halfword macname;
@@ -22874,13 +22865,13 @@ scan_expression (void)
 	  d = cur_cmd;
 	  if (d == 47) 
 	  {
-	    getxnext ();
+	    get_x_next ();
 	    if (cur_cmd == 58) 
 	    {
-	      getxnext ();
+	      get_x_next ();
 	      y = cur_cmd;
 	      if (cur_cmd == 59) 
-	      getxnext ();
+	      get_x_next ();
 	      scan_primary ();
 	      if ((cur_type != 16) || (cur_exp < 49152L)) 
 	      {
@@ -22896,10 +22887,10 @@ scan_expression (void)
 	      mem[q + 6].cint = cur_exp;
 	      if (cur_cmd == 52) 
 	      {
-		getxnext ();
+		get_x_next ();
 		y = cur_cmd;
 		if (cur_cmd == 59) 
-		getxnext ();
+		get_x_next ();
 		scan_primary ();
 		if ((cur_type != 16) || (cur_exp < 49152L)) 
 		{
@@ -22919,7 +22910,7 @@ scan_expression (void)
 	    {
 	      mem[q].hhfield.b1 = 1;
 	      t = 1;
-	      getxnext ();
+	      get_x_next ();
 	      scan_primary ();
 	      known_pair ();
 	      mem[q + 5].cint = cur_x;
@@ -22931,7 +22922,7 @@ scan_expression (void)
 	      }
 	      else {
 		  
-		getxnext ();
+		get_x_next ();
 		scan_primary ();
 		known_pair ();
 		x = cur_x;
@@ -22942,7 +22933,7 @@ scan_expression (void)
 		
 	      mem[q + 6].cint = 65536L;
 	      y = 65536L;
-	      backinput ();
+	      back_input ();
 	      goto done;
 	    }
 	    if (cur_cmd != 47) 
@@ -22952,13 +22943,13 @@ scan_expression (void)
 		help_ptr = 1;
 		help_line[0] = 825;
 	      }
-	      backerror ();
+	      back_error ();
 	    }
 	    done:;
 	  }
 	  else if (d != 48) 
 	  goto lab26;
-	  getxnext ();
+	  get_x_next ();
 	  if (cur_cmd == 46) 
 	  {
 	    t = scan_direction ();
@@ -22974,7 +22965,7 @@ scan_expression (void)
 	  if (cur_cmd == 36) 
 	  {
 	    cyclehit = true;
-	    getxnext ();
+	    get_x_next ();
 	    pp = p;
 	    qq = p;
 	    if (d == 48) {
@@ -23134,16 +23125,16 @@ scan_expression (void)
 	}
 	else {
 	    
-	  getxnext ();
+	  get_x_next ();
 	  scan_tertiary ();
 	  if (d != 49) 
 	  dobinary (p , c);
 	  else {
 	      
-	    backinput ();
+	    back_input ();
 	    binarymac (p , c , macname);
 	    decr (mem[c].hhfield.lhfield);
-	    getxnext ();
+	    get_x_next ();
 	    goto lab20;
 	  }
 	}
@@ -23153,10 +23144,10 @@ scan_expression (void)
   }
   lab10:;
 }
-void 
-get_boolean (void) 
+
+void get_boolean (void) 
 {
-  getxnext ();
+  get_x_next ();
   scan_expression ();
   if (cur_type != 2) 
   {
@@ -23170,20 +23161,20 @@ get_boolean (void)
     cur_type = 2;
   }
 }
-void 
-print_capsule (void) 
+
+void print_capsule (void) 
 {
   print_char(40);
   print_exp (g_pointer , 0);
   print_char(41);
 }
-void 
-token_recycle (void) 
+
+void token_recycle (void) 
 {
   recycle_value (g_pointer);
 }
-void 
-close_files_and_terminate (void) 
+
+void close_files_and_terminate (void) 
 {
   integer k;
   integer lh;
@@ -23280,8 +23271,8 @@ close_files_and_terminate (void)
       internal[33] = 0;
       if (job_name == 0) 
       open_log_file ();
-      packjob_name (1045);
-      while (!bopenout (tfm_file)) promptfilename (1046 , 1045);
+      pack_job_name (1045);
+      while (!bopenout (tfm_file)) prompt_file_name (1046 , 1045);
       metric_file_name = bmakenamestring (tfm_file);
       k = header_size;
       while (header_byte[k]< 0) decr (k);
@@ -23618,11 +23609,12 @@ close_files_and_terminate (void)
   if ((editnamestart != 0) && (interaction > 0)) 
   calledit (str_pool , editnamestart , editname_length , editline);
 }
+
 #ifdef TEXMF_DEBUG
 void 
 debughelp (void) 
 {
-  /* 888 10 */ integer k, l, m, n;
+  integer k, l, m, n;
   while (true) {
       
 ;
