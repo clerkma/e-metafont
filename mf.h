@@ -1,18 +1,8 @@
-#undef TRIP
-#undef TRAP
-
 #define EXTERN
 #define STAT
 #define INI
 #define INIMF
-#define MF
-#ifdef TEXMF_DEBUG
-#endif /* TEXMF_DEBUG */
-#define MFCOERCE
-#include "texmfmp.h"
-/* 1 9998 9999 */ 
 
-/* 11. */
 #define max_internal (300) 
 #define stack_size (300) 
 #define max_strings (7500) 
@@ -62,17 +52,14 @@ typedef struct {
 } in_state_record;
 typedef integer gf_index;
 
-/* G L O B A L   V A R I A B L E S */
-
-/* 13. */
 EXTERN integer bad;
 
-/* { */
 #ifdef INIMF
 EXTERN boolean iniversion;
 EXTERN boolean dumpoption;
 EXTERN boolean dumpline;
 #endif /* INIMF */
+
 EXTERN constcstring dumpname;
 EXTERN integer bounddefault;
 EXTERN constcstring boundname;
@@ -91,23 +78,18 @@ EXTERN cinttype filelineerrorstylep;
 EXTERN cinttype eightbitp;
 EXTERN cinttype haltonerrorp;
 EXTERN boolean quotedfilename;
-/* } */
 
-/* 20. */
 EXTERN ASCII_code xord[256];
 EXTERN ASCII_code xchr[256];
 
-/* 25. */
 EXTERN ASCII_code * name_of_file;
 EXTERN integer name_length;
 
-/* 29. */
 EXTERN ASCII_code * buffer;
 EXTERN integer first;
 EXTERN integer last;
 EXTERN integer max_buf_stack;
 
-/* 38. */
 EXTERN packed_ASCII_code str_pool[pool_size + 1];
 EXTERN pool_pointer str_start[max_strings + 1];
 EXTERN pool_pointer pool_ptr;
@@ -117,14 +99,12 @@ EXTERN str_number init_str_ptr;
 EXTERN pool_pointer max_pool_ptr;
 EXTERN str_number max_str_ptr;
 
-/* 42. */
 EXTERN uint8_t str_ref[max_strings + 1];
 
 #ifdef INIMF
 EXTERN alpha_file poolfile;
 #endif /* INIMF */
 
-/* 54. On-line and off-line printing. */
 EXTERN alpha_file log_file;
 EXTERN uint8_t selector;
 EXTERN uint8_t dig[23];
@@ -135,58 +115,44 @@ EXTERN ASCII_code trick_buf[256];
 EXTERN integer trick_count;
 EXTERN integer first_count;
 
-/* 68. */
 EXTERN uint8_t interaction;
 EXTERN uint8_t interactionoption;
 
-/* 71. */
 EXTERN boolean deletions_allowed;
 EXTERN uint8_t history;
 EXTERN schar error_count;
 
-/* 74. */
 EXTERN str_number help_line[6];
 EXTERN uint8_t help_ptr;
 EXTERN boolean use_err_help;
 EXTERN str_number err_help;
 
-/* 91. */
 EXTERN integer interrupt;
 EXTERN boolean OK_to_interrupt;
 
-/* 97. */
 EXTERN boolean arith_error;
 
-/* 129. */
 EXTERN integer two_to_the[31];
 EXTERN integer spec_log[29];
 
-/* 137. */
 EXTERN angle spec_atan[27];
 
-/* 144. */
 EXTERN fraction n_sin, n_cos;
 
-/* 148. */
 EXTERN fraction randoms[55];
 EXTERN uint8_t j_random;
 
-/* 159. */
 EXTERN memoryword * mem;
 EXTERN halfword lo_mem_max;
 EXTERN halfword hi_mem_min;
 
-/* 160. */
 EXTERN integer var_used, dyn_used;
 
-/* 161. */
 EXTERN halfword avail;
 EXTERN halfword mem_end;
 
-/* 166. */
 EXTERN halfword rover;
 
-/* 178. */
 #ifdef TEXMF_DEBUG
 EXTERN boolean freearr[2];
 EXTERN boolean was_free[2];
@@ -194,132 +160,100 @@ EXTERN halfword was_mem_end, was_lo_max, was_hi_min;
 EXTERN boolean panicking;
 #endif /* TEXMF_DEBUG */
 
-/* 190. */
 EXTERN scaled internal[max_internal + 1];
 EXTERN str_number int_name[max_internal + 1];
 EXTERN integer int_ptr;
 
-/* 196. */
 EXTERN uint8_t old_setting;
 
-/* 198. */
 EXTERN uint8_t char_class[256];
 
-/* 200. The hash table. */
 EXTERN halfword hash_used;
 EXTERN integer st_count;
 
-/* 201. */
 EXTERN twohalves hash[9770];
 EXTERN twohalves eqtb[9770];
 
-/* 225. */
 EXTERN halfword g_pointer;
 
-/* 230. */
 EXTERN small_number 
 #define big_node_size (zzzaa -13)
   zzzaa[2];
 
-/* 250. Saving and restoring equivalents. */
 EXTERN halfword save_ptr;
 
-/* 267. */
 EXTERN halfword path_tail;
 
-/* 279. */
 EXTERN scaled delta_x[pathsize + 1], delta_y[pathsize + 1], delta[pathsize + 1];
 EXTERN angle psi[pathsize + 1];
 
-/* 283. */
 EXTERN angle theta[pathsize + 1];
 EXTERN fraction uu[pathsize + 1];
 EXTERN angle vv[pathsize + 1];
 EXTERN fraction ww[pathsize + 1];
 
-/* 298. */
 EXTERN fraction st, ct, sf, cf;
 
-/* 308. */
 EXTERN integer move[move_size + 1];
 EXTERN integer move_ptr;
 
-/* 309. */
 EXTERN integer bisect_stack[bistack_size + 1];
 EXTERN integer bisect_ptr;
 
-/* 327. */
 EXTERN halfword cur_edges;
 EXTERN integer cur_wt;
 
-/* 371. */
 EXTERN integer trace_x;
 EXTERN integer trace_y;
 EXTERN integer trace_yy;
 
-/* 379. */
 EXTERN uint8_t octant;
 
-/* 389. */
 EXTERN scaled cur_x, cur_y;
 
-/* 395. */
 EXTERN str_number octant_dir[9];
 
-/* 403. */
 EXTERN halfword cur_spec;
 EXTERN integer turning_number;
 EXTERN halfword cur_pen;
 EXTERN uint8_t cur_path_type;
 EXTERN scaled max_allowed;
 
-/* 427. */
 EXTERN scaled before[max_wiggle + 1], after[max_wiggle + 1];
 EXTERN halfword node_to_round[max_wiggle + 1];
 EXTERN integer cur_rounding_ptr;
 EXTERN integer max_rounding_ptr;
 
-/* 430. */
 EXTERN scaled cur_gran;
 
-/* 448. */
 EXTERN uint8_t octant_number[9];
 EXTERN uint8_t octant_code[9];
 
-/* 455. */
 EXTERN boolean rev_turns;
 
-/* 461. */
 EXTERN uint8_t y_corr[9], xy_corr[9], z_corr[9];
 EXTERN schar x_corr[9];
 
-/* 464. */
 EXTERN integer m0, n0, m1, n1;
 EXTERN uint8_t d0, d1;
 
-/* 507. */
 EXTERN integer env_move[move_size + 1];
 
-/* 552. */
 EXTERN uint8_t tol_step;
 
-/* 555. */
 EXTERN integer cur_t, cur_tt;
 EXTERN integer time_to_go;
 EXTERN integer max_t;
 
-/* 557. */
 EXTERN integer delx, dely;
 EXTERN integer tol;
 EXTERN integer uv, xy;
 EXTERN integer three_l;
 EXTERN integer appr_t, appr_tt;
 
-/* 569. */
 EXTERN boolean screen_started;
 EXTERN boolean screen_OK;
 
-/* 572. */
 EXTERN boolean window_open[16];
 EXTERN screen_col left_col[16];
 EXTERN screen_col right_col[16];
@@ -329,29 +263,23 @@ EXTERN integer m_window[16];
 EXTERN integer n_window[16];
 EXTERN integer window_time[16];
 
-/* 579. */
 EXTERN trans_spec row_transition;
 
-/* 585. Dynamic linear equations. */
 EXTERN integer serial_no;
 
-/* 592. */
 EXTERN boolean fix_needed;
 EXTERN boolean watch_coefs;
 EXTERN halfword dep_final;
 
-/* 624. Introduction to the syntactic routines. */
 EXTERN eight_bits cur_cmd;
 EXTERN integer cur_mod;
 EXTERN halfword cur_sym;
 
-/* 628. */
 EXTERN in_state_record input_stack[stack_size + 1];
 EXTERN integer input_ptr;
 EXTERN integer max_in_stack;
 EXTERN in_state_record cur_input;
 
-/* 631. */
 EXTERN uint8_t in_open;
 EXTERN uint8_t open_parens;
 EXTERN alpha_file input_file[16];
@@ -360,63 +288,48 @@ EXTERN integer line_stack[16];
 EXTERN str_number * sourcefilenamestack;
 EXTERN str_number * fullsourcefilenamestack;
 
-/* 633. */
 EXTERN halfword param_stack[151];
 EXTERN uint8_t param_ptr;
 EXTERN integer max_param_stack;
 
-/* 634. */
 EXTERN integer file_ptr;
 
-/* 659. */
 EXTERN uint8_t scanner_status;
 EXTERN integer warning_info;
 
-/* 680. */
 EXTERN boolean force_eof;
 
-/* 699. */
 EXTERN short bg_loc, eg_loc;
 
-/* 738. Conditional processing. */
 EXTERN halfword cond_ptr;
 EXTERN uint8_t if_limit;
 EXTERN small_number cur_if;
 EXTERN integer if_line;
 
-/* 752. Iterations. */
 EXTERN halfword loop_ptr;
 
-/* 767. */
 EXTERN str_number cur_name;
 EXTERN str_number cur_area;
 EXTERN str_number cur_ext;
 
-/* 768. */
 EXTERN pool_pointer area_delimiter;
 EXTERN pool_pointer ext_delimiter;
 EXTERN integer basedefaultlength;
 
-/* 775. */
 EXTERN cstring MF_base_default;
 
-/* 782. */
 EXTERN str_number job_name;
 EXTERN boolean log_opened;
 EXTERN str_number texmflogname;
 
-/* 785. */
 EXTERN str_number gf_ext;
 
-/* 791. */
 EXTERN byte_file gf_file;
 EXTERN str_number output_file_name;
 
-/* 796. Introduction to the parsing routines. */
 EXTERN small_number cur_type;
 EXTERN integer cur_exp;
 
-/* 813. */
 EXTERN integer 
 #define max_c (zzzab -17)
   zzzab[2];
@@ -427,23 +340,17 @@ EXTERN halfword
 #define max_link (zzzad -17)
   zzzad[2];
 
-/* 821. */
 EXTERN uint8_t var_flag;
 
-/* 954. */
 EXTERN scaled txx, txy, tyx, tyy, tx, ty;
 
-/* 1077. */
 EXTERN halfword start_sym;
 
-/* 1084. */
 EXTERN boolean long_help_seen;
 
-/* 1087. Font metric data. */
 EXTERN byte_file tfm_file;
 EXTERN str_number metric_file_name;
 
-/* 1096. */
 EXTERN eight_bits bc, ec;
 EXTERN scaled tfm_width[256];
 EXTERN scaled tfm_height[256];
@@ -471,43 +378,33 @@ EXTERN integer label_loc[257];
 EXTERN eight_bits label_char[257];
 EXTERN short label_ptr;
 
-/* 1119. */
 EXTERN scaled perturbation;
 EXTERN integer excess;
 
-/* 1125. */
 EXTERN halfword dimen_head[5];
 
-/* 1130. */
 EXTERN scaled max_tfm_dimen;
 EXTERN integer tfm_changed;
 
-/* 1149. Shipping characters out. */
 EXTERN integer gf_min_m, gf_max_m, gf_min_n, gf_max_n;
 EXTERN integer gf_prev_ptr;
 EXTERN integer total_chars;
 EXTERN integer char_ptr[256];
 EXTERN integer gf_dx[256], gf_dy[256];
 
-/* 1152. */
 EXTERN eight_bits * gf_buf;
 EXTERN gf_index half_buf;
 EXTERN gf_index gf_limit;
 EXTERN gf_index gf_ptr;
 EXTERN integer gf_offset;
 
-/* 1162. */
 EXTERN integer boc_c, boc_p;
 
-/* 1183. Dumping and undumping the tables. */
 EXTERN str_number base_ident;
 
-/* 1188. */
 EXTERN word_file base_file;
 
-/* 1203. */
 EXTERN integer ready_already;
-
 
 EXTERN pool_pointer editnamestart;
 EXTERN integer editname_length, editline;
@@ -562,7 +459,7 @@ scaled m_exp(scaled x);
 angle n_arg(integer x, integer y);
 void n_sin_cos(angle z);
 void new_randoms(void);
-void init)randoms(scaled seed);
+void init_randoms(scaled seed);
 scaled unif_rand(scaled x);
 scaled norm_rand(void);
 void print_word(memoryword w);
@@ -583,132 +480,132 @@ void primitive(str_number s, halfword c, halfword o);
 halfword new_num_tok(scaled v);
 void flush_token_list(halfword p);
 
-void zdeletemacref(halfword p);
-void zprintcmdmod(integer c, integer m);
-void zshowmacro(halfword p, integer q, integer l);
-void zinitbignode(halfword p);
+void deletemacref(halfword p);
+void printcmdmod(integer c, integer m);
+void showmacro(halfword p, integer q, integer l);
+void initbignode(halfword p);
 halfword idtransform(void);
-void znewroot(halfword x);
-void zprintvariablename(halfword p);
-boolean zinteresting(halfword p);
-halfword znewstructure(halfword p);
-halfword zfindvariable(halfword t);
-void zprintpath(halfword h, str_number s, boolean nuline);
-void zprintweight(halfword q, integer xoff);
-void zprintedges(str_number s, boolean nuline, integer xoff, integer yoff);
-void zunskew(scaled x, scaled y, small_number octant);
-void zprintpen(halfword p, str_number s, boolean nuline);
-void zprintdependency(halfword p, small_number t);
-void zprintdp(small_number t, halfword p, small_number verbosity);
+void newroot(halfword x);
+void printvariablename(halfword p);
+boolean interesting(halfword p);
+halfword newstructure(halfword p);
+halfword findvariable(halfword t);
+void printpath(halfword h, str_number s, boolean nuline);
+void printweight(halfword q, integer xoff);
+void printedges(str_number s, boolean nuline, integer xoff, integer yoff);
+void unskew(scaled x, scaled y, small_number octant);
+void printpen(halfword p, str_number s, boolean nuline);
+void printdependency(halfword p, small_number t);
+void printdp(small_number t, halfword p, small_number verbosity);
 halfword stashcurexp(void);
-void zunstashcurexp(halfword p);
-void zprintexp(halfword p, small_number verbosity);
-void zdisperr(halfword p, str_number s);
-halfword zpplusfq(halfword p, integer f, halfword q, small_number t, small_number tt);
-halfword zpoverv(halfword p, scaled v, small_number t0, small_number t1);
-void zvaltoobig(scaled x);
-void zmakeknown(halfword p, halfword q);
+void unstashcurexp(halfword p);
+void printexp(halfword p, small_number verbosity);
+void disperr(halfword p, str_number s);
+halfword pplusfq(halfword p, integer f, halfword q, small_number t, small_number tt);
+halfword poverv(halfword p, scaled v, small_number t0, small_number t1);
+void valtoobig(scaled x);
+void makeknown(halfword p, halfword q);
 void fixdependencies(void);
-void ztossknotlist(halfword p);
-void ztossedges(halfword h);
-void ztosspen(halfword p);
-void zringdelete(halfword p);
-void zrecyclevalue(halfword p);
-void zflushcurexp(scaled v);
-void zflusherror(scaled v);
+void tossknotlist(halfword p);
+void tossedges(halfword h);
+void tosspen(halfword p);
+void ringdelete(halfword p);
+void recyclevalue(halfword p);
+void flushcurexp(scaled v);
+void flusherror(scaled v);
 void putgeterror(void);
-void zputgetflusherror(scaled v);
-void zflushbelowvariable(halfword p);
-void zflushvariable(halfword p, halfword t, boolean discardsuffixes);
-small_number zundtype(halfword p);
-void zclearsymbol(halfword p, boolean saving);
-void zsavevariable(halfword q);
-void zsaveinternal(halfword q);
+void putgetflusherror(scaled v);
+void flushbelowvariable(halfword p);
+void flushvariable(halfword p, halfword t, boolean discardsuffixes);
+small_number undtype(halfword p);
+void clearsymbol(halfword p, boolean saving);
+void savevariable(halfword q);
+void saveinternal(halfword q);
 void unsave(void);
-halfword zcopyknot(halfword p);
-halfword zcopypath(halfword p);
-halfword zhtapypoc(halfword p);
-fraction zcurlratio(scaled gamma, scaled atension, scaled btension);
-void zsetcontrols(halfword p, halfword q, integer k);
-void zsolvechoices(halfword p, halfword q, halfword n);
-void zmakechoices(halfword knots);
-void zmakemoves(scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, scaled yy1, scaled yy2, scaled yy3, small_number xicorr, small_number etacorr);
-void zsmoothmoves(integer b, integer t);
-void zinitedges(halfword h);
+halfword copyknot(halfword p);
+halfword copypath(halfword p);
+halfword htapypoc(halfword p);
+fraction curlratio(scaled gamma, scaled atension, scaled btension);
+void setcontrols(halfword p, halfword q, integer k);
+void solvechoices(halfword p, halfword q, halfword n);
+void makechoices(halfword knots);
+void makemoves(scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, scaled yy1, scaled yy2, scaled yy3, small_number xicorr, small_number etacorr);
+void smoothmoves(integer b, integer t);
+void initedges(halfword h);
 void fixoffset(void);
-void zedgeprep(integer ml, integer mr, integer nl, integer nr);
-halfword zcopyedges(halfword h);
+void edgeprep(integer ml, integer mr, integer nl, integer nr);
+halfword copyedges(halfword h);
 void yreflectedges(void);
 void xreflectedges(void);
-void zyscaleedges(integer s);
-void zxscaleedges(integer s);
-void znegateedges(halfword h);
-void zsortedges(halfword h);
-void zculledges(integer wlo, integer whi, integer wout, integer win);
+void yscaleedges(integer s);
+void xscaleedges(integer s);
+void negateedges(halfword h);
+void sortedges(halfword h);
+void culledges(integer wlo, integer whi, integer wout, integer win);
 void xyswapedges(void);
-void zmergeedges(halfword h);
-integer ztotalweight(halfword h);
+void mergeedges(halfword h);
+integer totalweight(halfword h);
 void beginedgetracing(void);
 void traceacorner(void);
 void endedgetracing(void);
-void ztracenewedge(halfword r, integer n);
-void zlineedges(scaled x0, scaled y0, scaled x1, scaled y1);
-void zmovetoedges(integer m0, integer n0, integer m1, integer n1);
-void zskew(scaled x, scaled y, small_number octant);
-void zabnegate(scaled x, scaled y, small_number octantbefore, small_number octantafter);
-fraction zcrossingpoint(integer a, integer b, integer c);
-void zprintspec(str_number s);
-void zprintstrange(str_number s);
-void zremovecubic(halfword p);
-void zsplitcubic(halfword p, fraction t, scaled xq, scaled yq);
+void tracenewedge(halfword r, integer n);
+void lineedges(scaled x0, scaled y0, scaled x1, scaled y1);
+void movetoedges(integer m0, integer n0, integer m1, integer n1);
+void skew(scaled x, scaled y, small_number octant);
+void abnegate(scaled x, scaled y, small_number octantbefore, small_number octantafter);
+fraction crossingpoint(integer a, integer b, integer c);
+void printspec(str_number s);
+void printstrange(str_number s);
+void removecubic(halfword p);
+void splitcubic(halfword p, fraction t, scaled xq, scaled yq);
 void quadrantsubdivide(void);
 void octantsubdivide(void);
 void makesafe(void);
-void zbeforeandafter(scaled b, scaled a, halfword p);
-scaled zgoodval(scaled b, scaled o);
-scaled zcompromise(scaled u, scaled v);
+void beforeandafter(scaled b, scaled a, halfword p);
+scaled goodval(scaled b, scaled o);
+scaled compromise(scaled u, scaled v);
 void xyround(void);
 void diaground(void);
-void znewboundary(halfword p, small_number octant);
-halfword zmakespec(halfword h, scaled safetymargin, integer tracing);
-void zendround(scaled x, scaled y);
-void zfillspec(halfword h);
-void zdupoffset(halfword w);
-halfword zmakepen(halfword h);
-halfword ztrivialknot(scaled x, scaled y);
-halfword zmakepath(halfword penhead);
-void zfindoffset(scaled x, scaled y, halfword p);
-void zsplitforoffset(halfword p, fraction t);
-void zfinoffsetprep(halfword p, halfword k, halfword w, integer x0, integer x1, integer x2, integer y0, integer y1, integer y2, boolean rising, integer n);
-void zoffsetprep(halfword c, halfword h);
-void zskewlineedges(halfword p, halfword w, halfword ww);
-void zdualmoves(halfword h, halfword p, halfword q);
-void zfillenvelope(halfword spechead);
-halfword zmakeellipse(scaled majoraxis, scaled minoraxis, angle theta);
-scaled zfinddirectiontime(scaled x, scaled y, halfword h);
-void zcubicintersection(halfword p, halfword pp);
-void zpathintersection(halfword h, halfword hh);
-void zopenawindow(windownumber k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y);
-void zdispedges(windownumber k);
-fraction zmaxcoef(halfword p);
-halfword zpplusq(halfword p, halfword q, small_number t);
-halfword zptimesv(halfword p, integer v, small_number t0, small_number t1, boolean visscaled);
-halfword zpwithxbecomingq(halfword p, halfword x, halfword q, small_number t);
-void znewdep(halfword q, halfword p);
-halfword zconstdependency(scaled v);
-halfword zsingledependency(halfword p);
-halfword zcopydeplist(halfword p);
-void zlineareq(halfword p, small_number t);
-halfword znewringentry(halfword p);
-void znonlineareq(integer v, halfword p, boolean flushp);
-void zringmerge(halfword p, halfword q);
-void zshowcmdmod(integer c, integer m);
+void newboundary(halfword p, small_number octant);
+halfword makespec(halfword h, scaled safetymargin, integer tracing);
+void endround(scaled x, scaled y);
+void fillspec(halfword h);
+void dupoffset(halfword w);
+halfword makepen(halfword h);
+halfword trivialknot(scaled x, scaled y);
+halfword makepath(halfword penhead);
+void findoffset(scaled x, scaled y, halfword p);
+void splitforoffset(halfword p, fraction t);
+void finoffsetprep(halfword p, halfword k, halfword w, integer x0, integer x1, integer x2, integer y0, integer y1, integer y2, boolean rising, integer n);
+void offsetprep(halfword c, halfword h);
+void skewlineedges(halfword p, halfword w, halfword ww);
+void dualmoves(halfword h, halfword p, halfword q);
+void fillenvelope(halfword spechead);
+halfword makeellipse(scaled majoraxis, scaled minoraxis, angle theta);
+scaled finddirectiontime(scaled x, scaled y, halfword h);
+void cubicintersection(halfword p, halfword pp);
+void pathintersection(halfword h, halfword hh);
+void openawindow(windownumber k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y);
+void dispedges(windownumber k);
+fraction maxcoef(halfword p);
+halfword pplusq(halfword p, halfword q, small_number t);
+halfword ptimesv(halfword p, integer v, small_number t0, small_number t1, boolean visscaled);
+halfword pwithxbecomingq(halfword p, halfword x, halfword q, small_number t);
+void newdep(halfword q, halfword p);
+halfword constdependency(scaled v);
+halfword singledependency(halfword p);
+halfword copydeplist(halfword p);
+void lineareq(halfword p, small_number t);
+halfword newringentry(halfword p);
+void nonlineareq(integer v, halfword p, boolean flushp);
+void ringmerge(halfword p, halfword q);
+void showcmdmod(integer c, integer m);
 void showcontext(void);
-void zbegintokenlist(halfword p, quarterword t);
+void begintokenlist(halfword p, quarterword t);
 void endtokenlist(void);
-void zencapsulate(halfword p);
-void zinstall(halfword r, halfword q);
-void zmakeexpcopy(halfword p);
+void encapsulate(halfword p);
+void install(halfword r, halfword q);
+void makeexpcopy(halfword p);
 halfword curtok(void);
 void backinput(void);
 void backerror(void);
@@ -719,101 +616,101 @@ void clearforerrorprompt(void);
 boolean checkoutervalidity(void);
 void getnext(void);
 void firmuptheline(void);
-halfword zscantoks(commandcode terminator, halfword substlist, halfword tailend, small_number suffixcount);
+halfword scantoks(commandcode terminator, halfword substlist, halfword tailend, small_number suffixcount);
 void getsymbol(void);
 void getclearsymbol(void);
 void checkequals(void);
 void makeopdef(void);
-void zcheckdelimiter(halfword ldelim, halfword rdelim);
+void checkdelimiter(halfword ldelim, halfword rdelim);
 halfword scandeclaredvariable(void);
 void scandef(void);
-void zprintmacroname(halfword a, halfword n);
-void zprintarg(halfword q, integer n, halfword b);
-void zscantextarg(halfword ldelim, halfword rdelim);
-void zmacrocall(halfword defref, halfword arglist, halfword macroname);
+void printmacroname(halfword a, halfword n);
+void printarg(halfword q, integer n, halfword b);
+void scantextarg(halfword ldelim, halfword rdelim);
+void macrocall(halfword defref, halfword arglist, halfword macroname);
 void expand(void);
 void getxnext(void);
-void zstackargument(halfword p);
+void stackargument(halfword p);
 void passtext(void);
-void zchangeiflimit(small_number l, halfword p);
+void changeiflimit(small_number l, halfword p);
 void checkcolon(void);
 void conditional(void);
-void zbadfor(str_number s);
+void badfor(str_number s);
 void beginiteration(void);
 void resumeiteration(void);
 void stopiteration(void);
 void beginname(void);
-boolean zmorename(ASCIIcode c);
+boolean morename(ASCIIcode c);
 void endname(void);
-void zpackfilename(str_number n, str_number a, str_number e);
-void zpackbufferedname(small_number n, integer a, integer b);
+void packfilename(str_number n, str_number a, str_number e);
+void packbufferedname(small_number n, integer a, integer b);
 str_number makenamestring(void);
-str_number zamakenamestring(alphafile f);
-str_number zbmakenamestring(bytefile f);
-str_number zwmakenamestring(wordfile f);
+str_number amakenamestring(alphafile f);
+str_number bmakenamestring(bytefile f);
+str_number wmakenamestring(wordfile f);
 void scanfilename(void);
-void zpackjobname(str_number s);
-void zpromptfilename(str_number s, str_number e);
+void packjobname(str_number s);
+void promptfilename(str_number s, str_number e);
 void openlogfile(void);
 void startinput(void);
-void zbadexp(str_number s);
-void zstashin(halfword p);
+void badexp(str_number s);
+void stashin(halfword p);
 void backexpr(void);
 void badsubscript(void);
-void zobliterated(halfword q);
-void zbinarymac(halfword p, halfword c, halfword n);
+void obliterated(halfword q);
+void binarymac(halfword p, halfword c, halfword n);
 void materializepen(void);
 void knownpair(void);
 halfword newknot(void);
 small_number scandirection(void);
-void zdonullary(quarterword c);
-boolean znicepair(integer p, quarterword t);
-void zprintknownorunknowntype(small_number t, integer v);
-void zbadunary(quarterword c);
-void znegatedeplist(halfword p);
+void donullary(quarterword c);
+boolean nicepair(integer p, quarterword t);
+void printknownorunknowntype(small_number t, integer v);
+void badunary(quarterword c);
+void negatedeplist(halfword p);
 void pairtopath(void);
-void ztakepart(quarterword c);
-void zstrtonum(quarterword c);
+void takepart(quarterword c);
+void strtonum(quarterword c);
 scaled pathlength(void);
-void ztestknown(quarterword c);
-void zdounary(quarterword c);
-void zbadbinary(halfword p, quarterword c);
-halfword ztarnished(halfword p);
-void zdepfinish(halfword v, halfword q, small_number t);
-void zaddorsubtract(halfword p, halfword q, quarterword c);
-void zdepmult(halfword p, integer v, boolean visscaled);
-void zhardtimes(halfword p);
-void zdepdiv(halfword p, scaled v);
-void zsetuptrans(quarterword c);
-void zsetupknowntrans(quarterword c);
-void ztrans(halfword p, halfword q);
-void zpathtrans(halfword p, quarterword c);
-void zedgestrans(halfword p, quarterword c);
-void zbilin1(halfword p, scaled t, halfword q, scaled u, scaled delta);
-void zaddmultdep(halfword p, scaled v, halfword r);
-void zbilin2(halfword p, halfword t, scaled v, halfword u, halfword q);
-void zbilin3(halfword p, scaled t, scaled v, scaled u, scaled delta);
-void zbigtrans(halfword p, quarterword c);
-void zcat(halfword p);
-void zchopstring(halfword p);
-void zchoppath(halfword p);
-void zpairvalue(scaled x, scaled y);
-void zsetupoffset(halfword p);
-void zsetupdirectiontime(halfword p);
-void zfindpoint(scaled v, quarterword c);
-void zdobinary(halfword p, quarterword c);
-void zfracmult(scaled n, scaled d);
+void testknown(quarterword c);
+void dounary(quarterword c);
+void badbinary(halfword p, quarterword c);
+halfword tarnished(halfword p);
+void depfinish(halfword v, halfword q, small_number t);
+void addorsubtract(halfword p, halfword q, quarterword c);
+void depmult(halfword p, integer v, boolean visscaled);
+void hardtimes(halfword p);
+void depdiv(halfword p, scaled v);
+void setuptrans(quarterword c);
+void setupknowntrans(quarterword c);
+void trans(halfword p, halfword q);
+void pathtrans(halfword p, quarterword c);
+void edgestrans(halfword p, quarterword c);
+void bilin1(halfword p, scaled t, halfword q, scaled u, scaled delta);
+void addmultdep(halfword p, scaled v, halfword r);
+void bilin2(halfword p, halfword t, scaled v, halfword u, halfword q);
+void bilin3(halfword p, scaled t, scaled v, scaled u, scaled delta);
+void bigtrans(halfword p, quarterword c);
+void cat(halfword p);
+void chopstring(halfword p);
+void choppath(halfword p);
+void pairvalue(scaled x, scaled y);
+void setupoffset(halfword p);
+void setupdirectiontime(halfword p);
+void findpoint(scaled v, quarterword c);
+void dobinary(halfword p, quarterword c);
+void fracmult(scaled n, scaled d);
 void gfswap(void);
-void zgffour(integer x);
-void zgftwo(integer x);
-void zgfthree(integer x);
-void zgfpaint(integer d);
-void zgfstring(str_number s, str_number t);
-void zgfboc(integer minm, integer maxm, integer minn, integer maxn);
+void gffour(integer x);
+void gftwo(integer x);
+void gfthree(integer x);
+void gfpaint(integer d);
+void gfstring(str_number s, str_number t);
+void gfboc(integer minm, integer maxm, integer minn, integer maxn);
 void initgf(void);
-void zshipout(eightbits c);
-void ztryeq(halfword l, halfword r);
-void zmakeeq(halfword lhs);
+void shipout(eightbits c);
+void tryeq(halfword l, halfword r);
+void makeeq(halfword lhs);
 void doequation(void);
 void doassignment(void);
 void dotypedeclaration(void);
@@ -827,31 +724,31 @@ void doshow(void);
 void disptoken(void);
 void doshowtoken(void);
 void doshowstats(void);
-void zdispvar(halfword p);
+void dispvar(halfword p);
 void doshowvar(void);
 void doshowdependencies(void);
 void doshowwhatever(void);
 boolean scanwith(void);
-void zfindedgesvar(halfword t);
+void findedgesvar(halfword t);
 void doaddto(void);
-scaled ztfmcheck(small_number m);
+scaled tfmcheck(small_number m);
 void doshipout(void);
 void dodisplay(void);
-boolean zgetpair(commandcode c);
+boolean getpair(commandcode c);
 void doopenwindow(void);
 void docull(void);
 void domessage(void);
 eightbits getcode(void);
-void zsettag(halfword c, small_number t, halfword r);
+void settag(halfword c, small_number t, halfword r);
 void dotfmcommand(void);
 void dospecial(void);
 void storebasefile(void);
 void dostatement(void);
 void maincontrol(void);
-halfword zsortin(scaled v);
-integer zmincover(scaled d);
-scaled zthresholdfn(integer m);
-integer zskimp(integer m);
+halfword sortin(scaled v);
+integer mincover(scaled d);
+scaled thresholdfn(integer m);
+integer skimp(integer m);
 void tfm_warning(small_number m);
 void fix_design_size(void);
 integer dimen_out(scaled x);
@@ -873,9 +770,8 @@ void init_prim(void);
 void init_tab(void);
 void debug_help(void);
 
-extern str_number getjobname(str_number);
-extern void calledit(packedASCIIcode *, poolpointer, integer, integer);
-extern void blankrectangle(screencol, screencol, screenrow, screenrow);
-extern void paintrow(screenrow, pixelcolor, transspec, screencol);
-
-extern str_number makefullnamestring(void);
+str_number getjobname(str_number);
+void calledit(packedASCIIcode *, poolpointer, integer, integer);
+void blankrectangle(screencol, screencol, screenrow, screenrow);
+void paintrow(screenrow, pixelcolor, transspec, screencol);
+str_number makefullnamestring(void);
