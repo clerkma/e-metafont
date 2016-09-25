@@ -50,8 +50,1204 @@
 #define tertiary_secondary_macro 44
 #define tertiary_binary 45
 
-#define EXTERN extern
-#include "mfd.h"
+#include "mf.h"
+
+boolean get_strings_started(void)
+{
+  /* 30 10 */ register boolean Result; unsigned char k, l;
+  str_number g;
+  pool_ptr = 0;
+  str_ptr = 0;
+  max_pool_ptr = 0;
+  max_str_ptr = 0;
+  str_start[0] = 0;
+  {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+  {
+    if (((k < 32) || (k > 126)))
+    {
+      {
+        str_pool[pool_ptr] = 94;
+        incr(pool_ptr);
+      }
+      {
+        str_pool[pool_ptr] = 94;
+        incr(pool_ptr);
+      }
+      if (k < 64)
+      {
+        str_pool[pool_ptr] = k + 64;
+        incr(pool_ptr);
+      }
+      else if (k < 128)
+      {
+        str_pool[pool_ptr] = k - 64;
+        incr(pool_ptr);
+      }
+      else {
+
+        l = k / 16;
+        if (l < 10)
+        {
+          str_pool[pool_ptr] = l + 48;
+          incr(pool_ptr);
+        }
+        else {
+
+          str_pool[pool_ptr] = l + 87;
+          incr(pool_ptr);
+        }
+        l = k % 16;
+        if (l < 10)
+        {
+          str_pool[pool_ptr] = l + 48;
+          incr(pool_ptr);
+        }
+        else {
+
+          str_pool[pool_ptr] = l + 87;
+          incr(pool_ptr);
+        }
+      }
+    }
+    else {
+
+      str_pool[pool_ptr] = k;
+      incr(pool_ptr);
+    }
+    g = makestring();
+    str_ref[g] = 127;
+  } while (k++ < for_end); }
+  g = loadpoolstrings((pool_size - string_vacancies));
+  if (g == 0)
+  {
+    ;
+    fprintf(stdout, "%s\n", "! You have to increase pool_size.");
+    Result = false;
+    goto lab10;
+  }
+  Result = true;
+lab10:;
+  return Result;
+}
+
+void sort_avail(void)
+{
+  halfword p, q, r;
+  halfword oldrover;
+  p = getnode(1073741824L);
+  p = mem[rover + 1].hhfield.v.RH;
+  mem[rover + 1].hhfield.v.RH = 268435455L;
+  oldrover = rover;
+  while (p != oldrover) if (p < rover)
+  {
+    q = p;
+    p = mem[q + 1].hhfield.v.RH;
+    mem[q + 1].hhfield.v.RH = rover;
+    rover = q;
+  }
+  else {
+
+    q = rover;
+    while (mem[q + 1].hhfield.v.RH < p) q = mem[q + 1].hhfield
+      .v.RH;
+    r = mem[p + 1].hhfield.v.RH;
+    mem[p + 1].hhfield.v.RH = mem[q + 1].hhfield.v.RH;
+    mem[q + 1].hhfield.v.RH = p;
+    p = r;
+  }
+  p = rover;
+  while (mem[p + 1].hhfield.v.RH != 268435455L) {
+
+    mem[mem[p + 1].hhfield.v.RH + 1].hhfield.lhfield = p;
+    p = mem[p + 1].hhfield.v.RH;
+  }
+  mem[p + 1].hhfield.v.RH = rover;
+  mem[rover + 1].hhfield.lhfield = p;
+}
+
+void primitive(str_number s, halfword c, halfword o)
+{
+  pool_pointer k;
+  small_number j;
+  small_number l;
+  k = str_start[s];
+  l = str_start[s + 1] - k;
+  {register integer for_end; j = 0; for_end = l - 1; if (j <= for_end) do
+    buffer[j] = str_pool[k + j];
+  while (j++ < for_end); }
+  cur_sym = idlookup(0, l);
+  if (s >= 256)
+  {
+    flushstring(str_ptr - 1);
+    hash[cur_sym].v.RH = s;
+  }
+  eqtb[cur_sym].lhfield = c;
+  eqtb[cur_sym].v.RH = o;
+}
+
+void store_base_file(void)
+{
+  integer k;
+  halfword p, q;
+  integer x;
+  fourquarters w;
+  ASCII_code * baseengine;
+  selector = 5;
+  print(1073);
+  print(job_name);
+  printchar(32);
+  printint(roundunscaled(internal[14]));
+  printchar(46);
+  printint(roundunscaled(internal[15]));
+  printchar(46);
+  printint(roundunscaled(internal[16]));
+  printchar(41);
+  if (interaction == 0)
+    selector = 2;
+  else selector = 3;
+  {
+    if (pool_ptr + 1 > max_pool_ptr)
+    {
+      if (pool_ptr + 1 > pool_size)
+        overflow(257, pool_size - init_pool_ptr);
+      max_pool_ptr = pool_ptr + 1;
+    }
+  }
+  base_ident = makestring();
+  str_ref[base_ident] = 127;
+  packjob_name(742);
+  while (!wopenout(base_file)) promptfilename(1074, 742);
+  printnl(1075);
+  slowprint(wmakenamestring(base_file));
+  flushstring(str_ptr - 1);
+  printnl(261);
+  slowprint(base_ident);
+  dumpint(1462914374L);
+  x = strlen(enginename);
+  baseengine = xmallocarray(ASCII_code, x + 4);
+  strcpy(stringcast(baseengine), enginename);
+  {register integer for_end; k = x; for_end = x + 3; if (k <= for_end) do
+    baseengine[k] = 0;
+  while (k++ < for_end); }
+  x = x + 4 - (x % 4);
+  dumpint(x);
+  dumpthings(baseengine[0], x);
+  libcfree(baseengine);
+  dumpint(4795517L);
+  dumpthings(xord[0], 256);
+  dumpthings(xchr[0], 256);
+  dumpthings(xprn[0], 256);
+  dumpint(0);
+  dumpint(memtop);
+  dumpint(9500);
+  dumpint(7919);
+  dumpint(15);
+  dumpint(pool_ptr);
+  dumpint(str_ptr);
+  {register integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
+    dumpint(str_start[k]);
+  while (k++ < for_end); }
+  k = 0;
+  while (k + 4 < pool_ptr) {
+
+    w.b0 = str_pool[k];
+    w.b1 = str_pool[k + 1];
+    w.b2 = str_pool[k + 2];
+    w.b3 = str_pool[k + 3];
+    dumpqqqq(w);
+    k = k + 4;
+  }
+  k = pool_ptr - 4;
+  w.b0 = str_pool[k];
+  w.b1 = str_pool[k + 1];
+  w.b2 = str_pool[k + 2];
+  w.b3 = str_pool[k + 3];
+  dumpqqqq(w);
+  println();
+  printint(str_ptr);
+  print(1070);
+  printint(pool_ptr);
+  sort_avail();
+  var_used = 0;
+  dumpint(lo_mem_max);
+  dumpint(rover);
+  p = 0;
+  q = rover;
+  x = 0;
+  do {
+    { register integer for_end; k = p; for_end = q + 1; if (k <=
+      for_end) do
+      dumpwd(mem[k]);
+    while (k++ < for_end); }
+    x = x + q + 2 - p;
+    var_used = var_used + q - p;
+    p = q + mem[q].hhfield.lhfield;
+    q = mem[q + 1].hhfield.v.RH;
+  } while (!(q == rover));
+  var_used = var_used + lo_mem_max - p;
+  dyn_used = mem_end + 1 - hi_mem_min;
+  {register integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
+    do
+      dumpwd(mem[k]);
+  while (k++ < for_end); }
+  x = x + lo_mem_max + 1 - p;
+  dumpint(hi_mem_min);
+  dumpint(avail);
+  {register integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
+    for_end) do
+    dumpwd(mem[k]);
+  while (k++ < for_end); }
+  x = x + mem_end + 1 - hi_mem_min;
+  p = avail;
+  while (p != 0) {
+
+    decr(dyn_used);
+    p = mem[p].hhfield.v.RH;
+  }
+  dumpint(var_used);
+  dumpint(dyn_used);
+  println();
+  printint(x);
+  print(1071);
+  printint(var_used);
+  printchar(38);
+  printint(dyn_used);
+  dumpint(hash_used);
+  st_count = 9756 - hash_used;
+  {register integer for_end; p = 1; for_end = hash_used; if (p <= for_end)
+    do
+      if (hash[p].v.RH != 0)
+      {
+        dumpint(p);
+        dumphh(hash[p]);
+        dumphh(eqtb[p]);
+        incr(st_count);
+      }
+  while (p++ < for_end); }
+  {register integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
+    for_end) do
+  {
+    dumphh(hash[p]);
+    dumphh(eqtb[p]);
+  } while (p++ < for_end); }
+  dumpint(st_count);
+  println();
+  printint(st_count);
+  print(1072);
+  dumpint(int_ptr);
+  {register integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
+  {
+    dumpint(internal[k]);
+    dumpint(int_name[k]);
+  } while (k++ < for_end); }
+  dumpint(start_sym);
+  dumpint(interaction);
+  dumpint(base_ident);
+  dumpint(bg_loc);
+  dumpint(eg_loc);
+  dumpint(serial_no);
+  dumpint(69069L);
+  internal[12] = 0;
+  wclose(base_file);
+}
+
+boolean load_base_file(void)
+{
+  /* 6666 10 */ register boolean Result; integer k;
+  halfword p, q;
+  integer x;
+  fourquarters w;
+  ASCII_code * baseengine;
+  ASCII_code dummyxord;
+  ASCII_code dummyxchr;
+  ASCII_code dummyxprn;
+  undumpint(x);
+  if (x != 1462914374L)
+    goto lab6666;
+  undumpint(x);
+  if ((x < 0) || (x > 256))
+    goto lab6666;
+  baseengine = xmallocarray(ASCII_code, x);
+  undumpthings(baseengine[0], x);
+  baseengine[x - 1] = 0;
+  if (strcmp(enginename, stringcast(baseengine)))
+  {
+    ;
+    fprintf(stdout, "%s%s%s%s\n", "---! ", stringcast(name_of_file + 1), " was written by ", stringcast(baseengine));
+    libcfree(baseengine);
+    goto lab6666;
+  }
+  libcfree(baseengine);
+  undumpint(x);
+  if (x != 4795517L)
+  {
+    ;
+    fprintf(stdout, "%s%s%s%s\n", "---! ", stringcast(name_of_file + 1), " doesn't match ", pool_name);
+    goto lab6666;
+  }
+  if (translatefilename)
+  {
+    {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+      undumpthings(dummyxord, 1);
+    while (k++ < for_end); }
+    {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+      undumpthings(dummyxchr, 1);
+    while (k++ < for_end); }
+    {register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+      undumpthings(dummyxprn, 1);
+    while (k++ < for_end); }
+  }
+  else {
+
+    undumpthings(xord[0], 256);
+    undumpthings(xchr[0], 256);
+    undumpthings(xprn[0], 256);
+    if (eightbitp)
+    {
+      register integer for_end; k = 0; for_end = 255; if (k <= for_end) do
+        xprn[k] = 1;
+      while (k++ < for_end);
+    }
+  }
+  undumpint(x);
+  if (x != 0)
+    goto lab6666;
+  ;
+#ifdef INIMF
+  if (iniversion)
+  {
+    libcfree(mem);
+  }
+#endif /* INIMF */
+  undumpint(memtop);
+  if (memmax < memtop)
+    memmax = memtop;
+  if (1100 > memtop)
+    goto lab6666;
+  mem = xmallocarray(memoryword, memmax + 1);
+  undumpint(x);
+  if (x != 9500)
+    goto lab6666;
+  undumpint(x);
+  if (x != 7919)
+    goto lab6666;
+  undumpint(x);
+  if (x != 15)
+    goto lab6666;
+  {
+    undumpint(x);
+    if (x < 0)
+      goto lab6666;
+    if (x > pool_size)
+    {
+      ;
+      fprintf(stdout, "%s%s\n", "---! Must increase the ", "string pool size");
+      goto lab6666;
+    }
+    else pool_ptr = x;
+  }
+  {
+    undumpint(x);
+    if (x < 0)
+      goto lab6666;
+    if (x > max_strings)
+    {
+      ;
+      fprintf(stdout, "%s%s\n", "---! Must increase the ", "max strings");
+      goto lab6666;
+    }
+    else str_ptr = x;
+  }
+  {register integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
+  {
+    {
+      undumpint(x);
+      if ((x < 0) || (x > pool_ptr))
+        goto lab6666;
+      else str_start[k] = x;
+    }
+    str_ref[k] = 127;
+  } while (k++ < for_end); }
+  k = 0;
+  while (k + 4 < pool_ptr) {
+
+    undumpqqqq(w);
+    str_pool[k] = w.b0;
+    str_pool[k + 1] = w.b1;
+    str_pool[k + 2] = w.b2;
+    str_pool[k + 3] = w.b3;
+    k = k + 4;
+  }
+  k = pool_ptr - 4;
+  undumpqqqq(w);
+  str_pool[k] = w.b0;
+  str_pool[k + 1] = w.b1;
+  str_pool[k + 2] = w.b2;
+  str_pool[k + 3] = w.b3;
+  init_str_ptr = str_ptr;
+  init_pool_ptr = pool_ptr;
+  max_str_ptr = str_ptr;
+  max_pool_ptr = pool_ptr;
+  {
+    undumpint(x);
+    if ((x < 1022) || (x > memtop - 3))
+      goto lab6666;
+    else lo_mem_max = x;
+  }
+  {
+    undumpint(x);
+    if ((x < 23) || (x > lo_mem_max))
+      goto lab6666;
+    else rover = x;
+  }
+  p = 0;
+  q = rover;
+  do {
+    { register integer for_end; k = p; for_end = q + 1; if (k <=
+      for_end) do
+      undumpwd(mem[k]);
+    while (k++ < for_end); }
+    p = q + mem[q].hhfield.lhfield;
+    if ((p > lo_mem_max) || ((q >= mem[q + 1].hhfield.v.RH) && (mem
+      [q + 1].hhfield.v.RH != rover)))
+      goto lab6666;
+    q = mem[q + 1].hhfield.v.RH;
+  } while (!(q == rover));
+  {register integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
+    do
+      undumpwd(mem[k]);
+  while (k++ < for_end); }
+  {
+    undumpint(x);
+    if ((x < lo_mem_max + 1) || (x > memtop - 2))
+      goto lab6666;
+    else hi_mem_min = x;
+  }
+  {
+    undumpint(x);
+    if ((x < 0) || (x > memtop))
+      goto lab6666;
+    else avail = x;
+  }
+  mem_end = memtop;
+  {register integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
+    for_end) do
+    undumpwd(mem[k]);
+  while (k++ < for_end); }
+  undumpint(var_used);
+  undumpint(dyn_used);
+  {
+    undumpint(x);
+    if ((x < 1) || (x > 9757))
+      goto lab6666;
+    else hash_used = x;
+  }
+  p = 0;
+  do {
+    {
+      undumpint(x);
+      if ((x < p + 1) || (x > hash_used))
+        goto lab6666;
+      else p = x;
+    }
+    undumphh(hash[p]);
+    undumphh(eqtb[p]);
+  } while (!(p == hash_used));
+  {register integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
+    for_end) do
+  {
+    undumphh(hash[p]);
+    undumphh(eqtb[p]);
+  } while (p++ < for_end); }
+  undumpint(st_count);
+  {
+    undumpint(x);
+    if ((x < 41) || (x > max_internal))
+      goto lab6666;
+    else int_ptr = x;
+  }
+  {register integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
+  {
+    undumpint(internal[k]);
+    {
+      undumpint(x);
+      if ((x < 0) || (x > str_ptr))
+        goto lab6666;
+      else int_name[k] = x;
+    }
+  } while (k++ < for_end); }
+  {
+    undumpint(x);
+    if ((x < 0) || (x > 9757))
+      goto lab6666;
+    else start_sym = x;
+  }
+  {
+    undumpint(x);
+    if ((x < 0) || (x > 3))
+      goto lab6666;
+    else interaction = x;
+  }
+  if (interactionoption != 4)
+    interaction = interactionoption;
+  {
+    undumpint(x);
+    if ((x < 0) || (x > str_ptr))
+      goto lab6666;
+    else base_ident = x;
+  }
+  {
+    undumpint(x);
+    if ((x < 1) || (x > 9769))
+      goto lab6666;
+    else bg_loc = x;
+  }
+  {
+    undumpint(x);
+    if ((x < 1) || (x > 9769))
+      goto lab6666;
+    else eg_loc = x;
+  }
+  undumpint(serial_no);
+  undumpint(x);
+  if (x != 69069L)
+    goto lab6666;
+  Result = true;
+  goto lab10;
+lab6666:;
+  fprintf(stdout, "%s\n", "(Fatal base file error; I'm stymied)");
+  Result = false;
+lab10:;
+  return Result;
+}
+
+void final_cleanup(void)
+{
+  /* 10 */ small_number c;
+  c = cur_mod;
+  if (job_name == 0)
+    open_log_file();
+  while (input_ptr > 0) if ((cur_input.index_field > 15))
+    endtokenlist();
+  else endfilereading();
+  while (loop_ptr != 0) stop_iteration();
+  while (open_parens > 0) {
+
+    print(1077);
+    decr(open_parens);
+  }
+  while (cond_ptr != 0) {
+
+    printnl(1078);
+    printcmdmod(2, cur_if);
+    if (if_line != 0)
+    {
+      print(1079);
+      printint(if_line);
+    }
+    print(1080);
+    if_line = mem[cond_ptr + 1].cint;
+    cur_if = mem[cond_ptr].hhfield.b1;
+    loop_ptr = cond_ptr;
+    cond_ptr = mem[cond_ptr].hhfield.v.RH;
+    freenode(loop_ptr, 2);
+  }
+  if (history != 0) {
+
+    if (((history == 1) || (interaction < 3))) {
+
+      if (selector == 3)
+      {
+        selector = 1;
+        printnl(1081);
+        selector = 3;
+      }
+    }
+  }
+  if (c == 1)
+  {
+    ;
+#ifdef INIMF
+    if (iniversion)
+    {
+      store_base_file();
+      goto lab10;
+    }
+#endif /* INIMF */
+    printnl(1082);
+    goto lab10;
+  }
+lab10:;
+}
+
+void init_prim(void)
+{
+  primitive(409, 40, 1);
+  primitive(410, 40, 2);
+  primitive(411, 40, 3);
+  primitive(412, 40, 4);
+  primitive(413, 40, 5);
+  primitive(414, 40, 6);
+  primitive(415, 40, 7);
+  primitive(416, 40, 8);
+  primitive(417, 40, 9);
+  primitive(418, 40, 10);
+  primitive(419, 40, 11);
+  primitive(420, 40, 12);
+  primitive(421, 40, 13);
+  primitive(422, 40, 14);
+  primitive(423, 40, 15);
+  primitive(424, 40, 16);
+  primitive(425, 40, 17);
+  primitive(426, 40, 18);
+  primitive(427, 40, 19);
+  primitive(428, 40, 20);
+  primitive(429, 40, 21);
+  primitive(430, 40, 22);
+  primitive(431, 40, 23);
+  primitive(432, 40, 24);
+  primitive(433, 40, 25);
+  primitive(434, 40, 26);
+  primitive(435, 40, 27);
+  primitive(436, 40, 28);
+  primitive(437, 40, 29);
+  primitive(438, 40, 30);
+  primitive(439, 40, 31);
+  primitive(440, 40, 32);
+  primitive(441, 40, 33);
+  primitive(442, 40, 34);
+  primitive(443, 40, 35);
+  primitive(444, 40, 36);
+  primitive(445, 40, 37);
+  primitive(446, 40, 38);
+  primitive(447, 40, 39);
+  primitive(448, 40, 40);
+  primitive(449, 40, 41);
+  primitive(408, 47, 0);
+  primitive(91, 63, 0);
+  eqtb[9760] = eqtb[cur_sym];
+  primitive(93, 64, 0);
+  primitive(125, 65, 0);
+  primitive(123, 46, 0);
+  primitive(58, 81, 0);
+  eqtb[9762] = eqtb[cur_sym];
+  primitive(459, 80, 0);
+  primitive(460, 79, 0);
+  primitive(461, 77, 0);
+  primitive(44, 82, 0);
+  primitive(59, 83, 0);
+  eqtb[9763] = eqtb[cur_sym];
+  primitive(92, 7, 0);
+  primitive(462, 18, 0);
+  primitive(463, 72, 0);
+  primitive(464, 59, 0);
+  primitive(465, 32, 0);
+  bg_loc = cur_sym;
+  primitive(466, 57, 0);
+  primitive(467, 19, 0);
+  primitive(468, 60, 0);
+  primitive(469, 27, 0);
+  primitive(470, 11, 0);
+  primitive(453, 84, 0);
+  eqtb[9767] = eqtb[cur_sym];
+  eg_loc = cur_sym;
+  primitive(471, 26, 0);
+  primitive(472, 6, 0);
+  primitive(473, 9, 0);
+  primitive(474, 70, 0);
+  primitive(475, 73, 0);
+  primitive(476, 13, 0);
+  primitive(477, 14, 0);
+  primitive(478, 15, 0);
+  primitive(479, 69, 0);
+  primitive(480, 28, 0);
+  primitive(481, 24, 0);
+  primitive(482, 12, 0);
+  primitive(483, 8, 0);
+  primitive(484, 17, 0);
+  primitive(485, 78, 0);
+  primitive(486, 74, 0);
+  primitive(487, 35, 0);
+  primitive(488, 58, 0);
+  primitive(489, 71, 0);
+  primitive(490, 75, 0);
+  primitive(655, 16, 1);
+  primitive(656, 16, 2);
+  primitive(657, 16, 53);
+  primitive(658, 16, 44);
+  primitive(659, 16, 49);
+  primitive(454, 16, 0);
+  eqtb[9765] = eqtb[cur_sym];
+  primitive(660, 4, 9770);
+  primitive(661, 4, 9920);
+  primitive(662, 4, 1);
+  primitive(455, 4, 0);
+  eqtb[9764] = eqtb[cur_sym];
+  primitive(663, 61, 0);
+  primitive(664, 61, 1);
+  primitive(64, 61, 2);
+  primitive(665, 61, 3);
+  primitive(676, 56, 9770);
+  primitive(677, 56, 9920);
+  primitive(678, 56, 10070);
+  primitive(679, 56, 1);
+  primitive(680, 56, 2);
+  primitive(681, 56, 3);
+  primitive(691, 3, 0);
+  primitive(617, 3, 1);
+  primitive(718, 1, 1);
+  primitive(452, 2, 2);
+  eqtb[9766] = eqtb[cur_sym];
+  primitive(719, 2, 3);
+  primitive(720, 2, 4);
+  primitive(347, 33, 30);
+  primitive(348, 33, 31);
+  primitive(349, 33, 32);
+  primitive(350, 33, 33);
+  primitive(351, 33, 34);
+  primitive(352, 33, 35);
+  primitive(353, 33, 36);
+  primitive(354, 33, 37);
+  primitive(355, 34, 38);
+  primitive(356, 34, 39);
+  primitive(357, 34, 40);
+  primitive(358, 34, 41);
+  primitive(359, 34, 42);
+  primitive(360, 34, 43);
+  primitive(361, 34, 44);
+  primitive(362, 34, 45);
+  primitive(363, 34, 46);
+  primitive(364, 34, 47);
+  primitive(365, 34, 48);
+  primitive(366, 34, 49);
+  primitive(367, 34, 50);
+  primitive(368, 34, 51);
+  primitive(369, 34, 52);
+  primitive(370, 34, 53);
+  primitive(371, 34, 54);
+  primitive(372, 34, 55);
+  primitive(373, 34, 56);
+  primitive(374, 34, 57);
+  primitive(375, 34, 58);
+  primitive(376, 34, 59);
+  primitive(377, 34, 60);
+  primitive(378, 34, 61);
+  primitive(379, 34, 62);
+  primitive(380, 34, 63);
+  primitive(381, 34, 64);
+  primitive(382, 34, 65);
+  primitive(383, 34, 66);
+  primitive(384, 34, 67);
+  primitive(385, 36, 68);
+  primitive(43, 43, 69);
+  primitive(45, 43, 70);
+  primitive(42, 55, 71);
+  primitive(47, 54, 72);
+  eqtb[9761] = eqtb[cur_sym];
+  primitive(386, 45, 73);
+  primitive(310, 45, 74);
+  primitive(388, 52, 76);
+  primitive(387, 45, 75);
+  primitive(60, 50, 77);
+  primitive(389, 50, 78);
+  primitive(62, 50, 79);
+  primitive(390, 50, 80);
+  primitive(61, 51, 81);
+  primitive(391, 50, 82);
+  primitive(401, 37, 94);
+  primitive(402, 37, 95);
+  primitive(403, 37, 96);
+  primitive(404, 37, 97);
+  primitive(405, 37, 98);
+  primitive(406, 37, 99);
+  primitive(407, 37, 100);
+  primitive(38, 48, 83);
+  primitive(392, 55, 84);
+  primitive(393, 55, 85);
+  primitive(394, 55, 86);
+  primitive(395, 55, 87);
+  primitive(396, 55, 88);
+  primitive(397, 55, 89);
+  primitive(398, 55, 90);
+  primitive(399, 55, 91);
+  primitive(400, 45, 92);
+  primitive(340, 30, 15);
+  primitive(326, 30, 4);
+  primitive(324, 30, 2);
+  primitive(331, 30, 9);
+  primitive(328, 30, 6);
+  primitive(333, 30, 11);
+  primitive(335, 30, 13);
+  primitive(336, 30, 14);
+  primitive(912, 85, 0);
+  primitive(913, 85, 1);
+  primitive(273, 23, 0);
+  primitive(274, 23, 1);
+  primitive(275, 23, 2);
+  primitive(919, 23, 3);
+  primitive(920, 21, 0);
+  primitive(921, 21, 1);
+  primitive(935, 22, 0);
+  primitive(936, 22, 1);
+  primitive(937, 22, 2);
+  primitive(938, 22, 3);
+  primitive(939, 22, 4);
+  primitive(956, 68, 1);
+  primitive(957, 68, 0);
+  primitive(958, 68, 2);
+  primitive(959, 66, 6);
+  primitive(960, 66, 16);
+  primitive(961, 67, 0);
+  primitive(962, 67, 1);
+  primitive(992, 25, 0);
+  primitive(993, 25, 1);
+  primitive(994, 25, 2);
+  primitive(1004, 20, 0);
+  primitive(1005, 20, 1);
+  primitive(1006, 20, 2);
+  primitive(1007, 20, 3);
+  primitive(1008, 20, 4);
+  primitive(1026, 76, 0);
+  primitive(1027, 76, 1);
+  primitive(1028, 76, 5);
+  primitive(1029, 76, 2);
+  primitive(1030, 76, 6);
+  primitive(1031, 76, 3);
+  primitive(1032, 76, 7);
+  primitive(1033, 76, 11);
+  primitive(1034, 76, 128);
+  primitive(1059, 29, 4);
+  primitive(1060, 29, 16);
+}
+
+void init_tab(void)
+{
+  integer k;
+  rover = 23;
+  mem[rover].hhfield.v.RH = 268435455L;
+  mem[rover].hhfield.lhfield = 1000;
+  mem[rover + 1].hhfield.lhfield = rover;
+  mem[rover + 1].hhfield.v.RH = rover;
+  lo_mem_max = rover + 1000;
+  mem[lo_mem_max].hhfield.v.RH = 0;
+  mem[lo_mem_max].hhfield.lhfield = 0;
+  {register integer for_end; k = memtop - 2; for_end = memtop; if (k <=
+    for_end) do
+    mem[k] = mem[lo_mem_max];
+  while (k++ < for_end); }
+  avail = 0;
+  mem_end = memtop;
+  hi_mem_min = memtop - 2;
+  var_used = 23;
+  dyn_used = memtop + 1 - hi_mem_min;
+  int_name[1] = 409;
+  int_name[2] = 410;
+  int_name[3] = 411;
+  int_name[4] = 412;
+  int_name[5] = 413;
+  int_name[6] = 414;
+  int_name[7] = 415;
+  int_name[8] = 416;
+  int_name[9] = 417;
+  int_name[10] = 418;
+  int_name[11] = 419;
+  int_name[12] = 420;
+  int_name[13] = 421;
+  int_name[14] = 422;
+  int_name[15] = 423;
+  int_name[16] = 424;
+  int_name[17] = 425;
+  int_name[18] = 426;
+  int_name[19] = 427;
+  int_name[20] = 428;
+  int_name[21] = 429;
+  int_name[22] = 430;
+  int_name[23] = 431;
+  int_name[24] = 432;
+  int_name[25] = 433;
+  int_name[26] = 434;
+  int_name[27] = 435;
+  int_name[28] = 436;
+  int_name[29] = 437;
+  int_name[30] = 438;
+  int_name[31] = 439;
+  int_name[32] = 440;
+  int_name[33] = 441;
+  int_name[34] = 442;
+  int_name[35] = 443;
+  int_name[36] = 444;
+  int_name[37] = 445;
+  int_name[38] = 446;
+  int_name[39] = 447;
+  int_name[40] = 448;
+  int_name[41] = 449;
+  hash_used = 9757;
+  st_count = 0;
+  hash[9768].v.RH = 451;
+  hash[9766].v.RH = 452;
+  hash[9767].v.RH = 453;
+  hash[9765].v.RH = 454;
+  hash[9764].v.RH = 455;
+  hash[9763].v.RH = 59;
+  hash[9762].v.RH = 58;
+  hash[9761].v.RH = 47;
+  hash[9760].v.RH = 91;
+  hash[9759].v.RH = 41;
+  hash[9757].v.RH = 456;
+  eqtb[9759].lhfield = 62;
+  mem[19].hhfield.lhfield = 9770;
+  mem[19].hhfield.v.RH = 0;
+  mem[memtop].hhfield.lhfield = 268435455L;
+  mem[3].hhfield.lhfield = 0;
+  mem[3].hhfield.v.RH = 0;
+  mem[4].hhfield.lhfield = 1;
+  mem[4].hhfield.v.RH = 0;
+  {register integer for_end; k = 5; for_end = 11; if (k <= for_end) do
+    mem[k] = mem[4];
+  while (k++ < for_end); }
+  mem[12].cint = 0;
+  mem[0].hhfield.v.RH = 0;
+  mem[0].hhfield.lhfield = 0;
+  mem[1].cint = 0;
+  mem[2].cint = 0;
+  serial_no = 0;
+  mem[13].hhfield.v.RH = 13;
+  mem[14].hhfield.lhfield = 13;
+  mem[13].hhfield.lhfield = 0;
+  mem[14].hhfield.v.RH = 0;
+  mem[21].hhfield.b1 = 0;
+  mem[21].hhfield.v.RH = 9768;
+  eqtb[9768].v.RH = 21;
+  eqtb[9768].lhfield = 41;
+  eqtb[9758].lhfield = 91;
+  hash[9758].v.RH = 735;
+  mem[17].hhfield.b1 = 11;
+  mem[20].cint = 1073741824L;
+  mem[16].cint = 0;
+  mem[15].hhfield.lhfield = 0;
+  if (iniversion)
+    base_ident = 1069;
+}
+
+void mainbody(void) {
+
+  bounddefault = 250000L;
+  boundname = "main_memory";
+  setupboundvariable(addressof(mainmemory), boundname, bounddefault);
+  bounddefault = 3000;
+  boundname = "buf_size";
+  setupboundvariable(addressof(bufsize), boundname, bounddefault);
+  bounddefault = 79;
+  boundname = "error_line";
+  setupboundvariable(addressof(errorline), boundname, bounddefault);
+  bounddefault = 50;
+  boundname = "half_error_line";
+  setupboundvariable(addressof(halferrorline), boundname, bounddefault
+  );
+  bounddefault = 79;
+  boundname = "max_print_line";
+  setupboundvariable(addressof(maxprintline), boundname, bounddefault)
+    ;
+  bounddefault = 768;
+  boundname = "screen_width";
+  setupboundvariable(addressof(screenwidth), boundname, bounddefault)
+    ;
+  bounddefault = 1024;
+  boundname = "screen_depth";
+  setupboundvariable(addressof(screendepth), boundname, bounddefault)
+    ;
+  bounddefault = 16384;
+  boundname = "gf_buf_size";
+  setupboundvariable(addressof(gf_buf_size), boundname, bounddefault);
+  if (errorline > 255)
+    errorline = 255;
+  if (screenwidth > 32767)
+    screenwidth = 32767;
+  if (screendepth > 32767)
+    screendepth = 32767;
+  {
+    if (mainmemory < infmainmemory)
+      mainmemory = infmainmemory;
+    else if (mainmemory > supmainmemory)
+      mainmemory = supmainmemory;
+  }
+  memtop = 0 + mainmemory - 1;
+  memmax = memtop;
+  {
+    if (bufsize < infbufsize)
+      bufsize = infbufsize;
+    else if (bufsize > supbufsize)
+      bufsize = supbufsize;
+  }
+  buffer = xmallocarray(ASCII_code, bufsize);
+  row_transition = xmallocarray(screen_col, screenwidth);
+  gf_buf = xmallocarray(eight_bits, gf_buf_size);
+  sourcefilenamestack = xmallocarray(str_number, 15);
+  fullsourcefilenamestack = xmallocarray(str_number, 15);
+#ifdef INIMF
+  if (iniversion)
+  {
+    mem = xmallocarray(memoryword, memtop + 1);
+  }
+#endif /* INIMF */
+  history = 3;
+  if (ready_already == 314159L)
+    goto lab1;
+  bad = 0;
+  if ((halferrorline < 30) || (halferrorline > errorline - 15))
+    bad = 1;
+  if (maxprintline < 60)
+    bad = 2;
+  if (gf_buf_size % 8 != 0)
+    bad = 3;
+  if (1100 > memtop)
+    bad = 4;
+  if (7919 > 9500)
+    bad = 5;
+  if (header_size % 4 != 0)
+    bad = 6;
+  if ((lig_table_size < 255) || (lig_table_size > 32510))
+    bad = 7;
+#ifdef INIMF
+  if (memmax != memtop)
+    bad = 10;
+#endif /* INIMF */
+  if (memmax < memtop)
+    bad = 10;
+  if ((0 > 0) || (255 < 127))
+    bad = 11;
+  if ((0 > 0) || (268435455L < 32767))
+    bad = 12;
+  if ((0 < 0) || (255 > 268435455L))
+    bad = 13;
+  if ((0 < 0) || (memmax >= 268435455L))
+    bad = 14;
+  if (max_strings > 268435455L)
+    bad = 15;
+  if (bufsize > 268435455L)
+    bad = 16;
+  if ((255 < 255) || (268435455L < 65535L))
+    bad = 17;
+  if (9769 + max_internal > 268435455L)
+    bad = 21;
+  if (10220 > 268435455L)
+    bad = 22;
+  if (15 * 11 > bistack_size)
+    bad = 31;
+  if (20 + 17 * 45 > bistack_size)
+    bad = 32;
+  if (basedefaultlength > maxint)
+    bad = 41;
+  if (bad > 0)
+  {
+    fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long)bad);
+    goto lab9999;
+  }
+  initialize();
+#ifdef INIMF
+  if (iniversion)
+  {
+    if (!get_strings_started())
+      goto lab9999;
+    init_tab();
+    init_prim();
+    init_str_ptr = str_ptr;
+    init_pool_ptr = pool_ptr;
+    max_str_ptr = str_ptr;
+    max_pool_ptr = pool_ptr;
+    fixdateandtime();
+  }
+#endif /* INIMF */
+  ready_already = 314159L;
+lab1: selector = 1;
+  tally = 0;
+  term_offset = 0;
+  file_offset = 0;
+  Fputs(stdout, "This is METAFONT, Version 2.7182818");
+  Fputs(stdout, versionstring);
+  if (base_ident == 0)
+    fprintf(stdout, "%s%s%c\n", " (preloaded base=", dumpname, ')');
+  else {
+
+    slowprint(base_ident);
+    println();
+  }
+  if (translatefilename)
+  {
+    putc('(', stdout);
+    fputs(translatefilename, stdout);
+    { putc(')', stdout);  putc('\n', stdout); }
+  }
+  fflush(stdout);
+  job_name = 0;
+  log_opened = false;
+  output_file_name = 0;
+  {
+    {
+      input_ptr = 0;
+      max_in_stack = 0;
+      in_open = 0;
+      open_parens = 0;
+      max_buf_stack = 0;
+      param_ptr = 0;
+      max_param_stack = 0;
+      first = 1;
+      cur_input.start_field = 1;
+      cur_input.index_field = 0;
+      line = 0;
+      cur_input.name_field = 0;
+      force_eof = false;
+      if (!initterminal())
+        goto lab9999;
+      cur_input.limit_field = last;
+      first = last + 1;
+    }
+    scanner_status = 0;
+    if ((base_ident == 0) || (buffer[cur_input.loc_field] == 38))
+    {
+      if (base_ident != 0)
+        initialize();
+      if (!open_base_file())
+        goto lab9999;
+      if (!load_base_file())
+      {
+        wclose(base_file);
+        goto lab9999;
+      }
+      wclose(base_file);
+      while ((cur_input.loc_field < cur_input.limit_field) && (buffer[
+        cur_input.loc_field] == 32)) incr(cur_input.loc_field);
+    }
+    buffer[cur_input.limit_field] = 37;
+    fixdateandtime();
+    initrandoms((internal[17] / 65536L) + internal[16]);
+    if (interaction == 0)
+      selector = 0;
+    else selector = 1;
+    if (cur_input.loc_field < cur_input.limit_field) {
+
+      if (buffer[cur_input.loc_field] != 92)
+        start_input();
+    }
+  }
+  history = 0;
+  if (start_sym > 0)
+  {
+    cur_sym = start_sym;
+    backinput();
+  }
+  maincontrol();
+  final_cleanup();
+  close_files_and_terminate();
+lab9999: {
+
+  fflush(stdout);
+  ready_already = 0;
+  if ((history != 0) && (history != 1))
+    uexit(1);
+  else uexit(0);
+  }
+}
 
 void initialize (void) 
 {
@@ -439,7 +1635,7 @@ void print_ln (void)
   }
 }
 
-void print_char (ASCII_code s) 
+void print_char(ASCII_code s) 
 {
   switch (selector) 
   {case 3 : 
@@ -496,56 +1692,52 @@ void print_char (ASCII_code s)
   incr (tally);
 }
 
-void print (integer s) 
+void print(integer s) 
 {
   pool_pointer j;
   if ((s < 0) || (s >= str_ptr)) 
   s = 259;
   if ((s < 256) && ((selector > 4) || xprn[s])) 
-  print_char (s);
+  print_char(s);
   else {
       
     j = str_start[s];
     while (j < str_start[s + 1]) {
-	
-      print_char (str_pool[j]);
+      print_char(str_pool[j]);
       incr (j);
     }
   }
 }
 
-void slow_print (integer s) 
+void slow_print(integer s) 
 {
   pool_pointer j;
   if ((s < 0) || (s >= str_ptr)) 
   s = 259;
   if ((s < 256) && ((selector > 4) || xprn[s])) 
-  print_char (s);
+  print_char(s);
   else {
-      
     j = str_start[s];
     while (j < str_start[s + 1]) {
-	
-      print (str_pool[j]);
+      print(str_pool[j]);
       incr (j);
     }
   }
 }
 
-void print_nl (str_number s) 
+void print_nl(str_number s) 
 {
   if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0 
 ) && (selector >= 2))) 
   print_ln ();
-  print (s);
+  print(s);
 }
 
 void print_the_digs (eight_bits k) 
 {
   while (k > 0) {
-      
     decr (k);
-    print_char (48 + dig[k]);
+    print_char(48 + dig[k]);
   }
 }
 
@@ -556,7 +1748,7 @@ void print_int (integer n)
   k = 0;
   if (n < 0) 
   {
-    print_char (45);
+    print_char(45);
     if (n > -100000000L) 
     n = - (integer) n;
     else {
@@ -582,12 +1774,12 @@ void print_int (integer n)
   print_the_digs (k);
 }
 
-void print_scaled (scaled s) 
+void print_scaled(scaled s) 
 {
   scaled delta;
   if (s < 0) 
   {
-    print_char (45);
+    print_char(45);
     s = - (integer) s;
   }
   print_int (s / 65536L);
@@ -595,11 +1787,11 @@ void print_scaled (scaled s)
   if (s != 5) 
   {
     delta = 10;
-    print_char (46);
+    print_char(46);
     do {
 	if (delta > 65536L) 
       s = s + 32768L - (delta / 2);
-      print_char (48 + (s / 65536L));
+      print_char(48 + (s / 65536L));
       s = 10 * (s % 65536L);
       delta = delta * 10;
     }while (!(s <= delta));
@@ -608,87 +1800,87 @@ void print_scaled (scaled s)
 
 void print_two (scaled x , scaled y) 
 {
-  print_char (40);
-  print_scaled (x);
-  print_char (44);
-  print_scaled (y);
-  print_char (41);
+  print_char(40);
+  print_scaled(x);
+  print_char(44);
+  print_scaled(y);
+  print_char(41);
 }
 
 void print_type (small_number t) 
 {
   switch (t) 
   {case 1 : 
-    print (323);
+    print(323);
     break;
   case 2 : 
-    print (324);
+    print(324);
     break;
   case 3 : 
-    print (325);
+    print(325);
     break;
   case 4 : 
-    print (326);
+    print(326);
     break;
   case 5 : 
-    print (327);
+    print(327);
     break;
   case 6 : 
-    print (328);
+    print(328);
     break;
   case 7 : 
-    print (329);
+    print(329);
     break;
   case 8 : 
-    print (330);
+    print(330);
     break;
   case 9 : 
-    print (331);
+    print(331);
     break;
   case 10 : 
-    print (332);
+    print(332);
     break;
   case 11 : 
-    print (333);
+    print(333);
     break;
   case 12 : 
-    print (334);
+    print(334);
     break;
   case 13 : 
-    print (335);
+    print(335);
     break;
   case 14 : 
-    print (336);
+    print(336);
     break;
   case 16 : 
-    print (337);
+    print(337);
     break;
   case 17 : 
-    print (338);
+    print(338);
     break;
   case 18 : 
-    print (339);
+    print(339);
     break;
   case 15 : 
-    print (340);
+    print(340);
     break;
   case 19 : 
-    print (341);
+    print(341);
     break;
   case 20 : 
-    print (342);
+    print(342);
     break;
   case 21 : 
-    print (343);
+    print(343);
     break;
   case 22 : 
-    print (344);
+    print(344);
     break;
   case 23 : 
-    print (345);
+    print(345);
     break;
     default: 
-    print (346);
+    print(346);
     break;
   }
 }
@@ -706,22 +1898,22 @@ void begin_diagnostic (void)
 
 void end_diagnostic (boolean blankline) 
 {
-  print_nl (261);
+  print_nl(261);
   if (blankline) 
   print_ln ();
   selector = old_setting;
 }
 
-void print_diagnostic (str_number s , str_number t , boolean nuline) 
+void print_diagnostic(str_number s , str_number t , boolean nuline) 
 {
   begin_diagnostic ();
   if (nuline) 
-  print_nl (s);
-  else print (s);
-  print (450);
+  print_nl(s);
+  else print(s);
+  print(450);
   print_int (line);
-  print (t);
-  print_char (58);
+  print(t);
+  print_char(58);
 }
 
 void print_file_name (integer n , integer a , integer e) 
@@ -733,7 +1925,6 @@ void print_file_name (integer n , integer a , integer e)
   {
     j = str_start[a];
     while ((!mustquote) && (j < str_start[a + 1])) {
-	
       mustquote = str_pool[j] == 32;
       incr (j);
     }
@@ -742,7 +1933,6 @@ void print_file_name (integer n , integer a , integer e)
   {
     j = str_start[n];
     while ((!mustquote) && (j < str_start[n + 1])) {
-	
       mustquote = str_pool[j] == 32;
       incr (j);
     }
@@ -751,33 +1941,32 @@ void print_file_name (integer n , integer a , integer e)
   {
     j = str_start[e];
     while ((!mustquote) && (j < str_start[e + 1])) {
-	
       mustquote = str_pool[j] == 32;
       incr (j);
     }
   }
   if (mustquote) 
-  slow_print (34);
+  slow_print(34);
   if (a != 0) 
   {integer for_end; j = str_start[a];for_end = str_start[a + 1 
 ] - 1; if (j <= for_end) do 
     if (str_pool[j]!= 34) 
-    print (str_pool[j]);
+    print(str_pool[j]);
   while (j++ < for_end);}
   if (n != 0) 
   {integer for_end; j = str_start[n];for_end = str_start[n + 1 
 ] - 1; if (j <= for_end) do 
     if (str_pool[j]!= 34) 
-    print (str_pool[j]);
+    print(str_pool[j]);
   while (j++ < for_end);}
   if (e != 0) 
   {integer for_end; j = str_start[e];for_end = str_start[e + 1 
 ] - 1; if (j <= for_end) do 
     if (str_pool[j]!= 34) 
-    print (str_pool[j]);
+    print(str_pool[j]);
   while (j++ < for_end);}
   if (mustquote) 
-  slow_print (34);
+  slow_print(34);
 }
 #ifdef TEXMF_DEBUG
 #endif /* TEXMF_DEBUG */
@@ -811,7 +2000,7 @@ void error (void)
   pool_pointer j;
   if (history < 2) 
   history = 2;
-  print_char (46);
+  print_char(46);
   showcontext ();
   if ((haltonerrorp)) 
   {
@@ -820,11 +2009,10 @@ void error (void)
   }
   if (interaction == 3) 
   while (true) {
-      
     lab22: clearforerrorprompt ();
     {
 ;
-      print (265);
+      print(265);
       term_input ();
     }
     if (last == first) 
@@ -907,7 +2095,7 @@ void error (void)
 	  while (j < str_start[err_help + 1]) {
 	      
 	    if (str_pool[j]!= 37) 
-	    print (str_pool[j]);
+	    print(str_pool[j]);
 	    else if (j + 1 == str_start[err_help + 1]) 
 	    print_ln ();
 	    else if (str_pool[j + 1]!= 37) 
@@ -915,7 +2103,7 @@ void error (void)
 	    else {
 		
 	      incr (j);
-	      print_char (37);
+	      print_char(37);
 	    }
 	    incr (j);
 	  }
@@ -931,7 +2119,7 @@ void error (void)
 	  }
 	  do {
 	      decr (help_ptr);
-	    print (help_line[help_ptr]);
+	    print(help_line[help_ptr]);
 	    print_ln ();
 	  }while (!(help_ptr == 0));
 	}
@@ -957,7 +2145,7 @@ void error (void)
 	    
 	  {
 	;
-	    print (277);
+	    print(277);
 	    term_input ();
 	  }
 	  cur_input.loc_field = first;
@@ -973,22 +2161,22 @@ void error (void)
       {
 	error_count = 0;
 	interaction = 0 + c - 81;
-	print (272);
+	print(272);
 	switch (c) 
 	{case 81 : 
 	  {
-	    print (273);
+	    print(273);
 	    decr (selector);
 	  }
 	  break;
 	case 82 : 
-	  print (274);
+	  print(274);
 	  break;
 	case 83 : 
-	  print (275);
+	  print(275);
 	  break;
 	}
-	print (276);
+	print(276);
 	print_ln ();
 	fflush (stdout);
 	goto lab10;
@@ -1005,20 +2193,20 @@ void error (void)
       break;
     }
     {
-      print (266);
-      print_nl (267);
-      print_nl (268);
+      print(266);
+      print_nl(267);
+      print_nl(268);
       if (file_ptr > 0) 
-      print (269);
+      print(269);
       if (deletions_allowed) 
-      print_nl (270);
-      print_nl (271);
+      print_nl(270);
+      print_nl(271);
     }
   }
   incr (error_count);
   if (error_count == 100) 
   {
-    print_nl (264);
+    print_nl(264);
     history = 3;
     jump_out ();
   }
@@ -1026,12 +2214,12 @@ void error (void)
   decr (selector);
   if (use_err_help) 
   {
-    print_nl (261);
+    print_nl(261);
     j = str_start[err_help];
     while (j < str_start[err_help + 1]) {
 	
       if (str_pool[j]!= 37) 
-      print (str_pool[j]);
+      print(str_pool[j]);
       else if (j + 1 == str_start[err_help + 1]) 
       print_ln ();
       else if (str_pool[j + 1]!= 37) 
@@ -1039,7 +2227,7 @@ void error (void)
       else {
 	  
 	incr (j);
-	print_char (37);
+	print_char(37);
       }
       incr (j);
     }
@@ -1047,7 +2235,7 @@ void error (void)
   else while (help_ptr > 0) {
       
     decr (help_ptr);
-    print_nl (help_line[help_ptr]);
+    print_nl(help_line[help_ptr]);
   }
   print_ln ();
   if (interaction > 0) 
@@ -1064,17 +2252,17 @@ void fatal_error (str_number s)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (285);
+      print(262);
+      print(285);
     }
     else {
 	
-      print_nl (263);
-      print (285);
+      print_nl(263);
+      print(285);
     }
   }
   {
@@ -1104,23 +2292,23 @@ void overflow (str_number s , integer n)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (286);
+      print(262);
+      print(286);
     }
     else {
 	
-      print_nl (263);
-      print (286);
+      print_nl(263);
+      print(286);
     }
   }
-  print (s);
-  print_char (61);
+  print(s);
+  print_char(61);
   print_int (n);
-  print_char (93);
+  print_char(93);
   {
     help_ptr = 2;
     help_line[1] = 287;
@@ -1141,7 +2329,7 @@ void overflow (str_number s , integer n)
   }
 }
 
-void confusion (str_number s) 
+void confusion(str_number s) 
 {
   normalize_selector ();
   if (history < 2) 
@@ -1151,21 +2339,21 @@ void confusion (str_number s)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (289);
+	print(262);
+	print(289);
       }
       else {
 	  
-	print_nl (263);
-	print (289);
+	print_nl(263);
+	print(289);
       }
     }
-    print (s);
-    print_char (41);
+    print(s);
+    print_char(41);
     {
       help_ptr = 1;
       help_line[0] = 290;
@@ -1178,17 +2366,17 @@ void confusion (str_number s)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (291);
+	print(262);
+	print(291);
       }
       else {
 	  
-	print_nl (263);
-	print (291);
+	print_nl(263);
+	print(291);
       }
     }
     {
@@ -1318,8 +2506,8 @@ integer str_vs_str (str_number s , str_number t)
 void print_dd (integer n) 
 {
   n = abs (n) % 100;
-  print_char (48 + (n / 10));
-  print_char (48 + (n % 10));
+  print_char(48 + (n / 10));
+  print_char(48 + (n % 10));
 }
 
 void term_input (void) 
@@ -1333,7 +2521,7 @@ void term_input (void)
   if (last != first) 
   {integer for_end; k = first;for_end = last - 1; if (k <= 
   for_end) do 
-    print (buffer[k]);
+    print(buffer[k]);
   while (k++ < for_end);}
   print_ln ();
   buffer[last] = 37;
@@ -1363,17 +2551,17 @@ void pause_for_instructions (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (294);
+	print(262);
+	print(294);
       }
       else {
 	  
-	print_nl (263);
-	print (294);
+	print_nl(263);
+	print(294);
       }
     }
     {
@@ -1396,21 +2584,21 @@ void missing_err (str_number s)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (298);
+      print(262);
+      print(298);
     }
     else {
 	
-      print_nl (263);
-      print (298);
+      print_nl(263);
+      print(298);
     }
   }
-  print (s);
-  print (299);
+  print(s);
+  print(299);
 }
 
 void clear_arith (void) 
@@ -1420,17 +2608,17 @@ void clear_arith (void)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (300);
+      print(262);
+      print(300);
     }
     else {
 	
-      print_nl (263);
-      print (300);
+      print_nl(263);
+      print(300);
     }
   }
   {
@@ -1499,7 +2687,7 @@ zmakefraction (integer p , integer q)
 	;
 #ifdef TEXMF_DEBUG
     if (q == 0) 
-    confusion (47);
+    confusion(47);
 #endif /* TEXMF_DEBUG */
     q = - (integer) q;
     negative = !negative;
@@ -1683,7 +2871,7 @@ zmakescaled (integer p , integer q)
 	;
 #ifdef TEXMF_DEBUG
     if (q == 0) 
-    confusion (47);
+    confusion(47);
 #endif /* TEXMF_DEBUG */
     q = - (integer) q;
     negative = !negative;
@@ -1866,21 +3054,21 @@ scaled zsquarert (scaled x)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (305);
+	  print(262);
+	  print(305);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (305);
+	  print_nl(263);
+	  print(305);
 	}
       }
-      print_scaled (x);
-      print (306);
+      print_scaled(x);
+      print(306);
       {
 	help_ptr = 2;
 	help_line[1] = 307;
@@ -2002,23 +3190,23 @@ integer pyth_sub (integer a , integer b)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (309);
+	  print(262);
+	  print(309);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (309);
+	  print_nl(263);
+	  print(309);
 	}
       }
-      print_scaled (a);
-      print (310);
-      print_scaled (b);
-      print (306);
+      print_scaled(a);
+      print(310);
+      print_scaled(b);
+      print(306);
       {
 	help_ptr = 2;
 	help_line[1] = 307;
@@ -2067,21 +3255,21 @@ scaled m_log (scaled x)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (311);
+	print(262);
+	print(311);
       }
       else {
 	  
-	print_nl (263);
-	print (311);
+	print_nl(263);
+	print(311);
       }
     }
-    print_scaled (x);
-    print (306);
+    print_scaled(x);
+    print(306);
     {
       help_ptr = 2;
       help_line[1] = 312;
@@ -2187,16 +3375,16 @@ angle n_arg (integer x , integer y)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (313);
+	print(262);
+	print(313);
       }
       else {
-	print_nl (263);
-	print (313);
+	print_nl(263);
+	print(313);
       }
     }
     {
@@ -2271,7 +3459,7 @@ angle n_arg (integer x , integer y)
   return Result;
 }
 
-void n_sin_cos (angle z) 
+void n_sin_cos(angle z) 
 {
   small_number k;
   unsigned char q;
@@ -2433,25 +3621,25 @@ void
 zprintword (memoryword w) 
 {
   print_int (w .cint);
-  print_char (32);
-  print_scaled (w .cint);
-  print_char (32);
-  print_scaled (w .cint / 4096);
+  print_char(32);
+  print_scaled(w .cint);
+  print_char(32);
+  print_scaled(w .cint / 4096);
   print_ln ();
   print_int (w .hhfield.lhfield);
-  print_char (61);
+  print_char(61);
   print_int (w .hhfield.b0);
-  print_char (58);
+  print_char(58);
   print_int (w .hhfield.b1);
-  print_char (59);
+  print_char(59);
   print_int (w .hhfield.v.RH);
-  print_char (32);
+  print_char(32);
   print_int (w .qqqq.b0);
-  print_char (58);
+  print_char(58);
   print_int (w .qqqq.b1);
-  print_char (58);
+  print_char(58);
   print_int (w .qqqq .b2);
-  print_char (58);
+  print_char(58);
   print_int (w .qqqq .b3);
 }
 #endif /* TEXMF_DEBUG */
@@ -2474,7 +3662,7 @@ void show_token_list (integer p , integer q , integer l , integer nulltally)
     c = 9;
     if ((p < 0) || (p > mem_end)) 
     {
-      print (493);
+      print(493);
       goto lab10;
     }
     if (p < hi_mem_min) {
@@ -2484,36 +3672,36 @@ void show_token_list (integer p , integer q , integer l , integer nulltally)
 	if (mem[p].hhfield.b0 == 16) 
 	{
 	  if (cclass == 0) 
-	  print_char (32);
+	  print_char(32);
 	  v = mem[p + 1].cint;
 	  if (v < 0) 
 	  {
 	    if (cclass == 17) 
-	    print_char (32);
-	    print_char (91);
-	    print_scaled (v);
-	    print_char (93);
+	    print_char(32);
+	    print_char(91);
+	    print_scaled(v);
+	    print_char(93);
 	    c = 18;
 	  }
 	  else {
 	      
-	    print_scaled (v);
+	    print_scaled(v);
 	    c = 0;
 	  }
 	}
 	else if (mem[p].hhfield.b0 != 4) 
-	print (496);
+	print(496);
 	else {
 	    
-	  print_char (34);
-	  slow_print (mem[p + 1].cint);
-	  print_char (34);
+	  print_char(34);
+	  slow_print(mem[p + 1].cint);
+	  print_char(34);
 	  c = 4;
 	}
       }
       else if ((mem[p].hhfield.b1 != 11) || (mem[p].hhfield.b0 < 
       1) || (mem[p].hhfield.b0 > 19)) 
-      print (496);
+      print(496);
       else {
 	  
 	g_pointer = p;
@@ -2528,21 +3716,21 @@ void show_token_list (integer p , integer q , integer l , integer nulltally)
       {
 	if (r < 9920) 
 	{
-	  print (498);
+	  print(498);
 	  r = r - (9770);
 	}
 	else if (r < 10070) 
 	{
-	  print (499);
+	  print(499);
 	  r = r - (9920);
 	}
 	else {
 	    
-	  print (500);
+	  print(500);
 	  r = r - (10070);
 	}
 	print_int (r);
-	print_char (41);
+	print_char(41);
 	c = 8;
       }
       else if (r < 1) {
@@ -2550,24 +3738,24 @@ void show_token_list (integer p , integer q , integer l , integer nulltally)
 	if (r == 0) 
 	{
 	  if (cclass == 17) 
-	  print_char (32);
-	  print (497);
+	  print_char(32);
+	  print(497);
 	  c = 18;
 	}
-	else print (494);
+	else print(494);
       }
       else {
 	  
 	r = hash[r].v.RH;
 	if ((r < 0) || (r >= str_ptr)) 
-	print (495);
+	print(495);
 	else {
 	    
 	  c = char_class[str_pool[str_start[r]]];
 	  if (c == cclass) 
 	  switch (c) 
 	  {case 9 : 
-	    print_char (46);
+	    print_char(46);
 	    break;
 	  case 5 : 
 	  case 6 : 
@@ -2576,10 +3764,10 @@ void show_token_list (integer p , integer q , integer l , integer nulltally)
 	;
 	    break;
 	    default: 
-	    print_char (32);
+	    print_char(32);
 	    break;
 	  }
-	  slow_print (r);
+	  slow_print(r);
 	}
       }
     }
@@ -2587,7 +3775,7 @@ void show_token_list (integer p , integer q , integer l , integer nulltally)
     p = mem[p].hhfield.v.RH;
   }
   if (p != 0) 
-  print (492);
+  print(492);
   lab10:;
 }
 
@@ -2595,17 +3783,17 @@ void runaway (void)
 {
   if (scanner_status > 2) 
   {
-    print_nl (638);
+    print_nl(638);
     switch (scanner_status) 
     {case 3 : 
-      print (639);
+      print(639);
       break;
     case 4 : 
     case 5 : 
-      print (640);
+      print(640);
       break;
     case 6 : 
-      print (641);
+      print(641);
       break;
     }
     print_ln ();
@@ -2810,7 +3998,7 @@ zcheckmem (boolean printlocs)
     clobbered = true;
     if (clobbered) 
     {
-      print_nl (316);
+      print_nl(316);
       print_int (q);
       goto done1;
     }
@@ -2833,7 +4021,7 @@ zcheckmem (boolean printlocs)
     clobbered = true;
     if (clobbered) 
     {
-      print_nl (317);
+      print_nl(317);
       print_int (q);
       goto done2;
     }
@@ -2842,7 +4030,7 @@ zcheckmem (boolean printlocs)
       {
 	if (freearr[q]) 
 	{
-	  print_nl (318);
+	  print_nl(318);
 	  print_int (q);
 	  goto done2;
 	}
@@ -2858,7 +4046,7 @@ zcheckmem (boolean printlocs)
       
     if ((mem[p].hhfield.v.RH == 268435455L)) 
     {
-      print_nl (319);
+      print_nl(319);
       print_int (p);
     }
     while ((p <= lo_mem_max) && !freearr[p]) incr (p);
@@ -2870,7 +4058,7 @@ zcheckmem (boolean printlocs)
       
     if (mem[p + 1].hhfield.lhfield != q) 
     {
-      print_nl (598);
+      print_nl(598);
       print_int (p);
     }
     p = mem[p + 1].hhfield.v.RH;
@@ -2879,7 +4067,7 @@ zcheckmem (boolean printlocs)
 	if (mem[mem[p].hhfield.lhfield + 1].cint >= mem[r + 1]
       .cint) 
       {
-	print_nl (599);
+	print_nl(599);
 	print_int (p);
       }
       r = mem[p].hhfield.lhfield;
@@ -2889,12 +4077,12 @@ zcheckmem (boolean printlocs)
   }
   if (printlocs) 
   {
-    print_nl (320);
+    print_nl(320);
     {integer for_end; p = 0;for_end = lo_mem_max; if (p <= 
     for_end) do 
       if (!freearr[p]&& ((p > was_lo_max) || was_free[p])) 
       {
-	print_char (32);
+	print_char(32);
 	print_int (p);
       }
     while (p++ < for_end);}
@@ -2903,7 +4091,7 @@ zcheckmem (boolean printlocs)
       if (!freearr[p]&& ((p < was_hi_min) || (p > was_mem_end) || 
       was_free[p])) 
       {
-	print_char (32);
+	print_char(32);
 	print_int (p);
       }
     while (p++ < for_end);}
@@ -2932,15 +4120,15 @@ zsearchmem (halfword p)
     {
       if (mem[q].hhfield.v.RH == p) 
       {
-	print_nl (321);
+	print_nl(321);
 	print_int (q);
-	print_char (41);
+	print_char(41);
       }
       if (mem[q].hhfield.lhfield == p) 
       {
-	print_nl (322);
+	print_nl(322);
 	print_int (q);
-	print_char (41);
+	print_char(41);
       }
     }
   while (q++ < for_end);}
@@ -2949,15 +4137,15 @@ zsearchmem (halfword p)
     {
       if (mem[q].hhfield.v.RH == p) 
       {
-	print_nl (321);
+	print_nl(321);
 	print_int (q);
-	print_char (41);
+	print_char(41);
       }
       if (mem[q].hhfield.lhfield == p) 
       {
-	print_nl (322);
+	print_nl(322);
 	print_int (q);
-	print_char (41);
+	print_char(41);
       }
     }
   while (q++ < for_end);}
@@ -2965,9 +4153,9 @@ zsearchmem (halfword p)
     {
       if (eqtb[q].v.RH == p) 
       {
-	print_nl (458);
+	print_nl(458);
 	print_int (q);
-	print_char (41);
+	print_char(41);
       }
     }
   while (q++ < for_end);}
@@ -2980,217 +4168,217 @@ void print_op (quarterword c)
   print_type (c);
   else switch (c) 
   {case 30 : 
-    print (347);
+    print(347);
     break;
   case 31 : 
-    print (348);
+    print(348);
     break;
   case 32 : 
-    print (349);
+    print(349);
     break;
   case 33 : 
-    print (350);
+    print(350);
     break;
   case 34 : 
-    print (351);
+    print(351);
     break;
   case 35 : 
-    print (352);
+    print(352);
     break;
   case 36 : 
-    print (353);
+    print(353);
     break;
   case 37 : 
-    print (354);
+    print(354);
     break;
   case 38 : 
-    print (355);
+    print(355);
     break;
   case 39 : 
-    print (356);
+    print(356);
     break;
   case 40 : 
-    print (357);
+    print(357);
     break;
   case 41 : 
-    print (358);
+    print(358);
     break;
   case 42 : 
-    print (359);
+    print(359);
     break;
   case 43 : 
-    print (360);
+    print(360);
     break;
   case 44 : 
-    print (361);
+    print(361);
     break;
   case 45 : 
-    print (362);
+    print(362);
     break;
   case 46 : 
-    print (363);
+    print(363);
     break;
   case 47 : 
-    print (364);
+    print(364);
     break;
   case 48 : 
-    print (365);
+    print(365);
     break;
   case 49 : 
-    print (366);
+    print(366);
     break;
   case 50 : 
-    print (367);
+    print(367);
     break;
   case 51 : 
-    print (368);
+    print(368);
     break;
   case 52 : 
-    print (369);
+    print(369);
     break;
   case 53 : 
-    print (370);
+    print(370);
     break;
   case 54 : 
-    print (371);
+    print(371);
     break;
   case 55 : 
-    print (372);
+    print(372);
     break;
   case 56 : 
-    print (373);
+    print(373);
     break;
   case 57 : 
-    print (374);
+    print(374);
     break;
   case 58 : 
-    print (375);
+    print(375);
     break;
   case 59 : 
-    print (376);
+    print(376);
     break;
   case 60 : 
-    print (377);
+    print(377);
     break;
   case 61 : 
-    print (378);
+    print(378);
     break;
   case 62 : 
-    print (379);
+    print(379);
     break;
   case 63 : 
-    print (380);
+    print(380);
     break;
   case 64 : 
-    print (381);
+    print(381);
     break;
   case 65 : 
-    print (382);
+    print(382);
     break;
   case 66 : 
-    print (383);
+    print(383);
     break;
   case 67 : 
-    print (384);
+    print(384);
     break;
   case 68 : 
-    print (385);
+    print(385);
     break;
   case 69 : 
-    print_char (43);
+    print_char(43);
     break;
   case 70 : 
-    print_char (45);
+    print_char(45);
     break;
   case 71 : 
-    print_char (42);
+    print_char(42);
     break;
   case 72 : 
-    print_char (47);
+    print_char(47);
     break;
   case 73 : 
-    print (386);
+    print(386);
     break;
   case 74 : 
-    print (310);
+    print(310);
     break;
   case 75 : 
-    print (387);
+    print(387);
     break;
   case 76 : 
-    print (388);
+    print(388);
     break;
   case 77 : 
-    print_char (60);
+    print_char(60);
     break;
   case 78 : 
-    print (389);
+    print(389);
     break;
   case 79 : 
-    print_char (62);
+    print_char(62);
     break;
   case 80 : 
-    print (390);
+    print(390);
     break;
   case 81 : 
-    print_char (61);
+    print_char(61);
     break;
   case 82 : 
-    print (391);
+    print(391);
     break;
   case 83 : 
-    print (38);
+    print(38);
     break;
   case 84 : 
-    print (392);
+    print(392);
     break;
   case 85 : 
-    print (393);
+    print(393);
     break;
   case 86 : 
-    print (394);
+    print(394);
     break;
   case 87 : 
-    print (395);
+    print(395);
     break;
   case 88 : 
-    print (396);
+    print(396);
     break;
   case 89 : 
-    print (397);
+    print(397);
     break;
   case 90 : 
-    print (398);
+    print(398);
     break;
   case 91 : 
-    print (399);
+    print(399);
     break;
   case 92 : 
-    print (400);
+    print(400);
     break;
   case 94 : 
-    print (401);
+    print(401);
     break;
   case 95 : 
-    print (402);
+    print(402);
     break;
   case 96 : 
-    print (403);
+    print(403);
     break;
   case 97 : 
-    print (404);
+    print(404);
     break;
   case 98 : 
-    print (405);
+    print(405);
     break;
   case 99 : 
-    print (406);
+    print(406);
     break;
   case 100 : 
-    print (407);
+    print(407);
     break;
     default: 
-    print (408);
+    print(408);
     break;
   }
 }
@@ -3229,9 +4417,7 @@ halfword id_lookup (integer j , integer l)
       
     if (hash[p].v.RH > 0) {
 	
-      if ((str_start[hash[p].v.RH + 1] - str_start[hash[p].v.RH]
-   ) == l) {
-	  
+      if ((str_start[hash[p].v.RH + 1] - str_start[hash[p].v.RH]) == l) {
 	if (str_eq_buf (hash[p].v.RH , j)) 
 	goto found;
       }
@@ -3342,7 +4528,7 @@ void flush_token_list (halfword p)
 	}
 	break;
 	default: 
-	confusion (491);
+	confusion(491);
 	break;
       }
       free_node (q , 2);
@@ -3361,170 +4547,170 @@ void print_cmd_mod (integer c , integer m)
 {
   switch (c) 
   {case 18 : 
-    print (462);
+    print(462);
     break;
   case 77 : 
-    print (461);
+    print(461);
     break;
   case 59 : 
-    print (464);
+    print(464);
     break;
   case 72 : 
-    print (463);
+    print(463);
     break;
   case 79 : 
-    print (460);
+    print(460);
     break;
   case 32 : 
-    print (465);
+    print(465);
     break;
   case 81 : 
-    print (58);
+    print(58);
     break;
   case 82 : 
-    print (44);
+    print(44);
     break;
   case 57 : 
-    print (466);
+    print(466);
     break;
   case 19 : 
-    print (467);
+    print(467);
     break;
   case 60 : 
-    print (468);
+    print(468);
     break;
   case 27 : 
-    print (469);
+    print(469);
     break;
   case 11 : 
-    print (470);
+    print(470);
     break;
   case 80 : 
-    print (459);
+    print(459);
     break;
   case 84 : 
-    print (453);
+    print(453);
     break;
   case 26 : 
-    print (471);
+    print(471);
     break;
   case 6 : 
-    print (472);
+    print(472);
     break;
   case 9 : 
-    print (473);
+    print(473);
     break;
   case 70 : 
-    print (474);
+    print(474);
     break;
   case 73 : 
-    print (475);
+    print(475);
     break;
   case 13 : 
-    print (476);
+    print(476);
     break;
   case 46 : 
-    print (123);
+    print(123);
     break;
   case 63 : 
-    print (91);
+    print(91);
     break;
   case 14 : 
-    print (477);
+    print(477);
     break;
   case 15 : 
-    print (478);
+    print(478);
     break;
   case 69 : 
-    print (479);
+    print(479);
     break;
   case 28 : 
-    print (480);
+    print(480);
     break;
   case 47 : 
-    print (408);
+    print(408);
     break;
   case 24 : 
-    print (481);
+    print(481);
     break;
   case 7 : 
-    print_char (92);
+    print_char(92);
     break;
   case 65 : 
-    print (125);
+    print(125);
     break;
   case 64 : 
-    print (93);
+    print(93);
     break;
   case 12 : 
-    print (482);
+    print(482);
     break;
   case 8 : 
-    print (483);
+    print(483);
     break;
   case 83 : 
-    print (59);
+    print(59);
     break;
   case 17 : 
-    print (484);
+    print(484);
     break;
   case 78 : 
-    print (485);
+    print(485);
     break;
   case 74 : 
-    print (486);
+    print(486);
     break;
   case 35 : 
-    print (487);
+    print(487);
     break;
   case 58 : 
-    print (488);
+    print(488);
     break;
   case 71 : 
-    print (489);
+    print(489);
     break;
   case 75 : 
-    print (490);
+    print(490);
     break;
   case 16 : 
     if (m <= 2) {
 	
       if (m == 1) 
-      print (655);
+      print(655);
       else if (m < 1) 
-      print (454);
-      else print (656);
+      print(454);
+      else print(656);
     }
     else if (m == 53) 
-    print (657);
+    print(657);
     else if (m == 44) 
-    print (658);
-    else print (659);
+    print(658);
+    else print(659);
     break;
   case 4 : 
     if (m <= 1) {
 	
       if (m == 1) 
-      print (662);
-      else print (455);
+      print(662);
+      else print(455);
     }
     else if (m == 9770) 
-    print (660);
-    else print (661);
+    print(660);
+    else print(661);
     break;
   case 61 : 
     switch (m) 
     {case 1 : 
-      print (664);
+      print(664);
       break;
     case 2 : 
-      print_char (64);
+      print_char(64);
       break;
     case 3 : 
-      print (665);
+      print(665);
       break;
       default: 
-      print (663);
+      print(663);
       break;
     }
     break;
@@ -3532,36 +4718,36 @@ void print_cmd_mod (integer c , integer m)
     if (m >= 9770) {
 	
       if (m == 9770) 
-      print (676);
+      print(676);
       else if (m == 9920) 
-      print (677);
-      else print (678);
+      print(677);
+      else print(678);
     }
     else if (m < 2) 
-    print (679);
+    print(679);
     else if (m == 2) 
-    print (680);
-    else print (681);
+    print(680);
+    else print(681);
     break;
   case 3 : 
     if (m == 0) 
-    print (691);
-    else print (617);
+    print(691);
+    else print(617);
     break;
   case 1 : 
   case 2 : 
     switch (m) 
     {case 1 : 
-      print (718);
+      print(718);
       break;
     case 2 : 
-      print (452);
+      print(452);
       break;
     case 3 : 
-      print (719);
+      print(719);
       break;
       default: 
-      print (720);
+      print(720);
       break;
     }
     break;
@@ -3584,46 +4770,46 @@ void print_cmd_mod (integer c , integer m)
     break;
   case 85 : 
     if (m == 0) 
-    print (912);
-    else print (913);
+    print(912);
+    else print(913);
     break;
   case 23 : 
     switch (m) 
     {case 0 : 
-      print (273);
+      print(273);
       break;
     case 1 : 
-      print (274);
+      print(274);
       break;
     case 2 : 
-      print (275);
+      print(275);
       break;
       default: 
-      print (919);
+      print(919);
       break;
     }
     break;
   case 21 : 
     if (m == 0) 
-    print (920);
-    else print (921);
+    print(920);
+    else print(921);
     break;
   case 22 : 
     switch (m) 
     {case 0 : 
-      print (935);
+      print(935);
       break;
     case 1 : 
-      print (936);
+      print(936);
       break;
     case 2 : 
-      print (937);
+      print(937);
       break;
     case 3 : 
-      print (938);
+      print(938);
       break;
       default: 
-      print (939);
+      print(939);
       break;
     }
     break;
@@ -3631,118 +4817,118 @@ void print_cmd_mod (integer c , integer m)
   case 62 : 
     {
       if (c == 31) 
-      print (942);
-      else print (943);
-      print (944);
-      slow_print (hash[m].v.RH);
+      print(942);
+      else print(943);
+      print(944);
+      slow_print(hash[m].v.RH);
     }
     break;
   case 41 : 
     if (m == 0) 
-    print (945);
-    else print (946);
+    print(945);
+    else print(946);
     break;
   case 10 : 
-    print (947);
+    print(947);
     break;
   case 53 : 
   case 44 : 
   case 49 : 
     {
       print_cmd_mod (16 , c);
-      print (948);
+      print(948);
       print_ln ();
       show_token_list (mem[mem[m].hhfield.v.RH].hhfield.v.RH , 0 , 
       1000 , 0);
     }
     break;
   case 5 : 
-    print (949);
+    print(949);
     break;
   case 40 : 
-    slow_print (int_name[m]);
+    slow_print(int_name[m]);
     break;
   case 68 : 
     if (m == 1) 
-    print (956);
+    print(956);
     else if (m == 0) 
-    print (957);
-    else print (958);
+    print(957);
+    else print(958);
     break;
   case 66 : 
     if (m == 6) 
-    print (959);
-    else print (960);
+    print(959);
+    else print(960);
     break;
   case 67 : 
     if (m == 0) 
-    print (961);
-    else print (962);
+    print(961);
+    else print(962);
     break;
   case 25 : 
     if (m < 1) 
-    print (992);
+    print(992);
     else if (m == 1) 
-    print (993);
-    else print (994);
+    print(993);
+    else print(994);
     break;
   case 20 : 
     switch (m) 
     {case 0 : 
-      print (1004);
+      print(1004);
       break;
     case 1 : 
-      print (1005);
+      print(1005);
       break;
     case 2 : 
-      print (1006);
+      print(1006);
       break;
     case 3 : 
-      print (1007);
+      print(1007);
       break;
       default: 
-      print (1008);
+      print(1008);
       break;
     }
     break;
   case 76 : 
     switch (m) 
     {case 0 : 
-      print (1026);
+      print(1026);
       break;
     case 1 : 
-      print (1027);
+      print(1027);
       break;
     case 2 : 
-      print (1029);
+      print(1029);
       break;
     case 3 : 
-      print (1031);
+      print(1031);
       break;
     case 5 : 
-      print (1028);
+      print(1028);
       break;
     case 6 : 
-      print (1030);
+      print(1030);
       break;
     case 7 : 
-      print (1032);
+      print(1032);
       break;
     case 11 : 
-      print (1033);
+      print(1033);
       break;
       default: 
-      print (1034);
+      print(1034);
       break;
     }
     break;
   case 29 : 
     if (m == 16) 
-    print (1060);
-    else print (1059);
+    print(1060);
+    else print(1059);
     break;
     default: 
-    print (603);
+    print(603);
     break;
   }
 }
@@ -3765,28 +4951,28 @@ void show_macro (halfword p , integer q , integer l)
   tally = 0;
   switch (mem[p].hhfield.lhfield) 
   {case 0 : 
-    print (501);
+    print(501);
     break;
   case 1 : 
   case 2 : 
   case 3 : 
     {
-      print_char (60);
+      print_char(60);
       print_cmd_mod (56 , mem[p].hhfield.lhfield);
-      print (502);
+      print(502);
     }
     break;
   case 4 : 
-    print (503);
+    print(503);
     break;
   case 5 : 
-    print (504);
+    print(504);
     break;
   case 6 : 
-    print (505);
+    print(505);
     break;
   case 7 : 
-    print (506);
+    print(506);
     break;
   }
   show_token_list (mem[p].hhfield.v.RH , q , l - tally , 0);
@@ -3846,7 +5032,7 @@ void new_root (halfword x)
   eqtb[x].v.RH = p;
 }
 
-void print_variable_name (halfword p) 
+void print_variable_name(halfword p) 
 {
   /* 40 10 */ halfword q;
   halfword r;
@@ -3854,32 +5040,32 @@ void print_variable_name (halfword p)
       
     switch (mem[p].hhfield.b1) 
     {case 5 : 
-      print_char (120);
+      print_char(120);
       break;
     case 6 : 
-      print_char (121);
+      print_char(121);
       break;
     case 7 : 
-      print (509);
+      print(509);
       break;
     case 8 : 
-      print (510);
+      print(510);
       break;
     case 9 : 
-      print (511);
+      print(511);
       break;
     case 10 : 
-      print (512);
+      print(512);
       break;
     case 11 : 
       {
-	print (513);
+	print(513);
 	print_int (p - 0);
 	goto lab10;
       }
       break;
     }
-    print (514);
+    print(514);
     p = mem[p - 2 * (mem[p].hhfield.b1 - 5)].hhfield.v.RH;
   }
   q = 0;
@@ -3900,7 +5086,7 @@ void print_variable_name (halfword p)
     else {
 	
       if (mem[p].hhfield.b1 != 4) 
-      confusion (508);
+      confusion(508);
       r = get_avail ();
       mem[r].hhfield.lhfield = mem[p + 2].hhfield.lhfield;
     }
@@ -3912,7 +5098,7 @@ void print_variable_name (halfword p)
   mem[r].hhfield.lhfield = mem[p].hhfield.v.RH;
   mem[r].hhfield.v.RH = q;
   if (mem[p].hhfield.b1 == 1) 
-  print (507);
+  print(507);
   show_token_list (r , 0 , 2147483647L , tally);
   flush_token_list (r);
   lab10:;
@@ -3984,7 +5170,7 @@ halfword new_structure (halfword p)
     }
     break;
     default: 
-    confusion (515);
+    confusion(515);
     break;
   }
   mem[r].hhfield.v.RH = mem[p].hhfield.v.RH;
@@ -4141,14 +5327,14 @@ halfword find_variable (halfword t)
 void print_path (halfword h , str_number s , boolean nuline) 
 {
   /* 30 31 */ halfword p, q;
-  print_diagnostic (517 , s , nuline);
+  print_diagnostic(517 , s , nuline);
   print_ln ();
   p = h;
   do {
       q = mem[p].hhfield.v.RH;
     if ((p == 0) || (q == 0)) 
     {
-      print_nl (259);
+      print_nl(259);
       goto done;
     }
     print_two (mem[p + 1].cint , mem[p + 2].cint);
@@ -4156,7 +5342,7 @@ void print_path (halfword h , str_number s , boolean nuline)
     {case 0 : 
       {
 	if (mem[p].hhfield.b0 == 4) 
-	print (518);
+	print(518);
 	if ((mem[q].hhfield.b0 != 0) || (q != h)) 
 	q = 0;
 	goto done1;
@@ -4164,11 +5350,11 @@ void print_path (halfword h , str_number s , boolean nuline)
       break;
     case 1 : 
       {
-	print (524);
+	print(524);
 	print_two (mem[p + 5].cint , mem[p + 6].cint);
-	print (523);
+	print(523);
 	if (mem[q].hhfield.b0 != 1) 
-	print (525);
+	print(525);
 	else print_two (mem[q + 3].cint , mem[q + 4].cint);
 	goto done1;
       }
@@ -4176,74 +5362,74 @@ void print_path (halfword h , str_number s , boolean nuline)
     case 4 : 
       if ((mem[p].hhfield.b0 != 1) && (mem[p].hhfield.b0 != 4) 
    ) 
-      print (518);
+      print(518);
       break;
     case 3 : 
     case 2 : 
       {
 	if (mem[p].hhfield.b0 == 4) 
-	print (525);
+	print(525);
 	if (mem[p].hhfield.b1 == 3) 
 	{
-	  print (521);
-	  print_scaled (mem[p + 5].cint);
+	  print(521);
+	  print_scaled(mem[p + 5].cint);
 	}
 	else {
 	    
-	  n_sin_cos (mem[p + 5].cint);
-	  print_char (123);
-	  print_scaled (n_cos);
-	  print_char (44);
-	  print_scaled (n_sin);
+	  n_sin_cos(mem[p + 5].cint);
+	  print_char(123);
+	  print_scaled(n_cos);
+	  print_char(44);
+	  print_scaled(n_sin);
 	}
-	print_char (125);
+	print_char(125);
       }
       break;
       default: 
-      print (259);
+      print(259);
       break;
     }
     if (mem[q].hhfield.b0 <= 1) 
-    print (519);
+    print(519);
     else if ((mem[p + 6].cint != 65536L) || (mem[q + 4].cint != 
     65536L)) 
     {
-      print (522);
+      print(522);
       if (mem[p + 6].cint < 0) 
-      print (464);
-      print_scaled (abs (mem[p + 6].cint));
+      print(464);
+      print_scaled(abs (mem[p + 6].cint));
       if (mem[p + 6].cint != mem[q + 4].cint) 
       {
-	print (523);
+	print(523);
 	if (mem[q + 4].cint < 0) 
-	print (464);
-	print_scaled (abs (mem[q + 4].cint));
+	print(464);
+	print_scaled(abs (mem[q + 4].cint));
       }
     }
     done1:;
     p = q;
     if ((p != h) || (mem[h].hhfield.b0 != 0)) 
     {
-      print_nl (520);
+      print_nl(520);
       if (mem[p].hhfield.b0 == 2) 
       {
-	n_sin_cos (mem[p + 3].cint);
-	print_char (123);
-	print_scaled (n_cos);
-	print_char (44);
-	print_scaled (n_sin);
-	print_char (125);
+	n_sin_cos(mem[p + 3].cint);
+	print_char(123);
+	print_scaled(n_cos);
+	print_char(44);
+	print_scaled(n_sin);
+	print_char(125);
       }
       else if (mem[p].hhfield.b0 == 3) 
       {
-	print (521);
-	print_scaled (mem[p + 3].cint);
-	print_char (125);
+	print(521);
+	print_scaled(mem[p + 3].cint);
+	print_char(125);
       }
     }
   }while (!(p == h));
   if (mem[h].hhfield.b0 != 0) 
-  print (385);
+  print(385);
   done: end_diagnostic (true);
 }
 
@@ -4255,17 +5441,17 @@ void print_weight (halfword q , integer xoff)
   w = d % 8;
   m = (d / 8) - mem[cur_edges + 3].hhfield.lhfield;
   if (file_offset > maxprintline - 9) 
-  print_nl (32);
-  else print_char (32);
+  print_nl(32);
+  else print_char(32);
   print_int (m + xoff);
   while (w > 4) {
       
-    print_char (43);
+    print_char(43);
     decr (w);
   }
   while (w < 4) {
       
-    print_char (45);
+    print_char(45);
     incr (w);
   }
 }
@@ -4274,7 +5460,7 @@ void print_edges (str_number s , boolean nuline , integer xoff , integer yoff)
 {
   halfword p, q, r;
   integer n;
-  print_diagnostic (532 , s , nuline);
+  print_diagnostic(532 , s , nuline);
   p = mem[cur_edges].hhfield.lhfield;
   n = mem[cur_edges + 1].hhfield.v.RH - 4096;
   while (p != cur_edges) {
@@ -4283,15 +5469,15 @@ void print_edges (str_number s , boolean nuline , integer xoff , integer yoff)
     r = mem[p + 1].hhfield.v.RH;
     if ((q > 1) || (r != memtop)) 
     {
-      print_nl (533);
+      print_nl(533);
       print_int (n + yoff);
-      print_char (58);
+      print_char(58);
       while (q > 1) {
 	  
 	print_weight (q , xoff);
 	q = mem[q].hhfield.v.RH;
       }
-      print (534);
+      print(534);
       while (r != memtop) {
 	  
 	print_weight (r , xoff);
@@ -4365,7 +5551,7 @@ void print_pen (halfword p , str_number s , boolean nuline)
   halfword h;
   integer m, n;
   halfword w, ww;
-  print_diagnostic (569 , s , nuline);
+  print_diagnostic(569 , s , nuline);
   nothingprinted = true;
   print_ln ();
   {integer for_end; k = 1;for_end = 8; if (k <= for_end) do 
@@ -4387,7 +5573,7 @@ void print_pen (halfword p , str_number s , boolean nuline)
 	  {
 	    if (nothingprinted) 
 	    nothingprinted = false;
-	    else print_nl (571);
+	    else print_nl(571);
 	    unskew (mem[ww + 1].cint , mem[ww + 2].cint , octant);
 	    print_two (cur_x , cur_y);
 	  }
@@ -4402,11 +5588,11 @@ void print_pen (halfword p , str_number s , boolean nuline)
     print_two (mem[w + 1].cint + mem[w + 2].cint , mem[w + 2].cint 
  );
   }
-  print_nl (570);
+  print_nl(570);
   end_diagnostic (true);
 }
 
-void print_dependency (halfword p , small_number t) 
+void print_dependency(halfword p , small_number t) 
 {
   /* 10 */ integer v;
   halfword pp, q;
@@ -4422,27 +5608,26 @@ void print_dependency (halfword p , small_number t)
 	if (mem[p + 1].cint > 0) {
 	    
 	  if (p != pp) 
-	  print_char (43);
+	  print_char(43);
 	}
-	print_scaled (mem[p + 1].cint);
+	print_scaled(mem[p + 1].cint);
       }
       goto lab10;
     }
     if (mem[p + 1].cint < 0) 
-    print_char (45);
+    print_char(45);
     else if (p != pp) 
-    print_char (43);
+    print_char(43);
     if (t == 17) 
     v = roundfraction (v);
     if (v != 65536L) 
-    print_scaled (v);
+    print_scaled(v);
     if (mem[q].hhfield.b0 != 19) 
-    confusion (589);
-    print_variable_name (q);
+    confusion(589);
+    print_variable_name(q);
     v = mem[q + 1].cint % 64;
     while (v > 0) {
-	
-      print (590);
+      print(590);
       v = v - 2;
     }
     p = mem[p].hhfield.v.RH;
@@ -4455,8 +5640,8 @@ void print_dp (small_number t , halfword p , small_number verbosity)
   halfword q;
   q = mem[p].hhfield.v.RH;
   if ((mem[q].hhfield.lhfield == 0) || (verbosity > 0)) 
-  print_dependency (p , t);
-  else print (764);
+  print_dependency(p , t);
+  else print(764);
 }
 
 halfword stash_cur_exp (void) 
@@ -4535,12 +5720,12 @@ void print_exp (halfword p , small_number verbosity)
   v = mem[p + 1].hhfield.v.RH;
   switch (t) 
   {case 1 : 
-    print (323);
+    print(323);
     break;
   case 2 : 
     if (v == 30) 
-    print (347);
-    else print (348);
+    print(347);
+    else print(348);
     break;
   case 3 : 
   case 5 : 
@@ -4552,18 +5737,18 @@ void print_exp (halfword p , small_number verbosity)
       print_type (t);
       if (v != 0) 
       {
-	print_char (32);
+	print_char(32);
 	while ((mem[v].hhfield.b1 == 11) && (v != p)) v = mem[v + 
 	1].cint;
-	print_variable_name (v);
+	print_variable_name(v);
       }
     }
     break;
   case 4 : 
     {
-      print_char (34);
-      slow_print (v);
-      print_char (34);
+      print_char(34);
+      slow_print(v);
+      print_char(34);
     }
     break;
   case 6 : 
@@ -4580,7 +5765,7 @@ void print_exp (halfword p , small_number verbosity)
 	{
 	  selector = 1;
 	  print_type (t);
-	  print (762);
+	  print(762);
 	  selector = 3;
 	}
       }
@@ -4609,34 +5794,34 @@ void print_exp (halfword p , small_number verbosity)
     print_type (t);
     else {
 	
-      print_char (40);
+      print_char(40);
       q = v + big_node_size[t];
       do {
 	  if (mem[v].hhfield.b0 == 16) 
-	print_scaled (mem[v + 1].cint);
+	print_scaled(mem[v + 1].cint);
 	else if (mem[v].hhfield.b0 == 19) 
-	print_variable_name (v);
+	print_variable_name(v);
 	else print_dp (mem[v].hhfield.b0 , mem[v + 1].hhfield.v.RH , 
 	verbosity);
 	v = v + 2;
 	if (v != q) 
-	print_char (44);
+	print_char(44);
       }while (!(v == q));
-      print_char (41);
+      print_char(41);
     }
     break;
   case 16 : 
-    print_scaled (v);
+    print_scaled(v);
     break;
   case 17 : 
   case 18 : 
     print_dp (t , v , verbosity);
     break;
   case 19 : 
-    print_variable_name (p);
+    print_variable_name(p);
     break;
     default: 
-    confusion (761);
+    confusion(761);
     break;
   }
   if (restorecur_exp) 
@@ -4647,12 +5832,12 @@ void disp_err (halfword p , str_number s)
 {
   if (interaction == 3) 
 ;
-  print_nl (765);
+  print_nl(765);
   print_exp (p , 1);
   if (s != 261) 
   {
-    print_nl (263);
-    print (s);
+    print_nl(263);
+    print(s);
   }
 }
 
@@ -4798,21 +5983,21 @@ void val_too_big (scaled x)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (591);
+	print(262);
+	print(591);
       }
       else {
 	  
-	print_nl (263);
-	print (591);
+	print_nl(263);
+	print(591);
       }
     }
-    print_scaled (x);
-    print_char (41);
+    print_scaled(x);
+    print_char(41);
     {
       help_ptr = 4;
       help_line[3] = 592;
@@ -4842,10 +6027,10 @@ void make_known (halfword p , halfword q)
     if (interesting (p)) 
     {
       begin_diagnostic ();
-      print_nl (596);
-      print_variable_name (p);
-      print_char (61);
-      print_scaled (mem[p + 1].cint);
+      print_nl(596);
+      print_variable_name(p);
+      print_char(61);
+      print_scaled(mem[p + 1].cint);
       end_diagnostic (false);
     }
   }
@@ -5131,24 +6316,24 @@ void recycle_value (halfword p)
 	  if (interesting (p)) 
 	  {
 	    begin_diagnostic ();
-	    print_nl (767);
+	    print_nl(767);
 	    if (v > 0) 
-	    print_char (45);
+	    print_char(45);
 	    if (t == 17) 
 	    vv = roundfraction (max_c[17]);
 	    else vv = max_c[18];
 	    if (vv != 65536L) 
-	    print_scaled (vv);
-	    print_variable_name (p);
+	    print_scaled(vv);
+	    print_variable_name(p);
 	    while (mem[p + 1].cint % 64 > 0) {
 		
-	      print (590);
+	      print(590);
 	      mem[p + 1].cint = mem[p + 1].cint - 2;
 	    }
 	    if (t == 17) 
-	    print_char (61);
-	    else print (768);
-	    print_dependency (s , t);
+	    print_char(61);
+	    else print(768);
+	    print_dependency(s , t);
 	    end_diagnostic (false);
 	  }
 	}
@@ -5220,7 +6405,7 @@ void recycle_value (halfword p)
     break;
   case 20 : 
   case 21 : 
-    confusion (766);
+    confusion(766);
     break;
   case 22 : 
   case 23 : 
@@ -5490,11 +6675,11 @@ unsave (void)
       if (internal[8] > 0) 
       {
 	begin_diagnostic ();
-	print_nl (516);
-	slow_print (int_name[q - (9769)]);
-	print_char (61);
-	print_scaled (mem[save_ptr + 1].cint);
-	print_char (125);
+	print_nl(516);
+	slow_print(int_name[q - (9769)]);
+	print_char(61);
+	print_scaled(mem[save_ptr + 1].cint);
+	print_char(125);
 	end_diagnostic (false);
       }
       internal[q - (9769)] = mem[save_ptr + 1].cint;
@@ -5504,9 +6689,9 @@ unsave (void)
       if (internal[8] > 0) 
       {
 	begin_diagnostic ();
-	print_nl (516);
-	slow_print (hash[q].v.RH);
-	print_char (125);
+	print_nl(516);
+	slow_print(hash[q].v.RH);
+	print_char(125);
 	end_diagnostic (false);
       }
       clearsymbol (q , false);
@@ -5697,10 +6882,10 @@ solve_choices (halfword p , halfword q , halfword n)
       if (mem[t].hhfield.b0 == 2) 
       {
 	aa = n_arg (delta_x[0], delta_y[0]);
-	n_sin_cos (mem[p + 5].cint - aa);
+	n_sin_cos(mem[p + 5].cint - aa);
 	ct = n_cos;
 	st = n_sin;
-	n_sin_cos (mem[q + 3].cint - aa);
+	n_sin_cos(mem[q + 3].cint - aa);
 	cf = n_cos;
 	sf = - (integer) n_sin;
 	set_controls (p , q , 0);
@@ -5918,10 +7103,10 @@ solve_choices (halfword p , halfword q , halfword n)
   k = 0;
   do {
       t = mem[s].hhfield.v.RH;
-    n_sin_cos (theta[k]);
+    n_sin_cos(theta[k]);
     st = n_sin;
     ct = n_cos;
-    n_sin_cos (- (integer) psi[k + 1] - theta[k + 1]);
+    n_sin_cos(- (integer) psi[k + 1] - theta[k + 1]);
     sf = n_sin;
     cf = n_cos;
     set_controls (s , t , k);
@@ -6067,17 +7252,17 @@ make_choices (halfword knots)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (528);
+	print(262);
+	print(528);
       }
       else {
 	  
-	print_nl (263);
-	print (528);
+	print_nl(263);
+	print(528);
       }
     }
     {
@@ -6097,7 +7282,7 @@ etacorr)
   /* 22 30 10 */ integer x1, x2, x3, m, r, y1, y2, y3, n, s, l;
   integer q, t, u, x2a, x3a, y2a, y3a;
   if ((xx3 < xx0) || (yy3 < yy0)) 
-  confusion (109);
+  confusion(109);
   l = 16;
   bisect_ptr = 0;
   x1 = xx1 - xx0;
@@ -6513,17 +7698,17 @@ y_scale_edges (integer s)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (535);
+	print(262);
+	print(535);
       }
       else {
 	  
-	print_nl (263);
-	print (535);
+	print_nl(263);
+	print(535);
       }
     }
     {
@@ -6597,17 +7782,17 @@ x_scale_edges (integer s)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (535);
+	print(262);
+	print(535);
       }
       else {
 	  
-	print_nl (263);
-	print (535);
+	print_nl(263);
+	print(535);
       }
     }
     {
@@ -6934,7 +8119,7 @@ xy_swap_edges (void)
 	if (m != mm) 
 	{
 	  if (mm - mmagic >= move_size) 
-	  confusion (510);
+	  confusion(510);
 	  extras = (abs (w) - 1) / 3;
 	  if (extras > 0) 
 	  {
@@ -7160,33 +8345,33 @@ total_weight (halfword h)
 void 
 begin_edge_tracing (void) 
 {
-  print_diagnostic (541 , 261 , true);
-  print (542);
+  print_diagnostic(541 , 261 , true);
+  print(542);
   print_int (cur_wt);
-  print_char (41);
+  print_char(41);
   trace_x = -4096;
 }
 void 
 trace_a_corner (void) 
 {
   if (file_offset > maxprintline - 13) 
-  print_nl (261);
-  print_char (40);
+  print_nl(261);
+  print_char(40);
   print_int (trace_x);
-  print_char (44);
+  print_char(44);
   print_int (trace_yy);
-  print_char (41);
+  print_char(41);
   trace_y = trace_yy;
 }
 void 
 end_edge_tracing (void) 
 {
   if (trace_x == -4096) 
-  print_nl (543);
+  print_nl(543);
   else {
       
     trace_a_corner ();
-    print_char (46);
+    print_char(46);
   }
   end_diagnostic (true);
 }
@@ -7213,11 +8398,11 @@ trace_new_edge (halfword r , integer n)
   {
     if (trace_x == -4096) 
     {
-      print_nl (261);
+      print_nl(261);
       trace_yy = n0;
     }
     else if (trace_yy != n0) 
-    print_char (63);
+    print_char(63);
     else trace_a_corner ();
     trace_x = m;
     trace_a_corner ();
@@ -7225,7 +8410,7 @@ trace_new_edge (halfword r , integer n)
   else {
       
     if (n0 != trace_yy) 
-    print_char (33);
+    print_char(33);
     if (((n0 < n1) && (trace_y > trace_yy)) || ((n0 > n1) && (trace_y 
     < trace_yy))) 
     trace_a_corner ();
@@ -7360,7 +8545,7 @@ move_to_edges (integer m0 , integer n0 , integer m1 , integer n1)
     sum = sum + abs (move[k]);
   while (k++ < for_end);}
   if (sum != m1 - m0) 
-  confusion (48);
+  confusion(48);
 #endif /* TEXMF_DEBUG */
   switch (octant) 
   {case 1 : 
@@ -7775,33 +8960,33 @@ zprintspec (str_number s)
 {
   /* 45 30 */ halfword p, q;
   small_number octant;
-  print_diagnostic (544 , s , true);
+  print_diagnostic(544 , s , true);
   p = cur_spec;
   octant = mem[p + 3].cint;
   print_ln ();
   unskew (mem[cur_spec + 1].cint , mem[cur_spec + 2].cint , octant);
   print_two (cur_x , cur_y);
-  print (545);
+  print(545);
   while (true) {
       
-    print (octant_dir[octant]);
-    print_char (39);
+    print(octant_dir[octant]);
+    print_char(39);
     while (true) {
 	
       q = mem[p].hhfield.v.RH;
       if (mem[p].hhfield.b1 == 0) 
       goto not_found;
       {
-	print_nl (556);
+	print_nl(556);
 	unskew (mem[p + 5].cint , mem[p + 6].cint , octant);
 	print_two (cur_x , cur_y);
-	print (523);
+	print(523);
 	unskew (mem[q + 3].cint , mem[q + 4].cint , octant);
 	print_two (cur_x , cur_y);
-	print_nl (520);
+	print_nl(520);
 	unskew (mem[q + 1].cint , mem[q + 2].cint , octant);
 	print_two (cur_x , cur_y);
-	print (557);
+	print(557);
 	print_int (mem[q].hhfield.b0 - 1);
       }
       p = q;
@@ -7810,9 +8995,9 @@ zprintspec (str_number s)
     goto done;
     p = q;
     octant = mem[p + 3].cint;
-    print_nl (546);
+    print_nl(546);
   }
-  done: print_nl (547);
+  done: print_nl(547);
   end_diagnostic (true);
 }
 void 
@@ -7824,7 +9009,7 @@ zprintstrange (str_number s)
   integer t;
   if (interaction == 3) 
 ;
-  print_nl (62);
+  print_nl(62);
   p = cur_spec;
   t = 256;
   do {
@@ -7850,26 +9035,26 @@ zprintstrange (str_number s)
       if (mem[p].hhfield.b0 != t) 
       {
 	t = mem[p].hhfield.b0;
-	print_char (32);
+	print_char(32);
 	print_int (t - 1);
       }
       if (q != 0) 
       {
 	if (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0) 
 	{
-	  print (558);
-	  print (octant_dir[mem[q + 3].cint]);
+	  print(558);
+	  print(octant_dir[mem[q + 3].cint]);
 	  q = mem[q].hhfield.v.RH;
 	  while (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0) {
 	      
-	    print_char (32);
-	    print (octant_dir[mem[q + 3].cint]);
+	    print_char(32);
+	    print(octant_dir[mem[q + 3].cint]);
 	    q = mem[q].hhfield.v.RH;
 	  }
-	  print_char (41);
+	  print_char(41);
 	}
-	print_char (32);
-	print (octant_dir[mem[q + 3].cint]);
+	print_char(32);
+	print(octant_dir[mem[q + 3].cint]);
 	q = 0;
       }
     }
@@ -7877,22 +9062,22 @@ zprintstrange (str_number s)
     q = p;
     p = mem[p].hhfield.v.RH;
   }while (!(p == f));
-  print_char (32);
+  print_char(32);
   print_int (mem[p].hhfield.b0 - 1);
   if (q != 0) {
       
     if (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0) 
     {
-      print (558);
-      print (octant_dir[mem[q + 3].cint]);
+      print(558);
+      print(octant_dir[mem[q + 3].cint]);
       q = mem[q].hhfield.v.RH;
       while (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0) {
 	  
-	print_char (32);
-	print (octant_dir[mem[q + 3].cint]);
+	print_char(32);
+	print(octant_dir[mem[q + 3].cint]);
 	q = mem[q].hhfield.v.RH;
       }
-      print_char (41);
+      print_char(41);
     }
   }
   {
@@ -7900,17 +9085,17 @@ zprintstrange (str_number s)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (s);
+      print(262);
+      print(s);
     }
     else {
 	
-      print_nl (263);
-      print (s);
+      print_nl(263);
+      print(s);
     }
   }
 }
@@ -9026,17 +10211,17 @@ zmakespec (halfword h , scaled safetymargin , integer tracing)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (563);
+	print(262);
+	print(563);
       }
       else {
 	  
-	print_nl (263);
-	print (563);
+	print_nl(263);
+	print(563);
       }
     }
     {
@@ -9495,17 +10680,17 @@ zmakepen (halfword h)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (573);
+	print(262);
+	print(573);
       }
       else {
 	  
-	print_nl (263);
-	print (573);
+	print_nl(263);
+	print(573);
       }
     }
     {
@@ -9521,17 +10706,17 @@ zmakepen (halfword h)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (576);
+	print(262);
+	print(576);
       }
       else {
 	  
-	print_nl (263);
-	print (576);
+	print_nl(263);
+	print(576);
       }
     }
     {
@@ -9968,11 +11153,11 @@ zskewline_edges (halfword p , halfword w , halfword ww)
 #ifdef STAT
     if (internal[10] > 65536L) 
     {
-      print_nl (585);
+      print_nl(585);
       print_two (x0 , y0);
-      print (584);
+      print(584);
       print_two (cur_x , cur_y);
-      print_nl (261);
+      print_nl(261);
     }
 #endif /* STAT */
     line_edges (x0 , y0 , cur_x , cur_y);
@@ -10015,9 +11200,9 @@ zdualmoves (halfword h , halfword p , halfword q)
 #ifdef STAT
       if (internal[10] > 65536L) 
       {
-	print_nl (586);
+	print_nl(586);
 	print_int (k);
-	print (587);
+	print(587);
 	unskew (xx , yy - 32768L , octant);
 	print_two (cur_x , cur_y);
       }
@@ -10068,10 +11253,10 @@ zdualmoves (halfword h , halfword p , halfword q)
 #ifdef STAT
       if (internal[10] > 65536L) 
       {
-	print (584);
+	print(584);
 	unskew (xp , yp - 32768L , octant);
 	print_two (cur_x , cur_y);
-	print_nl (261);
+	print_nl(261);
       }
 #endif /* STAT */
       m = floorunscaled (xp - xy_corr[octant]);
@@ -10104,7 +11289,7 @@ zdualmoves (halfword h , halfword p , halfword q)
 	;
 #ifdef TEXMF_DEBUG
   if ((m != mm1) || (move_ptr != n1 - n0)) 
-  confusion (50);
+  confusion(50);
 #endif /* TEXMF_DEBUG */
   move[0] = d0 + env_move[1] - mm0;
   {integer for_end; n = 1;for_end = move_ptr; if (n <= for_end) 
@@ -10148,21 +11333,21 @@ zfillenvelope (halfword spechead)
 #ifdef STAT
     if (internal[10] > 65536L) 
     {
-      print_nl (580);
-      print (octant_dir[octant]);
-      print (558);
+      print_nl(580);
+      print(octant_dir[octant]);
+      print(558);
       print_int (mem[h].hhfield.lhfield);
       if (mem[h].hhfield.lhfield != 1) 
-      print (581);
-      else print (582);
-      print (583);
+      print(581);
+      else print(582);
+      print(583);
       unskew (mem[p + 1].cint + mem[w + 1].cint , mem[p + 2].cint 
       + mem[w + 2].cint , octant);
       print_two (cur_x , cur_y);
       ww = mem[h].hhfield.v.RH;
       if (mem[q + 6].cint == 1) 
       ww = mem[ww].hhfield.lhfield;
-      print (584);
+      print(584);
       unskew (mem[q + 1].cint + mem[ww + 1].cint , mem[q + 2]
       .cint + mem[ww + 2].cint , octant);
       print_two (cur_x , cur_y);
@@ -10217,9 +11402,9 @@ zfillenvelope (halfword spechead)
 #ifdef STAT
 	  if (internal[10] > 65536L) 
 	  {
-	    print_nl (586);
+	    print_nl(586);
 	    print_int (k);
-	    print (587);
+	    print(587);
 	    unskew (xx , yy - 32768L , octant);
 	    print_two (cur_x , cur_y);
 	  }
@@ -10270,10 +11455,10 @@ zfillenvelope (halfword spechead)
 #ifdef STAT
 	  if (internal[10] > 65536L) 
 	  {
-	    print (584);
+	    print(584);
 	    unskew (xp , yp - 32768L , octant);
 	    print_two (cur_x , cur_y);
-	    print_nl (261);
+	    print_nl(261);
 	  }
 #endif /* STAT */
 	  m = floorunscaled (xp - xy_corr[octant]);
@@ -10307,7 +11492,7 @@ zfillenvelope (halfword spechead)
 	;
 #ifdef TEXMF_DEBUG
       if ((m != mm1) || (move_ptr != n1 - n0)) 
-      confusion (49);
+      confusion(49);
 #endif /* TEXMF_DEBUG */
       move[0] = d0 + env_move[0] - mm0;
       {integer for_end; n = 1;for_end = move_ptr; if (n <= 
@@ -10362,7 +11547,7 @@ zmakeellipse (scaled majoraxis , scaled minoraxis , angle theta)
   else {
       
     symmetric = false;
-    n_sin_cos (theta);
+    n_sin_cos(theta);
     gamma = takefraction (majoraxis , n_sin);
     delta = takefraction (minoraxis , n_cos);
     beta = pyth_add (gamma , delta);
@@ -12099,16 +13284,16 @@ zlineareq (halfword p , small_number t)
     if (interesting (x)) 
     {
       begin_diagnostic ();
-      print_nl (597);
-      print_variable_name (x);
+      print_nl(597);
+      print_variable_name(x);
       w = n;
       while (w > 0) {
 	  
-	print (590);
+	print(590);
 	w = w - 2;
       }
-      print_char (61);
-      print_dependency (p , 17);
+      print_char(61);
+      print_dependency(p , 17);
       end_diagnostic (false);
     }
   }
@@ -12255,17 +13440,17 @@ zringmerge (halfword p , halfword q)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (600);
+	    print(262);
+	    print(600);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (600);
+	    print_nl(263);
+	    print(600);
 	  }
 	}
 	{
@@ -12288,9 +13473,9 @@ void
 zshow_cmd_mod (integer c , integer m) 
 {
   begin_diagnostic ();
-  print_nl (123);
+  print_nl(123);
   print_cmd_mod (c , m);
-  print_char (125);
+  print_char(125);
   end_diagnostic (false);
 }
 void 
@@ -12318,17 +13503,17 @@ showcontext (void)
 	if (cur_input .name_field <= 1) {
 	    
 	  if ((cur_input .name_field == 0) && (file_ptr == 0)) 
-	  print_nl (604);
-	  else print_nl (605);
+	  print_nl(604);
+	  else print_nl(605);
 	}
 	else if (cur_input .name_field == 2) 
-	print_nl (606);
+	print_nl(606);
 	else {
 	    
-	  print_nl (607);
+	  print_nl(607);
 	  print_int (line);
 	}
-	print_char (32);
+	print_char(32);
 	{
 	  l = tally;
 	  tally = 0;
@@ -12346,7 +13531,7 @@ showcontext (void)
 	      if (trick_count < errorline) 
 	      trick_count = errorline;
 	    }
-	    print (buffer[i]);
+	    print(buffer[i]);
 	  }
 	while (i++ < for_end);}
       }
@@ -12354,11 +13539,11 @@ showcontext (void)
 	  
 	switch (cur_input.index_field) 
 	{case 16 : 
-	  print_nl (608);
+	  print_nl(608);
 	  break;
 	case 17 : 
 	  {
-	    print_nl (613);
+	    print_nl(613);
 	    p = param_stack[cur_input .limit_field];
 	    if (p != 0) {
 		
@@ -12366,25 +13551,25 @@ showcontext (void)
 	      print_exp (p , 0);
 	      else show_token_list (p , 0 , 20 , tally);
 	    }
-	    print (614);
+	    print(614);
 	  }
 	  break;
 	case 18 : 
-	  print_nl (609);
+	  print_nl(609);
 	  break;
 	case 19 : 
 	  if (cur_input.loc_field == 0) 
-	  print_nl (610);
-	  else print_nl (611);
+	  print_nl(610);
+	  else print_nl(611);
 	  break;
 	case 20 : 
-	  print_nl (612);
+	  print_nl(612);
 	  break;
 	case 21 : 
 	  {
 	    print_ln ();
 	    if (cur_input .name_field != 0) 
-	    slow_print (hash[cur_input .name_field].v.RH);
+	    slow_print(hash[cur_input .name_field].v.RH);
 	    else {
 		
 	      p = param_stack[cur_input .limit_field];
@@ -12402,11 +13587,11 @@ showcontext (void)
 		mem[q].hhfield.v.RH = 0;
 	      }
 	    }
-	    print (501);
+	    print(501);
 	  }
 	  break;
 	  default: 
-	  print_nl (63);
+	  print_nl(63);
 	  break;
 	}
 	{
@@ -12439,27 +13624,27 @@ showcontext (void)
       }
       else {
 	  
-	print (276);
+	print(276);
 	p = l + first_count - halferrorline + 3;
 	n = halferrorline;
       }
       {integer for_end; q = p;for_end = first_count - 1; if (q <= 
       for_end) do 
-	print_char (trick_buf[q % errorline]);
+	print_char(trick_buf[q % errorline]);
       while (q++ < for_end);}
       print_ln ();
       {integer for_end; q = 1;for_end = n; if (q <= for_end) do 
-	print_char (32);
+	print_char(32);
       while (q++ < for_end);}
       if (m + n <= errorline) 
       p = first_count + m;
       else p = first_count + (errorline - n - 3);
       {integer for_end; q = first_count;for_end = p - 1; if (q <= 
       for_end) do 
-	print_char (trick_buf[q % errorline]);
+	print_char(trick_buf[q % errorline]);
       while (q++ < for_end);}
       if (m + n > errorline) 
-      print (276);
+      print(276);
     }
     if ((cur_input.index_field <= 15)) {
 	
@@ -12655,7 +13840,7 @@ zmakeexpcopy (halfword p)
     }
     break;
     default: 
-    confusion (800);
+    confusion(800);
     break;
   }
 }
@@ -12763,7 +13948,7 @@ endfilereading (void)
   first = cur_input .start_field;
   line = line_stack[cur_input.index_field];
   if (cur_input.index_field != in_open) 
-  confusion (617);
+  confusion(617);
   if (cur_input .name_field > 2) 
   aclose (input_file[cur_input.index_field]);
   {
@@ -12804,17 +13989,17 @@ checkoutervalidity (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (623);
+	  print(262);
+	  print(623);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (623);
+	  print_nl(263);
+	  print(623);
 	}
       }
       else {
@@ -12824,21 +14009,21 @@ checkoutervalidity (void)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (624);
+	    print(262);
+	    print(624);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (624);
+	    print_nl(263);
+	    print(624);
 	  }
 	}
       }
-      print (625);
+      print(625);
       {
 	help_ptr = 4;
 	help_line[3] = 626;
@@ -12849,14 +14034,14 @@ checkoutervalidity (void)
       switch (scanner_status) 
       {case 2 : 
 	{
-	  print (630);
+	  print(630);
 	  help_line[3] = 631;
 	  cur_sym = 9763;
 	}
 	break;
       case 3 : 
 	{
-	  print (632);
+	  print(632);
 	  help_line[3] = 633;
 	  if (warning_info == 0) 
 	  cur_sym = 9767;
@@ -12870,18 +14055,18 @@ checkoutervalidity (void)
       case 4 : 
       case 5 : 
 	{
-	  print (634);
+	  print(634);
 	  if (scanner_status == 5) 
-	  slow_print (hash[warning_info].v.RH);
-	  else print_variable_name (warning_info);
+	  slow_print(hash[warning_info].v.RH);
+	  else print_variable_name(warning_info);
 	  cur_sym = 9765;
 	}
 	break;
       case 6 : 
 	{
-	  print (635);
-	  slow_print (hash[warning_info].v.RH);
-	  print (636);
+	  print(635);
+	  slow_print(hash[warning_info].v.RH);
+	  print(636);
 	  help_line[3] = 637;
 	  cur_sym = 9764;
 	}
@@ -12896,17 +14081,17 @@ checkoutervalidity (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (618);
+	  print(262);
+	  print(618);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (618);
+	  print_nl(263);
+	  print(618);
 	}
       }
       print_int (warning_info);
@@ -12972,7 +14157,7 @@ getnext (void)
 	  }
 	  if (force_eof) 
 	  {
-	    print_char (41);
+	    print_char(41);
 	    decr (open_parens);
 	    fflush (stdout);
 	    force_eof = false;
@@ -12997,12 +14182,12 @@ getnext (void)
 	  if (interaction > 1) 
 	  {
 	    if (cur_input .limit_field == cur_input .start_field) 
-	    print_nl (652);
+	    print_nl(652);
 	    print_ln ();
 	    first = cur_input .start_field;
 	    {
 	;
-	      print (42);
+	      print(42);
 	      term_input ();
 	    }
 	    cur_input .limit_field = last;
@@ -13038,17 +14223,17 @@ getnext (void)
 	;
 	      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	      {
-		print_nl (261);
-		print (fullsourcefilenamestack[in_open]);
-		print (58);
+		print_nl(261);
+		print(fullsourcefilenamestack[in_open]);
+		print(58);
 		print_int (line);
-		print (262);
-		print (645);
+		print(262);
+		print(645);
 	      }
 	      else {
 		  
-		print_nl (263);
-		print (645);
+		print_nl(263);
+		print(645);
 	      }
 	    }
 	    {
@@ -13106,17 +14291,17 @@ getnext (void)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (642);
+	    print(262);
+	    print(642);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (642);
+	    print_nl(263);
+	    print(642);
 	  }
 	}
 	{
@@ -13177,17 +14362,17 @@ getnext (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (649);
+	  print(262);
+	  print(649);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (649);
+	  print_nl(263);
+	  print(649);
 	}
       }
       {
@@ -13280,12 +14465,12 @@ firmuptheline (void)
       if (cur_input .start_field < cur_input .limit_field) 
       {integer for_end; k = cur_input .start_field;for_end = 
       cur_input .limit_field - 1; if (k <= for_end) do 
-	print (buffer[k]);
+	print(buffer[k]);
       while (k++ < for_end);}
       first = cur_input .limit_field;
       {
 	;
-	print (654);
+	print(654);
 	term_input ();
       }
       if (last > first) 
@@ -13366,17 +14551,17 @@ getsymbol (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (666);
+	print(262);
+	print(666);
       }
       else {
 	  
-	print_nl (263);
-	print (666);
+	print_nl(263);
+	print(666);
       }
     }
     {
@@ -13483,21 +14668,21 @@ zcheckdelimiter (halfword ldelim , halfword rdelim)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (924);
+	print(262);
+	print(924);
       }
       else {
 	  
-	print_nl (263);
-	print (924);
+	print_nl(263);
+	print(924);
       }
     }
-    slow_print (hash[rdelim].v.RH);
-    print (925);
+    slow_print(hash[rdelim].v.RH);
+    print(925);
     {
       help_ptr = 3;
       help_line[2] = 926;
@@ -13599,17 +14784,17 @@ scandef (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (682);
+	  print(262);
+	  print(682);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (682);
+	  print_nl(263);
+	  print(682);
 	}
       }
       {
@@ -13648,17 +14833,17 @@ scandef (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (685);
+	  print(262);
+	  print(685);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (685);
+	  print_nl(263);
+	  print(685);
 	}
       }
       {
@@ -13753,12 +14938,12 @@ zprintmacroname (halfword a , halfword n)
 {
   halfword p, q;
   if (n != 0) 
-  slow_print (hash[n].v.RH);
+  slow_print(hash[n].v.RH);
   else {
       
     p = mem[a].hhfield.lhfield;
     if (p == 0) 
-    slow_print (hash[mem[mem[mem[a].hhfield.v.RH].hhfield 
+    slow_print(hash[mem[mem[mem[a].hhfield.v.RH].hhfield 
   .lhfield].hhfield.lhfield].v.RH);
     else {
 	
@@ -13775,12 +14960,12 @@ void
 zprintarg (halfword q , integer n , halfword b) 
 {
   if (mem[q].hhfield.v.RH == 1) 
-  print_nl (498);
+  print_nl(498);
   else if ((b < 10070) && (b != 7)) 
-  print_nl (499);
-  else print_nl (500);
+  print_nl(499);
+  else print_nl(500);
   print_int (n);
-  print (703);
+  print(703);
   if (mem[q].hhfield.v.RH == 1) 
   print_exp (q , 1);
   else show_token_list (q , 0 , 1000 , 0);
@@ -13862,7 +15047,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
     print_ln ();
     printmacroname (arglist , macroname);
     if (n == 3) 
-    print (665);
+    print(665);
     show_macro (defref , 0 , 100000L);
     if (arglist != 0) 
     {
@@ -13890,17 +15075,17 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (709);
+	    print(262);
+	    print(709);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (709);
+	    print_nl(263);
+	    print(709);
 	  }
 	}
 	printmacroname (arglist , macroname);
@@ -13992,24 +15177,24 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (704);
+	print(262);
+	print(704);
       }
       else {
 	  
-	print_nl (263);
-	print (704);
+	print_nl(263);
+	print(704);
       }
     }
     printmacroname (arglist , macroname);
-    print_char (59);
-    print_nl (705);
-    slow_print (hash[rdelim].v.RH);
-    print (299);
+    print_char(59);
+    print_nl(705);
+    slow_print(hash[rdelim].v.RH);
+    print(299);
     {
       help_ptr = 3;
       help_line[2] = 706;
@@ -14061,7 +15246,7 @@ zmacrocall (halfword defref , halfword arglist , halfword macroname)
 	if (cur_cmd != 69) 
 	{
 	  missing_err (479);
-	  print (716);
+	  print(716);
 	  printmacroname (arglist , macroname);
 	  {
 	    help_ptr = 1;
@@ -14179,17 +15364,17 @@ expand (void)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (724);
+	    print(262);
+	    print(724);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (724);
+	    print_nl(263);
+	    print(724);
 	  }
 	}
 	print_cmd_mod (2 , cur_mod);
@@ -14226,17 +15411,17 @@ expand (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (688);
+	  print(262);
+	  print(688);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (688);
+	  print_nl(263);
+	  print(688);
 	}
       }
       {
@@ -14259,17 +15444,17 @@ expand (void)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (692);
+	    print(262);
+	    print(692);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (692);
+	    print_nl(263);
+	    print(692);
 	  }
 	}
 	{
@@ -14296,17 +15481,17 @@ expand (void)
 	;
 	    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	    {
-	      print_nl (261);
-	      print (fullsourcefilenamestack[in_open]);
-	      print (58);
+	      print_nl(261);
+	      print(fullsourcefilenamestack[in_open]);
+	      print(58);
 	      print_int (line);
-	      print (262);
-	      print (695);
+	      print(262);
+	      print(695);
 	    }
 	    else {
 		
-	      print_nl (263);
-	      print (695);
+	      print_nl(263);
+	      print(695);
 	    }
 	  }
 	  {
@@ -14488,7 +15673,7 @@ zchangeif_limit (small_number l , halfword p)
     while (true) {
 	
       if (q == 0) 
-      confusion (718);
+      confusion(718);
       if (mem[q].hhfield.v.RH == p) 
       {
 	mem[q].hhfield.b0 = l;
@@ -14537,8 +15722,8 @@ conditional (void)
   {
     begin_diagnostic ();
     if (cur_exp == 30) 
-    print (722);
-    else print (723);
+    print(722);
+    else print(723);
     end_diagnostic (false);
   }
   found: checkcolon ();
@@ -14588,8 +15773,8 @@ void
 bad_for (str_number s) 
 {
   disp_err (0 , 726);
-  print (s);
-  print (306);
+  print(s);
+  print(306);
   {
     help_ptr = 4;
     help_line[3] = 727;
@@ -14749,11 +15934,11 @@ resumeiteration (void)
   if (internal[7] > 65536L) 
   {
     begin_diagnostic ();
-    print_nl (736);
+    print_nl(736);
     if ((q != 0) && (mem[q].hhfield.v.RH == 1)) 
     print_exp (q , 1);
     else show_token_list (q , 0 , 50 , 0);
-    print_char (125);
+    print_char(125);
     end_diagnostic (false);
   }
   goto lab10;
@@ -15136,17 +16321,17 @@ zpromptfilename (str_number s , str_number e)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (744);
+      print(262);
+      print(744);
     }
     else {
 	
-      print_nl (263);
-      print (744);
+      print_nl(263);
+      print(744);
     }
   }
   else {
@@ -15155,31 +16340,31 @@ zpromptfilename (str_number s , str_number e)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (745);
+      print(262);
+      print(745);
     }
     else {
 	
-      print_nl (263);
-      print (745);
+      print_nl(263);
+      print(745);
     }
   }
   print_file_name (cur_name , cur_area , cur_ext);
-  print (746);
+  print(746);
   if (e == 747) 
   showcontext ();
-  print_nl (748);
-  print (s);
+  print_nl(748);
+  print(s);
   if (interaction < 2) 
   fatal_error (749);
   savedcur_name = cur_name;
   {
 ;
-    print (262);
+    print(262);
     term_input ();
   }
   {
@@ -15228,22 +16413,22 @@ open_log_file (void)
   {
     Fputs (log_file ,  "This is METAFONT, Version 2.7182818");
     Fputs (log_file ,  versionstring);
-    slow_print (base_ident);
-    print (755);
+    slow_print(base_ident);
+    print(755);
     print_int (roundunscaled (internal[16]));
-    print_char (32);
+    print_char(32);
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
     m = roundunscaled (internal[15]);
     {integer for_end; k = 3 * m - 2;for_end = 3 * m; if (k <= 
     for_end) do 
       putc (months[k],  log_file);
     while (k++ < for_end);}
-    print_char (32);
+    print_char(32);
     print_int (roundunscaled (internal[14]));
-    print_char (32);
+    print_char(32);
     m = roundunscaled (internal[17]);
     print_dd (m / 60);
-    print_char (58);
+    print_char(58);
     print_dd (m % 60);
     if (translatefilename) 
     {
@@ -15254,10 +16439,10 @@ open_log_file (void)
     }
   }
   input_stack[input_ptr] = cur_input;
-  print_nl (753);
+  print_nl(753);
   l = input_stack[0].limit_field - 1;
   {integer for_end; k = 1;for_end = l; if (k <= for_end) do 
-    print (buffer[k]);
+    print(buffer[k]);
   while (k++ < for_end);}
   print_ln ();
   selector = old_setting + 2;
@@ -15274,17 +16459,17 @@ start_input (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (757);
+	print(262);
+	print(757);
       }
       else {
 	  
-	print_nl (263);
-	print (757);
+	print_nl(263);
+	print(757);
       }
     }
     {
@@ -15330,10 +16515,10 @@ start_input (void)
   cur_input .name_field]) > maxprintline - 2) 
   print_ln ();
   else if ((term_offset > 0) || (file_offset > 0)) 
-  print_char (32);
-  print_char (40);
+  print_char(32);
+  print_char(40);
   incr (open_parens);
-  slow_print (cur_input .name_field);
+  slow_print(cur_input .name_field);
   fflush (stdout);
   {
     line = 1;
@@ -15354,22 +16539,22 @@ zbadexp (str_number s)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (s);
+      print(262);
+      print(s);
     }
     else {
 	
-      print_nl (263);
-      print (s);
+      print_nl(263);
+      print(s);
     }
   }
-  print (770);
+  print(770);
   print_cmd_mod (cur_cmd , cur_mod);
-  print_char (39);
+  print_char(39);
   {
     help_ptr = 4;
     help_line[3] = 771;
@@ -15449,21 +16634,21 @@ zobliterated (halfword q)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (790);
+      print(262);
+      print(790);
     }
     else {
 	
-      print_nl (263);
-      print (790);
+      print_nl(263);
+      print(790);
     }
   }
   show_token_list (q , 0 , 1000 , 0);
-  print (791);
+  print(791);
   {
     help_ptr = 5;
     help_line[4] = 792;
@@ -15499,17 +16684,17 @@ materializepen (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (806);
+	print(262);
+	print(806);
       }
       else {
 	  
-	print_nl (263);
-	print (806);
+	print_nl(263);
+	print(806);
       }
     }
     {
@@ -15786,7 +16971,7 @@ zdonullary (quarterword c)
       cur_input .name_field = 1;
       {
 	;
-	print (261);
+	print(261);
 	term_input ();
       }
       {
@@ -15837,17 +17022,17 @@ znicepair (integer p , quarterword t)
 void 
 zprintknownorunknowntype (small_number t , integer v) 
 {
-  print_char (40);
+  print_char(40);
   if (t < 17) {
       
     if (t != 14) 
     print_type (t);
     else if (nicepair (v , 14)) 
-    print (336);
-    else print (836);
+    print(336);
+    else print(836);
   }
-  else print (837);
-  print_char (41);
+  else print(837);
+  print_char(41);
 }
 void 
 zbadunary (quarterword c) 
@@ -15961,21 +17146,21 @@ zstrtonum (quarterword c)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (846);
+	  print(262);
+	  print(846);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (846);
+	  print_nl(263);
+	  print(846);
 	}
       }
       print_int (n);
-      print_char (41);
+      print_char(41);
       {
 	help_ptr = 1;
 	help_line[0] = 847;
@@ -16053,11 +17238,11 @@ zdounary (quarterword c)
   if (internal[7] > 131072L) 
   {
     begin_diagnostic ();
-    print_nl (123);
+    print_nl(123);
     print_op (c);
-    print_char (40);
+    print_char(40);
     print_exp (0 , 0);
-    print (842);
+    print(842);
     end_diagnostic (false);
   }
   switch (c) 
@@ -16135,7 +17320,7 @@ zdounary (quarterword c)
     case 62 : 
     case 63 : 
       {
-	n_sin_cos ((cur_exp % 23592960L) * 16);
+	n_sin_cos((cur_exp % 23592960L) * 16);
 	if (c == 62) 
 	cur_exp = roundfraction (n_sin);
 	else cur_exp = roundfraction (n_cos);
@@ -16227,7 +17412,7 @@ zdounary (quarterword c)
 	
       old_setting = selector;
       selector = 5;
-      print_scaled (cur_exp);
+      print_scaled(cur_exp);
       cur_exp = make_string ();
       selector = old_setting;
       cur_type = 4;
@@ -16394,7 +17579,7 @@ bad_binary (halfword p , quarterword c)
   print_op (c);
   printknownorunknowntype (mem[p].hhfield.b0 , p);
   if (c >= 94) 
-  print (479);
+  print(479);
   else print_op (c);
   printknownorunknowntype (cur_type , cur_exp);
   {
@@ -16636,7 +17821,7 @@ zsetuptrans (quarterword c)
     {case 84 : 
       if (mem[p].hhfield.b0 == 16) 
       {
-	n_sin_cos ((mem[p + 1].cint % 23592960L) * 16);
+	n_sin_cos((mem[p + 1].cint % 23592960L) * 16);
 	mem[q + 5].cint = roundfraction (n_cos);
 	mem[q + 9].cint = roundfraction (n_sin);
 	mem[q + 7].cint = - (integer) mem[q + 9].cint;
@@ -16860,17 +18045,17 @@ zedgestrans (halfword p , quarterword c)
 		if ((filelineerrorstylep && !(cur_input .name_field == 0)) 
 		) 
 		{
-		  print_nl (261);
-		  print (fullsourcefilenamestack[in_open]);
-		  print (58);
+		  print_nl(261);
+		  print(fullsourcefilenamestack[in_open]);
+		  print(58);
 		  print_int (line);
-		  print (262);
-		  print (867);
+		  print(262);
+		  print(867);
 		}
 		else {
 		    
-		  print_nl (263);
-		  print (867);
+		  print_nl(263);
+		  print(867);
 		}
 	      }
 	      {
@@ -16918,17 +18103,17 @@ zedgestrans (halfword p , quarterword c)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (864);
+      print(262);
+      print(864);
     }
     else {
 	
-      print_nl (263);
-      print (864);
+      print_nl(263);
+      print(864);
     }
   }
   {
@@ -17405,13 +18590,13 @@ zdobinary (halfword p , quarterword c)
   if (internal[7] > 131072L) 
   {
     begin_diagnostic ();
-    print_nl (850);
+    print_nl(850);
     print_exp (p , 0);
-    print_char (41);
+    print_char(41);
     print_op (c);
-    print_char (40);
+    print_char(40);
     print_exp (0 , 0);
-    print (842);
+    print(842);
     end_diagnostic (false);
   }
   switch (mem[p].hhfield.b0) 
@@ -17788,13 +18973,13 @@ zfracmult (scaled n , scaled d)
   if (internal[7] > 131072L) 
   {
     begin_diagnostic ();
-    print_nl (850);
-    print_scaled (n);
-    print_char (47);
-    print_scaled (d);
-    print (855);
+    print_nl(850);
+    print_scaled(n);
+    print_char(47);
+    print_scaled(d);
+    print(855);
     print_exp (0 , 0);
-    print (842);
+    print(842);
     end_diagnostic (false);
   }
   switch (cur_type) 
@@ -18132,9 +19317,9 @@ init_gf (void)
       
     old_setting = selector;
     selector = 5;
-    print_char (46);
+    print_char(46);
     print_int (makescaled (internal[27], 59429463L));
-    print (1056);
+    print(1056);
     gf_ext = make_string ();
     selector = old_setting;
   }
@@ -18159,13 +19344,13 @@ init_gf (void)
   }
   old_setting = selector;
   selector = 5;
-  print (1054);
+  print(1054);
   print_int (roundunscaled (internal[14]));
-  print_char (46);
+  print_char(46);
   print_dd (roundunscaled (internal[15]));
-  print_char (46);
+  print_char(46);
   print_dd (roundunscaled (internal[16]));
-  print_char (58);
+  print_char(58);
   t = roundunscaled (internal[17]);
   print_dd (t / 60);
   print_dd (t % 60);
@@ -18201,12 +19386,12 @@ zshipout (eight_bits c)
   if (term_offset > maxprintline - 9) 
   print_ln ();
   else if ((term_offset > 0) || (file_offset > 0)) 
-  print_char (32);
-  print_char (91);
+  print_char(32);
+  print_char(91);
   print_int (c);
   if (f != 0) 
   {
-    print_char (46);
+    print_char(46);
     print_int (f);
   }
   fflush (stdout);
@@ -18346,7 +19531,7 @@ zshipout (eight_bits c)
       q = mem[q].hhfield.v.RH;
     }while (!(mm == 268435456L));
     if (w != 0) 
-    print_nl (1058);
+    print_nl(1058);
     if (prevm - mem[cur_edges + 3].hhfield.lhfield + xoff > gf_max_m) 
     gf_max_m = prevm - mem[cur_edges + 3].hhfield.lhfield + xoff;
     p = mem[p].hhfield.lhfield;
@@ -18370,7 +19555,7 @@ zshipout (eight_bits c)
   }
   gf_prev_ptr = gf_offset + gf_ptr;
   incr (total_chars);
-  print_char (93);
+  print_char(93);
   fflush (stdout);
   if (internal[11] > 0) 
   print_edges (1057 , true , xoff , yoff);
@@ -18478,22 +19663,22 @@ ztryeq (halfword l , halfword r)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (897);
+	  print(262);
+	  print(897);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (897);
+	  print_nl(263);
+	  print(897);
 	}
       }
-      print (899);
-      print_scaled (mem[p + 1].cint);
-      print_char (41);
+      print(899);
+      print_scaled(mem[p + 1].cint);
+      print_char(41);
       {
 	help_ptr = 2;
 	help_line[1] = 898;
@@ -18508,17 +19693,17 @@ ztryeq (halfword l , halfword r)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (600);
+	  print(262);
+	  print(600);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (600);
+	  print_nl(263);
+	  print(600);
 	}
       }
       {
@@ -18586,17 +19771,17 @@ zmakeeq (halfword lhs)
 	;
 	    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	    {
-	      print_nl (261);
-	      print (fullsourcefilenamestack[in_open]);
-	      print (58);
+	      print_nl(261);
+	      print(fullsourcefilenamestack[in_open]);
+	      print(58);
 	      print_int (line);
-	      print (262);
-	      print (600);
+	      print(262);
+	      print(600);
 	    }
 	    else {
 		
-	      print_nl (263);
-	      print (600);
+	      print_nl(263);
+	      print(600);
 	    }
 	  }
 	  {
@@ -18613,17 +19798,17 @@ zmakeeq (halfword lhs)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (894);
+	  print(262);
+	  print(894);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (894);
+	  print_nl(263);
+	  print(894);
 	}
       }
       {
@@ -18639,17 +19824,17 @@ zmakeeq (halfword lhs)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (897);
+	  print(262);
+	  print(897);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (897);
+	  print_nl(263);
+	  print(897);
 	}
       }
       {
@@ -18717,12 +19902,12 @@ zmakeeq (halfword lhs)
   disp_err (0 , 891);
   if (mem[lhs].hhfield.b0 <= 14) 
   print_type (mem[lhs].hhfield.b0);
-  else print (340);
-  print_char (61);
+  else print(340);
+  print_char(61);
   if (cur_type <= 14) 
   print_type (cur_type);
-  else print (340);
-  print_char (41);
+  else print(340);
+  print_char(41);
   {
     help_ptr = 2;
     help_line[1] = 892;
@@ -18753,11 +19938,11 @@ doequation (void)
   if (internal[7] > 131072L) 
   {
     begin_diagnostic ();
-    print_nl (850);
+    print_nl(850);
     print_exp (lhs , 0);
-    print (886);
+    print(886);
     print_exp (0 , 0);
-    print (842);
+    print(842);
     end_diagnostic (false);
   }
   if (cur_type == 10) {
@@ -18802,13 +19987,13 @@ doassignment (void)
     if (internal[7] > 131072L) 
     {
       begin_diagnostic ();
-      print_nl (123);
+      print_nl(123);
       if (mem[lhs].hhfield.lhfield > 9769) 
-      slow_print (int_name[mem[lhs].hhfield.lhfield - (9769)]);
+      slow_print(int_name[mem[lhs].hhfield.lhfield - (9769)]);
       else show_token_list (lhs , 0 , 1000 , 0);
-      print (461);
+      print(461);
       print_exp (0 , 0);
-      print_char (125);
+      print_char(125);
       end_diagnostic (false);
     }
     if (mem[lhs].hhfield.lhfield > 9769) {
@@ -18818,8 +20003,8 @@ doassignment (void)
       else {
 	  
 	disp_err (0 , 887);
-	slow_print (int_name[mem[lhs].hhfield.lhfield - (9769)]);
-	print (888);
+	slow_print(int_name[mem[lhs].hhfield.lhfield - (9769)]);
+	print(888);
 	{
 	  help_ptr = 2;
 	  help_line[1] = 889;
@@ -18878,17 +20063,17 @@ dotypedeclaration (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (900);
+	  print(262);
+	  print(900);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (900);
+	  print_nl(263);
+	  print(900);
 	}
       }
       {
@@ -18906,17 +20091,17 @@ dotypedeclaration (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (903);
+	  print(262);
+	  print(903);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (903);
+	  print_nl(263);
+	  print(903);
 	}
       }
       {
@@ -18979,10 +20164,10 @@ dorandomseed (void)
     {
       old_setting = selector;
       selector = 2;
-      print_nl (918);
-      print_scaled (cur_exp);
-      print_char (125);
-      print_nl (261);
+      print_nl(918);
+      print_scaled(cur_exp);
+      print_char(125);
+      print_nl(261);
       selector = old_setting;
     }
   }
@@ -19031,23 +20216,23 @@ dointerim (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (924);
+	print(262);
+	print(924);
       }
       else {
 	  
-	print_nl (263);
-	print (924);
+	print_nl(263);
+	print(924);
       }
     }
     if (cur_sym == 0) 
-    print (929);
-    else slow_print (hash[cur_sym].v.RH);
-    print (930);
+    print(929);
+    else slow_print(hash[cur_sym].v.RH);
+    print(930);
     {
       help_ptr = 1;
       help_line[0] = 931;
@@ -19122,7 +20307,7 @@ doshow (void)
   do {
       getxnext ();
     scan_expression ();
-    print_nl (765);
+    print_nl(765);
     print_exp (0 , 2);
     flush_cur_exp (0);
   }while (!(cur_cmd != 82));
@@ -19130,11 +20315,11 @@ doshow (void)
 void 
 disptoken (void) 
 {
-  print_nl (940);
+  print_nl(940);
   if (cur_sym == 0) 
   {
     if (cur_cmd == 42) 
-    print_scaled (cur_mod);
+    print_scaled(cur_mod);
     else if (cur_cmd == 38) 
     {
       g_pointer = cur_mod;
@@ -19142,9 +20327,9 @@ disptoken (void)
     }
     else {
 	
-      print_char (34);
-      slow_print (cur_mod);
-      print_char (34);
+      print_char(34);
+      slow_print(cur_mod);
+      print_char(34);
       {
 	if (str_ref[cur_mod]< 127) {
 	    
@@ -19157,10 +20342,10 @@ disptoken (void)
   }
   else {
       
-    slow_print (hash[cur_sym].v.RH);
-    print_char (61);
+    slow_print(hash[cur_sym].v.RH);
+    print_char(61);
     if (eqtb[cur_sym].lhfield >= 86) 
-    print (941);
+    print(941);
     print_cmd_mod (cur_cmd , cur_mod);
     if (cur_cmd == 10) 
     {
@@ -19181,28 +20366,28 @@ do_show_token (void)
 void 
 do_show_stats (void) 
 {
-  print_nl (950);
+  print_nl(950);
 	;
 #ifdef STAT
   print_int (var_used);
-  print_char (38);
+  print_char(38);
   print_int (dyn_used);
   if (false) 
 #endif /* STAT */
-  print (357);
-  print (558);
+  print(357);
+  print(558);
   print_int (hi_mem_min - lo_mem_max - 1);
-  print (951);
+  print(951);
   print_ln ();
-  print_nl (952);
+  print_nl(952);
   print_int (str_ptr - init_str_ptr);
-  print_char (38);
+  print_char(38);
   print_int (pool_ptr - init_pool_ptr);
-  print (558);
+  print(558);
   print_int (max_strings - max_str_ptr);
-  print_char (38);
+  print_char(38);
   print_int (pool_size - max_pool_ptr);
-  print (951);
+  print(951);
   print_ln ();
   getxnext ();
 }
@@ -19227,11 +20412,11 @@ zdispvar (halfword p)
   }
   else if (mem[p].hhfield.b0 >= 22) 
   {
-    print_nl (261);
-    print_variable_name (p);
+    print_nl(261);
+    print_variable_name(p);
     if (mem[p].hhfield.b0 > 22) 
-    print (665);
-    print (953);
+    print(665);
+    print(953);
     if (file_offset >= maxprintline - 20) 
     n = 5;
     else n = maxprintline - file_offset - 15;
@@ -19239,9 +20424,9 @@ zdispvar (halfword p)
   }
   else if (mem[p].hhfield.b0 != 0) 
   {
-    print_nl (261);
-    print_variable_name (p);
-    print_char (61);
+    print_nl(261);
+    print_variable_name(p);
+    print_char(61);
     print_exp (p , 0);
   }
 }
@@ -19277,12 +20462,12 @@ do_show_dependencies (void)
       
     if (interesting (p)) 
     {
-      print_nl (261);
-      print_variable_name (p);
+      print_nl(261);
+      print_variable_name(p);
       if (mem[p].hhfield.b0 == 17) 
-      print_char (61);
-      else print (768);
-      print_dependency (mem[p + 1].hhfield.v.RH , mem[p].hhfield.b0 
+      print_char(61);
+      else print(768);
+      print_dependency(mem[p + 1].hhfield.v.RH , mem[p].hhfield.b0 
    );
     }
     p = mem[p + 1].hhfield.v.RH;
@@ -19320,17 +20505,17 @@ do_show_whatever (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (954);
+	print(262);
+	print(954);
       }
       else {
 	  
-	print_nl (263);
-	print (954);
+	print_nl(263);
+	print(954);
       }
     }
     if (interaction < 3) 
@@ -19384,17 +20569,17 @@ scan_with (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (967);
+	  print(262);
+	  print(967);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (967);
+	  print_nl(263);
+	  print(967);
 	}
       }
       {
@@ -19425,23 +20610,23 @@ zfindedgesvar (halfword t)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (790);
+	print(262);
+	print(790);
       }
       else {
 	  
-	print_nl (263);
-	print (790);
+	print_nl(263);
+	print(790);
       }
     }
     show_token_list (t , 0 , 1000 , 0);
-    print (968);
+    print(968);
     print_type (mem[p].hhfield.b0);
-    print_char (41);
+    print_char(41);
     {
       help_ptr = 2;
       help_line[1] = 969;
@@ -19580,17 +20765,17 @@ do_add_to (void)
 		if ((filelineerrorstylep && !(cur_input .name_field == 0)) 
 		) 
 		{
-		  print_nl (261);
-		  print (fullsourcefilenamestack[in_open]);
-		  print (58);
+		  print_nl(261);
+		  print(fullsourcefilenamestack[in_open]);
+		  print(58);
 		  print_int (line);
-		  print (262);
-		  print (978);
+		  print(262);
+		  print(978);
 		}
 		else {
 		    
-		  print_nl (263);
-		  print (978);
+		  print_nl(263);
+		  print(978);
 		}
 	      }
 	      {
@@ -19670,21 +20855,21 @@ ztfmcheck (small_number m)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (1001);
+	print(262);
+	print(1001);
       }
       else {
 	  
-	print_nl (263);
-	print (1001);
+	print_nl(263);
+	print(1001);
       }
     }
-    print (int_name[m]);
-    print (1002);
+    print(int_name[m]);
+    print(1002);
     {
       help_ptr = 1;
       help_line[0] = 1003;
@@ -19856,17 +21041,17 @@ doopen_window (void)
 ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
     {
-      print_nl (261);
-      print (fullsourcefilenamestack[in_open]);
-      print (58);
+      print_nl(261);
+      print(fullsourcefilenamestack[in_open]);
+      print(58);
       print_int (line);
-      print (262);
-      print (987);
+      print(262);
+      print(987);
     }
     else {
 	
-      print_nl (263);
-      print (987);
+      print_nl(263);
+      print(987);
     }
   }
   {
@@ -19935,17 +21120,17 @@ docull (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (990);
+	print(262);
+	print(990);
       }
       else {
 	  
-	print_nl (263);
-	print (990);
+	print_nl(263);
+	print(990);
       }
     }
     {
@@ -19976,8 +21161,8 @@ domessage (void)
   else switch (m) 
   {case 0 : 
     {
-      print_nl (261);
-      slow_print (cur_exp);
+      print_nl(261);
+      slow_print(cur_exp);
     }
     break;
   case 1 : 
@@ -19987,20 +21172,20 @@ domessage (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (261);
+	  print(262);
+	  print(261);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (261);
+	  print_nl(263);
+	  print(261);
 	}
       }
-      slow_print (cur_exp);
+      slow_print(cur_exp);
       if (err_help != 0) 
       use_err_help = true;
       else if (long_help_seen) 
@@ -20105,38 +21290,38 @@ zsettag (halfword c , small_number t , halfword r)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (1012);
+	print(262);
+	print(1012);
       }
       else {
 	  
-	print_nl (263);
-	print (1012);
+	print_nl(263);
+	print(1012);
       }
     }
     if ((c > 32) && (c < 127)) 
-    print (c);
+    print(c);
     else if (c == 256) 
-    print (1013);
+    print(1013);
     else {
 	
-      print (1014);
+      print(1014);
       print_int (c);
     }
-    print (1015);
+    print(1015);
     switch (char_tag[c]) 
     {case 1 : 
-      print (1016);
+      print(1016);
       break;
     case 2 : 
-      print (1017);
+      print(1017);
       break;
     case 3 : 
-      print (1006);
+      print(1006);
       break;
     }
     {
@@ -20180,17 +21365,17 @@ dotfmcommand (void)
 	;
 	      if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	      {
-		print_nl (261);
-		print (fullsourcefilenamestack[in_open]);
-		print (58);
+		print_nl(261);
+		print(fullsourcefilenamestack[in_open]);
+		print(58);
 		print_int (line);
-		print (262);
-		print (1035);
+		print(262);
+		print(1035);
 	      }
 	      else {
 		  
-		print_nl (263);
-		print (1035);
+		print_nl(263);
+		print(1035);
 	      }
 	    }
 	    {
@@ -20246,17 +21431,17 @@ dotfmcommand (void)
 		  if ((filelineerrorstylep && !(cur_input .name_field == 0) 
 		)) 
 		  {
-		    print_nl (261);
-		    print (fullsourcefilenamestack[in_open]);
-		    print (58);
+		    print_nl(261);
+		    print(fullsourcefilenamestack[in_open]);
+		    print(58);
 		    print_int (line);
-		    print (262);
-		    print (1035);
+		    print(262);
+		    print(1035);
 		  }
 		  else {
 		      
-		    print_nl (263);
-		    print (1035);
+		    print_nl(263);
+		    print(1035);
 		  }
 		}
 		{
@@ -20323,17 +21508,17 @@ dotfmcommand (void)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (1023);
+	    print(262);
+	    print(1023);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (1023);
+	    print_nl(263);
+	    print(1023);
 	  }
 	}
 	{
@@ -20519,21 +21704,21 @@ dostatement (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (869);
+	  print(262);
+	  print(869);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (869);
+	  print_nl(263);
+	  print(869);
 	}
       }
       print_cmd_mod (cur_cmd , cur_mod);
-      print_char (39);
+      print_char(39);
       {
 	help_ptr = 5;
 	help_line[4] = 870;
@@ -20560,8 +21745,8 @@ dostatement (void)
       {
 	if (internal[1] > 0) 
 	{
-	  print_nl (261);
-	  slow_print (cur_exp);
+	  print_nl(261);
+	  slow_print(cur_exp);
 	  fflush (stdout);
 	}
 	if (internal[34] > 0) 
@@ -20684,17 +21869,17 @@ dostatement (void)
 ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
       {
-	print_nl (261);
-	print (fullsourcefilenamestack[in_open]);
-	print (58);
+	print_nl(261);
+	print(fullsourcefilenamestack[in_open]);
+	print(58);
 	print_int (line);
-	print (262);
-	print (875);
+	print(262);
+	print(875);
       }
       else {
 	  
-	print_nl (263);
-	print (875);
+	print_nl(263);
+	print(875);
       }
     }
     {
@@ -20736,17 +21921,17 @@ maincontrol (void)
 	;
 	if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	{
-	  print_nl (261);
-	  print (fullsourcefilenamestack[in_open]);
-	  print (58);
+	  print_nl(261);
+	  print(fullsourcefilenamestack[in_open]);
+	  print(58);
 	  print_int (line);
-	  print (262);
-	  print (910);
+	  print(262);
+	  print(910);
 	}
 	else {
 	    
-	  print_nl (263);
-	  print (910);
+	  print_nl(263);
+	  print(910);
 	}
       }
       {
@@ -20864,11 +22049,11 @@ zskimp (integer m)
 void 
 ztfmwarning (small_number m) 
 {
-  print_nl (1041);
-  print (int_name[m]);
-  print (1042);
-  print_scaled (perturbation);
-  print (1043);
+  print_nl(1041);
+  print(int_name[m]);
+  print(1042);
+  print_scaled(perturbation);
+  print(1043);
 }
 void 
 fixdesignsize (void) 
@@ -20878,7 +22063,7 @@ fixdesignsize (void)
   if ((d < 65536L) || (d >= 134217728L)) 
   {
     if (d != 0) 
-    print_nl (1044);
+    print_nl(1044);
     d = 8388608L;
     internal[26] = d;
   }
@@ -21101,21 +22286,21 @@ scan_primary (void)
 	;
 	  if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	  {
-	    print_nl (261);
-	    print (fullsourcefilenamestack[in_open]);
-	    print (58);
+	    print_nl(261);
+	    print(fullsourcefilenamestack[in_open]);
+	    print(58);
 	    print_int (line);
-	    print (262);
-	    print (780);
+	    print(262);
+	    print(780);
 	  }
 	  else {
 	      
-	    print_nl (263);
-	    print (780);
+	    print_nl(263);
+	    print(780);
 	  }
 	}
 	print_int (groupline);
-	print (781);
+	print(781);
 	{
 	  help_ptr = 2;
 	  help_line[1] = 782;
@@ -21165,17 +22350,17 @@ scan_primary (void)
 	;
 	    if ((filelineerrorstylep && !(cur_input .name_field == 0))) 
 	    {
-	      print_nl (261);
-	      print (fullsourcefilenamestack[in_open]);
-	      print (58);
+	      print_nl(261);
+	      print(fullsourcefilenamestack[in_open]);
+	      print(58);
 	      print_int (line);
-	      print (262);
-	      print (784);
+	      print(262);
+	      print(784);
 	    }
 	    else {
 		
-	      print_nl (263);
-	      print (784);
+	      print_nl(263);
+	      print(784);
 	    }
 	  }
 	  {
@@ -21232,7 +22417,7 @@ scan_primary (void)
       if (cur_cmd != 69) 
       {
 	missing_err (479);
-	print (716);
+	print(716);
 	print_cmd_mod (37 , c);
 	{
 	  help_ptr = 1;
@@ -21834,17 +23019,17 @@ scan_expression (void)
 		  if ((filelineerrorstylep && !(cur_input .name_field == 0) 
 		)) 
 		  {
-		    print_nl (261);
-		    print (fullsourcefilenamestack[in_open]);
-		    print (58);
+		    print_nl(261);
+		    print(fullsourcefilenamestack[in_open]);
+		    print(58);
 		    print_int (line);
-		    print (262);
-		    print (828);
+		    print(262);
+		    print(828);
 		  }
 		  else {
 		      
-		    print_nl (263);
-		    print (828);
+		    print_nl(263);
+		    print(828);
 		  }
 		}
 		{
@@ -21988,9 +23173,9 @@ get_boolean (void)
 void 
 print_capsule (void) 
 {
-  print_char (40);
+  print_char(40);
   print_exp (g_pointer , 0);
-  print_char (41);
+  print_char(41);
 }
 void 
 token_recycle (void) 
@@ -22197,9 +23382,9 @@ close_files_and_terminate (void)
       do 
 	if (skip_table[k]< lig_table_size) 
 	{
-	  print_nl (1048);
+	  print_nl(1048);
 	  print_int (k);
-	  print (1049);
+	  print(1049);
 	  ll = skip_table[k];
 	  do {
 	      lll = lig_kern[ll].b0;
@@ -22265,14 +23450,14 @@ close_files_and_terminate (void)
       if (tfm_changed > 0) 
       {
 	if (tfm_changed == 1) 
-	print_nl (1050);
+	print_nl(1050);
 	else {
 	    
-	  print_nl (40);
+	  print_nl(40);
 	  print_int (tfm_changed);
-	  print (1051);
+	  print(1051);
 	}
-	print (1052);
+	print(1052);
       }
 	;
 #ifdef STAT
@@ -22285,9 +23470,9 @@ close_files_and_terminate (void)
 	fprintf (log_file , "%s%s%ld%s%ld%s%ld%s\n",  "  out of " , "256w,16h,16d,64i," , (long)lig_table_size ,         "l," , (long)max_kerns , "k,256e," , (long)max_font_dimen , "p)");
       }
 #endif /* STAT */
-      print_nl (1047);
+      print_nl(1047);
       print_file_name (0 , metric_file_name , 0);
-      print_char (46);
+      print_char(46);
       bclose (tfm_file);
     }
     if (gf_prev_ptr > 0) 
@@ -22404,16 +23589,16 @@ close_files_and_terminate (void)
       }
       if (gf_ptr > 0) 
       write_gf (0 , gf_ptr - 1);
-      print_nl (1064);
+      print_nl(1064);
       print_file_name (0 , output_file_name , 0);
-      print (558);
+      print(558);
       print_int (total_chars);
       if (total_chars != 1) 
-      print (1065);
-      else print (1066);
-      print (1067);
+      print(1065);
+      else print(1066);
+      print(1067);
       print_int (gf_offset + gf_ptr);
-      print (1068);
+      print(1068);
       bclose (gf_file);
     }
   }
@@ -22424,9 +23609,9 @@ close_files_and_terminate (void)
     selector = selector - 2;
     if (selector == 1) 
     {
-      print_nl (1076);
+      print_nl(1076);
       print_file_name (0 , texmflogname , 0);
-      print_char (46);
+      print_char(46);
     }
   }
   print_ln ();
@@ -22441,7 +23626,7 @@ debughelp (void)
   while (true) {
       
 ;
-    print_nl (1083);
+    print_nl(1083);
     fflush (stdout);
     read (stdin , m);
     if (m < 0) 
@@ -22467,12 +23652,12 @@ debughelp (void)
       case 4 : 
 	{
 	  print_int (eqtb[n].lhfield);
-	  print_char (58);
+	  print_char(58);
 	  print_int (eqtb[n].v.RH);
 	}
 	break;
       case 5 : 
-	print_variable_name (n);
+	print_variable_name(n);
 	break;
       case 6 : 
 	print_int (internal[n]);
@@ -22484,7 +23669,7 @@ debughelp (void)
 	show_token_list (n , 0 , 100000L , 0);
 	break;
       case 10 : 
-	slow_print (n);
+	slow_print(n);
 	break;
       case 11 : 
 	checkmem (n > 0);
@@ -22501,14 +23686,14 @@ debughelp (void)
       case 14 : 
 	{integer for_end; k = 0;for_end = n; if (k <= for_end) 
 	do 
-	  print (buffer[k]);
+	  print(buffer[k]);
 	while (k++ < for_end);}
 	break;
       case 15 : 
 	panicking = !panicking;
 	break;
 	default: 
-	print (63);
+	print(63);
 	break;
       }
     }
