@@ -3,6 +3,10 @@
 #define INI
 #define INIMF
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
 #define max_internal (300) 
 #define stack_size (300) 
 #define max_strings (7500) 
@@ -13,7 +17,7 @@
 #define pool_name (TEXMFpool_name) 
 #define enginename (TEXMFENGINENAME) 
 #define pathsize (1000) 
-#define bistack_size (1500) 
+#define bi_stack_size (1500) 
 #define header_size (100)
 #define lig_table_size (15000)
 #define max_kerns (2500)
@@ -23,10 +27,14 @@
 #define infbufsize (500)
 #define supbufsize (30000000L)
 
+typedef int32_t  integer;
+typedef uint32_t boolean;
+typedef char* constcstring;
+
 typedef uint8_t ASCII_code;
 typedef uint8_t eight_bits;
-typedef text /* of  ASCII_code */ alpha_file;
-typedef text /* of  eight_bits */ byte_file;
+typedef FILE* /* of  ASCII_code */ alpha_file;
+typedef FILE* /* of  eight_bits */ byte_file;
 typedef integer pool_pointer;
 typedef integer str_number;
 typedef uint8_t packed_ASCII_code;
@@ -38,8 +46,7 @@ typedef uint8_t quarterword;
 typedef integer halfword;
 typedef uint8_t twochoices;
 typedef uint8_t threechoices;
-#include "texmfmem.h"
-typedef text /* of  memoryword */ word_file;
+typedef FILE* /* of  memory_word */ word_file;
 typedef uint8_t commandcode;
 typedef short screen_row;
 typedef short screen_col;
@@ -142,7 +149,7 @@ EXTERN fraction n_sin, n_cos;
 EXTERN fraction randoms[55];
 EXTERN uint8_t j_random;
 
-EXTERN memoryword * mem;
+EXTERN memory_word * mem;
 EXTERN halfword lo_mem_max;
 EXTERN halfword hi_mem_min;
 
@@ -197,7 +204,7 @@ EXTERN fraction st, ct, sf, cf;
 EXTERN integer move[move_size + 1];
 EXTERN integer move_ptr;
 
-EXTERN integer bisect_stack[bistack_size + 1];
+EXTERN integer bisect_stack[bi_stack_size + 1];
 EXTERN integer bisect_ptr;
 
 EXTERN halfword cur_edges;
@@ -411,6 +418,80 @@ EXTERN integer editname_length, editline;
 EXTERN ASCII_code xprn[256];
 EXTERN boolean stopatspace;
 
+/* M A C R O S */
+
+#define if_test 1
+#define fi_or_else 2
+#define input 3
+#define iteration 4
+#define repeat_loop 5
+#define exit_test 6
+#define relex 7
+#define scan_tokens 8
+#define expand_after 9
+#define defined_macro 10
+#define min_command (defined_macro + 1)
+#define display_command 12
+#define save_command 13
+#define let_command 14
+#define new_internal 15
+#define macro_def 16
+#define ship_out_command 17
+#define add_to_command 18
+#define cull_command 19
+#define tfm_command 20
+#define protection_command 21
+#define show_command 22
+#define mode_command 23
+#define random_seed 24
+#define message_command 25
+#define every_job_command 26
+#define delimiters 27
+#define open_window 28
+#define special_command 29
+#define type_name 30
+#define max_statement_command type_name
+#define min_primary_command type_name
+#define let_delimiter 31
+#define begin_group 32
+#define nullary 33
+#define unary 34
+#define str_op 35
+#define cycle 36
+#define primary_binary 37
+#define capsule_token 38
+#define string_token 39
+#define internal_quantity 40
+#define min_suffix_token internal_quantity
+#define tag_token 41
+#define numeric_token 42
+#define max_suffix_token numeric_token
+#define plus_or_minus 43
+#define max_primary_command plus_or_minus
+#define min_tertiary_command plus_or_minus
+#define tertiary_secondary_macro 44
+#define tertiary_binary 45
+/* 325 */
+#define knil info
+#define sorted_loc(a) (a + 1)
+#define sorted(a) link(sorted_loc(a))
+#define unsorted(a) info(a + 1)
+#define row_node_size 2
+/* 326 */
+#define zero_field 4096
+#define n_min(a) info(a + 1)
+#define n_max(a) link(a + 1)
+#define m_min(a) info(a + 2)
+#define m_max(a) link(a + 2)
+#define m_offset(a) info(a + 3)
+#define last_window(a) link(a + 3)
+#define last_window_time(a) mem[a + 4].cint
+#define n_pos(a) info(a + 5)
+#define n_rover(a) link(a + 5)
+#define edge_header_size 6
+#define valid_range(a) (abs(a - 4096) < 4096)
+#define empty_edges(a) link(a)=a
+
 void initialize(void);
 void print_ln(void);
 void print_char(ASCIIcode s);
@@ -462,7 +543,7 @@ void new_randoms(void);
 void init_randoms(scaled seed);
 scaled unif_rand(scaled x);
 scaled norm_rand(void);
-void print_word(memoryword w);
+void print_word(memory_word w);
 void show_token_list(integer p, integer q, integer l, integer nulltally);
 void runaway(void);
 halfword get_avail(void);

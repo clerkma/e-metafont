@@ -1,55 +1,3 @@
-#define if_test 1
-#define fi_or_else 2
-#define input 3
-#define iteration 4
-#define repeat_loop 5
-#define exit_test 6
-#define relex 7
-#define scan_tokens 8
-#define expand_after 9
-#define defined_macro 10
-#define min_command (defined_macro + 1)
-#define display_command 12
-#define save_command 13
-#define let_command 14
-#define new_internal 15
-#define macro_def 16
-#define ship_out_command 17
-#define add_to_command 18
-#define cull_command 19
-#define tfm_command 20
-#define protection_command 21
-#define show_command 22
-#define mode_command 23
-#define random_seed 24
-#define message_command 25
-#define every_job_command 26
-#define delimiters 27
-#define open_window 28
-#define special_command 29
-#define type_name 30
-#define max_statement_command type_name
-#define min_primary_command type_name
-#define let_delimiter 31
-#define begin_group 32
-#define nullary 33
-#define unary 34
-#define str_op 35
-#define cycle 36
-#define primary_binary 37
-#define capsule_token 38
-#define string_token 39
-#define internal_quantity 40
-#define min_suffix_token internal_quantity
-#define tag_token 41
-#define numeric_token 42
-#define max_suffix_token numeric_token
-#define plus_or_minus 43
-#define max_primary_command plus_or_minus
-#define min_tertiary_command plus_or_minus
-#define tertiary_secondary_macro 44
-#define tertiary_binary 45
-
 #include "mf.h"
 
 boolean get_strings_started (void)
@@ -132,32 +80,32 @@ void sort_avail(void)
   halfword p, q, r;
   halfword oldrover;
   p = get_node(1073741824L);
-  p = mem[rover + 1].hhfield.v.RH;
-  mem[rover + 1].hhfield.v.RH = 268435455L;
+  p = mem[rover + 1].hh.v.RH;
+  mem[rover + 1].hh.v.RH = 268435455L;
   oldrover = rover;
   while (p != oldrover) if (p < rover)
   {
     q = p;
-    p = mem[q + 1].hhfield.v.RH;
-    mem[q + 1].hhfield.v.RH = rover;
+    p = mem[q + 1].hh.v.RH;
+    mem[q + 1].hh.v.RH = rover;
     rover = q;
   }
   else {
     q = rover;
-    while (mem[q + 1].hhfield.v.RH < p) q = mem[q + 1].hhfield
+    while (mem[q + 1].hh.v.RH < p) q = mem[q + 1].hh
       .v.RH;
-    r = mem[p + 1].hhfield.v.RH;
-    mem[p + 1].hhfield.v.RH = mem[q + 1].hhfield.v.RH;
-    mem[q + 1].hhfield.v.RH = p;
+    r = mem[p + 1].hh.v.RH;
+    mem[p + 1].hh.v.RH = mem[q + 1].hh.v.RH;
+    mem[q + 1].hh.v.RH = p;
     p = r;
   }
   p = rover;
-  while (mem[p + 1].hhfield.v.RH != 268435455L) {
-    mem[mem[p + 1].hhfield.v.RH + 1].hhfield.lhfield = p;
-    p = mem[p + 1].hhfield.v.RH;
+  while (mem[p + 1].hh.v.RH != 268435455L) {
+    mem[mem[p + 1].hh.v.RH + 1].hh.lh = p;
+    p = mem[p + 1].hh.v.RH;
   }
-  mem[p + 1].hhfield.v.RH = rover;
-  mem[rover + 1].hhfield.lhfield = p;
+  mem[p + 1].hh.v.RH = rover;
+  mem[rover + 1].hh.lh = p;
 }
 
 void primitive (str_number s, halfword c, halfword o)
@@ -176,7 +124,7 @@ void primitive (str_number s, halfword c, halfword o)
     flush_string(str_ptr - 1);
     hash[cur_sym].v.RH = s;
   }
-  eqtb[cur_sym].lhfield = c;
+  eqtb[cur_sym].lh = c;
   eqtb[cur_sym].v.RH = o;
 }
 
@@ -275,8 +223,8 @@ void store_base_file (void)
     while (k++ < for_end); }
     x = x + q + 2 - p;
     var_used = var_used + q - p;
-    p = q + mem[q].hhfield.lhfield;
-    q = mem[q + 1].hhfield.v.RH;
+    p = q + mem[q].hh.lh;
+    q = mem[q + 1].hh.v.RH;
   } while (!(q == rover));
   var_used = var_used + lo_mem_max - p;
   dyn_used = mem_end + 1 - hi_mem_min;
@@ -295,7 +243,7 @@ void store_base_file (void)
   p = avail;
   while (p != 0) {
     decr(dyn_used);
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   dump_int(var_used);
   dump_int(dyn_used);
@@ -416,7 +364,7 @@ boolean load_base_file (void)
     memmax = memtop;
   if (1100 > memtop)
     goto lab6666;
-  mem = xmallocarray(memoryword, memmax + 1);
+  mem = xmallocarray(memory_word, memmax + 1);
   undump_int(x);
   if (x != 9500)
     goto lab6666;
@@ -499,11 +447,11 @@ boolean load_base_file (void)
       for_end) do
       undumpwd(mem[k]);
     while (k++ < for_end); }
-    p = q + mem[q].hhfield.lhfield;
-    if ((p > lo_mem_max) || ((q >= mem[q + 1].hhfield.v.RH) && (mem
-      [q + 1].hhfield.v.RH != rover)))
+    p = q + mem[q].hh.lh;
+    if ((p > lo_mem_max) || ((q >= mem[q + 1].hh.v.RH) && (mem
+      [q + 1].hh.v.RH != rover)))
       goto lab6666;
-    q = mem[q + 1].hhfield.v.RH;
+    q = mem[q + 1].hh.v.RH;
   } while (!(q == rover));
   {integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
     do
@@ -637,9 +585,9 @@ void final_cleanup (void)
     }
     print(1080);
     if_line = mem[cond_ptr + 1].cint;
-    cur_if = mem[cond_ptr].hhfield.b1;
+    cur_if = mem[cond_ptr].hh.b1;
     loop_ptr = cond_ptr;
-    cond_ptr = mem[cond_ptr].hhfield.v.RH;
+    cond_ptr = mem[cond_ptr].hh.v.RH;
     freenode(loop_ptr, 2);
   }
   if (history != 0) {
@@ -912,13 +860,13 @@ void init_tab (void)
 {
   integer k;
   rover = 23;
-  mem[rover].hhfield.v.RH = 268435455L;
-  mem[rover].hhfield.lhfield = 1000;
-  mem[rover + 1].hhfield.lhfield = rover;
-  mem[rover + 1].hhfield.v.RH = rover;
+  mem[rover].hh.v.RH = 268435455L;
+  mem[rover].hh.lh = 1000;
+  mem[rover + 1].hh.lh = rover;
+  mem[rover + 1].hh.v.RH = rover;
   lo_mem_max = rover + 1000;
-  mem[lo_mem_max].hhfield.v.RH = 0;
-  mem[lo_mem_max].hhfield.lhfield = 0;
+  mem[lo_mem_max].hh.v.RH = 0;
+  mem[lo_mem_max].hh.lh = 0;
   {integer for_end; k = memtop - 2; for_end = memtop; if (k <=
     for_end) do
     mem[k] = mem[lo_mem_max];
@@ -982,37 +930,37 @@ void init_tab (void)
   hash[9760].v.RH = 91;
   hash[9759].v.RH = 41;
   hash[9757].v.RH = 456;
-  eqtb[9759].lhfield = 62;
-  mem[19].hhfield.lhfield = 9770;
-  mem[19].hhfield.v.RH = 0;
-  mem[memtop].hhfield.lhfield = 268435455L;
-  mem[3].hhfield.lhfield = 0;
-  mem[3].hhfield.v.RH = 0;
-  mem[4].hhfield.lhfield = 1;
-  mem[4].hhfield.v.RH = 0;
+  eqtb[9759].lh = 62;
+  mem[19].hh.lh = 9770;
+  mem[19].hh.v.RH = 0;
+  mem[memtop].hh.lh = 268435455L;
+  mem[3].hh.lh = 0;
+  mem[3].hh.v.RH = 0;
+  mem[4].hh.lh = 1;
+  mem[4].hh.v.RH = 0;
   {integer for_end; k = 5; for_end = 11; if (k <= for_end) do
     mem[k] = mem[4];
   while (k++ < for_end); }
   mem[12].cint = 0;
-  mem[0].hhfield.v.RH = 0;
-  mem[0].hhfield.lhfield = 0;
+  mem[0].hh.v.RH = 0;
+  mem[0].hh.lh = 0;
   mem[1].cint = 0;
   mem[2].cint = 0;
   serial_no = 0;
-  mem[13].hhfield.v.RH = 13;
-  mem[14].hhfield.lhfield = 13;
-  mem[13].hhfield.lhfield = 0;
-  mem[14].hhfield.v.RH = 0;
-  mem[21].hhfield.b1 = 0;
-  mem[21].hhfield.v.RH = 9768;
+  mem[13].hh.v.RH = 13;
+  mem[14].hh.lh = 13;
+  mem[13].hh.lh = 0;
+  mem[14].hh.v.RH = 0;
+  mem[21].hh.b1 = 0;
+  mem[21].hh.v.RH = 9768;
   eqtb[9768].v.RH = 21;
-  eqtb[9768].lhfield = 41;
-  eqtb[9758].lhfield = 91;
+  eqtb[9768].lh = 41;
+  eqtb[9758].lh = 91;
   hash[9758].v.RH = 735;
-  mem[17].hhfield.b1 = 11;
+  mem[17].hh.b1 = 11;
   mem[20].cint = 1073741824L;
   mem[16].cint = 0;
-  mem[15].hhfield.lhfield = 0;
+  mem[15].hh.lh = 0;
   if (iniversion)
     base_ident = 1069;
 }
@@ -1074,7 +1022,7 @@ void mainbody (void) {
 #ifdef INIMF
   if (iniversion)
   {
-    mem = xmallocarray(memoryword, memtop + 1);
+    mem = xmallocarray(memory_word, memtop + 1);
   }
 #endif /* INIMF */
   history = 3;
@@ -1119,9 +1067,9 @@ void mainbody (void) {
     bad = 21;
   if (10220 > 268435455L)
     bad = 22;
-  if (15 * 11 > bistack_size)
+  if (15 * 11 > bi_stack_size)
     bad = 31;
-  if (20 + 17 * 45 > bistack_size)
+  if (20 + 17 * 45 > bi_stack_size)
     bad = 32;
   if (basedefaultlength > maxint)
     bad = 41;
@@ -1471,9 +1419,9 @@ void initialize (void)
   while (k++ < for_end);}
   char_class[9] = 2;
   char_class[12] = 2;
-  hash[1].lhfield = 0;
+  hash[1].lh = 0;
   hash[1].v.RH = 0;
-  eqtb[1].lhfield = 41;
+  eqtb[1].lh = 41;
   eqtb[1].v.RH = 0;
   {integer for_end; k = 2;for_end = 9769; if (k <= for_end) do
     {
@@ -1591,87 +1539,89 @@ void initialize (void)
 void print_ln (void)
 {
   switch (selector)
-  {case 3 :
-    {
-      putc ('\n',  stdout);
-      putc ('\n',  log_file);
-      term_offset = 0;
-      file_offset = 0;
-    }
-    break;
-  case 2 :
-    {
-      putc ('\n',  log_file);
-      file_offset = 0;
-    }
-    break;
-  case 1 :
-    {
-      putc ('\n',  stdout);
-      term_offset = 0;
-    }
-    break;
-  case 0 :
-  case 4 :
-  case 5 :
-;
-    break;
+  {
+    case 3:
+      {
+        putc ('\n', stdout);
+        putc ('\n', log_file);
+        term_offset = 0;
+        file_offset = 0;
+      }
+      break;
+    case 2:
+      {
+        putc ('\n', log_file);
+        file_offset = 0;
+      }
+      break;
+    case 1:
+      {
+        putc ('\n', stdout);
+        term_offset = 0;
+      }
+      break;
+    case 0:
+    case 4:
+    case 5:
+      do_nothing();
+      break;
   }
 }
 
 void print_char (ASCII_code s)
 {
   switch (selector)
-  {case 3 :
-    {
-      putc (xchr[s],  stdout);
-      putc (xchr[s],  log_file);
-      incr (term_offset);
-      incr (file_offset);
-      if (term_offset == maxprintline)
+  {
+    case 3:
       {
-        putc ('\n',  stdout);
-        term_offset = 0;
+        putc (xchr[s], stdout);
+        putc (xchr[s], log_file);
+        incr (term_offset);
+        incr (file_offset);
+        if (term_offset == maxprintline)
+        {
+          putc ('\n', stdout);
+          term_offset = 0;
+        }
+        if (file_offset == maxprintline)
+        {
+          putc ('\n', log_file);
+          file_offset = 0;
+        }
       }
-      if (file_offset == maxprintline)
+      break;
+    case 2:
       {
-        putc ('\n',  log_file);
-        file_offset = 0;
+        putc (xchr[s], log_file);
+        incr (file_offset);
+        if (file_offset == maxprintline)
+          print_ln ();
       }
-    }
-    break;
-  case 2 :
-    {
-      putc (xchr[s],  log_file);
-      incr (file_offset);
-      if (file_offset == maxprintline)
-      print_ln ();
-    }
-    break;
-  case 1 :
-    {
-      putc (xchr[s],  stdout);
-      incr (term_offset);
-      if (term_offset == maxprintline)
-      print_ln ();
-    }
-    break;
-  case 0 :
-;
-    break;
-  case 4 :
-    if (tally < trick_count)
-    trick_buf[tally % errorline] = s;
-    break;
-  case 5 :
-    {
-      if (pool_ptr < pool_size)
+      break;
+    case 1:
       {
-        str_pool[pool_ptr] = s;
-        incr (pool_ptr);
+        putc (xchr[s], stdout);
+        incr (term_offset);
+        if (term_offset == maxprintline)
+          print_ln ();
       }
-    }
-    break;
+      break;
+    case 0:
+      do_nothing();
+      break;
+    case 4:
+      if (tally < trick_count)
+        trick_buf[tally % errorline] = s;
+      break;
+    case 5:
+      {
+        if (pool_ptr < pool_size)
+        {
+          str_pool[pool_ptr] = s;
+          incr (pool_ptr);
+        }
+      }
+      break;
   }
   incr (tally);
 }
@@ -1679,14 +1629,16 @@ void print_char (ASCII_code s)
 void print (integer s)
 {
   pool_pointer j;
-  if ((s < 0) || (s >= str_ptr))
-  s = 259;
-  if ((s < 256) && ((selector > 4) || xprn[s]))
-  print_char(s);
-  else {
 
+  if ((s < 0) || (s >= str_ptr))
+    s = 259;
+  if ((s < 256) && ((selector > 4) || xprn[s]))
+    print_char(s);
+  else
+  {
     j = str_start[s];
-    while (j < str_start[s + 1]) {
+    while (j < str_start[s + 1])
+    {
       print_char(str_pool[j]);
       incr (j);
     }
@@ -1696,13 +1648,16 @@ void print (integer s)
 void slow_print (integer s)
 {
   pool_pointer j;
+
   if ((s < 0) || (s >= str_ptr))
-  s = 259;
+    s = 259;
   if ((s < 256) && ((selector > 4) || xprn[s]))
-  print_char(s);
-  else {
+    print_char(s);
+  else
+  {
     j = str_start[s];
-    while (j < str_start[s + 1]) {
+    while (j < str_start[s + 1])
+    {
       print(str_pool[j]);
       incr (j);
     }
@@ -1711,15 +1666,15 @@ void slow_print (integer s)
 
 void print_nl (str_number s)
 {
-  if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0
-) && (selector >= 2)))
-  print_ln ();
+  if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0) && (selector >= 2)))
+    print_ln ();
   print(s);
 }
 
 void print_the_digs (eight_bits k)
 {
-  while (k > 0) {
+  while (k > 0)
+  {
     decr (k);
     print_char(48 + dig[k]);
   }
@@ -1729,38 +1684,40 @@ void print_int (integer n)
 {
   unsigned char k;
   integer m;
+  
   k = 0;
   if (n < 0)
   {
     print_char(45);
     if (n > -100000000L)
-    n = - (integer) n;
-    else {
-
+      n = - (integer) n;
+    else
+    {
       m = -1 - n;
       n = m / 10;
       m = (m % 10) + 1;
       k = 1;
       if (m < 10)
-      dig[0] = m;
-      else {
-
+        dig[0] = m;
+      else
+      {
         dig[0] = 0;
         incr (n);
       }
     }
   }
   do {
-      dig[k] = n % 10;
+    dig[k] = n % 10;
     n = n / 10;
     incr (k);
-  }while (!(n == 0));
+  } while (!(n == 0));
   print_the_digs (k);
 }
 
 void print_scaled (scaled s)
 {
   scaled delta;
+
   if (s < 0)
   {
     print_char(45);
@@ -1773,12 +1730,12 @@ void print_scaled (scaled s)
     delta = 10;
     print_char(46);
     do {
-        if (delta > 65536L)
-      s = s + 32768L - (delta / 2);
+      if (delta > 65536L)
+        s = s + 32768L - (delta / 2);
       print_char(48 + (s / 65536L));
       s = 10 * (s % 65536L);
       delta = delta * 10;
-    }while (!(s <= delta));
+    } while (!(s <= delta));
   }
 }
 
@@ -1794,89 +1751,90 @@ void print_two (scaled x, scaled y)
 void print_type (small_number t)
 {
   switch (t)
-  {case 1 :
-    print(323);
-    break;
-  case 2 :
-    print(324);
-    break;
-  case 3 :
-    print(325);
-    break;
-  case 4 :
-    print(326);
-    break;
-  case 5 :
-    print(327);
-    break;
-  case 6 :
-    print(328);
-    break;
-  case 7 :
-    print(329);
-    break;
-  case 8 :
-    print(330);
-    break;
-  case 9 :
-    print(331);
-    break;
-  case 10 :
-    print(332);
-    break;
-  case 11 :
-    print(333);
-    break;
-  case 12 :
-    print(334);
-    break;
-  case 13 :
-    print(335);
-    break;
-  case 14 :
-    print(336);
-    break;
-  case 16 :
-    print(337);
-    break;
-  case 17 :
-    print(338);
-    break;
-  case 18 :
-    print(339);
-    break;
-  case 15 :
-    print(340);
-    break;
-  case 19 :
-    print(341);
-    break;
-  case 20 :
-    print(342);
-    break;
-  case 21 :
-    print(343);
-    break;
-  case 22 :
-    print(344);
-    break;
-  case 23 :
-    print(345);
-    break;
+  {
+    case 1:
+      print(323);
+      break;
+    case 2:
+      print(324);
+      break;
+    case 3:
+      print(325);
+      break;
+    case 4:
+      print(326);
+      break;
+    case 5:
+      print(327);
+      break;
+    case 6:
+      print(328);
+      break;
+    case 7:
+      print(329);
+      break;
+    case 8:
+      print(330);
+      break;
+    case 9:
+      print(331);
+      break;
+    case 10:
+      print(332);
+      break;
+    case 11:
+      print(333);
+      break;
+    case 12:
+      print(334);
+      break;
+    case 13:
+      print(335);
+      break;
+    case 14:
+      print(336);
+      break;
+    case 16:
+      print(337);
+      break;
+    case 17:
+      print(338);
+      break;
+    case 18:
+      print(339);
+      break;
+   case 15:
+      print(340);
+      break;
+    case 19:
+      print(341);
+      break;
+    case 20:
+      print(342);
+      break;
+    case 21:
+      print(343);
+      break;
+    case 22:
+      print(344);
+      break;
+    case 23:
+      print(345);
+      break;
     default:
-    print(346);
-    break;
+      print(346);
+      break;
   }
 }
 
 void begin_diagnostic (void)
 {
   old_setting = selector;
-  if ((internal[13]<= 0) && (selector == 3))
+  if ((internal[13] <= 0) && (selector == 3))
   {
     decr (selector);
     if (history == 0)
-    history = 1;
+      history = 1;
   }
 }
 
@@ -1884,7 +1842,7 @@ void end_diagnostic (boolean blankline)
 {
   print_nl(261);
   if (blankline)
-  print_ln ();
+    print_ln ();
   selector = old_setting;
 }
 
@@ -1892,8 +1850,9 @@ void print_diagnostic (str_number s, str_number t, boolean nuline)
 {
   begin_diagnostic ();
   if (nuline)
-  print_nl(s);
-  else print(s);
+    print_nl(s);
+  else
+    print(s);
   print(450);
   print_int (line);
   print(t);
@@ -1905,10 +1864,12 @@ void print_file_name (integer n, integer a, integer e)
   boolean mustquote;
   pool_pointer j;
   mustquote = false;
+
   if (a != 0)
   {
     j = str_start[a];
-    while ((!mustquote) && (j < str_start[a + 1])) {
+    while ((!mustquote) && (j < str_start[a + 1]))
+    {
       mustquote = str_pool[j] == 32;
       incr (j);
     }
@@ -1916,7 +1877,8 @@ void print_file_name (integer n, integer a, integer e)
   if (n != 0)
   {
     j = str_start[n];
-    while ((!mustquote) && (j < str_start[n + 1])) {
+    while ((!mustquote) && (j < str_start[n + 1]))
+    {
       mustquote = str_pool[j] == 32;
       incr (j);
     }
@@ -1924,42 +1886,41 @@ void print_file_name (integer n, integer a, integer e)
   if (e != 0)
   {
     j = str_start[e];
-    while ((!mustquote) && (j < str_start[e + 1])) {
+    while ((!mustquote) && (j < str_start[e + 1]))
+    {
       mustquote = str_pool[j] == 32;
       incr (j);
     }
   }
   if (mustquote)
-  slow_print(34);
+    slow_print(34);
   if (a != 0)
-  {integer for_end; j = str_start[a];for_end = str_start[a + 1
-] - 1; if (j <= for_end) do
+  {integer for_end; j = str_start[a];for_end = str_start[a + 1] - 1; if (j <= for_end) do
     if (str_pool[j]!= 34)
     print(str_pool[j]);
   while (j++ < for_end);}
   if (n != 0)
-  {integer for_end; j = str_start[n];for_end = str_start[n + 1
-] - 1; if (j <= for_end) do
+  {integer for_end; j = str_start[n];for_end = str_start[n + 1] - 1; if (j <= for_end) do
     if (str_pool[j]!= 34)
     print(str_pool[j]);
   while (j++ < for_end);}
   if (e != 0)
-  {integer for_end; j = str_start[e];for_end = str_start[e + 1
-] - 1; if (j <= for_end) do
+  {integer for_end; j = str_start[e];for_end = str_start[e + 1] - 1; if (j <= for_end) do
     if (str_pool[j]!= 34)
     print(str_pool[j]);
   while (j++ < for_end);}
   if (mustquote)
-  slow_print(34);
+    slow_print(34);
 }
 
 void flush_string (str_number s)
 {
   if (s < str_ptr - 1)
-  str_ref[s] = 0;
-  else do {
+    str_ref[s] = 0;
+  else
+    do {
       decr (str_ptr);
-  }while (!(str_ref[str_ptr - 1]!= 0));
+    } while (!(str_ref[str_ptr - 1]!= 0));
   pool_ptr = str_start[str_ptr];
 }
 
@@ -1970,8 +1931,9 @@ void jump_out (void)
     fflush (stdout);
     ready_already = 0;
     if ((history != 0) && (history != 1))
-    uexit (1);
-    else uexit (0);
+      exit (1);
+    else
+      exit (0);
   }
 }
 
@@ -1980,206 +1942,217 @@ void error (void)
   ASCII_code c;
   integer s1, s2, s3;
   pool_pointer j;
+
   if (history < 2)
-  history = 2;
+    history = 2;
   print_char(46);
   show_context ();
+  
   if ((haltonerrorp))
   {
     history = 3;
     jump_out ();
   }
   if (interaction == 3)
-  while (true) {
-    lab_continue: clear_for_error_prompt ();
+    while (true)
     {
-;
-      print(265);
-      term_input ();
-    }
-    if (last == first)
-    goto lab_exit;
-    c = buffer[first];
-    if (c >= 97)
-    c = c - 32;
-    switch (c)
-    {case 48 :
-    case 49 :
-    case 50 :
-    case 51 :
-    case 52 :
-    case 53 :
-    case 54 :
-    case 55 :
-    case 56 :
-    case 57 :
-      if (deletions_allowed)
+      lab_continue: clear_for_error_prompt ();
       {
-        s1 = cur_cmd;
-        s2 = cur_mod;
-        s3 = cur_sym;
-        OK_to_interrupt = false;
-        if ((last > first + 1) && (buffer[first + 1] >= 48) && (
-        buffer[first + 1]<= 57))
-        c = c * 10 + buffer[first + 1] - 48 * 11;
-        else c = c - 48;
-        while (c > 0) {
-          get_next ();
-          if (cur_cmd == 39)
-          {
-            if (str_ref[cur_mod]< 127) {
-
-              if (str_ref[cur_mod] > 1)
-              decr (str_ref[cur_mod]);
-              else flush_string (cur_mod);
-            }
-          }
-          decr (c);
-        }
-        cur_cmd = s1;
-        cur_mod = s2;
-        cur_sym = s3;
-        OK_to_interrupt = true;
-        {
-          help_ptr = 2;
-          help_line[1] = 278;
-          help_line[0] = 279;
-        }
-        show_context ();
-        goto lab_continue;
+        do_nothing();
+        print(265);
+        term_input ();
       }
-      break;
-        ;
+      if (last == first)
+        goto lab_exit;
+      c = buffer[first];
+      if (c >= 97)
+        c = c - 32;
+      switch (c)
+      {
+        case 48:
+        case 49:
+        case 50:
+        case 51:
+        case 52:
+        case 53:
+        case 54:
+        case 55:
+        case 56:
+        case 57:
+          if (deletions_allowed)
+          {
+            s1 = cur_cmd;
+            s2 = cur_mod;
+            s3 = cur_sym;
+            OK_to_interrupt = false;
+            if ((last > first + 1) && (buffer[first + 1] >= 48) && (buffer[first + 1] <= 57))
+              c = c * 10 + buffer[first + 1] - 48 * 11;
+            else
+              c = c - 48;
+            while (c > 0)
+            {
+              get_next ();
+              if (cur_cmd == 39)
+              {
+                if (str_ref[cur_mod] < 127)
+                {
+                  if (str_ref[cur_mod] > 1)
+                    decr (str_ref[cur_mod]);
+                  else
+                    flush_string (cur_mod);
+                }
+              }
+              decr (c);
+            }
+            cur_cmd = s1;
+            cur_mod = s2;
+            cur_sym = s3;
+            OK_to_interrupt = true;
+            {
+              help_ptr = 2;
+              help_line[1] = 278;
+              help_line[0] = 279;
+            }
+            show_context ();
+            goto lab_continue;
+          }
+          break;
+;
 #ifdef TEXMF_DEBUG
-    case 68 :
-      {
-        debughelp ();
-        goto lab_continue;
-      }
-      break;
+        case 68:
+        {
+          debughelp ();
+          goto lab_continue;
+        }
+        break;
 #endif /* TEXMF_DEBUG */
-    case 69 :
-      if (file_ptr > 0)
-      {
-        editnamestart = str_start[input_stack[file_ptr].name_field];
-        editname_length = str_start[input_stack[file_ptr].name_field + 1] -
-        str_start[input_stack[file_ptr].name_field];
-        editline = line;
-        jump_out ();
-      }
-      break;
-    case 72 :
-      {
-        if (use_err_help)
+        case 69:
+          if (file_ptr > 0)
+          {
+            editnamestart = str_start[input_stack[file_ptr].name_field];
+            editname_length = str_start[input_stack[file_ptr].name_field + 1] -
+            str_start[input_stack[file_ptr].name_field];
+            editline = line;
+            jump_out ();
+          }
+          break;
+        case 72:
         {
-          j = str_start[err_help];
-          while (j < str_start[err_help + 1]) {
-            if (str_pool[j]!= 37)
-            print(str_pool[j]);
-            else if (j + 1 == str_start[err_help + 1])
-            print_ln ();
-            else if (str_pool[j + 1]!= 37)
-            print_ln ();
-            else {
+          if (use_err_help)
+          {
+            j = str_start[err_help];
+            while (j < str_start[err_help + 1])
+            {
+              if (str_pool[j]!= 37)
+                print(str_pool[j]);
+              else if (j + 1 == str_start[err_help + 1])
+                print_ln ();
+              else if (str_pool[j + 1] != 37)
+                print_ln ();
+              else
+              {
+                incr (j);
+                print_char(37);
+              }
               incr (j);
-              print_char(37);
             }
-            incr (j);
+            use_err_help = false;
           }
-          use_err_help = false;
-        }
-        else {
-          if (help_ptr == 0)
+          else
           {
-            help_ptr = 2;
-            help_line[1] = 280;
-            help_line[0] = 281;
-          }
-          do {
+            if (help_ptr == 0)
+            {
+              help_ptr = 2;
+              help_line[1] = 280;
+              help_line[0] = 281;
+            }
+            do {
               decr (help_ptr);
-            print(help_line[help_ptr]);
-            print_ln ();
-          }while (!(help_ptr == 0));
-        }
-        {
-          help_ptr = 4;
-          help_line[3] = 282;
-          help_line[2] = 281;
-          help_line[1] = 283;
-          help_line[0] = 284;
-        }
-        goto lab_continue;
-      }
-      break;
-    case 73 :
-      {
-        begin_file_reading ();
-        if (last > first + 1)
-        {
-          cur_input.loc_field = first + 1;
-          buffer[first] = 32;
-        }
-        else {
-          {
-        ;
-            print(277);
-            term_input ();
+              print(help_line[help_ptr]);
+              print_ln ();
+            } while (!(help_ptr == 0));
           }
-          cur_input.loc_field = first;
-        }
-        first = last + 1;
-        cur_input .limit_field = last;
-        goto lab_exit;
-      }
-      break;
-    case 81 :
-    case 82 :
-    case 83 :
-      {
-        error_count = 0;
-        interaction = 0 + c - 81;
-        print(272);
-        switch (c)
-        {case 81 :
           {
-            print(273);
-            decr (selector);
+            help_ptr = 4;
+            help_line[3] = 282;
+            help_line[2] = 281;
+            help_line[1] = 283;
+            help_line[0] = 284;
           }
-          break;
-        case 82 :
-          print(274);
-          break;
-        case 83 :
-          print(275);
-          break;
+          goto lab_continue;
         }
-        print(276);
-        print_ln ();
-        fflush (stdout);
-        goto lab_exit;
-      }
-      break;
-    case 88 :
-      {
-        interaction = 2;
-        jump_out ();
-      }
-      break;
+        break;
+      case 73:
+        {
+          begin_file_reading ();
+          if (last > first + 1)
+          {
+            cur_input.loc_field = first + 1;
+            buffer[first] = 32;
+          }
+          else
+          {
+            {
+              ;
+              print(277);
+              term_input ();
+            }
+            cur_input.loc_field = first;
+          }
+          first = last + 1;
+          cur_input .limit_field = last;
+          goto lab_exit;
+        }
+        break;
+      case 81:
+      case 82:
+      case 83:
+        {
+          error_count = 0;
+          interaction = 0 + c - 81;
+          print(272);
+          switch (c)
+          {
+            case 81:
+              {
+                print(273);
+                decr (selector);
+              }
+              break;
+            case 82:
+              print(274);
+              break;
+            case 83:
+              print(275);
+              break;
+          }
+          print(276);
+          print_ln ();
+          fflush (stdout);
+          goto lab_exit;
+        }
+        break;
+      case 88:
+        {
+          interaction = 2;
+          jump_out ();
+        }
+        break;
       default:
-;
-      break;
+        do_nothing();
+        break;
     }
-    {
-      print(266);
-      print_nl(267);
-      print_nl(268);
-      if (file_ptr > 0)
-      print(269);
-      if (deletions_allowed)
-      print_nl(270);
-      print_nl(271);
+      {
+        print(266);
+        print_nl(267);
+        print_nl(268);
+        if (file_ptr > 0)
+          print(269);
+        if (deletions_allowed)
+          print_nl(270);
+        print_nl(271);
+      }
     }
-  }
   incr (error_count);
   if (error_count == 100)
   {
@@ -2188,32 +2161,36 @@ void error (void)
     jump_out ();
   }
   if (interaction > 0)
-  decr (selector);
+    decr (selector);
   if (use_err_help)
   {
     print_nl(261);
     j = str_start[err_help];
-    while (j < str_start[err_help + 1]) {
+    while (j < str_start[err_help + 1])
+    {
       if (str_pool[j]!= 37)
-      print(str_pool[j]);
+        print(str_pool[j]);
       else if (j + 1 == str_start[err_help + 1])
-      print_ln ();
+        print_ln ();
       else if (str_pool[j + 1]!= 37)
-      print_ln ();
-      else {
+        print_ln ();
+      else
+      {
         incr (j);
         print_char(37);
       }
       incr (j);
     }
   }
-  else while (help_ptr > 0) {
-    decr (help_ptr);
-    print_nl(help_line[help_ptr]);
-  }
+  else
+    while (help_ptr > 0)
+    {
+      decr (help_ptr);
+      print_nl(help_line[help_ptr]);
+    }
   print_ln ();
   if (interaction > 0)
-  incr (selector);
+    incr (selector);
   print_ln ();
   lab_exit:;
 }
@@ -2223,7 +2200,7 @@ void fatal_error (str_number s)
   normalize_selector ();
   {
     if (interaction == 3)
-;
+      do_nothing();
     if ((filelineerrorstylep && !(cur_input .name_field == 0)))
     {
       print_nl(261);
@@ -2233,7 +2210,8 @@ void fatal_error (str_number s)
       print(262);
       print(285);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(285);
     }
@@ -2244,13 +2222,13 @@ void fatal_error (str_number s)
   }
   {
     if (interaction == 3)
-    interaction = 2;
+      interaction = 2;
     if (log_opened)
-    error ();
-        ;
+      error ();
+    ;
 #ifdef TEXMF_DEBUG
     if (interaction > 0)
-    debughelp ();
+      debughelp ();
 #endif /* TEXMF_DEBUG */
     history = 3;
     jump_out ();
@@ -2262,7 +2240,7 @@ void overflow (str_number s, integer n)
   normalize_selector ();
   {
     if (interaction == 3)
-;
+      ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0)))
     {
       print_nl(261);
@@ -2272,7 +2250,8 @@ void overflow (str_number s, integer n)
       print(262);
       print(286);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(286);
     }
@@ -2288,13 +2267,13 @@ void overflow (str_number s, integer n)
   }
   {
     if (interaction == 3)
-    interaction = 2;
+      interaction = 2;
     if (log_opened)
-    error ();
-        ;
+      error ();
+    ;
 #ifdef TEXMF_DEBUG
     if (interaction > 0)
-    debughelp ();
+      debughelp ();
 #endif /* TEXMF_DEBUG */
     history = 3;
     jump_out ();
@@ -2308,7 +2287,7 @@ void confusion (str_number s)
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -2318,7 +2297,8 @@ void confusion (str_number s)
         print(262);
         print(289);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(289);
       }
@@ -2330,10 +2310,11 @@ void confusion (str_number s)
       help_line[0] = 290;
     }
   }
-  else {
+  else
+  {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -2343,7 +2324,8 @@ void confusion (str_number s)
         print(262);
         print(291);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(291);
       }
@@ -2356,13 +2338,13 @@ void confusion (str_number s)
   }
   {
     if (interaction == 3)
-    interaction = 2;
+      interaction = 2;
     if (log_opened)
-    error ();
-        ;
+      error ();
+    ;
 #ifdef TEXMF_DEBUG
     if (interaction > 0)
-    debughelp ();
+      debughelp ();
 #endif /* TEXMF_DEBUG */
     history = 3;
     jump_out ();
@@ -2371,20 +2353,23 @@ void confusion (str_number s)
 
 boolean init_terminal (void)
 {
-  boolean Result; topenin ();
+  boolean Result;
+
+  topenin ();
   if (last > first)
   {
     cur_input.loc_field = first;
-    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field]
-    == ' ')) incr (cur_input.loc_field);
+    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field] == ' '))
+      incr (cur_input.loc_field);
     if (cur_input.loc_field < last)
     {
       Result = true;
       goto lab_exit;
     }
   }
-  while (true) {
-;
+  while (true)
+  {
+    ;
     Fputs (stdout,  "**");
     fflush (stdout);
     if (!inputln (stdin, true))
@@ -2395,8 +2380,8 @@ boolean init_terminal (void)
       goto lab_exit;
     }
     cur_input.loc_field = first;
-    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field]
-    == 32)) incr (cur_input.loc_field);
+    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field] == 32))
+      incr (cur_input.loc_field);
     if (cur_input.loc_field < last)
     {
       Result = true;
@@ -2410,10 +2395,12 @@ boolean init_terminal (void)
 
 str_number make_string (void)
 {
-  str_number Result; if (str_ptr == max_str_ptr)
+  str_number Result;
+  
+  if (str_ptr == max_str_ptr)
   {
     if (str_ptr == max_strings)
-    overflow (258, max_strings - init_str_ptr);
+      overflow (258, max_strings - init_str_ptr);
     incr (max_str_ptr);
   }
   str_ref[str_ptr] = 1;
@@ -2425,10 +2412,13 @@ str_number make_string (void)
 
 boolean str_eq_buf (str_number s, integer k)
 {
-  boolean Result; pool_pointer j;
+  boolean Result;
+  pool_pointer j;
   boolean result;
+
   j = str_start[s];
-  while (j < str_start[s + 1]) {
+  while (j < str_start[s + 1])
+  {
     if (str_pool[j]!= buffer[k])
     {
       result = false;
@@ -2447,15 +2437,18 @@ integer str_vs_str (str_number s, str_number t)
   integer Result; pool_pointer j, k;
   integer ls, lt;
   integer l;
+
   ls = (str_start[s + 1] - str_start[s]);
   lt = (str_start[t + 1] - str_start[t]);
   if (ls <= lt)
-  l = ls;
-  else l = lt;
+    l = ls;
+  else
+    l = lt;
   j = str_start[s];
   k = str_start[t];
-  while (l > 0) {
-    if (str_pool[j]!= str_pool[k])
+  while (l > 0)
+  {
+    if (str_pool[j] != str_pool[k])
     {
       Result = str_pool[j] - str_pool[k];
       goto lab_exit;
@@ -2481,14 +2474,13 @@ void term_input (void)
   integer k;
   fflush (stdout);
   if (!inputln (stdin, true))
-  fatal_error (260);
+    fatal_error (260);
   term_offset = 0;
   decr (selector);
   if (last != first)
-  {integer for_end; k = first;for_end = last - 1; if (k <=
-  for_end) do
-    print(buffer[k]);
-  while (k++ < for_end);}
+    {integer for_end; k = first;for_end = last - 1; if (k <= for_end) do
+      print(buffer[k]);
+    while (k++ < for_end);}
   print_ln ();
   buffer[last] = 37;
   incr (selector);
@@ -2497,12 +2489,13 @@ void term_input (void)
 void normalize_selector (void)
 {
   if (log_opened)
-  selector = 3;
-  else selector = 1;
+    selector = 3;
+  else
+    selector = 1;
   if (job_name == 0)
-  open_log_file ();
+    open_log_file ();
   if (interaction == 0)
-  decr (selector);
+    decr (selector);
 }
 
 void pause_for_instructions (void)
@@ -2511,10 +2504,10 @@ void pause_for_instructions (void)
   {
     interaction = 3;
     if ((selector == 2) || (selector == 0))
-    incr (selector);
+      incr (selector);
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -2524,7 +2517,8 @@ void pause_for_instructions (void)
         print(262);
         print(294);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(294);
       }
@@ -2546,7 +2540,7 @@ void missing_err (str_number s)
 {
   {
     if (interaction == 3)
-;
+      ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0)))
     {
       print_nl(261);
@@ -2556,7 +2550,8 @@ void missing_err (str_number s)
       print(262);
       print(298);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(298);
     }
@@ -2569,7 +2564,7 @@ void clear_arith (void)
 {
   {
     if (interaction == 3)
-;
+      ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0)))
     {
       print_nl(261);
@@ -2579,7 +2574,8 @@ void clear_arith (void)
       print(262);
       print(300);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(300);
     }
@@ -2597,17 +2593,22 @@ void clear_arith (void)
 
 integer slow_add (integer x, integer y)
 {
-  integer Result; if (x >= 0) {
+  integer Result;
+
+  if (x >= 0)
+  {
     if (y <= 2147483647L - x)
-    Result = x + y;
-    else {
+      Result = x + y;
+    else
+    {
       arith_error = true;
       Result = 2147483647L;
     }
   }
   else if (- (integer) y <= 2147483647L + x)
-  Result = x + y;
-  else {
+    Result = x + y;
+  else
+  {
     arith_error = true;
     Result = -2147483647L;
   }
@@ -2616,11 +2617,14 @@ integer slow_add (integer x, integer y)
 
 scaled round_decimals (small_number k)
 {
-  scaled Result; integer a;
+  scaled Result;
+  integer a;
+  
   a = 0;
-  while (k > 0) {
+  while (k > 0)
+  {
     decr (k);
-    a = (a + dig[k]* 131072L) / 10;
+    a = (a + dig[k] * 131072L) / 10;
   }
   Result = halfp (a + 1);
   return Result;
@@ -2629,22 +2633,25 @@ scaled round_decimals (small_number k)
 #ifdef FIXPT
 fraction make_fraction (integer p, integer q)
 {
-  fraction Result; integer f;
+  fraction Result;
+  integer f;
   integer n;
   boolean negative;
   integer becareful;
+  
   if (p >= 0)
-  negative = false;
-  else {
+    negative = false;
+  else
+  {
     p = - (integer) p;
     negative = true;
   }
   if (q <= 0)
   {
-        ;
+    ;
 #ifdef TEXMF_DEBUG
     if (q == 0)
-    confusion(47);
+      confusion(47);
 #endif /* TEXMF_DEBUG */
     q = - (integer) q;
     negative = !negative;
@@ -2655,28 +2662,32 @@ fraction make_fraction (integer p, integer q)
   {
     arith_error = true;
     if (negative)
-    Result = -2147483647L;
-    else Result = 2147483647L;
+      Result = -2147483647L;
+    else
+      Result = 2147483647L;
   }
-  else {
+  else
+  {
     n = (n - 1) * 268435456L;
     f = 1;
     do {
-        becareful = p - q;
+      becareful = p - q;
       p = becareful + p;
       if (p >= 0)
-      f = f + f + 1;
-      else {
+        f = f + f + 1;
+      else
+      {
         f = f + f;
         p = p + q;
       }
-    }while (!(f >= 268435456L));
+    } while (!(f >= 268435456L));
     becareful = p - q;
     if (becareful + p >= 0)
-    incr (f);
+      incr (f);
     if (negative)
-    Result = - (integer) (f + n);
-    else Result = f + n;
+      Result = - (integer) (f + n);
+    else
+      Result = f + n;
   }
   return Result;
 }
@@ -2685,13 +2696,16 @@ fraction make_fraction (integer p, integer q)
 #ifdef FIXPT
 integer take_fraction (integer q, fraction f)
 {
-  integer Result; integer p;
+  integer Result;
+  integer p;
   boolean negative;
   integer n;
   integer becareful;
+  
   if (f >= 0)
-  negative = false;
-  else {
+    negative = false;
+  else
+  {
     f = - (integer) f;
     negative = true;
   }
@@ -2701,13 +2715,15 @@ integer take_fraction (integer q, fraction f)
     negative = !negative;
   }
   if (f < 268435456L)
-  n = 0;
-  else {
+    n = 0;
+  else
+  {
     n = f / 268435456L;
     f = f % 268435456L;
     if (q <= 2147483647L / n)
-    n = n * q;
-    else {
+      n = n * q;
+    else
+    {
       arith_error = true;
       n = 2147483647L;
     }
@@ -2715,18 +2731,21 @@ integer take_fraction (integer q, fraction f)
   f = f + 268435456L;
   p = 134217728L;
   if (q < 1073741824L)
-  do {
+    do {
       if (odd (f))
-    p = halfp (p + q);
-    else p = halfp (p);
-    f = halfp (f);
-  }while (!(f == 1));
-  else do {
+        p = halfp (p + q);
+      else
+        p = halfp (p);
+      f = halfp (f);
+    } while (!(f == 1));
+  else
+    do {
       if (odd (f))
-    p = p + halfp (q - p);
-    else p = halfp (p);
-    f = halfp (f);
-  }while (!(f == 1));
+        p = p + halfp (q - p);
+      else
+        p = halfp (p);
+      f = halfp (f);
+  } while (!(f == 1));
   becareful = n - 2147483647L;
   if (becareful + p > 0)
   {
@@ -2734,8 +2753,9 @@ integer take_fraction (integer q, fraction f)
     n = 2147483647L - p;
   }
   if (negative)
-  Result = - (integer) (n + p);
-  else Result = n + p;
+    Result = - (integer) (n + p);
+  else
+    Result = n + p;
   return Result;
 }
 #endif /* FIXPT */
@@ -2743,13 +2763,16 @@ integer take_fraction (integer q, fraction f)
 #ifdef FIXPT
 integer take_scaled (integer q, scaled f)
 {
-  integer Result; integer p;
+  integer Result;
+  integer p;
   boolean negative;
   integer n;
   integer becareful;
+  
   if (f >= 0)
-  negative = false;
-  else {
+    negative = false;
+  else
+  {
     f = - (integer) f;
     negative = true;
   }
@@ -2759,13 +2782,15 @@ integer take_scaled (integer q, scaled f)
     negative = !negative;
   }
   if (f < 65536L)
-  n = 0;
-  else {
+    n = 0;
+  else
+  {
     n = f / 65536L;
     f = f % 65536L;
     if (q <= 2147483647L / n)
-    n = n * q;
-    else {
+      n = n * q;
+    else
+    {
       arith_error = true;
       n = 2147483647L;
     }
@@ -2773,18 +2798,21 @@ integer take_scaled (integer q, scaled f)
   f = f + 65536L;
   p = 32768L;
   if (q < 1073741824L)
-  do {
+    do {
       if (odd (f))
-    p = halfp (p + q);
-    else p = halfp (p);
-    f = halfp (f);
-  }while (!(f == 1));
-  else do {
+        p = halfp (p + q);
+      else
+        p = halfp (p);
+      f = halfp (f);
+    } while (!(f == 1));
+  else
+    do {
       if (odd (f))
-    p = p + halfp (q - p);
-    else p = halfp (p);
-    f = halfp (f);
-  }while (!(f == 1));
+        p = p + halfp (q - p);
+      else
+        p = halfp (p);
+      f = halfp (f);
+    } while (!(f == 1));
   becareful = n - 2147483647L;
   if (becareful + p > 0)
   {
@@ -2792,8 +2820,9 @@ integer take_scaled (integer q, scaled f)
     n = 2147483647L - p;
   }
   if (negative)
-  Result = - (integer) (n + p);
-  else Result = n + p;
+    Result = - (integer) (n + p);
+  else
+    Result = n + p;
   return Result;
 }
 #endif /* FIXPT */
@@ -2801,22 +2830,25 @@ integer take_scaled (integer q, scaled f)
 #ifdef FIXPT
 scaled make_scaled (integer p, integer q)
 {
-  scaled Result; integer f;
+  scaled Result;
+  integer f;
   integer n;
   boolean negative;
   integer becareful;
+
   if (p >= 0)
-  negative = false;
-  else {
+    negative = false;
+  else
+  {
     p = - (integer) p;
     negative = true;
   }
   if (q <= 0)
   {
-        ;
+    ;
 #ifdef TEXMF_DEBUG
     if (q == 0)
-    confusion(47);
+      confusion(47);
 #endif /* TEXMF_DEBUG */
     q = - (integer) q;
     negative = !negative;
@@ -2827,28 +2859,32 @@ scaled make_scaled (integer p, integer q)
   {
     arith_error = true;
     if (negative)
-    Result = -2147483647L;
-    else Result = 2147483647L;
+      Result = -2147483647L;
+    else
+      Result = 2147483647L;
   }
-  else {
+  else
+  {
     n = (n - 1) * 65536L;
     f = 1;
     do {
-        becareful = p - q;
+      becareful = p - q;
       p = becareful + p;
       if (p >= 0)
-      f = f + f + 1;
-      else {
+        f = f + f + 1;
+      else
+      {
         f = f + f;
         p = p + q;
       }
-    }while (!(f >= 65536L));
+    } while (!(f >= 65536L));
     becareful = p - q;
     if (becareful + p >= 0)
-    incr (f);
+      incr (f);
     if (negative)
-    Result = - (integer) (f + n);
-    else Result = f + n;
+      Result = - (integer) (f + n);
+    else
+      Result = f + n;
   }
   return Result;
 }
@@ -2856,23 +2892,28 @@ scaled make_scaled (integer p, integer q)
 
 fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
 {
-  fraction Result; integer acc, num, denom;
+  fraction Result;
+  integer acc, num, denom;
+
   acc = take_fraction (st - (sf / 16), sf - (st / 16));
   acc = take_fraction (acc, ct - cf);
   num = 536870912L + take_fraction (acc, 379625062L);
   denom = 805306368L + take_fraction (ct, 497706707L) + take_fraction (cf ,
   307599661L);
   if (t != 65536L)
-  num = make_scaled (num, t);
+    num = make_scaled (num, t);
   if (num / 4 >= denom)
-  Result = 1073741824L;
-  else Result = make_fraction (num, denom);
+    Result = 1073741824L;
+  else
+    Result = make_fraction (num, denom);
   return Result;
 }
 
 integer ab_vs_cd (integer a, integer b, integer c, integer d)
 {
-  integer Result; integer q, r;
+  integer Result;
+  integer q, r;
+  
   if (a < 0)
   {
     a = - (integer) a;
@@ -2885,24 +2926,28 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
   }
   if (d <= 0)
   {
-    if (b >= 0) {
+    if (b >= 0)
+    {
       if (((a == 0) || (b == 0)) && ((c == 0) || (d == 0)))
       {
         Result = 0;
         goto lab_exit;
       }
-      else {
+      else
+      {
         Result = 1;
         goto lab_exit;
       }
     }
-    if (d == 0) {
+    if (d == 0)
+    {
       if (a == 0)
       {
         Result = 0;
         goto lab_exit;
       }
-      else {
+      else
+      {
         Result = -1;
         goto lab_exit;
       }
@@ -2916,7 +2961,8 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
   }
   else if (b <= 0)
   {
-    if (b < 0) {
+    if (b < 0)
+    {
       if (a > 0)
       {
         Result = -1;
@@ -2928,35 +2974,40 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
       Result = 0;
       goto lab_exit;
     }
-    else {
-
+    else
+    {
       Result = -1;
       goto lab_exit;
     }
   }
-  while (true) {
+  while (true)
+  {
     q = a / d;
     r = c / b;
-    if (q != r) {
+    if (q != r)
+    {
       if (q > r)
       {
         Result = 1;
         goto lab_exit;
       }
-      else {
+      else
+      {
         Result = -1;
         goto lab_exit;
       }
     }
     q = a % d;
     r = c % b;
-    if (r == 0) {
+    if (r == 0)
+    {
       if (q == 0)
       {
         Result = 0;
         goto lab_exit;
       }
-      else {
+      else
+      {
         Result = 1;
         goto lab_exit;
       }
@@ -2977,15 +3028,17 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
 
 scaled square_rt (scaled x)
 {
-  scaled Result; small_number k;
+  scaled Result;
+  small_number k;
   integer y, q;
+  
   if (x <= 0)
   {
     if (x < 0)
     {
       {
         if (interaction == 3)
-        ;
+          ;
         if ((filelineerrorstylep && !(cur_input .name_field == 0)))
         {
           print_nl(261);
@@ -2995,7 +3048,8 @@ scaled square_rt (scaled x)
           print(262);
           print(305);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(305);
         }
@@ -3011,21 +3065,24 @@ scaled square_rt (scaled x)
     }
     Result = 0;
   }
-  else {
+  else
+  {
     k = 23;
     q = 2;
-    while (x < 536870912L) {
+    while (x < 536870912L)
+    {
       decr (k);
       x = x + x + x + x;
     }
     if (x < 1073741824L)
-    y = 0;
-    else {
+      y = 0;
+    else
+    {
       x = x - 1073741824L;
       y = 1;
     }
     do {
-        x = x + x;
+      x = x + x;
       y = y + y;
       if (x >= 1073741824L)
       {
@@ -3051,7 +3108,7 @@ scaled square_rt (scaled x)
         y = y + q;
       }
       decr (k);
-    }while (!(k == 0));
+    } while (!(k == 0));
     Result = halfp (q);
   }
   return Result;
@@ -3059,8 +3116,10 @@ scaled square_rt (scaled x)
 
 integer pyth_add (integer a, integer b)
 {
-  integer Result; fraction r;
+  integer Result;
+  fraction r;
   boolean big;
+  
   a = abs (a);
   b = abs (b);
   if (a < b)
@@ -3072,26 +3131,30 @@ integer pyth_add (integer a, integer b)
   if (b > 0)
   {
     if (a < 536870912L)
-    big = false;
-    else {
+      big = false;
+    else
+    {
       a = a / 4;
       b = b / 4;
       big = true;
     }
-    while (true) {
+    while (true)
+    {
       r = make_fraction (b, a);
       r = take_fraction (r, r);
       if (r == 0)
-      goto done;
+        goto done;
       r = make_fraction (r, 1073741824L + r);
       a = a + take_fraction (a + a, r);
       b = take_fraction (b, r);
     }
     done:;
-    if (big) {
+    if (big)
+    {
       if (a < 536870912L)
-      a = a + a + a + a;
-      else {
+        a = a + a + a + a;
+      else
+      {
         arith_error = true;
         a = 2147483647L;
       }
@@ -3103,8 +3166,10 @@ integer pyth_add (integer a, integer b)
 
 integer pyth_sub (integer a, integer b)
 {
-  integer Result; fraction r;
+  integer Result;
+  fraction r;
   boolean big;
+  
   a = abs (a);
   b = abs (b);
   if (a <= b)
@@ -3113,7 +3178,7 @@ integer pyth_sub (integer a, integer b)
     {
       {
         if (interaction == 3)
-        ;
+          ;
         if ((filelineerrorstylep && !(cur_input .name_field == 0)))
         {
           print_nl(261);
@@ -3123,7 +3188,8 @@ integer pyth_sub (integer a, integer b)
           print(262);
           print(309);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(309);
         }
@@ -3141,26 +3207,29 @@ integer pyth_sub (integer a, integer b)
     }
     a = 0;
   }
-  else {
+  else
+  {
     if (a < 1073741824L)
-    big = false;
-    else {
+      big = false;
+    else
+    {
       a = halfp (a);
       b = halfp (b);
       big = true;
     }
-    while (true) {
+    while (true)
+    {
       r = make_fraction (b, a);
       r = take_fraction (r, r);
       if (r == 0)
-      goto done;
+        goto done;
       r = make_fraction (r, 1073741824L - r);
       a = a - take_fraction (a + a, r);
       b = take_fraction (b, r);
     }
     done:;
     if (big)
-    a = a + a;
+      a = a + a;
   }
   Result = a;
   return Result;
@@ -3168,13 +3237,14 @@ integer pyth_sub (integer a, integer b)
 
 scaled m_log (scaled x)
 {
-  scaled Result; integer y, z;
+  scaled Result;
+  integer y, z;
   integer k;
   if (x <= 0)
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -3184,7 +3254,8 @@ scaled m_log (scaled x)
         print(262);
         print(311);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(311);
       }
@@ -3199,19 +3270,23 @@ scaled m_log (scaled x)
     error ();
     Result = 0;
   }
-  else {
+  else
+  {
     y = 1302456860L;
     z = 6581195L;
-    while (x < 1073741824L) {
+    while (x < 1073741824L)
+    {
       x = x + x;
       y = y - 93032639L;
       z = z - 48782L;
     }
     y = y + (z / 65536L);
     k = 2;
-    while (x > 1073741828L) {
+    while (x > 1073741828L)
+    {
       z = ((x - 1) / two_to_the[k]) + 1;
-      while (x < 1073741824L + z) {
+      while (x < 1073741824L + z)
+      {
         z = halfp (z + 1);
         k = k + 1;
       }
@@ -3225,51 +3300,62 @@ scaled m_log (scaled x)
 
 scaled m_exp (scaled x)
 {
-  scaled Result; small_number k;
+  scaled Result;
+  small_number k;
   integer y, z;
+  
   if (x > 174436200L)
   {
     arith_error = true;
     Result = 2147483647L;
   }
   else if (x < -197694359L)
-  Result = 0;
-  else {
+    Result = 0;
+  else
+  {
     if (x <= 0)
     {
       z = -8 * x;
       y = 1048576L;
     }
-    else {
+    else
+    {
       if (x <= 127919879L)
-      z = 1023359037L - 8 * x;
-      else z = 8 * (174436200L - x);
+        z = 1023359037L - 8 * x;
+      else
+        z = 8 * (174436200L - x);
       y = 2147483647L;
     }
     k = 1;
-    while (z > 0) {
-      while (z >= spec_log[k]) {
+    while (z > 0)
+    {
+      while (z >= spec_log[k])
+      {
         z = z - spec_log[k];
         y = y - 1 - ((y - two_to_the[k - 1]) / two_to_the[k]);
       }
       incr (k);
     }
     if (x <= 127919879L)
-    Result = (y + 8) / 16;
-    else Result = y;
+      Result = (y + 8) / 16;
+    else
+      Result = y;
   }
   return Result;
 }
 
 angle n_arg (integer x, integer y)
 {
-  angle Result; angle z;
+  angle Result;
+  angle z;
   integer t;
   small_number k;
   unsigned char octant;
+  
   if (x >= 0)
-  octant = 1;
-  else {
+    octant = 1;
+  else
+  {
     x = - (integer) x;
     octant = 2;
   }
@@ -3289,7 +3375,7 @@ angle n_arg (integer x, integer y)
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -3299,7 +3385,8 @@ angle n_arg (integer x, integer y)
         print(262);
         print(313);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(313);
       }
@@ -3312,21 +3399,24 @@ angle n_arg (integer x, integer y)
     error ();
     Result = 0;
   }
-  else {
-    while (x >= 536870912L) {
+  else
+  {
+    while (x >= 536870912L)
+    {
       x = halfp (x);
       y = halfp (y);
     }
     z = 0;
     if (y > 0)
     {
-      while (x < 268435456L) {
+      while (x < 268435456L)
+      {
         x = x + x;
         y = y + y;
       }
       k = 0;
       do {
-          y = y + y;
+        y = y + y;
         incr (k);
         if (y > x)
         {
@@ -3335,42 +3425,43 @@ angle n_arg (integer x, integer y)
           x = x + (y / two_to_the[k + k]);
           y = y - t;
         }
-      }while (!(k == 15));
+      } while (!(k == 15));
       do {
-          y = y + y;
+        y = y + y;
         incr (k);
         if (y > x)
         {
           z = z + spec_atan[k];
           y = y - x;
         }
-      }while (!(k == 26));
+      } while (!(k == 26));
     }
     switch (octant)
-    {case 1 :
-      Result = z;
-      break;
-    case 5 :
-      Result = 94371840L - z;
-      break;
-    case 6 :
-      Result = 94371840L + z;
-      break;
-    case 2 :
-      Result = 188743680L - z;
-      break;
-    case 4 :
-      Result = z - 188743680L;
-      break;
-    case 8 :
-      Result = - (integer) z - 94371840L;
-      break;
-    case 7 :
-      Result = z - 94371840L;
-      break;
-    case 3 :
-      Result = - (integer) z;
-      break;
+    {
+      case 1:
+        Result = z;
+        break;
+      case 5:
+        Result = 94371840L - z;
+        break;
+      case 6:
+        Result = 94371840L + z;
+        break;
+      case 2:
+        Result = 188743680L - z;
+        break;
+      case 4:
+        Result = z - 188743680L;
+        break;
+      case 8:
+        Result = - (integer) z - 94371840L;
+        break;
+      case 7:
+        Result = z - 94371840L;
+        break;
+      case 3:
+        Result = - (integer) z;
+        break;
     }
   }
   return Result;
@@ -3382,16 +3473,19 @@ void n_sin_cos(angle z)
   unsigned char q;
   fraction r;
   integer x, y, t;
-  while (z < 0) z = z + 377487360L;
+  
+  while (z < 0)
+    z = z + 377487360L;
   z = z % 377487360L;
   q = z / 47185920L;
   z = z % 47185920L;
   x = 268435456L;
   y = x;
   if (!odd (q))
-  z = 47185920L - z;
+    z = 47185920L - z;
   k = 1;
-  while (z > 0) {
+  while (z > 0)
+  {
     if (z >= spec_atan[k])
     {
       z = z - spec_atan[k];
@@ -3402,51 +3496,52 @@ void n_sin_cos(angle z)
     incr (k);
   }
   if (y < 0)
-  y = 0;
+    y = 0;
   switch (q)
-  {case 0 :
-;
-    break;
-  case 1 :
-    {
-      t = x;
-      x = y;
-      y = t;
-    }
-    break;
-  case 2 :
-    {
-      t = x;
-      x = - (integer) y;
-      y = t;
-    }
-    break;
-  case 3 :
-    x = - (integer) x;
-    break;
-  case 4 :
-    {
+  {
+    case 0:
+      ;
+      break;
+    case 1:
+      {
+        t = x;
+        x = y;
+        y = t;
+      }
+      break;
+    case 2:
+      {
+        t = x;
+        x = - (integer) y;
+        y = t;
+      }
+      break;
+    case 3:
       x = - (integer) x;
+      break;
+    case 4:
+      {
+        x = - (integer) x;
+        y = - (integer) y;
+      }
+      break;
+    case 5:
+      {
+        t = x;
+        x = - (integer) y;
+        y = - (integer) t;
+      }
+      break;
+    case 6:
+      {
+        t = x;
+        x = y;
+        y = - (integer) t;
+      }
+      break;
+    case 7:
       y = - (integer) y;
-    }
-    break;
-  case 5 :
-    {
-      t = x;
-      x = - (integer) y;
-      y = - (integer) t;
-    }
-    break;
-  case 6 :
-    {
-      t = x;
-      x = y;
-      y = - (integer) t;
-    }
-    break;
-  case 7 :
-    y = - (integer) y;
-    break;
+      break;
   }
   r = pyth_add (x, y);
   n_cos = make_fraction (x, r);
@@ -3457,11 +3552,12 @@ void new_randoms (void)
 {
   unsigned char k;
   fraction x;
+  
   {integer for_end; k = 0;for_end = 23; if (k <= for_end) do
     {
       x = randoms[k] - randoms[k + 31];
       if (x < 0)
-      x = x + 268435456L;
+        x = x + 268435456L;
       randoms[k] = x;
     }
   while (k++ < for_end);}
@@ -3469,7 +3565,7 @@ void new_randoms (void)
     {
       x = randoms[k] - randoms[k - 24];
       if (x < 0)
-      x = x + 268435456L;
+        x = x + 268435456L;
       randoms[k] = x;
     }
   while (k++ < for_end);}
@@ -3480,8 +3576,10 @@ void init_randoms (scaled seed)
 {
   fraction j, jj, k;
   unsigned char i;
+
   j = abs (seed);
-  while (j >= 268435456L) j = halfp (j);
+  while (j >= 268435456L)
+    j = halfp (j);
   k = 1;
   {integer for_end; i = 0;for_end = 54; if (i <= for_end) do
     {
@@ -3489,7 +3587,7 @@ void init_randoms (scaled seed)
       k = j - k;
       j = jj;
       if (k < 0)
-      k = k + 268435456L;
+        k = k + 268435456L;
       randoms[(i * 21) % 55] = j;
     }
   while (i++ < for_end);}
@@ -3500,41 +3598,49 @@ void init_randoms (scaled seed)
 
 scaled unif_rand (scaled x)
 {
-  scaled Result; scaled y;
+  scaled Result;
+  scaled y;
+  
   if (j_random == 0)
-  new_randoms ();
-  else decr (j_random);
+    new_randoms ();
+  else
+    decr (j_random);
   y = take_fraction (abs (x), randoms[j_random]);
   if (y == abs (x))
-  Result = 0;
+    Result = 0;
   else if (x > 0)
-  Result = y;
-  else Result = - (integer) y;
+    Result = y;
+  else
+    Result = - (integer) y;
   return Result;
 }
 
 scaled norm_rand (void)
 {
-  scaled Result; integer x, u, l;
+  scaled Result;
+  integer x, u, l;
   do {
-      do { if (j_random == 0)
-      new_randoms ();
-      else decr (j_random);
+    do {
+      if (j_random == 0)
+        new_randoms ();
+      else
+        decr (j_random);
       x = take_fraction (112429L, randoms[j_random] - 134217728L);
       if (j_random == 0)
-      new_randoms ();
-      else decr (j_random);
+        new_randoms ();
+      else
+        decr (j_random);
       u = randoms[j_random];
-    }while (!(abs (x) < u));
+    } while (!(abs (x) < u));
     x = make_fraction (x, u);
     l = 139548960L - m_log (u);
-  }while (!(ab_vs_cd (1024, l, x, x) >= 0));
+  } while (!(ab_vs_cd (1024, l, x, x) >= 0));
   Result = x;
   return Result;
 }
 
 #ifdef TEXMF_DEBUG
-void print_word (memoryword w)
+void print_word (memory_word w)
 {
   print_int (w .cint);
   print_char(32);
@@ -3542,13 +3648,13 @@ void print_word (memoryword w)
   print_char(32);
   print_scaled(w .cint / 4096);
   print_ln ();
-  print_int (w .hhfield.lhfield);
+  print_int (w .hh.lh);
   print_char(61);
-  print_int (w .hhfield.b0);
+  print_int (w .hh.b0);
   print_char(58);
-  print_int (w .hhfield.b1);
+  print_int (w .hh.b1);
   print_char(59);
-  print_int (w .hhfield.v.RH);
+  print_int (w .hh.v.RH);
   print_char(32);
   print_int (w .qqqq.b0);
   print_char(58);
@@ -3566,13 +3672,15 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
   integer r, v;
   cclass = 3;
   tally = nulltally;
-  while ((p != 0) && (tally < l)) {
+  
+  while ((p != 0) && (tally < l))
+  {
     if (p == q)
     {
       first_count = tally;
       trick_count = tally + 1 + errorline - halferrorline;
       if (trick_count < errorline)
-      trick_count = errorline;
+        trick_count = errorline;
     }
     c = 9;
     if ((p < 0) || (p > mem_end))
@@ -3580,47 +3688,52 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
       print(493);
       goto lab_exit;
     }
-    if (p < hi_mem_min) {
-      if (mem[p].hhfield.b1 == 12) {
-        if (mem[p].hhfield.b0 == 16)
+    if (p < hi_mem_min)
+    {
+      if (mem[p].hh.b1 == 12)
+      {
+        if (mem[p].hh.b0 == 16)
         {
           if (cclass == 0)
-          print_char(32);
+            print_char(32);
           v = mem[p + 1].cint;
           if (v < 0)
           {
             if (cclass == 17)
-            print_char(32);
+              print_char(32);
             print_char(91);
             print_scaled(v);
             print_char(93);
             c = 18;
           }
-          else {
+          else
+          {
             print_scaled(v);
             c = 0;
           }
         }
-        else if (mem[p].hhfield.b0 != 4)
-        print(496);
-        else {
+        else if (mem[p].hh.b0 != 4)
+          print(496);
+        else
+        {
           print_char(34);
           slow_print(mem[p + 1].cint);
           print_char(34);
           c = 4;
         }
       }
-      else if ((mem[p].hhfield.b1 != 11) || (mem[p].hhfield.b0 <
-      1) || (mem[p].hhfield.b0 > 19))
-      print(496);
-      else {
+      else if ((mem[p].hh.b1 != 11) || (mem[p].hh.b0 < 1) || (mem[p].hh.b0 > 19))
+        print(496);
+      else
+      {
         g_pointer = p;
         print_capsule ();
         c = 8;
       }
     }
-    else {
-      r = mem[p].hhfield.lhfield;
+    else
+    {
+      r = mem[p].hh.lh;
       if (r >= 9770)
       {
         if (r < 9920)
@@ -3633,7 +3746,8 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
           print(499);
           r = r - (9920);
         }
-        else {
+        else
+        {
           print(500);
           r = r - (10070);
         }
@@ -3641,46 +3755,51 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
         print_char(41);
         c = 8;
       }
-      else if (r < 1) {
+      else if (r < 1)
+      {
         if (r == 0)
         {
           if (cclass == 17)
-          print_char(32);
+            print_char(32);
           print(497);
           c = 18;
         }
-        else print(494);
+        else
+          print(494);
       }
-      else {
+      else
+      {
         r = hash[r].v.RH;
         if ((r < 0) || (r >= str_ptr))
-        print(495);
-        else {
+          print(495);
+        else
+        {
           c = char_class[str_pool[str_start[r]]];
           if (c == cclass)
-          switch (c)
-          {case 9 :
-            print_char(46);
-            break;
-          case 5 :
-          case 6 :
-          case 7 :
-          case 8 :
-        ;
-            break;
-            default:
-            print_char(32);
-            break;
-          }
+            switch (c)
+            {
+              case 9:
+                print_char(46);
+                break;
+              case 5:
+              case 6:
+              case 7:
+              case 8:
+                ;
+                break;
+              default:
+                print_char(32);
+                break;
+            }
           slow_print(r);
         }
       }
     }
     cclass = c;
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   if (p != 0)
-  print(492);
+    print(492);
   lab_exit:;
 }
 
@@ -3690,35 +3809,38 @@ void runaway (void)
   {
     print_nl(638);
     switch (scanner_status)
-    {case 3 :
-      print(639);
-      break;
-    case 4 :
-    case 5 :
-      print(640);
-      break;
-    case 6 :
-      print(641);
-      break;
+    {
+      case 3:
+        print(639);
+        break;
+      case 4:
+      case 5:
+        print(640);
+        break;
+      case 6:
+        print(641);
+        break;
     }
     print_ln ();
-    show_token_list (mem[memtop - 2].hhfield.v.RH, 0, errorline - 10, 0
- );
+    show_token_list (mem[memtop - 2].hh.v.RH, 0, errorline - 10, 0);
   }
 }
 
 halfword get_avail (void)
 {
-  halfword Result; halfword p;
+  halfword Result;
+  halfword p;
+  
   p = avail;
   if (p != 0)
-  avail = mem[avail].hhfield.v.RH;
+    avail = mem[avail].hh.v.RH;
   else if (mem_end < memmax)
   {
     incr (mem_end);
     p = mem_end;
   }
-  else {
+  else
+  {
     decr (hi_mem_min);
     p = hi_mem_min;
     if (hi_mem_min <= lo_mem_max)
@@ -3727,8 +3849,8 @@ halfword get_avail (void)
       overflow (315, memmax + 1);
     }
   }
-  mem[p].hhfield.v.RH = 0;
-        ;
+  mem[p].hh.v.RH = 0;
+  ;
 #ifdef STAT
   incr (dyn_used);
 #endif /* STAT */
@@ -3738,73 +3860,80 @@ halfword get_avail (void)
 
 halfword get_node (integer s)
 {
-  halfword Result; halfword p;
+  halfword Result;
+  halfword p;
   halfword q;
   integer r;
   integer t, tt;
-  lab_restart: p = rover;
+  
+lab_restart:
+  p = rover;
   do {
-      q = p + mem[p].hhfield.lhfield;
-    while ((mem[q].hhfield.v.RH == 268435455L)) {
-      t = mem[q + 1].hhfield.v.RH;
-      tt = mem[q + 1].hhfield.lhfield;
+    q = p + mem[p].hh.lh;
+    while ((mem[q].hh.v.RH == 268435455L))
+    {
+      t = mem[q + 1].hh.v.RH;
+      tt = mem[q + 1].hh.lh;
       if (q == rover)
-      rover = t;
-      mem[t + 1].hhfield.lhfield = tt;
-      mem[tt + 1].hhfield.v.RH = t;
-      q = q + mem[q].hhfield.lhfield;
+        rover = t;
+      mem[t + 1].hh.lh = tt;
+      mem[tt + 1].hh.v.RH = t;
+      q = q + mem[q].hh.lh;
     }
     r = q - s;
     if (r > p + 1)
     {
-      mem[p].hhfield.lhfield = r - p;
+      mem[p].hh.lh = r - p;
       rover = p;
       goto found;
     }
-    if (r == p) {
-      if (mem[p + 1].hhfield.v.RH != p)
+    if (r == p)
+    {
+      if (mem[p + 1].hh.v.RH != p)
       {
-        rover = mem[p + 1].hhfield.v.RH;
-        t = mem[p + 1].hhfield.lhfield;
-        mem[rover + 1].hhfield.lhfield = t;
-        mem[t + 1].hhfield.v.RH = rover;
+        rover = mem[p + 1].hh.v.RH;
+        t = mem[p + 1].hh.lh;
+        mem[rover + 1].hh.lh = t;
+        mem[t + 1].hh.v.RH = rover;
         goto found;
       }
     }
-    mem[p].hhfield.lhfield = q - p;
-    p = mem[p + 1].hhfield.v.RH;
-  }while (!(p == rover));
+    mem[p].hh.lh = q - p;
+    p = mem[p + 1].hh.v.RH;
+  } while (!(p == rover));
   if (s == 1073741824L)
   {
     Result = 268435455L;
     goto lab_exit;
   }
-  if (lo_mem_max + 2 < hi_mem_min) {
+  if (lo_mem_max + 2 < hi_mem_min)
+  {
     if (lo_mem_max + 2 <= 268435455L)
     {
       if (hi_mem_min - lo_mem_max >= 1998)
-      t = lo_mem_max + 1000;
-      else t = lo_mem_max + 1 + (hi_mem_min - lo_mem_max) / 2;
+        t = lo_mem_max + 1000;
+      else
+        t = lo_mem_max + 1 + (hi_mem_min - lo_mem_max) / 2;
       if (t > 268435455L)
-      t = 268435455L;
-      p = mem[rover + 1].hhfield.lhfield;
+        t = 268435455L;
+      p = mem[rover + 1].hh.lh;
       q = lo_mem_max;
-      mem[p + 1].hhfield.v.RH = q;
-      mem[rover + 1].hhfield.lhfield = q;
-      mem[q + 1].hhfield.v.RH = rover;
-      mem[q + 1].hhfield.lhfield = p;
-      mem[q].hhfield.v.RH = 268435455L;
-      mem[q].hhfield.lhfield = t - lo_mem_max;
+      mem[p + 1].hh.v.RH = q;
+      mem[rover + 1].hh.lh = q;
+      mem[q + 1].hh.v.RH = rover;
+      mem[q + 1].hh.lh = p;
+      mem[q].hh.v.RH = 268435455L;
+      mem[q].hh.lh = t - lo_mem_max;
       lo_mem_max = t;
-      mem[lo_mem_max].hhfield.v.RH = 0;
-      mem[lo_mem_max].hhfield.lhfield = 0;
+      mem[lo_mem_max].hh.v.RH = 0;
+      mem[lo_mem_max].hh.lh = 0;
       rover = q;
       goto lab_restart;
     }
   }
   overflow (315, memmax + 1);
-  found: mem[r].hhfield.v.RH = 0;
-        ;
+  found: mem[r].hh.v.RH = 0;
+  ;
 #ifdef STAT
   var_used = var_used + s;
 #endif /* STAT */
@@ -3816,14 +3945,15 @@ halfword get_node (integer s)
 void free_node (halfword p, halfword s)
 {
   halfword q;
-  mem[p].hhfield.lhfield = s;
-  mem[p].hhfield.v.RH = 268435455L;
-  q = mem[rover + 1].hhfield.lhfield;
-  mem[p + 1].hhfield.lhfield = q;
-  mem[p + 1].hhfield.v.RH = rover;
-  mem[rover + 1].hhfield.lhfield = p;
-  mem[q + 1].hhfield.v.RH = p;
-        ;
+
+  mem[p].hh.lh = s;
+  mem[p].hh.v.RH = 268435455L;
+  q = mem[rover + 1].hh.lh;
+  mem[p + 1].hh.lh = q;
+  mem[p + 1].hh.v.RH = rover;
+  mem[rover + 1].hh.lh = p;
+  mem[q + 1].hh.v.RH = p;
+  ;
 #ifdef STAT
   var_used = var_used - s;
 #endif /* STAT */
@@ -3832,21 +3962,23 @@ void free_node (halfword p, halfword s)
 void flush_list (halfword p)
 {
   halfword q, r;
-  if (p >= hi_mem_min) {
+
+  if (p >= hi_mem_min)
+  {
     if (p != memtop)
     {
       r = p;
       do {
-          q = r;
-        r = mem[r].hhfield.v.RH;
+        q = r;
+        r = mem[r].hh.v.RH;
         ;
 #ifdef STAT
         decr (dyn_used);
 #endif /* STAT */
         if (r < hi_mem_min)
-        goto done;
-      }while (!(r == memtop));
-      done: mem[q].hhfield.v.RH = avail;
+          goto done;
+      } while (!(r == memtop));
+      done: mem[q].hh.v.RH = avail;
       avail = p;
     }
   }
@@ -3855,15 +3987,18 @@ void flush_list (halfword p)
 void flush_node_list (halfword p)
 {
   halfword q;
-  while (p != 0) {
+
+  while (p != 0)
+  {
     q = p;
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
     if (q < hi_mem_min)
-    free_node (q, 2);
-    else {
-      mem[q].hhfield.v.RH = avail;
+      free_node (q, 2);
+    else
+    {
+      mem[q].hh.v.RH = avail;
       avail = q;
-        ;
+      ;
 #ifdef STAT
       decr (dyn_used);
 #endif /* STAT */
@@ -3876,22 +4011,24 @@ void check_mem (boolean printlocs)
 {
   halfword p, q, r;
   boolean clobbered;
+  
   {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end)
-  do
-    freearr[p] = false;
-  while (p++ < for_end);}
-  {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <=
-  for_end) do
-    freearr[p] = false;
-  while (p++ < for_end);}
+    do
+      freearr[p] = false;
+    while (p++ < for_end);}
+  {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <= for_end)
+    do
+      freearr[p] = false;
+    while (p++ < for_end);}
   p = avail;
   q = 0;
   clobbered = false;
-  while (p != 0) {
+  while (p != 0)
+  {
     if ((p > mem_end) || (p < hi_mem_min))
-    clobbered = true;
+      clobbered = true;
     else if (freearr[p])
-    clobbered = true;
+      clobbered = true;
     if (clobbered)
     {
       print_nl(316);
@@ -3900,81 +4037,82 @@ void check_mem (boolean printlocs)
     }
     freearr[p] = true;
     q = p;
-    p = mem[q].hhfield.v.RH;
+    p = mem[q].hh.v.RH;
   }
   done1:;
   p = rover;
   q = 0;
   clobbered = false;
   do {
-      if ((p >= lo_mem_max))
-    clobbered = true;
-    else if ((mem[p + 1].hhfield.v.RH >= lo_mem_max))
-    clobbered = true;
-    else if (!((mem[p].hhfield.v.RH == 268435455L)) || (mem[p]
-    .hhfield.lhfield < 2) || (p + mem[p].hhfield.lhfield > lo_mem_max)
-    || (mem[mem[p + 1].hhfield.v.RH + 1].hhfield.lhfield != p))
-    clobbered = true;
+    if ((p >= lo_mem_max))
+      clobbered = true;
+    else if ((mem[p + 1].hh.v.RH >= lo_mem_max))
+      clobbered = true;
+    else if (!((mem[p].hh.v.RH == 268435455L)) || (mem[p].hh.lh < 2) ||
+      (p + mem[p].hh.lh > lo_mem_max) || (mem[mem[p + 1].hh.v.RH + 1].hh.lh != p))
+      clobbered = true;
     if (clobbered)
     {
       print_nl(317);
       print_int (q);
       goto done2;
     }
-    {integer for_end; q = p;for_end = p + mem[p].hhfield
-  .lhfield - 1; if (q <= for_end) do
-      {
-        if (freearr[q])
-        {
-          print_nl(318);
-          print_int (q);
-          goto done2;
+    {integer for_end; q = p;for_end = p + mem[p].hh.lh - 1;
+      if (q <= for_end)
+        do {
+          if (freearr[q])
+          {
+            print_nl(318);
+            print_int (q);
+            goto done2;
+          }
+          freearr[q] = true;
         }
-        freearr[q] = true;
-      }
     while (q++ < for_end);}
     q = p;
-    p = mem[p + 1].hhfield.v.RH;
-  }while (!(p == rover));
+    p = mem[p + 1].hh.v.RH;
+  } while (!(p == rover));
   done2:;
   p = 0;
-  while (p <= lo_mem_max) {
-    if ((mem[p].hhfield.v.RH == 268435455L))
+  while (p <= lo_mem_max)
+  {
+    if ((mem[p].hh.v.RH == 268435455L))
     {
       print_nl(319);
       print_int (p);
     }
-    while ((p <= lo_mem_max) && !freearr[p]) incr (p);
-    while ((p <= lo_mem_max) && freearr[p]) incr (p);
+    while ((p <= lo_mem_max) && !freearr[p])
+      incr (p);
+    while ((p <= lo_mem_max) && freearr[p])
+      incr (p);
   }
   q = 13;
-  p = mem[q].hhfield.v.RH;
-  while (p != 13) {
-    if (mem[p + 1].hhfield.lhfield != q)
+  p = mem[q].hh.v.RH;
+  while (p != 13)
+  {
+    if (mem[p + 1].hh.lh != q)
     {
       print_nl(598);
       print_int (p);
     }
-    p = mem[p + 1].hhfield.v.RH;
+    p = mem[p + 1].hh.v.RH;
     r = 19;
     do {
-        if (mem[mem[p].hhfield.lhfield + 1].cint >= mem[r + 1]
-      .cint)
+      if (mem[mem[p].hh.lh + 1].cint >= mem[r + 1].cint)
       {
         print_nl(599);
         print_int (p);
       }
-      r = mem[p].hhfield.lhfield;
+      r = mem[p].hh.lh;
       q = p;
-      p = mem[q].hhfield.v.RH;
-    }while (!(r == 0));
+      p = mem[q].hh.v.RH;
+    } while (!(r == 0));
   }
   if (printlocs)
   {
     print_nl(320);
-    {integer for_end; p = 0;for_end = lo_mem_max; if (p <=
-    for_end) do
-      if (!freearr[p]&& ((p > was_lo_max) || was_free[p]))
+    {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end) do
+      if (!freearr[p] && ((p > was_lo_max) || was_free[p]))
       {
         print_char(32);
         print_int (p);
@@ -3982,8 +4120,7 @@ void check_mem (boolean printlocs)
     while (p++ < for_end);}
     {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <=
     for_end) do
-      if (!freearr[p]&& ((p < was_hi_min) || (p > was_mem_end) ||
-      was_free[p]))
+      if (!freearr[p]&& ((p < was_hi_min) || (p > was_mem_end) || was_free[p]))
       {
         print_char(32);
         print_int (p);
@@ -3991,8 +4128,8 @@ void check_mem (boolean printlocs)
     while (p++ < for_end);}
   }
   {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end)
-  do
-    was_free[p] = freearr[p];
+    do
+      was_free[p] = freearr[p];
   while (p++ < for_end);}
   {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <=
   for_end) do
@@ -4008,16 +4145,16 @@ void check_mem (boolean printlocs)
 void search_mem (halfword p)
 {
   integer q;
+
   {integer for_end; q = 0;for_end = lo_mem_max; if (q <= for_end)
-  do
-    {
-      if (mem[q].hhfield.v.RH == p)
+    do {
+      if (mem[q].hh.v.RH == p)
       {
         print_nl(321);
         print_int (q);
         print_char(41);
       }
-      if (mem[q].hhfield.lhfield == p)
+      if (mem[q].hh.lh == p)
       {
         print_nl(322);
         print_int (q);
@@ -4028,13 +4165,13 @@ void search_mem (halfword p)
   {integer for_end; q = hi_mem_min;for_end = mem_end; if (q <=
   for_end) do
     {
-      if (mem[q].hhfield.v.RH == p)
+      if (mem[q].hh.v.RH == p)
       {
         print_nl(321);
         print_int (q);
         print_char(41);
       }
-      if (mem[q].hhfield.lhfield == p)
+      if (mem[q].hh.lh == p)
       {
         print_nl(322);
         print_int (q);
@@ -4060,219 +4197,220 @@ void print_op (quarterword c)
   if (c <= 15)
   print_type (c);
   else switch (c)
-  {case 30 :
-    print(347);
-    break;
-  case 31 :
-    print(348);
-    break;
-  case 32 :
-    print(349);
-    break;
-  case 33 :
-    print(350);
-    break;
-  case 34 :
-    print(351);
-    break;
-  case 35 :
-    print(352);
-    break;
-  case 36 :
-    print(353);
-    break;
-  case 37 :
-    print(354);
-    break;
-  case 38 :
-    print(355);
-    break;
-  case 39 :
-    print(356);
-    break;
-  case 40 :
-    print(357);
-    break;
-  case 41 :
-    print(358);
-    break;
-  case 42 :
-    print(359);
-    break;
-  case 43 :
-    print(360);
-    break;
-  case 44 :
-    print(361);
-    break;
-  case 45 :
-    print(362);
-    break;
-  case 46 :
-    print(363);
-    break;
-  case 47 :
-    print(364);
-    break;
-  case 48 :
-    print(365);
-    break;
-  case 49 :
-    print(366);
-    break;
-  case 50 :
-    print(367);
-    break;
-  case 51 :
-    print(368);
-    break;
-  case 52 :
-    print(369);
-    break;
-  case 53 :
-    print(370);
-    break;
-  case 54 :
-    print(371);
-    break;
-  case 55 :
-    print(372);
-    break;
-  case 56 :
-    print(373);
-    break;
-  case 57 :
-    print(374);
-    break;
-  case 58 :
-    print(375);
-    break;
-  case 59 :
-    print(376);
-    break;
-  case 60 :
-    print(377);
-    break;
-  case 61 :
-    print(378);
-    break;
-  case 62 :
-    print(379);
-    break;
-  case 63 :
-    print(380);
-    break;
-  case 64 :
-    print(381);
-    break;
-  case 65 :
-    print(382);
-    break;
-  case 66 :
-    print(383);
-    break;
-  case 67 :
-    print(384);
-    break;
-  case 68 :
-    print(385);
-    break;
-  case 69 :
-    print_char(43);
-    break;
-  case 70 :
-    print_char(45);
-    break;
-  case 71 :
-    print_char(42);
-    break;
-  case 72 :
-    print_char(47);
-    break;
-  case 73 :
-    print(386);
-    break;
-  case 74 :
-    print(310);
-    break;
-  case 75 :
-    print(387);
-    break;
-  case 76 :
-    print(388);
-    break;
-  case 77 :
-    print_char(60);
-    break;
-  case 78 :
-    print(389);
-    break;
-  case 79 :
-    print_char(62);
-    break;
-  case 80 :
-    print(390);
-    break;
-  case 81 :
-    print_char(61);
-    break;
-  case 82 :
-    print(391);
-    break;
-  case 83 :
-    print(38);
-    break;
-  case 84 :
-    print(392);
-    break;
-  case 85 :
-    print(393);
-    break;
-  case 86 :
-    print(394);
-    break;
-  case 87 :
-    print(395);
-    break;
-  case 88 :
-    print(396);
-    break;
-  case 89 :
-    print(397);
-    break;
-  case 90 :
-    print(398);
-    break;
-  case 91 :
-    print(399);
-    break;
-  case 92 :
-    print(400);
-    break;
-  case 94 :
-    print(401);
-    break;
-  case 95 :
-    print(402);
-    break;
-  case 96 :
-    print(403);
-    break;
-  case 97 :
-    print(404);
-    break;
-  case 98 :
-    print(405);
-    break;
-  case 99 :
-    print(406);
-    break;
-  case 100 :
-    print(407);
-    break;
-    default:
-    print(408);
-    break;
+    {
+      case 30:
+        print(347);
+        break;
+      case 31:
+        print(348);
+        break;
+      case 32:
+        print(349);
+        break;
+      case 33:
+        print(350);
+        break;
+      case 34:
+        print(351);
+        break;
+      case 35:
+        print(352);
+        break;
+      case 36:
+        print(353);
+        break;
+      case 37:
+        print(354);
+        break;
+      case 38:
+        print(355);
+        break;
+      case 39:
+        print(356);
+        break;
+      case 40:
+        print(357);
+        break;
+      case 41:
+        print(358);
+        break;
+      case 42:
+        print(359);
+        break;
+      case 43:
+        print(360);
+        break;
+      case 44:
+        print(361);
+        break;
+      case 45:
+        print(362);
+        break;
+      case 46:
+        print(363);
+        break;
+      case 47:
+        print(364);
+        break;
+      case 48:
+        print(365);
+        break;
+      case 49:
+        print(366);
+        break;
+      case 50:
+        print(367);
+        break;
+      case 51:
+        print(368);
+        break;
+      case 52:
+        print(369);
+        break;
+      case 53:
+        print(370);
+        break;
+      case 54 :
+        print(371);
+        break;
+      case 55:
+        print(372);
+        break;
+      case 56:
+        print(373);
+        break;
+      case 57:
+        print(374);
+        break;
+      case 58:
+        print(375);
+        break;
+      case 59:
+        print(376);
+        break;
+      case 60:
+        print(377);
+        break;
+      case 61:
+        print(378);
+        break;
+      case 62:
+        print(379);
+        break;
+      case 63:
+        print(380);
+        break;
+      case 64:
+        print(381);
+        break;
+      case 65:
+        print(382);
+        break;
+      case 66:
+        print(383);
+        break;
+      case 67:
+        print(384);
+        break;
+      case 68:
+        print(385);
+        break;
+      case 69:
+        print_char(43);
+        break;
+      case 70:
+        print_char(45);
+        break;
+      case 71:
+        print_char(42);
+        break;
+      case 72:
+        print_char(47);
+        break;
+      case 73:
+        print(386);
+        break;
+      case 74:
+        print(310);
+        break;
+      case 75:
+        print(387);
+        break;
+      case 76:
+        print(388);
+        break;
+      case 77:
+        print_char(60);
+        break;
+      case 78:
+        print(389);
+        break;
+      case 79:
+        print_char(62);
+        break;
+      case 80:
+        print(390);
+        break;
+      case 81:
+        print_char(61);
+        break;
+      case 82:
+        print(391);
+        break;
+      case 83:
+        print(38);
+        break;
+      case 84:
+        print(392);
+        break;
+      case 85:
+        print(393);
+        break;
+      case 86:
+        print(394);
+        break;
+      case 87:
+        print(395);
+        break;
+      case 88:
+        print(396);
+        break;
+      case 89:
+        print(397);
+        break;
+      case 90:
+        print(398);
+        break;
+      case 91:
+        print(399);
+        break;
+      case 92:
+        print(400);
+        break;
+      case 94:
+        print(401);
+        break;
+      case 95:
+        print(402);
+        break;
+      case 96:
+        print(403);
+        break;
+      case 97:
+        print(404);
+        break;
+      case 98:
+        print(405);
+        break;
+      case 99:
+        print(406);
+        break;
+      case 100:
+        print(407);
+        break;
+      default:
+        print(408);
+        break;
   }
 }
 
@@ -4288,9 +4426,11 @@ void fix_date_and_time (void)
 
 halfword id_lookup (integer j, integer l)
 {
-  halfword Result; integer h;
+  halfword Result;
+  integer h;
   halfword p;
   halfword k;
+  
   if (l == 1)
   {
     p = buffer[j]+ 1;
@@ -4298,31 +4438,34 @@ halfword id_lookup (integer j, integer l)
     goto found;
   }
   h = buffer[j];
-  {integer for_end; k = j + 1;for_end = j + l - 1; if (k <=
-  for_end) do
+  {integer for_end; k = j + 1;for_end = j + l - 1; if (k <= for_end) do
     {
       h = h + h + buffer[k];
-      while (h >= 7919) h = h - 7919;
+      while (h >= 7919)
+        h = h - 7919;
     }
   while (k++ < for_end);}
   p = h + 257;
-  while (true) {
-    if (hash[p].v.RH > 0) {
-      if ((str_start[hash[p].v.RH + 1] - str_start[hash[p].v.RH]) == l) {
+  while (true)
+  {
+    if (hash[p].v.RH > 0)
+    {
+      if ((str_start[hash[p].v.RH + 1] - str_start[hash[p].v.RH]) == l)
+      {
         if (str_eq_buf (hash[p].v.RH, j))
-        goto found;
+          goto found;
       }
     }
-    if (hash[p].lhfield == 0)
+    if (hash[p].lh == 0)
     {
       if (hash[p].v.RH > 0)
       {
         do {
-            if ((hash_used == 257))
-          overflow (457, 9500);
+          if ((hash_used == 257))
+            overflow (457, 9500);
           decr (hash_used);
-        }while (!(hash[hash_used].v.RH == 0));
-        hash[p].lhfield = hash_used;
+        } while (!(hash[hash_used].v.RH == 0));
+        hash[p].lh = hash_used;
         p = hash_used;
       }
       {
@@ -4333,8 +4476,7 @@ halfword id_lookup (integer j, integer l)
           max_pool_ptr = pool_ptr + l;
         }
       }
-      {integer for_end; k = j;for_end = j + l - 1; if (k <=
-      for_end) do
+      {integer for_end; k = j;for_end = j + l - 1; if (k <= for_end) do
         {
           str_pool[pool_ptr] = buffer[k];
           incr (pool_ptr);
@@ -4342,13 +4484,13 @@ halfword id_lookup (integer j, integer l)
       while (k++ < for_end);}
       hash[p].v.RH = make_string ();
       str_ref[hash[p].v.RH] = 127;
-        ;
+      ;
 #ifdef STAT
       incr (st_count);
 #endif /* STAT */
       goto found;
     }
-    p = hash[p].lhfield;
+    p = hash[p].lh;
   }
   found: Result = p;
   return Result;
@@ -4356,11 +4498,13 @@ halfword id_lookup (integer j, integer l)
 
 halfword new_num_tok (scaled v)
 {
-  halfword Result; halfword p;
+  halfword Result;
+  halfword p;
+
   p = get_node (2);
   mem[p + 1].cint = v;
-  mem[p].hhfield.b0 = 16;
-  mem[p].hhfield.b1 = 12;
+  mem[p].hh.b0 = 16;
+  mem[p].hh.b1 = 12;
   Result = p;
   return Result;
 }
@@ -4368,57 +4512,62 @@ halfword new_num_tok (scaled v)
 void flush_token_list (halfword p)
 {
   halfword q;
-  while (p != 0) {
+
+  while (p != 0)
+  {
     q = p;
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
     if (q >= hi_mem_min)
     {
-      mem[q].hhfield.v.RH = avail;
+      mem[q].hh.v.RH = avail;
       avail = q;
-        ;
+      ;
 #ifdef STAT
       decr (dyn_used);
 #endif /* STAT */
     }
-    else {
-      switch (mem[q].hhfield.b0)
-      {case 1 :
-      case 2 :
-      case 16 :
-        ;
-        break;
-      case 4 :
-        {
-          if (str_ref[mem[q + 1].cint]< 127) {
-
-            if (str_ref[mem[q + 1].cint] > 1)
-            decr (str_ref[mem[q + 1].cint]);
-            else flush_string (mem[q + 1].cint);
+    else
+    {
+      switch (mem[q].hh.b0)
+      {
+        case 1:
+        case 2:
+        case 16:
+          ;
+          break;
+        case 4:
+          {
+            if (str_ref[mem[q + 1].cint]< 127)
+            {
+              if (str_ref[mem[q + 1].cint] > 1)
+                decr (str_ref[mem[q + 1].cint]);
+              else
+                flush_string (mem[q + 1].cint);
+            }
           }
-        }
-        break;
-      case 3 :
-      case 5 :
-      case 7 :
-      case 12 :
-      case 10 :
-      case 6 :
-      case 9 :
-      case 8 :
-      case 11 :
-      case 14 :
-      case 13 :
-      case 17 :
-      case 18 :
-      case 19 :
-        {
-          g_pointer = q;
-          token_recycle ();
-        }
-        break;
+          break;
+        case 3:
+        case 5:
+        case 7:
+        case 12:
+        case 10:
+        case 6:
+        case 9:
+        case 8:
+        case 11:
+        case 14:
+        case 13:
+        case 17:
+        case 18:
+        case 19:
+          {
+            g_pointer = q;
+            token_recycle ();
+          }
+          break;
         default:
-        confusion(491);
-        break;
+          confusion(491);
+          break;
       }
       free_node (q, 2);
     }
@@ -4427,440 +4576,470 @@ void flush_token_list (halfword p)
 
 void delete_mac_ref (halfword p)
 {
-  if (mem[p].hhfield.lhfield == 0)
-  flush_token_list (p);
-  else decr (mem[p].hhfield.lhfield);
+  if (mem[p].hh.lh == 0)
+    flush_token_list (p);
+  else
+    decr (mem[p].hh.lh);
 }
 
 void print_cmd_mod (integer c, integer m)
 {
   switch (c)
-  {case 18 :
-    print(462);
-    break;
-  case 77 :
-    print(461);
-    break;
-  case 59 :
-    print(464);
-    break;
-  case 72 :
-    print(463);
-    break;
-  case 79 :
-    print(460);
-    break;
-  case 32 :
-    print(465);
-    break;
-  case 81 :
-    print(58);
-    break;
-  case 82 :
-    print(44);
-    break;
-  case 57 :
-    print(466);
-    break;
-  case 19 :
-    print(467);
-    break;
-  case 60 :
-    print(468);
-    break;
-  case 27 :
-    print(469);
-    break;
-  case 11 :
-    print(470);
-    break;
-  case 80 :
-    print(459);
-    break;
-  case 84 :
-    print(453);
-    break;
-  case 26 :
-    print(471);
-    break;
-  case 6 :
-    print(472);
-    break;
-  case 9 :
-    print(473);
-    break;
-  case 70 :
-    print(474);
-    break;
-  case 73 :
-    print(475);
-    break;
-  case 13 :
-    print(476);
-    break;
-  case 46 :
-    print(123);
-    break;
-  case 63 :
-    print(91);
-    break;
-  case 14 :
-    print(477);
-    break;
-  case 15 :
-    print(478);
-    break;
-  case 69 :
-    print(479);
-    break;
-  case 28 :
-    print(480);
-    break;
-  case 47 :
-    print(408);
-    break;
-  case 24 :
-    print(481);
-    break;
-  case 7 :
-    print_char(92);
-    break;
-  case 65 :
-    print(125);
-    break;
-  case 64 :
-    print(93);
-    break;
-  case 12 :
-    print(482);
-    break;
-  case 8 :
-    print(483);
-    break;
-  case 83 :
-    print(59);
-    break;
-  case 17 :
-    print(484);
-    break;
-  case 78 :
-    print(485);
-    break;
-  case 74 :
-    print(486);
-    break;
-  case 35 :
-    print(487);
-    break;
-  case 58 :
-    print(488);
-    break;
-  case 71 :
-    print(489);
-    break;
-  case 75 :
-    print(490);
-    break;
-  case 16 :
-    if (m <= 2) {
+  {
+    case 18:
+      print(462);
+      break;
+    case 77:
+      print(461);
+      break;
+    case 59:
+      print(464);
+      break;
+    case 72:
+      print(463);
+      break;
+    case 79:
+      print(460);
+      break;
+    case 32:
+      print(465);
+      break;
+    case 81:
+      print(58);
+      break;
+    case 82:
+      print(44);
+      break;
+    case 57:
+      print(466);
+      break;
+    case 19:
+      print(467);
+      break;
+    case 60:
+      print(468);
+      break;
+    case 27:
+      print(469);
+      break;
+    case 11:
+      print(470);
+      break;
+    case 80:
+      print(459);
+      break;
+    case 84:
+      print(453);
+      break;
+    case 26:
+      print(471);
+      break;
+    case 6:
+      print(472);
+      break;
+    case 9:
+      print(473);
+      break;
+    case 70:
+      print(474);
+      break;
+    case 73:
+      print(475);
+      break;
+    case 13:
+      print(476);
+      break;
+    case 46:
+      print(123);
+      break;
+    case 63:
+      print(91);
+      break;
+    case 14:
+      print(477);
+      break;
+    case 15:
+      print(478);
+      break;
+    case 69:
+      print(479);
+      break;
+    case 28:
+      print(480);
+      break;
+    case 47:
+      print(408);
+      break;
+    case 24:
+      print(481);
+      break;
+    case 7:
+      print_char(92);
+      break;
+    case 65:
+      print(125);
+      break;
+    case 64:
+      print(93);
+      break;
+    case 12:
+      print(482);
+      break;
+    case 8:
+      print(483);
+      break;
+    case 83:
+      print(59);
+      break;
+    case 17:
+      print(484);
+      break;
+    case 78:
+      print(485);
+      break;
+    case 74:
+      print(486);
+      break;
+    case 35:
+      print(487);
+      break;
+    case 58:
+      print(488);
+      break;
+    case 71:
+      print(489);
+      break;
+    case 75:
+      print(490);
+      break;
+    case 16:
+      if (m <= 2)
+      {
+        if (m == 1)
+          print(655);
+        else if (m < 1)
+          print(454);
+        else
+          print(656);
+      }
+      else if (m == 53)
+        print(657);
+      else if (m == 44)
+        print(658);
+      else
+        print(659);
+      break;
+    case 4:
+      if (m <= 1)
+      {
+        if (m == 1)
+          print(662);
+        else
+          print(455);
+      }
+      else if (m == 9770)
+        print(660);
+      else
+        print(661);
+      break;
+    case 61:
+      switch (m)
+      {
+        case 1:
+          print(664);
+          break;
+        case 2:
+          print_char(64);
+          break;
+        case 3:
+          print(665);
+          break;
+        default:
+          print(663);
+          break;
+      }
+      break;
+    case 56:
+      if (m >= 9770)
+      {
+        if (m == 9770)
+          print(676);
+        else if (m == 9920)
+          print(677);
+        else
+          print(678);
+      }
+      else if (m < 2)
+        print(679);
+      else if (m == 2)
+        print(680);
+      else
+        print(681);
+      break;
+    case 3:
+      if (m == 0)
+        print(691);
+      else
+        print(617);
+      break;
+    case 1:
+    case 2:
+      switch (m)
+      {
+        case 1:
+          print(718);
+          break;
+        case 2:
+          print(452);
+          break;
+        case 3:
+          print(719);
+          break;
+        default:
+          print(720);
+          break;
+      }
+      break;
+    case 33:
+    case 34:
+    case 37:
+    case 55:
+    case 45:
+    case 50:
+    case 36:
+    case 43:
+    case 54:
+    case 48:
+    case 51:
+    case 52:
+      print_op (m);
+      break;
+    case 30:
+      print_type (m);
+      break;
+    case 85:
+      if (m == 0)
+        print(912);
+      else
+        print(913);
+      break;
+    case 23:
+      switch (m)
+      {
+        case 0:
+          print(273);
+          break;
+        case 1:
+          print(274);
+          break;
+        case 2:
+          print(275);
+          break;
+        default:
+          print(919);
+          break;
+      }
+      break;
+    case 21:
+      if (m == 0)
+        print(920);
+      else
+        print(921);
+      break;
+    case 22:
+      switch (m)
+      {
+        case 0:
+          print(935);
+          break;
+        case 1:
+          print(936);
+          break;
+        case 2:
+          print(937);
+          break;
+        case 3:
+          print(938);
+          break;
+        default:
+          print(939);
+          break;
+      }
+      break;
+    case 31:
+    case 62:
+      {
+        if (c == 31)
+          print(942);
+        else
+          print(943);
+        print(944);
+        slow_print(hash[m].v.RH);
+      }
+      break;
+    case 41:
+      if (m == 0)
+        print(945);
+      else
+        print(946);
+      break;
+    case 10:
+      print(947);
+      break;
+    case 53:
+    case 44:
+    case 49:
+      {
+        print_cmd_mod (16, c);
+        print(948);
+        print_ln ();
+        show_token_list (mem[mem[m].hh.v.RH].hh.v.RH, 0, 1000, 0);
+      }
+      break;
+    case 5:
+      print(949);
+      break;
+    case 40:
+      slow_print(int_name[m]);
+      break;
+    case 68:
       if (m == 1)
-      print(655);
-      else if (m < 1)
-      print(454);
-      else print(656);
-    }
-    else if (m == 53)
-    print(657);
-    else if (m == 44)
-    print(658);
-    else print(659);
-    break;
-  case 4 :
-    if (m <= 1) {
-      if (m == 1)
-      print(662);
-      else print(455);
-    }
-    else if (m == 9770)
-    print(660);
-    else print(661);
-    break;
-  case 61 :
-    switch (m)
-    {case 1 :
-      print(664);
+        print(956);
+      else if (m == 0)
+        print(957);
+      else
+        print(958);
       break;
-    case 2 :
-      print_char(64);
+    case 66:
+      if (m == 6)
+        print(959);
+      else
+        print(960);
       break;
-    case 3 :
-      print(665);
+    case 67:
+      if (m == 0)
+        print(961);
+      else
+        print(962);
       break;
-      default:
-      print(663);
+    case 25:
+      if (m < 1)
+        print(992);
+      else if (m == 1)
+        print(993);
+      else
+        print(994);
       break;
-    }
-    break;
-  case 56 :
-    if (m >= 9770) {
-      if (m == 9770)
-      print(676);
-      else if (m == 9920)
-      print(677);
-      else print(678);
-    }
-    else if (m < 2)
-    print(679);
-    else if (m == 2)
-    print(680);
-    else print(681);
-    break;
-  case 3 :
-    if (m == 0)
-    print(691);
-    else print(617);
-    break;
-  case 1 :
-  case 2 :
-    switch (m)
-    {case 1 :
-      print(718);
+    case 20:
+      switch (m)
+      {
+        case 0:
+          print(1004);
+          break;
+        case 1:
+          print(1005);
+          break;
+        case 2:
+          print(1006);
+          break;
+        case 3:
+          print(1007);
+          break;
+        default:
+          print(1008);
+          break;
+      }
       break;
-    case 2 :
-      print(452);
+    case 76:
+      switch (m)
+      {
+        case 0:
+          print(1026);
+          break;
+        case 1:
+          print(1027);
+          break;
+        case 2:
+          print(1029);
+          break;
+        case 3:
+          print(1031);
+          break;
+        case 5:
+          print(1028);
+          break;
+        case 6:
+          print(1030);
+          break;
+        case 7:
+          print(1032);
+          break;
+        case 11:
+          print(1033);
+          break;
+        default:
+          print(1034);
+          break;
+      }
       break;
-    case 3 :
-      print(719);
+    case 29:
+      if (m == 16)
+        print(1060);
+      else
+        print(1059);
       break;
-      default:
-      print(720);
-      break;
-    }
-    break;
-  case 33 :
-  case 34 :
-  case 37 :
-  case 55 :
-  case 45 :
-  case 50 :
-  case 36 :
-  case 43 :
-  case 54 :
-  case 48 :
-  case 51 :
-  case 52 :
-    print_op (m);
-    break;
-  case 30 :
-    print_type (m);
-    break;
-  case 85 :
-    if (m == 0)
-    print(912);
-    else print(913);
-    break;
-  case 23 :
-    switch (m)
-    {case 0 :
-      print(273);
-      break;
-    case 1 :
-      print(274);
-      break;
-    case 2 :
-      print(275);
-      break;
-      default:
-      print(919);
-      break;
-    }
-    break;
-  case 21 :
-    if (m == 0)
-    print(920);
-    else print(921);
-    break;
-  case 22 :
-    switch (m)
-    {case 0 :
-      print(935);
-      break;
-    case 1 :
-      print(936);
-      break;
-    case 2 :
-      print(937);
-      break;
-    case 3 :
-      print(938);
-      break;
-      default:
-      print(939);
-      break;
-    }
-    break;
-  case 31 :
-  case 62 :
-    {
-      if (c == 31)
-      print(942);
-      else print(943);
-      print(944);
-      slow_print(hash[m].v.RH);
-    }
-    break;
-  case 41 :
-    if (m == 0)
-    print(945);
-    else print(946);
-    break;
-  case 10 :
-    print(947);
-    break;
-  case 53 :
-  case 44 :
-  case 49 :
-    {
-      print_cmd_mod (16, c);
-      print(948);
-      print_ln ();
-      show_token_list (mem[mem[m].hhfield.v.RH].hhfield.v.RH, 0 ,
-      1000, 0);
-    }
-    break;
-  case 5 :
-    print(949);
-    break;
-  case 40 :
-    slow_print(int_name[m]);
-    break;
-  case 68 :
-    if (m == 1)
-    print(956);
-    else if (m == 0)
-    print(957);
-    else print(958);
-    break;
-  case 66 :
-    if (m == 6)
-    print(959);
-    else print(960);
-    break;
-  case 67 :
-    if (m == 0)
-    print(961);
-    else print(962);
-    break;
-  case 25 :
-    if (m < 1)
-    print(992);
-    else if (m == 1)
-    print(993);
-    else print(994);
-    break;
-  case 20 :
-    switch (m)
-    {case 0 :
-      print(1004);
-      break;
-    case 1 :
-      print(1005);
-      break;
-    case 2 :
-      print(1006);
-      break;
-    case 3 :
-      print(1007);
-      break;
-      default:
-      print(1008);
-      break;
-    }
-    break;
-  case 76 :
-    switch (m)
-    {case 0 :
-      print(1026);
-      break;
-    case 1 :
-      print(1027);
-      break;
-    case 2 :
-      print(1029);
-      break;
-    case 3 :
-      print(1031);
-      break;
-    case 5 :
-      print(1028);
-      break;
-    case 6 :
-      print(1030);
-      break;
-    case 7 :
-      print(1032);
-      break;
-    case 11 :
-      print(1033);
-      break;
-      default:
-      print(1034);
-      break;
-    }
-    break;
-  case 29 :
-    if (m == 16)
-    print(1060);
-    else print(1059);
-    break;
     default:
-    print(603);
-    break;
+      print(603);
+      break;
   }
 }
 
 void show_macro (halfword p, integer q, integer l)
 {
   halfword r;
-  p = mem[p].hhfield.v.RH;
-  while (mem[p].hhfield.lhfield > 7) {
-    r = mem[p].hhfield.v.RH;
-    mem[p].hhfield.v.RH = 0;
+
+  p = mem[p].hh.v.RH;
+  while (mem[p].hh.lh > 7)
+  {
+    r = mem[p].hh.v.RH;
+    mem[p].hh.v.RH = 0;
     show_token_list (p, 0, l, 0);
-    mem[p].hhfield.v.RH = r;
+    mem[p].hh.v.RH = r;
     p = r;
     if (l > 0)
-    l = l - tally;
-    else goto lab_exit;
+      l = l - tally;
+    else
+      goto lab_exit;
   }
   tally = 0;
-  switch (mem[p].hhfield.lhfield)
-  {case 0 :
-    print(501);
-    break;
-  case 1 :
-  case 2 :
-  case 3 :
-    {
-      print_char(60);
-      print_cmd_mod (56, mem[p].hhfield.lhfield);
-      print(502);
-    }
-    break;
-  case 4 :
-    print(503);
-    break;
-  case 5 :
-    print(504);
-    break;
-  case 6 :
-    print(505);
-    break;
-  case 7 :
-    print(506);
-    break;
+  switch (mem[p].hh.lh)
+  {
+    case 0:
+      print(501);
+      break;
+    case 1:
+    case 2:
+    case 3:
+      {
+        print_char(60);
+        print_cmd_mod (56, mem[p].hh.lh);
+        print(502);
+      }
+      break;
+    case 4:
+      print(503);
+      break;
+    case 5:
+      print(504);
+      break;
+    case 6:
+      print(505);
+      break;
+    case 7:
+      print(506);
+      break;
   }
-  show_token_list (mem[p].hhfield.v.RH, q, l - tally, 0);
+  show_token_list (mem[p].hh.v.RH, q, l - tally, 0);
   lab_exit:;
 }
 
@@ -4868,39 +5047,42 @@ void init_big_node (halfword p)
 {
   halfword q;
   small_number s;
-  s = big_node_size[mem[p].hhfield.b0];
+
+  s = big_node_size[mem[p].hh.b0];
   q = get_node (s);
   do {
-      s = s - 2;
+    s = s - 2;
     {
       if (serial_no > 2147483583L)
-      overflow (588, serial_no / 64);
-      mem[q + s].hhfield.b0 = 19;
+        overflow (588, serial_no / 64);
+      mem[q + s].hh.b0 = 19;
       serial_no = serial_no + 64;
       mem[q + s + 1].cint = serial_no;
     }
-    mem[q + s].hhfield.b1 = halfp (s) + 5;
-    mem[q + s].hhfield.v.RH = 0;
-  }while (!(s == 0));
-  mem[q].hhfield.v.RH = p;
+    mem[q + s].hh.b1 = halfp (s) + 5;
+    mem[q + s].hh.v.RH = 0;
+  } while (!(s == 0));
+  mem[q].hh.v.RH = p;
   mem[p + 1].cint = q;
 }
 
 halfword id_transform (void)
 {
-  halfword Result; halfword p, q, r;
+  halfword Result;
+  halfword p, q, r;
+  
   p = get_node (2);
-  mem[p].hhfield.b0 = 13;
-  mem[p].hhfield.b1 = 11;
+  mem[p].hh.b0 = 13;
+  mem[p].hh.b1 = 11;
   mem[p + 1].cint = 0;
   init_big_node (p);
   q = mem[p + 1].cint;
   r = q + 12;
   do {
-      r = r - 2;
-    mem[r].hhfield.b0 = 16;
+    r = r - 2;
+    mem[r].hh.b0 = 16;
     mem[r + 1].cint = 0;
-  }while (!(r == q));
+  } while (!(r == q));
   mem[q + 5].cint = 65536L;
   mem[q + 11].cint = 65536L;
   Result = p;
@@ -4910,10 +5092,11 @@ halfword id_transform (void)
 void new_root (halfword x)
 {
   halfword p;
+
   p = get_node (2);
-  mem[p].hhfield.b0 = 0;
-  mem[p].hhfield.b1 = 0;
-  mem[p].hhfield.v.RH = x;
+  mem[p].hh.b0 = 0;
+  mem[p].hh.b1 = 0;
+  mem[p].hh.v.RH = x;
   eqtb[x].v.RH = p;
 }
 
@@ -4921,81 +5104,90 @@ void print_variable_name(halfword p)
 {
   halfword q;
   halfword r;
-  while (mem[p].hhfield.b1 >= 5) {
-    switch (mem[p].hhfield.b1)
-    {case 5 :
-      print_char(120);
-      break;
-    case 6 :
-      print_char(121);
-      break;
-    case 7 :
-      print(509);
-      break;
-    case 8 :
-      print(510);
-      break;
-    case 9 :
-      print(511);
-      break;
-    case 10 :
-      print(512);
-      break;
-    case 11 :
-      {
-        print(513);
-        print_int (p - 0);
-        goto lab_exit;
-      }
-      break;
+
+  while (mem[p].hh.b1 >= 5)
+  {
+    switch (mem[p].hh.b1)
+    {
+      case 5:
+        print_char(120);
+        break;
+      case 6:
+        print_char(121);
+        break;
+      case 7:
+        print(509);
+        break;
+      case 8:
+        print(510);
+        break;
+      case 9:
+        print(511);
+        break;
+      case 10:
+        print(512);
+        break;
+      case 11:
+        {
+          print(513);
+          print_int (p - 0);
+          goto lab_exit;
+        }
+        break;
     }
     print(514);
-    p = mem[p - 2 * (mem[p].hhfield.b1 - 5)].hhfield.v.RH;
+    p = mem[p - 2 * (mem[p].hh.b1 - 5)].hh.v.RH;
   }
   q = 0;
-  while (mem[p].hhfield.b1 > 1) {
-    if (mem[p].hhfield.b1 == 3)
+  while (mem[p].hh.b1 > 1)
+  {
+    if (mem[p].hh.b1 == 3)
     {
       r = new_num_tok (mem[p + 2].cint);
       do {
-          p = mem[p].hhfield.v.RH;
-      }while (!(mem[p].hhfield.b1 == 4));
+        p = mem[p].hh.v.RH;
+      } while (!(mem[p].hh.b1 == 4));
     }
-    else if (mem[p].hhfield.b1 == 2)
+    else if (mem[p].hh.b1 == 2)
     {
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
       goto found;
     }
-    else {
-      if (mem[p].hhfield.b1 != 4)
-      confusion(508);
+    else
+    {
+      if (mem[p].hh.b1 != 4)
+        confusion(508);
       r = get_avail ();
-      mem[r].hhfield.lhfield = mem[p + 2].hhfield.lhfield;
+      mem[r].hh.lh = mem[p + 2].hh.lh;
     }
-    mem[r].hhfield.v.RH = q;
+    mem[r].hh.v.RH = q;
     q = r;
-    found: p = mem[p + 2].hhfield.v.RH;
+    found: p = mem[p + 2].hh.v.RH;
   }
   r = get_avail ();
-  mem[r].hhfield.lhfield = mem[p].hhfield.v.RH;
-  mem[r].hhfield.v.RH = q;
-  if (mem[p].hhfield.b1 == 1)
-  print(507);
+  mem[r].hh.lh = mem[p].hh.v.RH;
+  mem[r].hh.v.RH = q;
+  if (mem[p].hh.b1 == 1)
+    print(507);
   show_token_list (r, 0, 2147483647L, tally);
   flush_token_list (r);
   lab_exit:;
 }
 
-boolean zinteresting (halfword p)
+boolean interesting (halfword p)
 {
-  boolean Result; small_number t;
+  boolean Result;
+  small_number t;
+
   if (internal[3] > 0)
-  Result = true;
-  else {
-    t = mem[p].hhfield.b1;
-    if (t >= 5) {
+    Result = true;
+  else
+  {
+    t = mem[p].hh.b1;
+    if (t >= 5)
+    {
       if (t != 11)
-      t = mem[mem[p - 2 * (t - 5)].hhfield.v.RH].hhfield.b1;
+        t = mem[mem[p - 2 * (t - 5)].hh.v.RH].hh.b1;
     }
     Result = (t != 11);
   }
@@ -5004,144 +5196,153 @@ boolean zinteresting (halfword p)
 
 halfword new_structure (halfword p)
 {
-  halfword Result; halfword q, r;
-  switch (mem[p].hhfield.b1)
-  {case 0 :
-    {
-      q = mem[p].hhfield.v.RH;
-      r = get_node (2);
-      eqtb[q].v.RH = r;
-    }
-    break;
-  case 3 :
-    {
-      q = p;
-      do {
-          q = mem[q].hhfield.v.RH;
-      }while (!(mem[q].hhfield.b1 == 4));
-      q = mem[q + 2].hhfield.v.RH;
-      r = q + 1;
-      do {
-          q = r;
-        r = mem[r].hhfield.v.RH;
-      }while (!(r == p));
-      r = get_node (3);
-      mem[q].hhfield.v.RH = r;
-      mem[r + 2].cint = mem[p + 2].cint;
-    }
-    break;
-  case 4 :
-    {
-      q = mem[p + 2].hhfield.v.RH;
-      r = mem[q + 1].hhfield.lhfield;
-      do {
-          q = r;
-        r = mem[r].hhfield.v.RH;
-      }while (!(r == p));
-      r = get_node (3);
-      mem[q].hhfield.v.RH = r;
-      mem[r + 2] = mem[p + 2];
-      if (mem[p + 2].hhfield.lhfield == 0)
+  halfword Result;
+  halfword q, r;
+  
+  switch (mem[p].hh.b1)
+  {
+    case 0:
       {
-        q = mem[p + 2].hhfield.v.RH + 1;
-        while (mem[q].hhfield.v.RH != p) q = mem[q].hhfield.v.RH;
-        mem[q].hhfield.v.RH = r;
+        q = mem[p].hh.v.RH;
+        r = get_node (2);
+        eqtb[q].v.RH = r;
       }
-    }
-    break;
+      break;
+    case 3:
+      {
+        q = p;
+        do {
+          q = mem[q].hh.v.RH;
+        } while (!(mem[q].hh.b1 == 4));
+        q = mem[q + 2].hh.v.RH;
+        r = q + 1;
+        do {
+          q = r;
+          r = mem[r].hh.v.RH;
+        } while (!(r == p));
+        r = get_node (3);
+        mem[q].hh.v.RH = r;
+        mem[r + 2].cint = mem[p + 2].cint;
+      }
+      break;
+    case 4:
+      {
+        q = mem[p + 2].hh.v.RH;
+        r = mem[q + 1].hh.lh;
+        do {
+          q = r;
+          r = mem[r].hh.v.RH;
+        } while (!(r == p));
+        r = get_node (3);
+        mem[q].hh.v.RH = r;
+        mem[r + 2] = mem[p + 2];
+        if (mem[p + 2].hh.lh == 0)
+        {
+          q = mem[p + 2].hh.v.RH + 1;
+          while (mem[q].hh.v.RH != p)
+            q = mem[q].hh.v.RH;
+          mem[q].hh.v.RH = r;
+        }
+      }
+      break;
     default:
-    confusion(515);
-    break;
+      confusion(515);
+      break;
   }
-  mem[r].hhfield.v.RH = mem[p].hhfield.v.RH;
-  mem[r].hhfield.b0 = 21;
-  mem[r].hhfield.b1 = mem[p].hhfield.b1;
-  mem[r + 1].hhfield.lhfield = p;
-  mem[p].hhfield.b1 = 2;
+  mem[r].hh.v.RH = mem[p].hh.v.RH;
+  mem[r].hh.b0 = 21;
+  mem[r].hh.b1 = mem[p].hh.b1;
+  mem[r + 1].hh.lh = p;
+  mem[p].hh.b1 = 2;
   q = get_node (3);
-  mem[p].hhfield.v.RH = q;
-  mem[r + 1].hhfield.v.RH = q;
-  mem[q + 2].hhfield.v.RH = r;
-  mem[q].hhfield.b0 = 0;
-  mem[q].hhfield.b1 = 4;
-  mem[q].hhfield.v.RH = 17;
-  mem[q + 2].hhfield.lhfield = 0;
+  mem[p].hh.v.RH = q;
+  mem[r + 1].hh.v.RH = q;
+  mem[q + 2].hh.v.RH = r;
+  mem[q].hh.b0 = 0;
+  mem[q].hh.b1 = 4;
+  mem[q].hh.v.RH = 17;
+  mem[q + 2].hh.lh = 0;
   Result = r;
   return Result;
 }
 
 halfword find_variable (halfword t)
 {
-  halfword Result; halfword p, q, r, s;
+  halfword Result;
+  halfword p, q, r, s;
   halfword pp, qq, rr, ss;
   integer n;
-  memoryword saveword;
-  p = mem[t].hhfield.lhfield;
-  t = mem[t].hhfield.v.RH;
-  if (eqtb[p].lhfield % 86 != 41)
+  memory_word saveword;
+  
+  p = mem[t].hh.lh;
+  t = mem[t].hh.v.RH;
+  if (eqtb[p].lh % 86 != 41)
   {
     Result = 0;
     goto lab_exit;
   }
   if (eqtb[p].v.RH == 0)
-  new_root (p);
+    new_root (p);
   p = eqtb[p].v.RH;
   pp = p;
-  while (t != 0) {
-    if (mem[pp].hhfield.b0 != 21)
+  while (t != 0)
+  {
+    if (mem[pp].hh.b0 != 21)
     {
-      if (mem[pp].hhfield.b0 > 21)
+      if (mem[pp].hh.b0 > 21)
       {
         Result = 0;
         goto lab_exit;
       }
       ss = new_structure (pp);
       if (p == pp)
-      p = ss;
+        p = ss;
       pp = ss;
     }
-    if (mem[p].hhfield.b0 != 21)
-    p = new_structure (p);
+    if (mem[p].hh.b0 != 21)
+      p = new_structure (p);
     if (t < hi_mem_min)
     {
       n = mem[t + 1].cint;
-      pp = mem[mem[pp + 1].hhfield.lhfield].hhfield.v.RH;
-      q = mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH;
+      pp = mem[mem[pp + 1].hh.lh].hh.v.RH;
+      q = mem[mem[p + 1].hh.lh].hh.v.RH;
       saveword = mem[q + 2];
       mem[q + 2].cint = 2147483647L;
       s = p + 1;
       do {
-          r = s;
-        s = mem[s].hhfield.v.RH;
-      }while (!(n <= mem[s + 2].cint));
+        r = s;
+        s = mem[s].hh.v.RH;
+      } while (!(n <= mem[s + 2].cint));
       if (n == mem[s + 2].cint)
-      p = s;
-      else {
+        p = s;
+      else
+      {
         p = get_node (3);
-        mem[r].hhfield.v.RH = p;
-        mem[p].hhfield.v.RH = s;
+        mem[r].hh.v.RH = p;
+        mem[p].hh.v.RH = s;
         mem[p + 2].cint = n;
-        mem[p].hhfield.b1 = 3;
-        mem[p].hhfield.b0 = 0;
+        mem[p].hh.b1 = 3;
+        mem[p].hh.b0 = 0;
       }
       mem[q + 2] = saveword;
     }
-    else {
-      n = mem[t].hhfield.lhfield;
-      ss = mem[pp + 1].hhfield.lhfield;
+    else
+    {
+      n = mem[t].hh.lh;
+      ss = mem[pp + 1].hh.lh;
       do {
-          rr = ss;
-        ss = mem[ss].hhfield.v.RH;
-      }while (!(n <= mem[ss + 2].hhfield.lhfield));
-      if (n < mem[ss + 2].hhfield.lhfield)
+        rr = ss;
+        ss = mem[ss].hh.v.RH;
+      } while (!(n <= mem[ss + 2].hh.lh));
+      if (n < mem[ss + 2].hh.lh)
       {
         qq = get_node (3);
-        mem[rr].hhfield.v.RH = qq;
-        mem[qq].hhfield.v.RH = ss;
-        mem[qq + 2].hhfield.lhfield = n;
-        mem[qq].hhfield.b1 = 4;
-        mem[qq].hhfield.b0 = 0;
-        mem[qq + 2].hhfield.v.RH = pp;
+        mem[rr].hh.v.RH = qq;
+        mem[qq].hh.v.RH = ss;
+        mem[qq + 2].hh.lh = n;
+        mem[qq].hh.b1 = 4;
+        mem[qq].hh.b0 = 0;
+        mem[qq + 2].hh.v.RH = pp;
         ss = qq;
       }
       if (p == pp)
@@ -5149,47 +5350,51 @@ halfword find_variable (halfword t)
         p = ss;
         pp = ss;
       }
-      else {
+      else
+      {
         pp = ss;
-        s = mem[p + 1].hhfield.lhfield;
+        s = mem[p + 1].hh.lh;
         do {
-            r = s;
-          s = mem[s].hhfield.v.RH;
-        }while (!(n <= mem[s + 2].hhfield.lhfield));
-        if (n == mem[s + 2].hhfield.lhfield)
-        p = s;
-        else {
+          r = s;
+          s = mem[s].hh.v.RH;
+        } while (!(n <= mem[s + 2].hh.lh));
+        if (n == mem[s + 2].hh.lh)
+          p = s;
+        else
+        {
           q = get_node (3);
-          mem[r].hhfield.v.RH = q;
-          mem[q].hhfield.v.RH = s;
-          mem[q + 2].hhfield.lhfield = n;
-          mem[q].hhfield.b1 = 4;
-          mem[q].hhfield.b0 = 0;
-          mem[q + 2].hhfield.v.RH = p;
+          mem[r].hh.v.RH = q;
+          mem[q].hh.v.RH = s;
+          mem[q + 2].hh.lh = n;
+          mem[q].hh.b1 = 4;
+          mem[q].hh.b0 = 0;
+          mem[q + 2].hh.v.RH = p;
           p = q;
         }
       }
     }
-    t = mem[t].hhfield.v.RH;
+    t = mem[t].hh.v.RH;
   }
-  if (mem[pp].hhfield.b0 >= 21) {
-    if (mem[pp].hhfield.b0 == 21)
-    pp = mem[pp + 1].hhfield.lhfield;
-    else {
+  if (mem[pp].hh.b0 >= 21)
+  {
+    if (mem[pp].hh.b0 == 21)
+      pp = mem[pp + 1].hh.lh;
+    else
+    {
       Result = 0;
       goto lab_exit;
     }
   }
-  if (mem[p].hhfield.b0 == 21)
-  p = mem[p + 1].hhfield.lhfield;
-  if (mem[p].hhfield.b0 == 0)
+  if (mem[p].hh.b0 == 21)
+    p = mem[p + 1].hh.lh;
+  if (mem[p].hh.b0 == 0)
   {
-    if (mem[pp].hhfield.b0 == 0)
+    if (mem[pp].hh.b0 == 0)
     {
-      mem[pp].hhfield.b0 = 15;
+      mem[pp].hh.b0 = 15;
       mem[pp + 1].cint = 0;
     }
-    mem[p].hhfield.b0 = mem[pp].hhfield.b0;
+    mem[p].hh.b0 = mem[pp].hh.b0;
     mem[p + 1].cint = 0;
   }
   Result = p;
@@ -5200,90 +5405,92 @@ halfword find_variable (halfword t)
 void print_path (halfword h, str_number s, boolean nuline)
 {
   halfword p, q;
+
   print_diagnostic(517, s, nuline);
   print_ln ();
   p = h;
   do {
-      q = mem[p].hhfield.v.RH;
+    q = mem[p].hh.v.RH;
     if ((p == 0) || (q == 0))
     {
       print_nl(259);
       goto done;
     }
     print_two (mem[p + 1].cint, mem[p + 2].cint);
-    switch (mem[p].hhfield.b1)
-    {case 0 :
-      {
-        if (mem[p].hhfield.b0 == 4)
-        print(518);
-        if ((mem[q].hhfield.b0 != 0) || (q != h))
-        q = 0;
-        goto done1;
-      }
-      break;
-    case 1 :
-      {
-        print(524);
-        print_two (mem[p + 5].cint, mem[p + 6].cint);
-        print(523);
-        if (mem[q].hhfield.b0 != 1)
-        print(525);
-        else print_two (mem[q + 3].cint, mem[q + 4].cint);
-        goto done1;
-      }
-      break;
-    case 4 :
-      if ((mem[p].hhfield.b0 != 1) && (mem[p].hhfield.b0 != 4)
-   )
-      print(518);
-      break;
-    case 3 :
-    case 2 :
-      {
-        if (mem[p].hhfield.b0 == 4)
-        print(525);
-        if (mem[p].hhfield.b1 == 3)
+    switch (mem[p].hh.b1)
+    {
+      case 0:
         {
-          print(521);
-          print_scaled(mem[p + 5].cint);
+          if (mem[p].hh.b0 == 4)
+            print(518);
+          if ((mem[q].hh.b0 != 0) || (q != h))
+            q = 0;
+          goto done1;
         }
-        else {
-          n_sin_cos(mem[p + 5].cint);
-          print_char(123);
-          print_scaled(n_cos);
-          print_char(44);
-          print_scaled(n_sin);
+        break;
+      case 1:
+        {
+          print(524);
+          print_two (mem[p + 5].cint, mem[p + 6].cint);
+          print(523);
+          if (mem[q].hh.b0 != 1)
+            print(525);
+          else
+            print_two (mem[q + 3].cint, mem[q + 4].cint);
+          goto done1;
         }
-        print_char(125);
-      }
-      break;
+        break;
+      case 4:
+        if ((mem[p].hh.b0 != 1) && (mem[p].hh.b0 != 4))
+          print(518);
+        break;
+      case 3:
+      case 2:
+        {
+          if (mem[p].hh.b0 == 4)
+            print(525);
+          if (mem[p].hh.b1 == 3)
+          {
+            print(521);
+            print_scaled(mem[p + 5].cint);
+          }
+          else
+          {
+            n_sin_cos(mem[p + 5].cint);
+            print_char(123);
+            print_scaled(n_cos);
+            print_char(44);
+            print_scaled(n_sin);
+          }
+          print_char(125);
+        }
+        break;
       default:
-      print(259);
-      break;
+        print(259);
+        break;
     }
-    if (mem[q].hhfield.b0 <= 1)
-    print(519);
-    else if ((mem[p + 6].cint != 65536L) || (mem[q + 4].cint !=
-    65536L))
+    if (mem[q].hh.b0 <= 1)
+      print(519);
+    else if ((mem[p + 6].cint != 65536L) || (mem[q + 4].cint != 65536L))
     {
       print(522);
       if (mem[p + 6].cint < 0)
-      print(464);
+        print(464);
       print_scaled(abs (mem[p + 6].cint));
       if (mem[p + 6].cint != mem[q + 4].cint)
       {
         print(523);
         if (mem[q + 4].cint < 0)
-        print(464);
+          print(464);
         print_scaled(abs (mem[q + 4].cint));
       }
     }
     done1:;
     p = q;
-    if ((p != h) || (mem[h].hhfield.b0 != 0))
+    if ((p != h) || (mem[h].hh.b0 != 0))
     {
       print_nl(520);
-      if (mem[p].hhfield.b0 == 2)
+      if (mem[p].hh.b0 == 2)
       {
         n_sin_cos(mem[p + 3].cint);
         print_char(123);
@@ -5292,16 +5499,16 @@ void print_path (halfword h, str_number s, boolean nuline)
         print_scaled(n_sin);
         print_char(125);
       }
-      else if (mem[p].hhfield.b0 == 3)
+      else if (mem[p].hh.b0 == 3)
       {
         print(521);
         print_scaled(mem[p + 3].cint);
         print_char(125);
       }
     }
-  }while (!(p == h));
-  if (mem[h].hhfield.b0 != 0)
-  print(385);
+  } while (!(p == h));
+  if (mem[h].hh.b0 != 0)
+    print(385);
   done: end_diagnostic (true);
 }
 
@@ -5309,18 +5516,22 @@ void print_weight (halfword q, integer xoff)
 {
   integer w, m;
   integer d;
-  d = mem[q].hhfield.lhfield;
+
+  d = mem[q].hh.lh;
   w = d % 8;
-  m = (d / 8) - mem[cur_edges + 3].hhfield.lhfield;
+  m = (d / 8) - mem[cur_edges + 3].hh.lh;
   if (file_offset > maxprintline - 9)
-  print_nl(32);
-  else print_char(32);
+    print_nl(32);
+  else
+    print_char(32);
   print_int (m + xoff);
-  while (w > 4) {
+  while (w > 4)
+  {
     print_char(43);
     decr (w);
   }
-  while (w < 4) {
+  while (w < 4)
+  {
     print_char(45);
     incr (w);
   }
@@ -5330,28 +5541,32 @@ void print_edges (str_number s, boolean nuline, integer xoff, integer yoff)
 {
   halfword p, q, r;
   integer n;
+
   print_diagnostic(532, s, nuline);
-  p = mem[cur_edges].hhfield.lhfield;
-  n = mem[cur_edges + 1].hhfield.v.RH - 4096;
-  while (p != cur_edges) {
-    q = mem[p + 1].hhfield.lhfield;
-    r = mem[p + 1].hhfield.v.RH;
+  p = mem[cur_edges].hh.lh;
+  n = mem[cur_edges + 1].hh.v.RH - 4096;
+  while (p != cur_edges)
+  {
+    q = mem[p + 1].hh.lh;
+    r = mem[p + 1].hh.v.RH;
     if ((q > 1) || (r != memtop))
     {
       print_nl(533);
       print_int (n + yoff);
       print_char(58);
-      while (q > 1) {
+      while (q > 1)
+      {
         print_weight (q, xoff);
-        q = mem[q].hhfield.v.RH;
+        q = mem[q].hh.v.RH;
       }
       print(534);
-      while (r != memtop) {
+      while (r != memtop)
+      {
         print_weight (r, xoff);
-        r = mem[r].hhfield.v.RH;
+        r = mem[r].hh.v.RH;
       }
     }
-    p = mem[p].hhfield.lhfield;
+    p = mem[p].hh.lh;
     decr (n);
   }
   end_diagnostic (true);
@@ -5360,54 +5575,55 @@ void print_edges (str_number s, boolean nuline, integer xoff, integer yoff)
 void unskew (scaled x, scaled y, small_number octant)
 {
   switch (octant)
-  {case 1 :
-    {
-      cur_x = x + y;
-      cur_y = y;
-    }
-    break;
-  case 5 :
-    {
-      cur_x = y;
-      cur_y = x + y;
-    }
-    break;
-  case 6 :
-    {
-      cur_x = - (integer) y;
-      cur_y = x + y;
-    }
-    break;
-  case 2 :
-    {
-      cur_x = - (integer) x - y;
-      cur_y = y;
-    }
-    break;
-  case 4 :
-    {
-      cur_x = - (integer) x - y;
-      cur_y = - (integer) y;
-    }
-    break;
-  case 8 :
-    {
-      cur_x = - (integer) y;
-      cur_y = - (integer) x - y;
-    }
-    break;
-  case 7 :
-    {
-      cur_x = y;
-      cur_y = - (integer) x - y;
-    }
-    break;
-  case 3 :
-    {
-      cur_x = x + y;
-      cur_y = - (integer) y;
-    }
-    break;
+  {
+    case 1:
+      {
+        cur_x = x + y;
+        cur_y = y;
+      }
+      break;
+    case 5:
+      {
+        cur_x = y;
+        cur_y = x + y;
+      }
+      break;
+    case 6:
+      {
+        cur_x = - (integer) y;
+        cur_y = x + y;
+      }
+      break;
+    case 2:
+      {
+        cur_x = - (integer) x - y;
+        cur_y = y;
+      }
+      break;
+    case 4:
+      {
+        cur_x = - (integer) x - y;
+        cur_y = - (integer) y;
+      }
+      break;
+    case 8:
+      {
+        cur_x = - (integer) y;
+        cur_y = - (integer) x - y;
+      }
+      break;
+    case 7:
+      {
+        cur_x = y;
+        cur_y = - (integer) x - y;
+      }
+      break;
+    case 3:
+      {
+        cur_x = x + y;
+        cur_y = - (integer) y;
+      }
+      break;
   }
 }
 
@@ -5418,6 +5634,7 @@ void print_pen (halfword p, str_number s, boolean nuline)
   halfword h;
   integer m, n;
   halfword w, ww;
+
   print_diagnostic(569, s, nuline);
   nothingprinted = true;
   print_ln ();
@@ -5425,22 +5642,23 @@ void print_pen (halfword p, str_number s, boolean nuline)
     {
       octant = octant_code[k];
       h = p + octant;
-      n = mem[h].hhfield.lhfield;
-      w = mem[h].hhfield.v.RH;
+      n = mem[h].hh.lh;
+      w = mem[h].hh.v.RH;
       if (!odd (k))
-      w = mem[w].hhfield.lhfield;
+        w = mem[w].hh.lh;
       {integer for_end; m = 1;for_end = n + 1; if (m <= for_end)
       do
         {
           if (odd (k))
-          ww = mem[w].hhfield.v.RH;
-          else ww = mem[w].hhfield.lhfield;
-          if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww +
-          2].cint != mem[w + 2].cint))
+            ww = mem[w].hh.v.RH;
+          else
+            ww = mem[w].hh.lh;
+          if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww + 2].cint != mem[w + 2].cint))
           {
             if (nothingprinted)
-            nothingprinted = false;
-            else print_nl(571);
+              nothingprinted = false;
+            else
+              print_nl(571);
             unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
             print_two (cur_x, cur_y);
           }
@@ -5451,9 +5669,8 @@ void print_pen (halfword p, str_number s, boolean nuline)
   while (k++ < for_end);}
   if (nothingprinted)
   {
-    w = mem[p + 1].hhfield.v.RH;
-    print_two (mem[w + 1].cint + mem[w + 2].cint, mem[w + 2].cint
- );
+    w = mem[p + 1].hh.v.RH;
+    print_two (mem[w + 1].cint + mem[w + 2].cint, mem[w + 2].cint);
   }
   print_nl(570);
   end_diagnostic (true);
@@ -5463,39 +5680,43 @@ void print_dependency (halfword p, small_number t)
 {
   integer v;
   halfword pp, q;
+
   pp = p;
-  while (true) {
+  while (true)
+  {
     v = abs (mem[p + 1].cint);
-    q = mem[p].hhfield.lhfield;
+    q = mem[p].hh.lh;
     if (q == 0)
     {
       if ((v != 0) || (p == pp))
       {
-        if (mem[p + 1].cint > 0) {
+        if (mem[p + 1].cint > 0)
+        {
           if (p != pp)
-          print_char(43);
+            print_char(43);
         }
         print_scaled(mem[p + 1].cint);
       }
       goto lab_exit;
     }
     if (mem[p + 1].cint < 0)
-    print_char(45);
+      print_char(45);
     else if (p != pp)
-    print_char(43);
+      print_char(43);
     if (t == 17)
-    v = roundfraction (v);
+      v = roundfraction (v);
     if (v != 65536L)
-    print_scaled(v);
-    if (mem[q].hhfield.b0 != 19)
-    confusion(589);
+      print_scaled(v);
+    if (mem[q].hh.b0 != 19)
+      confusion(589);
     print_variable_name(q);
     v = mem[q + 1].cint % 64;
-    while (v > 0) {
+    while (v > 0)
+    {
       print(590);
       v = v - 2;
     }
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   lab_exit:;
 }
@@ -5503,65 +5724,71 @@ void print_dependency (halfword p, small_number t)
 void print_dp (small_number t, halfword p, small_number verbosity)
 {
   halfword q;
-  q = mem[p].hhfield.v.RH;
-  if ((mem[q].hhfield.lhfield == 0) || (verbosity > 0))
-  print_dependency(p, t);
-  else print(764);
+
+  q = mem[p].hh.v.RH;
+  if ((mem[q].hh.lh == 0) || (verbosity > 0))
+    print_dependency(p, t);
+  else
+    print(764);
 }
 
 halfword stash_cur_exp (void)
 {
-  halfword Result; halfword p;
+  halfword Result;
+  halfword p;
+
   switch (cur_type)
-  {case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-  case 13 :
-  case 14 :
-  case 17 :
-  case 18 :
-  case 19 :
-    p = cur_exp;
-    break;
+  {
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+    case 13:
+    case 14:
+    case 17:
+    case 18:
+    case 19:
+      p = cur_exp;
+      break;
     default:
-    {
-      p = get_node (2);
-      mem[p].hhfield.b1 = 11;
-      mem[p].hhfield.b0 = cur_type;
-      mem[p + 1].cint = cur_exp;
-    }
-    break;
+      {
+        p = get_node (2);
+        mem[p].hh.b1 = 11;
+        mem[p].hh.b0 = cur_type;
+        mem[p + 1].cint = cur_exp;
+      }
+      break;
   }
   cur_type = 1;
-  mem[p].hhfield.v.RH = 1;
+  mem[p].hh.v.RH = 1;
   Result = p;
   return Result;
 }
 
 void unstash_cur_exp (halfword p)
 {
-  cur_type = mem[p].hhfield.b0;
+  cur_type = mem[p].hh.b0;
   switch (cur_type)
-  {case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-  case 13 :
-  case 14 :
-  case 17 :
-  case 18 :
-  case 19 :
-    cur_exp = p;
-    break;
+  {
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+    case 13:
+    case 14:
+    case 17:
+    case 18:
+    case 19:
+      cur_exp = p;
+      break;
     default:
-    {
-      cur_exp = mem[p + 1].cint;
-      free_node (p, 2);
-    }
-    break;
+      {
+        cur_exp = mem[p + 1].cint;
+        free_node (p, 2);
+      }
+      break;
   }
 }
 
@@ -5571,128 +5798,136 @@ void print_exp (halfword p, small_number verbosity)
   small_number t;
   integer v;
   halfword q;
+  
   if (p != 0)
-  restorecur_exp = false;
-  else {
+    restorecur_exp = false;
+  else
+  {
     p = stash_cur_exp ();
     restorecur_exp = true;
   }
-  t = mem[p].hhfield.b0;
+  t = mem[p].hh.b0;
   if (t < 17)
-  v = mem[p + 1].cint;
+    v = mem[p + 1].cint;
   else if (t < 19)
-  v = mem[p + 1].hhfield.v.RH;
+    v = mem[p + 1].hh.v.RH;
   switch (t)
-  {case 1 :
-    print(323);
-    break;
-  case 2 :
-    if (v == 30)
-    print(347);
-    else print(348);
-    break;
-  case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-  case 15 :
-    {
-      print_type (t);
-      if (v != 0)
+  {
+    case 1:
+      print(323);
+      break;
+    case 2:
+      if (v == 30)
+        print(347);
+      else
+        print(348);
+      break;
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+    case 15:
       {
-        print_char(32);
-        while ((mem[v].hhfield.b1 == 11) && (v != p)) v = mem[v +
-        1].cint;
-        print_variable_name(v);
-      }
-    }
-    break;
-  case 4 :
-    {
-      print_char(34);
-      slow_print(v);
-      print_char(34);
-    }
-    break;
-  case 6 :
-  case 8 :
-  case 9 :
-  case 11 :
-    if (verbosity <= 1)
-    print_type (t);
-    else {
-      if (selector == 3) {
-        if (internal[13]<= 0)
+        print_type (t);
+        if (v != 0)
         {
-          selector = 1;
-          print_type (t);
-          print(762);
-          selector = 3;
+          print_char(32);
+          while ((mem[v].hh.b1 == 11) && (v != p))
+            v = mem[v + 1].cint;
+          print_variable_name(v);
         }
       }
-      switch (t)
-      {case 6 :
-        print_pen (v, 261, false);
-        break;
-      case 8 :
-        print_path (v, 763, false);
-        break;
-      case 9 :
-        print_path (v, 261, false);
-        break;
-      case 11 :
-        {
-          cur_edges = v;
-          print_edges (261, false, 0, 0);
-        }
-        break;
+      break;
+    case 4:
+      {
+        print_char(34);
+        slow_print(v);
+        print_char(34);
       }
-    }
-    break;
-  case 13 :
-  case 14 :
-    if (v == 0)
-    print_type (t);
-    else {
-      print_char(40);
-      q = v + big_node_size[t];
-      do {
-          if (mem[v].hhfield.b0 == 16)
-        print_scaled(mem[v + 1].cint);
-        else if (mem[v].hhfield.b0 == 19)
-        print_variable_name(v);
-        else print_dp (mem[v].hhfield.b0, mem[v + 1].hhfield.v.RH ,
-        verbosity);
-        v = v + 2;
-        if (v != q)
-        print_char(44);
-      }while (!(v == q));
-      print_char(41);
-    }
-    break;
-  case 16 :
-    print_scaled(v);
-    break;
-  case 17 :
-  case 18 :
-    print_dp (t, v, verbosity);
-    break;
-  case 19 :
-    print_variable_name(p);
-    break;
-    default:
-    confusion(761);
-    break;
+      break;
+    case 6:
+    case 8:
+    case 9:
+    case 11:
+      if (verbosity <= 1)
+        print_type (t);
+      else
+      {
+        if (selector == 3)
+        {
+          if (internal[13]<= 0)
+          {
+            selector = 1;
+            print_type (t);
+            print(762);
+            selector = 3;
+          }
+        }
+        switch (t)
+        {
+          case 6:
+            print_pen (v, 261, false);
+            break;
+          case 8:
+            print_path (v, 763, false);
+            break;
+          case 9:
+            print_path (v, 261, false);
+            break;
+          case 11:
+            {
+              cur_edges = v;
+              print_edges (261, false, 0, 0);
+            }
+            break;
+        }
+      }
+      break;
+    case 13:
+    case 14:
+      if (v == 0)
+        print_type (t);
+      else
+      {
+        print_char(40);
+        q = v + big_node_size[t];
+        do {
+          if (mem[v].hh.b0 == 16)
+            print_scaled(mem[v + 1].cint);
+          else if (mem[v].hh.b0 == 19)
+            print_variable_name(v);
+          else
+            print_dp (mem[v].hh.b0, mem[v + 1].hh.v.RH, verbosity);
+          v = v + 2;
+          if (v != q)
+            print_char(44);
+        } while (!(v == q));
+        print_char(41);
+      }
+      break;
+    case 16:
+      print_scaled(v);
+      break;
+    case 17:
+    case 18:
+      print_dp (t, v, verbosity);
+      break;
+    case 19:
+      print_variable_name(p);
+      break;
+      default:
+      confusion(761);
+      break;
   }
   if (restorecur_exp)
-  unstash_cur_exp (p);
+    unstash_cur_exp (p);
 }
 
 void disp_err (halfword p, str_number s)
 {
   if (interaction == 3)
-;
+    ;
   print_nl(765);
   print_exp (p, 1);
   if (s != 261)
@@ -5704,125 +5939,146 @@ void disp_err (halfword p, str_number s)
 
 halfword p_plus_fq (halfword p, integer f, halfword q, small_number t, small_number tt)
 {
-  halfword Result; halfword pp, qq;
+  halfword Result;
+  halfword pp, qq;
   halfword r, s;
   integer threshold;
   integer v;
+
   if (t == 17)
-  threshold = 2685;
-  else threshold = 8;
+    threshold = 2685;
+  else
+    threshold = 8;
   r = memtop - 1;
-  pp = mem[p].hhfield.lhfield;
-  qq = mem[q].hhfield.lhfield;
-  while (true) if (pp == qq) {
-    if (pp == 0)
-    goto done;
-    else {
+  pp = mem[p].hh.lh;
+  qq = mem[q].hh.lh;
+  while (true)
+    if (pp == qq)
+    {
+      if (pp == 0)
+        goto done;
+      else
+      {
+        if (tt == 17)
+          v = mem[p + 1].cint + take_fraction (f, mem[q + 1].cint);
+        else
+          v = mem[p + 1].cint + take_scaled (f, mem[q + 1].cint);
+        mem[p + 1].cint = v;
+        s = p;
+        p = mem[p].hh.v.RH;
+        if (abs (v) < threshold)
+          free_node (s, 2);
+        else
+        {
+          if (abs (v) >= 626349397L)
+          {
+            if (watch_coefs)
+            {
+              mem[qq].hh.b0 = 0;
+              fix_needed = true;
+            }
+          }
+          mem[r].hh.v.RH = s;
+          r = s;
+        }
+        pp = mem[p].hh.lh;
+        q = mem[q].hh.v.RH;
+        qq = mem[q].hh.lh;
+      }
+    }
+    else if (mem[pp + 1].cint < mem[qq + 1].cint)
+    {
       if (tt == 17)
-      v = mem[p + 1].cint + take_fraction (f, mem[q + 1].cint);
-      else v = mem[p + 1].cint + take_scaled (f, mem[q + 1].cint);
-      mem[p + 1].cint = v;
-      s = p;
-      p = mem[p].hhfield.v.RH;
-      if (abs (v) < threshold)
-      free_node (s, 2);
-      else {
-        if (abs (v) >= 626349397L) {
+        v = take_fraction (f, mem[q + 1].cint);
+      else
+        v = take_scaled (f, mem[q + 1].cint);
+      if (abs (v) > halfp (threshold))
+      {
+        s = get_node (2);
+        mem[s].hh.lh = qq;
+        mem[s + 1].cint = v;
+        if (abs (v) >= 626349397L)
+        {
           if (watch_coefs)
           {
-            mem[qq].hhfield.b0 = 0;
+            mem[qq].hh.b0 = 0;
             fix_needed = true;
           }
         }
-        mem[r].hhfield.v.RH = s;
+        mem[r].hh.v.RH = s;
         r = s;
       }
-      pp = mem[p].hhfield.lhfield;
-      q = mem[q].hhfield.v.RH;
-      qq = mem[q].hhfield.lhfield;
+      q = mem[q].hh.v.RH;
+      qq = mem[q].hh.lh;
     }
-  }
-  else if (mem[pp + 1].cint < mem[qq + 1].cint)
-  {
-    if (tt == 17)
-    v = take_fraction (f, mem[q + 1].cint);
-    else v = take_scaled (f, mem[q + 1].cint);
-    if (abs (v) > halfp (threshold))
+    else
     {
-      s = get_node (2);
-      mem[s].hhfield.lhfield = qq;
-      mem[s + 1].cint = v;
-      if (abs (v) >= 626349397L) {
-        if (watch_coefs)
-        {
-          mem[qq].hhfield.b0 = 0;
-          fix_needed = true;
-        }
-      }
-      mem[r].hhfield.v.RH = s;
-      r = s;
+      mem[r].hh.v.RH = p;
+      r = p;
+      p = mem[p].hh.v.RH;
+      pp = mem[p].hh.lh;
     }
-    q = mem[q].hhfield.v.RH;
-    qq = mem[q].hhfield.lhfield;
-  }
-  else {
-    mem[r].hhfield.v.RH = p;
-    r = p;
-    p = mem[p].hhfield.v.RH;
-    pp = mem[p].hhfield.lhfield;
-  }
-  done: if (t == 17)
-  mem[p + 1].cint = slow_add (mem[p + 1].cint, take_fraction (mem[q
-  + 1].cint, f));
-  else mem[p + 1].cint = slow_add (mem[p + 1].cint, take_scaled (mem
-[q + 1].cint, f));
-  mem[r].hhfield.v.RH = p;
+done:
+  if (t == 17)
+    mem[p + 1].cint = slow_add (mem[p + 1].cint, take_fraction (mem[q + 1].cint, f));
+  else
+    mem[p + 1].cint = slow_add (mem[p + 1].cint, take_scaled (mem[q + 1].cint, f));
+  mem[r].hh.v.RH = p;
   dep_final = p;
-  Result = mem[memtop - 1].hhfield.v.RH;
+  Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
 halfword p_over_v (halfword p, scaled v, small_number t0, small_number t1)
 {
-  halfword Result; halfword r, s;
+  halfword Result;
+  halfword r, s;
   integer w;
   integer threshold;
   boolean scalingdown;
+  
   if (t0 != t1)
-  scalingdown = true;
-  else scalingdown = false;
+    scalingdown = true;
+  else
+    scalingdown = false;
   if (t1 == 17)
-  threshold = 1342;
-  else threshold = 4;
+    threshold = 1342;
+  else
+    threshold = 4;
   r = memtop - 1;
-  while (mem[p].hhfield.lhfield != 0) {
-    if (scalingdown) {
+  while (mem[p].hh.lh != 0)
+  {
+    if (scalingdown)
+    {
       if (abs (v) < 524288L)
-      w = make_scaled (mem[p + 1].cint, v * 4096);
-      else w = make_scaled (roundfraction (mem[p + 1].cint), v);
+        w = make_scaled (mem[p + 1].cint, v * 4096);
+      else
+        w = make_scaled (roundfraction (mem[p + 1].cint), v);
     }
-    else w = make_scaled (mem[p + 1].cint, v);
+    else
+      w = make_scaled (mem[p + 1].cint, v);
     if (abs (w) <= threshold)
     {
-      s = mem[p].hhfield.v.RH;
+      s = mem[p].hh.v.RH;
       free_node (p, 2);
       p = s;
     }
-    else {
+    else
+    {
       if (abs (w) >= 626349397L)
       {
         fix_needed = true;
-        mem[mem[p].hhfield.lhfield].hhfield.b0 = 0;
+        mem[mem[p].hh.lh].hh.b0 = 0;
       }
-      mem[r].hhfield.v.RH = p;
+      mem[r].hh.v.RH = p;
       r = p;
       mem[p + 1].cint = w;
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
     }
   }
-  mem[r].hhfield.v.RH = p;
+  mem[r].hh.v.RH = p;
   mem[p + 1].cint = make_scaled (mem[p + 1].cint, v);
-  Result = mem[memtop - 1].hhfield.v.RH;
+  Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
@@ -5832,7 +6088,7 @@ void val_too_big (scaled x)
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -5842,7 +6098,8 @@ void val_too_big (scaled x)
         print(262);
         print(591);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(591);
       }
@@ -5863,17 +6120,17 @@ void val_too_big (scaled x)
 void make_known (halfword p, halfword q)
 {
   unsigned char t;
-  mem[mem[q].hhfield.v.RH + 1].hhfield.lhfield = mem[p + 1]
-  .hhfield.lhfield;
-  mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = mem[q].hhfield
-.v.RH;
-  t = mem[p].hhfield.b0;
-  mem[p].hhfield.b0 = 16;
+
+  mem[mem[q].hh.v.RH + 1].hh.lh = mem[p + 1].hh.lh;
+  mem[mem[p + 1].hh.lh].hh.v.RH = mem[q].hh.v.RH;
+  t = mem[p].hh.b0;
+  mem[p].hh.b0 = 16;
   mem[p + 1].cint = mem[q + 1].cint;
   free_node (q, 2);
   if (abs (mem[p + 1].cint) >= 268435456L)
-  val_too_big (mem[p + 1].cint);
-  if (internal[2] > 0) {
+    val_too_big (mem[p + 1].cint);
+  if (internal[2] > 0)
+  {
     if (interesting (p))
     {
       begin_diagnostic ();
@@ -5884,7 +6141,8 @@ void make_known (halfword p, halfword q)
       end_diagnostic (false);
     }
   }
-  if (cur_exp == p) {
+  if (cur_exp == p)
+  {
     if (cur_type == t)
     {
       cur_type = 16;
@@ -5898,54 +6156,58 @@ void fix_dependencies (void)
 {
   halfword p, q, r, s, t;
   halfword x;
-  r = mem[13].hhfield.v.RH;
+
+  r = mem[13].hh.v.RH;
   s = 0;
-  while (r != 13) {
+  while (r != 13)
+  {
     t = r;
     r = t + 1;
-    while (true) {
-      q = mem[r].hhfield.v.RH;
-      x = mem[q].hhfield.lhfield;
+    while (true)
+    {
+      q = mem[r].hh.v.RH;
+      x = mem[q].hh.lh;
       if (x == 0)
-      goto done;
-      if (mem[x].hhfield.b0 <= 1)
+        goto done;
+      if (mem[x].hh.b0 <= 1)
       {
-        if (mem[x].hhfield.b0 < 1)
+        if (mem[x].hh.b0 < 1)
         {
           p = get_avail ();
-          mem[p].hhfield.v.RH = s;
+          mem[p].hh.v.RH = s;
           s = p;
-          mem[s].hhfield.lhfield = x;
-          mem[x].hhfield.b0 = 1;
+          mem[s].hh.lh = x;
+          mem[x].hh.b0 = 1;
         }
         mem[q + 1].cint = mem[q + 1].cint / 4;
         if (mem[q + 1].cint == 0)
         {
-          mem[r].hhfield.v.RH = mem[q].hhfield.v.RH;
+          mem[r].hh.v.RH = mem[q].hh.v.RH;
           free_node (q, 2);
           q = r;
         }
       }
       r = q;
     }
-    done:;
-    r = mem[q].hhfield.v.RH;
-    if (q == mem[t + 1].hhfield.v.RH)
-    make_known (t, q);
+done:;
+    r = mem[q].hh.v.RH;
+    if (q == mem[t + 1].hh.v.RH)
+      make_known (t, q);
   }
-  while (s != 0) {
-    p = mem[s].hhfield.v.RH;
-    x = mem[s].hhfield.lhfield;
+  while (s != 0)
+  {
+    p = mem[s].hh.v.RH;
+    x = mem[s].hh.lh;
     {
-      mem[s].hhfield.v.RH = avail;
+      mem[s].hh.v.RH = avail;
       avail = s;
-        ;
+      ;
 #ifdef STAT
       decr (dyn_used);
 #endif /* STAT */
     }
     s = p;
-    mem[x].hhfield.b0 = 19;
+    mem[x].hh.b0 = 19;
     mem[x + 1].cint = mem[x + 1].cint + 2;
   }
   fix_needed = false;
@@ -5955,24 +6217,27 @@ void toss_knot_list (halfword p)
 {
   halfword q;
   halfword r;
+
   q = p;
   do {
-      r = mem[q].hhfield.v.RH;
+    r = mem[q].hh.v.RH;
     free_node (q, 7);
     q = r;
-  }while (!(q == p));
+  } while (!(q == p));
 }
 
 void toss_edges (halfword h)
 {
   halfword p, q;
-  q = mem[h].hhfield.v.RH;
-  while (q != h) {
-    flush_list (mem[q + 1].hhfield.v.RH);
-    if (mem[q + 1].hhfield.lhfield > 1)
-    flush_list (mem[q + 1].hhfield.lhfield);
+
+  q = mem[h].hh.v.RH;
+  while (q != h)
+  {
+    flush_list (mem[q + 1].hh.v.RH);
+    if (mem[q + 1].hh.lh > 1)
+      flush_list (mem[q + 1].hh.lh);
     p = q;
-    q = mem[q].hhfield.v.RH;
+    q = mem[q].hh.v.RH;
     free_node (p, 2);
   }
   free_node (h, 6);
@@ -5982,16 +6247,17 @@ void toss_pen (halfword p)
 {
   unsigned char k;
   halfword w, ww;
+
   if (p != 3)
   {
     {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
       {
-        w = mem[p + k].hhfield.v.RH;
+        w = mem[p + k].hh.v.RH;
         do {
-            ww = mem[w].hhfield.v.RH;
+            ww = mem[w].hh.v.RH;
           free_node (w, 3);
           w = ww;
-        }while (!(w == mem[p + k].hhfield.v.RH));
+        } while (!(w == mem[p + k].hh.v.RH));
       }
     while (k++ < for_end);}
     free_node (p, 10);
@@ -6001,11 +6267,14 @@ void toss_pen (halfword p)
 void ring_delete (halfword p)
 {
   halfword q;
+
   q = mem[p + 1].cint;
-  if (q != 0) {
+  if (q != 0)
+  {
     if (q != p)
     {
-      while (mem[q + 1].cint != p) q = mem[q + 1].cint;
+      while (mem[q + 1].cint != p)
+        q = mem[q + 1].cint;
       mem[q + 1].cint = mem[p + 1].cint;
     }
   }
@@ -6017,280 +6286,294 @@ void recycle_value (halfword p)
   integer v;
   integer vv;
   halfword q, r, s, pp;
-  t = mem[p].hhfield.b0;
-  if (t < 17)
-  v = mem[p + 1].cint;
-  switch (t)
-  {case 0 :
-  case 1 :
-  case 2 :
-  case 16 :
-  case 15 :
-;
-    break;
-  case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-    ring_delete (p);
-    break;
-  case 4 :
-    {
-      if (str_ref[v]< 127) {
 
-        if (str_ref[v] > 1)
-        decr (str_ref[v]);
-        else flush_string (v);
-      }
-    }
-    break;
-  case 6 :
-    if (mem[v].hhfield.lhfield == 0)
-    toss_pen (v);
-    else decr (mem[v].hhfield.lhfield);
-    break;
-  case 9 :
-  case 8 :
-    toss_knot_list (v);
-    break;
-  case 11 :
-    toss_edges (v);
-    break;
-  case 14 :
-  case 13 :
-    if (v != 0)
-    {
-      q = v + big_node_size[t];
-      do {
-          q = q - 2;
-        recycle_value (q);
-      }while (!(q == v));
-      free_node (v, big_node_size[t]);
-    }
-    break;
-  case 17 :
-  case 18 :
-    {
-      q = mem[p + 1].hhfield.v.RH;
-      while (mem[q].hhfield.lhfield != 0) q = mem[q].hhfield.v.RH
-;
-      mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = mem[q]
-      .hhfield.v.RH;
-      mem[mem[q].hhfield.v.RH + 1].hhfield.lhfield = mem[p + 1]
-      .hhfield.lhfield;
-      mem[q].hhfield.v.RH = 0;
-      flush_node_list (mem[p + 1].hhfield.v.RH);
-    }
-    break;
-  case 19 :
-    {
-      max_c[17] = 0;
-      max_c[18] = 0;
-      max_link[17] = 0;
-      max_link[18] = 0;
-      q = mem[13].hhfield.v.RH;
-      while (q != 13) {
-        s = q + 1;
-        while (true) {
-          r = mem[s].hhfield.v.RH;
-          if (mem[r].hhfield.lhfield == 0)
-          goto done;
-          if (mem[r].hhfield.lhfield != p)
-          s = r;
-          else {
-            t = mem[q].hhfield.b0;
-            mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
-            mem[r].hhfield.lhfield = q;
-            if (abs (mem[r + 1].cint) > max_c[t])
-            {
-              if (max_c[t] > 0)
-              {
-                mem[max_ptr[t]].hhfield.v.RH = max_link[t];
-                max_link[t] = max_ptr[t];
-              }
-              max_c[t] = abs (mem[r + 1].cint);
-              max_ptr[t] = r;
-            }
-            else {
-              mem[r].hhfield.v.RH = max_link[t];
-              max_link[t] = r;
-            }
-          }
-        }
-        done: q = mem[r].hhfield.v.RH;
-      }
-      if ((max_c[17] > 0) || (max_c[18] > 0))
+  t = mem[p].hh.b0;
+  if (t < 17)
+    v = mem[p + 1].cint;
+  switch (t)
+  {
+    case 0:
+    case 1:
+    case 2:
+    case 16:
+    case 15:
+      ;
+      break;
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+      ring_delete (p);
+      break;
+    case 4:
       {
-        if ((max_c[17]/ 4096 >= max_c[18]))
-        t = 17;
-        else t = 18;
-        s = max_ptr[t];
-        pp = mem[s].hhfield.lhfield;
-        v = mem[s + 1].cint;
-        if (t == 17)
-        mem[s + 1].cint = -268435456L;
-        else mem[s + 1].cint = -65536L;
-        r = mem[pp + 1].hhfield.v.RH;
-        mem[s].hhfield.v.RH = r;
-        while (mem[r].hhfield.lhfield != 0) r = mem[r].hhfield
-        .v.RH;
-        q = mem[r].hhfield.v.RH;
-        mem[r].hhfield.v.RH = 0;
-        mem[q + 1].hhfield.lhfield = mem[pp + 1].hhfield.lhfield;
-        mem[mem[pp + 1].hhfield.lhfield].hhfield.v.RH = q;
+        if (str_ref[v]< 127)
         {
-          if (serial_no > 2147483583L)
-          overflow (588, serial_no / 64);
-          mem[pp].hhfield.b0 = 19;
-          serial_no = serial_no + 64;
-          mem[pp + 1].cint = serial_no;
-        }
-        if (cur_exp == pp) {
-          if (cur_type == t)
-          cur_type = 19;
-        }
-        if (internal[2] > 0) {
-          if (interesting (p))
-          {
-            begin_diagnostic ();
-            print_nl(767);
-            if (v > 0)
-            print_char(45);
-            if (t == 17)
-            vv = roundfraction (max_c[17]);
-            else vv = max_c[18];
-            if (vv != 65536L)
-            print_scaled(vv);
-            print_variable_name(p);
-            while (mem[p + 1].cint % 64 > 0) {
-              print(590);
-              mem[p + 1].cint = mem[p + 1].cint - 2;
-            }
-            if (t == 17)
-            print_char(61);
-            else print(768);
-            print_dependency(s, t);
-            end_diagnostic (false);
-          }
-        }
-        t = 35 - t;
-        if (max_c[t] > 0)
-        {
-          mem[max_ptr[t]].hhfield.v.RH = max_link[t];
-          max_link[t] = max_ptr[t];
-        }
-        if (t != 17)
-        {integer for_end; t = 17;for_end = 18; if (t <= for_end)
-        do
-          {
-            r = max_link[t];
-            while (r != 0) {
-              q = mem[r].hhfield.lhfield;
-              mem[q + 1].hhfield.v.RH = p_plus_fq (mem[q + 1].hhfield
-            .v.RH, make_fraction (mem[r + 1].cint, - (integer) v), s
-             , t, 17);
-              if (mem[q + 1].hhfield.v.RH == dep_final)
-              make_known (q, dep_final);
-              q = r;
-              r = mem[r].hhfield.v.RH;
-              free_node (q, 2);
-            }
-          }
-        while (t++ < for_end);}
-        else {
-            integer for_end; t = 17;for_end = 18; if (t <=
-        for_end) do
-          {
-            r = max_link[t];
-            while (r != 0) {
-              q = mem[r].hhfield.lhfield;
-              if (t == 17)
-              {
-                if (cur_exp == q) {
-                  if (cur_type == 17)
-                  cur_type = 18;
-                }
-                mem[q + 1].hhfield.v.RH = p_over_v (mem[q + 1].hhfield
-                .v.RH, 65536L, 17, 18);
-                mem[q].hhfield.b0 = 18;
-                mem[r + 1].cint = roundfraction (mem[r + 1].cint);
-              }
-              mem[q + 1].hhfield.v.RH = p_plus_fq (mem[q + 1].hhfield
-            .v.RH, make_scaled (mem[r + 1].cint, - (integer) v), s ,
-              18, 18);
-              if (mem[q + 1].hhfield.v.RH == dep_final)
-              make_known (q, dep_final);
-              q = r;
-              r = mem[r].hhfield.v.RH;
-              free_node (q, 2);
-            }
-          }
-        while (t++ < for_end);}
-        flush_node_list (s);
-        if (fix_needed)
-        fix_dependencies ();
-        {
-          if (arith_error)
-          clear_arith ();
+          if (str_ref[v] > 1)
+            decr (str_ref[v]);
+          else
+            flush_string (v);
         }
       }
-    }
-    break;
-  case 20 :
-  case 21 :
-    confusion(766);
-    break;
-  case 22 :
-  case 23 :
-    delete_mac_ref (mem[p + 1].cint);
-    break;
+      break;
+    case 6:
+      if (mem[v].hh.lh == 0)
+        toss_pen (v);
+      else
+        decr (mem[v].hh.lh);
+      break;
+    case 9:
+    case 8:
+      toss_knot_list (v);
+      break;
+    case 11:
+      toss_edges (v);
+      break;
+    case 14:
+    case 13:
+      if (v != 0)
+      {
+        q = v + big_node_size[t];
+        do {
+          q = q - 2;
+          recycle_value (q);
+        } while (!(q == v));
+        free_node (v, big_node_size[t]);
+      }
+      break;
+    case 17:
+    case 18:
+      {
+        q = mem[p + 1].hh.v.RH;
+        while (mem[q].hh.lh != 0)
+          q = mem[q].hh.v.RH;
+        mem[mem[p + 1].hh.lh].hh.v.RH = mem[q].hh.v.RH;
+        mem[mem[q].hh.v.RH + 1].hh.lh = mem[p + 1].hh.lh;
+        mem[q].hh.v.RH = 0;
+        flush_node_list (mem[p + 1].hh.v.RH);
+      }
+      break;
+    case 19:
+      {
+        max_c[17] = 0;
+        max_c[18] = 0;
+        max_link[17] = 0;
+        max_link[18] = 0;
+        q = mem[13].hh.v.RH;
+        while (q != 13)
+        {
+          s = q + 1;
+          while (true)
+          {
+            r = mem[s].hh.v.RH;
+            if (mem[r].hh.lh == 0)
+              goto done;
+            if (mem[r].hh.lh != p)
+              s = r;
+            else
+            {
+              t = mem[q].hh.b0;
+              mem[s].hh.v.RH = mem[r].hh.v.RH;
+              mem[r].hh.lh = q;
+              if (abs (mem[r + 1].cint) > max_c[t])
+              {
+                if (max_c[t] > 0)
+                {
+                  mem[max_ptr[t]].hh.v.RH = max_link[t];
+                  max_link[t] = max_ptr[t];
+                }
+                max_c[t] = abs (mem[r + 1].cint);
+                max_ptr[t] = r;
+              }
+              else
+              {
+                mem[r].hh.v.RH = max_link[t];
+                max_link[t] = r;
+              }
+            }
+          }
+          done: q = mem[r].hh.v.RH;
+        }
+        if ((max_c[17] > 0) || (max_c[18] > 0))
+        {
+          if ((max_c[17]/ 4096 >= max_c[18]))
+            t = 17;
+          else
+            t = 18;
+          s = max_ptr[t];
+          pp = mem[s].hh.lh;
+          v = mem[s + 1].cint;
+          if (t == 17)
+            mem[s + 1].cint = -268435456L;
+          else
+            mem[s + 1].cint = -65536L;
+          r = mem[pp + 1].hh.v.RH;
+          mem[s].hh.v.RH = r;
+          while (mem[r].hh.lh != 0) r = mem[r].hh.v.RH;
+          q = mem[r].hh.v.RH;
+          mem[r].hh.v.RH = 0;
+          mem[q + 1].hh.lh = mem[pp + 1].hh.lh;
+          mem[mem[pp + 1].hh.lh].hh.v.RH = q;
+          {
+            if (serial_no > 2147483583L)
+              overflow (588, serial_no / 64);
+            mem[pp].hh.b0 = 19;
+            serial_no = serial_no + 64;
+            mem[pp + 1].cint = serial_no;
+          }
+          if (cur_exp == pp)
+          {
+            if (cur_type == t)
+              cur_type = 19;
+          }
+          if (internal[2] > 0)
+          {
+            if (interesting (p))
+            {
+              begin_diagnostic ();
+              print_nl(767);
+              if (v > 0)
+                print_char(45);
+              if (t == 17)
+                vv = roundfraction (max_c[17]);
+              else
+                vv = max_c[18];
+              if (vv != 65536L)
+                print_scaled(vv);
+              print_variable_name(p);
+              while (mem[p + 1].cint % 64 > 0)
+              {
+                print(590);
+                mem[p + 1].cint = mem[p + 1].cint - 2;
+              }
+              if (t == 17)
+                print_char(61);
+              else
+                print(768);
+              print_dependency(s, t);
+              end_diagnostic (false);
+            }
+          }
+          t = 35 - t;
+          if (max_c[t] > 0)
+          {
+            mem[max_ptr[t]].hh.v.RH = max_link[t];
+            max_link[t] = max_ptr[t];
+          }
+          if (t != 17)
+          {
+            integer for_end; t = 17;for_end = 18; if (t <= for_end)
+            do {
+              r = max_link[t];
+              while (r != 0)
+              {
+                q = mem[r].hh.lh;
+                mem[q + 1].hh.v.RH = p_plus_fq (mem[q + 1].hh.v.RH, make_fraction (mem[r + 1].cint, - (integer) v), s, t, 17);
+                if (mem[q + 1].hh.v.RH == dep_final)
+                  make_known (q, dep_final);
+                q = r;
+                r = mem[r].hh.v.RH;
+                free_node (q, 2);
+              }
+            } while (t++ < for_end);
+          }
+          else
+          {
+            integer for_end; t = 17;for_end = 18; if (t <= for_end)
+              do {
+                r = max_link[t];
+                while (r != 0)
+                {
+                  q = mem[r].hh.lh;
+                  if (t == 17)
+                  {
+                    if (cur_exp == q)
+                    {
+                      if (cur_type == 17)
+                        cur_type = 18;
+                    }
+                    mem[q + 1].hh.v.RH = p_over_v (mem[q + 1].hh.v.RH, 65536L, 17, 18);
+                    mem[q].hh.b0 = 18;
+                    mem[r + 1].cint = roundfraction (mem[r + 1].cint);
+                  }
+                  mem[q + 1].hh.v.RH = p_plus_fq (mem[q + 1].hh.v.RH, make_scaled (mem[r + 1].cint, - (integer) v), s , 18, 18);
+                  if (mem[q + 1].hh.v.RH == dep_final)
+                    make_known (q, dep_final);
+                  q = r;
+                  r = mem[r].hh.v.RH;
+                  free_node (q, 2);
+                }
+            } while (t++ < for_end);
+          }
+          flush_node_list (s);
+          if (fix_needed)
+            fix_dependencies ();
+          {
+            if (arith_error)
+              clear_arith ();
+          }
+        }
+      }
+      break;
+    case 20:
+    case 21:
+      confusion(766);
+      break;
+    case 22:
+    case 23:
+      delete_mac_ref (mem[p + 1].cint);
+      break;
   }
-  mem[p].hhfield.b0 = 0;
+  mem[p].hh.b0 = 0;
 }
 
 void flush_cur_exp (scaled v)
 {
   switch (cur_type)
-  {case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-  case 13 :
-  case 14 :
-  case 17 :
-  case 18 :
-  case 19 :
-    {
-      recycle_value (cur_exp);
-      free_node (cur_exp, 2);
-    }
-    break;
-  case 6 :
-    if (mem[cur_exp].hhfield.lhfield == 0)
-    toss_pen (cur_exp);
-    else decr (mem[cur_exp].hhfield.lhfield);
-    break;
-  case 4 :
-    {
-      if (str_ref[cur_exp]< 127) {
-        if (str_ref[cur_exp] > 1)
-        decr (str_ref[cur_exp]);
-        else flush_string (cur_exp);
+  {
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+    case 13:
+    case 14:
+    case 17:
+    case 18:
+    case 19:
+      {
+        recycle_value (cur_exp);
+        free_node (cur_exp, 2);
       }
-    }
-    break;
-  case 8 :
-  case 9 :
-    toss_knot_list (cur_exp);
-    break;
-  case 11 :
-    toss_edges (cur_exp);
-    break;
+      break;
+    case 6:
+      if (mem[cur_exp].hh.lh == 0)
+        toss_pen (cur_exp);
+      else
+        decr (mem[cur_exp].hh.lh);
+      break;
+    case 4:
+      {
+        if (str_ref[cur_exp]< 127)
+        {
+          if (str_ref[cur_exp] > 1)
+            decr (str_ref[cur_exp]);
+          else
+            flush_string (cur_exp);
+        }
+      }
+      break;
+    case 8:
+    case 9:
+      toss_knot_list (cur_exp);
+      break;
+    case 11:
+      toss_edges (cur_exp);
+      break;
     default:
-;
-    break;
+      ;
+      break;
   }
   cur_type = 16;
   cur_exp = v;
@@ -6317,29 +6600,33 @@ void put_get_flush_error (scaled v)
 void flush_below_variable (halfword p)
 {
   halfword q, r;
-  if (mem[p].hhfield.b0 != 21)
-  recycle_value (p);
-  else {
-    q = mem[p + 1].hhfield.v.RH;
-    while (mem[q].hhfield.b1 == 3) {
+
+  if (mem[p].hh.b0 != 21)
+    recycle_value (p);
+  else
+  {
+    q = mem[p + 1].hh.v.RH;
+    while (mem[q].hh.b1 == 3)
+    {
       flush_below_variable (q);
       r = q;
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
       free_node (r, 3);
     }
-    r = mem[p + 1].hhfield.lhfield;
-    q = mem[r].hhfield.v.RH;
+    r = mem[p + 1].hh.lh;
+    q = mem[r].hh.v.RH;
     recycle_value (r);
-    if (mem[p].hhfield.b1 <= 1)
-    free_node (r, 2);
-    else free_node (r, 3);
-    do {
-        flush_below_variable (q);
-      r = q;
-      q = mem[q].hhfield.v.RH;
+    if (mem[p].hh.b1 <= 1)
+      free_node (r, 2);
+    else
       free_node (r, 3);
-    }while (!(q == 17));
-    mem[p].hhfield.b0 = 0;
+    do {
+      flush_below_variable (q);
+      r = q;
+      q = mem[q].hh.v.RH;
+      free_node (r, 3);
+    } while (!(q == 17));
+    mem[p].hh.b0 = 0;
   }
 }
 
@@ -6347,42 +6634,49 @@ void flush_variable (halfword p, halfword t, boolean discardsuffixes)
 {
   halfword q, r;
   halfword n;
-  while (t != 0) {
-    if (mem[p].hhfield.b0 != 21)
-    goto lab_exit;
-    n = mem[t].hhfield.lhfield;
-    t = mem[t].hhfield.v.RH;
+
+  while (t != 0)
+  {
+    if (mem[p].hh.b0 != 21)
+      goto lab_exit;
+    n = mem[t].hh.lh;
+    t = mem[t].hh.v.RH;
     if (n == 0)
     {
       r = p + 1;
-      q = mem[r].hhfield.v.RH;
-      while (mem[q].hhfield.b1 == 3) {
+      q = mem[r].hh.v.RH;
+      while (mem[q].hh.b1 == 3)
+      {
         flush_variable (q, t, discardsuffixes);
-        if (t == 0) {
-          if (mem[q].hhfield.b0 == 21)
-          r = q;
-          else {
-            mem[r].hhfield.v.RH = mem[q].hhfield.v.RH;
+        if (t == 0)
+        {
+          if (mem[q].hh.b0 == 21)
+            r = q;
+          else
+          {
+            mem[r].hh.v.RH = mem[q].hh.v.RH;
             free_node (q, 3);
           }
         }
-        else r = q;
-        q = mem[r].hhfield.v.RH;
+        else
+          r = q;
+        q = mem[r].hh.v.RH;
       }
     }
-    p = mem[p + 1].hhfield.lhfield;
+    p = mem[p + 1].hh.lh;
     do {
-        r = p;
-      p = mem[p].hhfield.v.RH;
-    }while (!(mem[p + 2].hhfield.lhfield >= n));
-    if (mem[p + 2].hhfield.lhfield != n)
-    goto lab_exit;
+      r = p;
+      p = mem[p].hh.v.RH;
+    } while (!(mem[p + 2].hh.lh >= n));
+    if (mem[p + 2].hh.lh != n)
+      goto lab_exit;
   }
   if (discardsuffixes)
-  flush_below_variable (p);
-  else {
-    if (mem[p].hhfield.b0 == 21)
-    p = mem[p + 1].hhfield.lhfield;
+    flush_below_variable (p);
+  else
+  {
+    if (mem[p].hh.b0 == 21)
+      p = mem[p + 1].hh.lh;
     recycle_value (p);
   }
   lab_exit:;
@@ -6390,43 +6684,45 @@ void flush_variable (halfword p, halfword t, boolean discardsuffixes)
 
 small_number und_type (halfword p)
 {
-  small_number Result; switch (mem[p].hhfield.b0)
-  {case 0 :
-  case 1 :
-    Result = 0;
-    break;
-  case 2 :
-  case 3 :
-    Result = 3;
-    break;
-  case 4 :
-  case 5 :
-    Result = 5;
-    break;
-  case 6 :
-  case 7 :
-  case 8 :
-    Result = 7;
-    break;
-  case 9 :
-  case 10 :
-    Result = 10;
-    break;
-  case 11 :
-  case 12 :
-    Result = 12;
-    break;
-  case 13 :
-  case 14 :
-  case 15 :
-    Result = mem[p].hhfield.b0;
-    break;
-  case 16 :
-  case 17 :
-  case 18 :
-  case 19 :
-    Result = 15;
-    break;
+  small_number Result;
+  switch (mem[p].hh.b0)
+  {
+    case 0:
+    case 1:
+      Result = 0;
+      break;
+    case 2:
+    case 3:
+      Result = 3;
+      break;
+    case 4:
+    case 5:
+      Result = 5;
+      break;
+    case 6:
+    case 7:
+    case 8:
+      Result = 7;
+      break;
+    case 9:
+    case 10:
+      Result = 10;
+      break;
+    case 11:
+    case 12:
+      Result = 12;
+      break;
+    case 13:
+    case 14:
+    case 15:
+      Result = mem[p].hh.b0;
+      break;
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+      Result = 15;
+      break;
   }
   return Result;
 }
@@ -6434,28 +6730,32 @@ small_number und_type (halfword p)
 void clear_symbol (halfword p, boolean saving)
 {
   halfword q;
+
   q = eqtb[p].v.RH;
-  switch (eqtb[p].lhfield % 86)
-  {case 10 :
-  case 53 :
-  case 44 :
-  case 49 :
-    if (!saving)
-    delete_mac_ref (q);
-    break;
-  case 41 :
-    if (q != 0) {
-      if (saving)
-      mem[q].hhfield.b1 = 1;
-      else {
-        flush_below_variable (q);
-        free_node (q, 2);
+  switch (eqtb[p].lh % 86)
+  {
+    case 10:
+    case 53:
+    case 44:
+    case 49:
+      if (!saving)
+        delete_mac_ref (q);
+      break;
+    case 41:
+      if (q != 0)
+      {
+        if (saving)
+          mem[q].hh.b1 = 1;
+        else
+        {
+          flush_below_variable (q);
+          free_node (q, 2);
+        }
       }
-    }
-    break;
+      break;
     default:
-;
-    break;
+      ;
+      break;
   }
   eqtb[p] = eqtb[9769];
 }
@@ -6463,12 +6763,13 @@ void clear_symbol (halfword p, boolean saving)
 void save_variable (halfword q)
 {
   halfword p;
+
   if (save_ptr != 0)
   {
     p = get_node (2);
-    mem[p].hhfield.lhfield = q;
-    mem[p].hhfield.v.RH = save_ptr;
-    mem[p + 1].hhfield = eqtb[q];
+    mem[p].hh.lh = q;
+    mem[p].hh.v.RH = save_ptr;
+    mem[p + 1].hh = eqtb[q];
     save_ptr = p;
   }
   clear_symbol (q, (save_ptr != 0));
@@ -6477,11 +6778,12 @@ void save_variable (halfword q)
 void save_internal (halfword q)
 {
   halfword p;
+
   if (save_ptr != 0)
   {
     p = get_node (2);
-    mem[p].hhfield.lhfield = 9769 + q;
-    mem[p].hhfield.v.RH = save_ptr;
+    mem[p].hh.lh = 9769 + q;
+    mem[p].hh.v.RH = save_ptr;
     mem[p + 1].cint = internal[q];
     save_ptr = p;
   }
@@ -6491,8 +6793,10 @@ void unsave (void)
 {
   halfword q;
   halfword p;
-  while (mem[save_ptr].hhfield.lhfield != 0) {
-    q = mem[save_ptr].hhfield.lhfield;
+
+  while (mem[save_ptr].hh.lh != 0)
+  {
+    q = mem[save_ptr].hh.lh;
     if (q > 9769)
     {
       if (internal[8] > 0)
@@ -6507,7 +6811,8 @@ void unsave (void)
       }
       internal[q - (9769)] = mem[save_ptr + 1].cint;
     }
-    else {
+    else
+    {
       if (internal[8] > 0)
       {
         begin_diagnostic ();
@@ -6517,23 +6822,23 @@ void unsave (void)
         end_diagnostic (false);
       }
       clear_symbol (q, false);
-      eqtb[q] = mem[save_ptr + 1].hhfield;
-      if (eqtb[q].lhfield % 86 == 41)
+      eqtb[q] = mem[save_ptr + 1].hh;
+      if (eqtb[q].lh % 86 == 41)
       {
         p = eqtb[q].v.RH;
         if (p != 0)
-        mem[p].hhfield.b1 = 0;
+        mem[p].hh.b1 = 0;
       }
     }
-    p = mem[save_ptr].hhfield.v.RH;
+    p = mem[save_ptr].hh.v.RH;
     free_node (save_ptr, 2);
     save_ptr = p;
   }
-  p = mem[save_ptr].hhfield.v.RH;
+  p = mem[save_ptr].hh.v.RH;
   {
-    mem[save_ptr].hhfield.v.RH = avail;
+    mem[save_ptr].hh.v.RH = avail;
     avail = save_ptr;
-        ;
+    ;
 #ifdef STAT
     decr (dyn_used);
 #endif /* STAT */
@@ -6543,40 +6848,47 @@ void unsave (void)
 
 halfword copy_knot (halfword p)
 {
-  halfword Result; halfword q;
+  halfword Result;
+  halfword q;
   unsigned char k;
+
   q = get_node (7);
-  {integer for_end; k = 0;for_end = 6; if (k <= for_end) do
-    mem[q + k] = mem[p + k];
-  while (k++ < for_end);}
+  {integer for_end; k = 0;for_end = 6; if (k <= for_end)
+    do
+      mem[q + k] = mem[p + k];
+    while (k++ < for_end);
+  }
   Result = q;
   return Result;
 }
 
 halfword copy_path (halfword p)
 {
-  halfword Result; halfword q, pp, qq;
+  halfword Result;
+  halfword q, pp, qq;
+
   q = get_node (7);
   qq = q;
   pp = p;
-  while (true) {
-    mem[qq].hhfield.b0 = mem[pp].hhfield.b0;
-    mem[qq].hhfield.b1 = mem[pp].hhfield.b1;
+  while (true)
+  {
+    mem[qq].hh.b0 = mem[pp].hh.b0;
+    mem[qq].hh.b1 = mem[pp].hh.b1;
     mem[qq + 1].cint = mem[pp + 1].cint;
     mem[qq + 2].cint = mem[pp + 2].cint;
     mem[qq + 3].cint = mem[pp + 3].cint;
     mem[qq + 4].cint = mem[pp + 4].cint;
     mem[qq + 5].cint = mem[pp + 5].cint;
     mem[qq + 6].cint = mem[pp + 6].cint;
-    if (mem[pp].hhfield.v.RH == p)
+    if (mem[pp].hh.v.RH == p)
     {
-      mem[qq].hhfield.v.RH = q;
+      mem[qq].hh.v.RH = q;
       Result = q;
       goto lab_exit;
     }
-    mem[qq].hhfield.v.RH = get_node (7);
-    qq = mem[qq].hhfield.v.RH;
-    pp = mem[pp].hhfield.v.RH;
+    mem[qq].hh.v.RH = get_node (7);
+    qq = mem[qq].hh.v.RH;
+    pp = mem[pp].hh.v.RH;
   }
   lab_exit:;
   return Result;
@@ -6584,30 +6896,33 @@ halfword copy_path (halfword p)
 
 halfword htap_ypoc (halfword p)
 {
-  halfword Result; halfword q, pp, qq, rr;
+  halfword Result;
+  halfword q, pp, qq, rr;
+
   q = get_node (7);
   qq = q;
   pp = p;
-  while (true) {
-    mem[qq].hhfield.b1 = mem[pp].hhfield.b0;
-    mem[qq].hhfield.b0 = mem[pp].hhfield.b1;
+  while (true)
+  {
+    mem[qq].hh.b1 = mem[pp].hh.b0;
+    mem[qq].hh.b0 = mem[pp].hh.b1;
     mem[qq + 1].cint = mem[pp + 1].cint;
     mem[qq + 2].cint = mem[pp + 2].cint;
     mem[qq + 5].cint = mem[pp + 3].cint;
     mem[qq + 6].cint = mem[pp + 4].cint;
     mem[qq + 3].cint = mem[pp + 5].cint;
     mem[qq + 4].cint = mem[pp + 6].cint;
-    if (mem[pp].hhfield.v.RH == p)
+    if (mem[pp].hh.v.RH == p)
     {
-      mem[q].hhfield.v.RH = qq;
+      mem[q].hh.v.RH = qq;
       path_tail = pp;
       Result = q;
       goto lab_exit;
     }
     rr = get_node (7);
-    mem[rr].hhfield.v.RH = qq;
+    mem[rr].hh.v.RH = qq;
     qq = rr;
-    pp = mem[pp].hhfield.v.RH;
+    pp = mem[pp].hh.v.RH;
   }
   lab_exit:;
   return Result;
@@ -6615,7 +6930,9 @@ halfword htap_ypoc (halfword p)
 
 fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
 {
-  fraction Result; fraction alpha, beta, num, denom, ff;
+  fraction Result;
+  fraction alpha, beta, num, denom, ff;
+
   alpha = make_fraction (65536L, atension);
   beta = make_fraction (65536L, btension);
   if (alpha <= beta)
@@ -6627,7 +6944,8 @@ fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
     denom = take_fraction (gamma, alpha) + 196608L - beta;
     num = take_fraction (gamma, 805306368L - alpha) + beta;
   }
-  else {
+  else
+  {
     ff = make_fraction (beta, alpha);
     ff = take_fraction (ff, ff);
     beta = take_fraction (beta, ff) / 4096;
@@ -6635,8 +6953,9 @@ fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
     num = take_fraction (gamma, 805306368L - alpha) + beta;
   }
   if (num >= denom + denom + denom + denom)
-  Result = 1073741824L;
-  else Result = make_fraction (num, denom);
+    Result = 1073741824L;
+  else
+    Result = make_fraction (num, denom);
   return Result;
 }
 
@@ -6645,41 +6964,38 @@ void set_controls (halfword p, halfword q, integer k)
   fraction rr, ss;
   scaled lt, rt;
   fraction sine;
+
   lt = abs (mem[q + 4].cint);
   rt = abs (mem[p + 6].cint);
   rr = velocity (st, ct, sf, cf, rt);
   ss = velocity (sf, cf, st, ct, lt);
-  if ((mem[p + 6].cint < 0) || (mem[q + 4].cint < 0)) {
+  if ((mem[p + 6].cint < 0) || (mem[q + 4].cint < 0))
+  {
     if (((st >= 0) && (sf >= 0)) || ((st <= 0) && (sf <= 0)))
     {
-      sine = take_fraction (abs (st), cf) + take_fraction (abs (sf), ct
-   );
+      sine = take_fraction (abs (st), cf) + take_fraction (abs (sf), ct);
       if (sine > 0)
       {
         sine = take_fraction (sine, 268500992L);
-        if (mem[p + 6].cint < 0) {
-
+        if (mem[p + 6].cint < 0)
+        {
           if (ab_vs_cd (abs (sf), 268435456L, rr, sine) < 0)
-          rr = make_fraction (abs (sf), sine);
+            rr = make_fraction (abs (sf), sine);
         }
-        if (mem[q + 4].cint < 0) {
-
+        if (mem[q + 4].cint < 0)
+        {
           if (ab_vs_cd (abs (st), 268435456L, ss, sine) < 0)
-          ss = make_fraction (abs (st), sine);
+            ss = make_fraction (abs (st), sine);
         }
       }
     }
   }
-  mem[p + 5].cint = mem[p + 1].cint + take_fraction (take_fraction (
-  delta_x[k], ct) - take_fraction (delta_y[k], st), rr);
-  mem[p + 6].cint = mem[p + 2].cint + take_fraction (take_fraction (
-  delta_y[k], ct) + take_fraction (delta_x[k], st), rr);
-  mem[q + 3].cint = mem[q + 1].cint - take_fraction (take_fraction (
-  delta_x[k], cf) + take_fraction (delta_y[k], sf), ss);
-  mem[q + 4].cint = mem[q + 2].cint - take_fraction (take_fraction (
-  delta_y[k], cf) - take_fraction (delta_x[k], sf), ss);
-  mem[p].hhfield.b1 = 1;
-  mem[q].hhfield.b0 = 1;
+  mem[p + 5].cint = mem[p + 1].cint + take_fraction (take_fraction (delta_x[k], ct) - take_fraction (delta_y[k], st), rr);
+  mem[p + 6].cint = mem[p + 2].cint + take_fraction (take_fraction (delta_y[k], ct) + take_fraction (delta_x[k], st), rr);
+  mem[q + 3].cint = mem[q + 1].cint - take_fraction (take_fraction (delta_x[k], cf) + take_fraction (delta_y[k], sf), ss);
+  mem[q + 4].cint = mem[q + 2].cint - take_fraction (take_fraction (delta_y[k], cf) - take_fraction (delta_x[k], sf), ss);
+  mem[p].hh.b1 = 1;
+  mem[q].hh.b0 = 1;
 }
 
 void solve_choices (halfword p, halfword q, halfword n)
@@ -6689,226 +7005,235 @@ void solve_choices (halfword p, halfword q, halfword n)
   fraction aa, bb, cc, ff, acc;
   scaled dd, ee;
   scaled lt, rt;
+
   k = 0;
   s = p;
-  while (true) {
-    t = mem[s].hhfield.v.RH;
+  while (true)
+  {
+    t = mem[s].hh.v.RH;
     if (k == 0)
-    switch (mem[s].hhfield.b1)
-    {case 2 :
-      if (mem[t].hhfield.b0 == 2)
+      switch (mem[s].hh.b1)
       {
-        aa = n_arg (delta_x[0], delta_y[0]);
-        n_sin_cos(mem[p + 5].cint - aa);
-        ct = n_cos;
-        st = n_sin;
-        n_sin_cos(mem[q + 3].cint - aa);
-        cf = n_cos;
-        sf = - (integer) n_sin;
-        set_controls (p, q, 0);
-        goto lab_exit;
-      }
-      else {
-        vv[0] = mem[s + 5].cint - n_arg (delta_x[0], delta_y[0])
-        ;
-        if (abs (vv[0]) > 188743680L) {
-          if (vv[0] > 0)
-          vv[0] = vv[0] - 377487360L;
-          else vv[0] = vv[0]+ 377487360L;
-        }
-        uu[0] = 0;
-        ww[0] = 0;
-      }
-      break;
-    case 3 :
-      if (mem[t].hhfield.b0 == 3)
-      {
-        mem[p].hhfield.b1 = 1;
-        mem[q].hhfield.b0 = 1;
-        lt = abs (mem[q + 4].cint);
-        rt = abs (mem[p + 6].cint);
-        if (rt == 65536L)
-        {
-          if (delta_x[0] >= 0)
-          mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0]+ 1) /
-          3);
-          else mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0] -
-          1) / 3);
-          if (delta_y[0] >= 0)
-          mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0]+ 1) /
-          3);
-          else mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0] -
-          1) / 3);
-        }
-        else {
-          ff = make_fraction (65536L, 3 * rt);
-          mem[p + 5].cint = mem[p + 1].cint + take_fraction (delta_x[
-          0], ff);
-          mem[p + 6].cint = mem[p + 2].cint + take_fraction (delta_y[
-          0], ff);
-        }
-        if (lt == 65536L)
-        {
-          if (delta_x[0] >= 0)
-          mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0]+ 1) /
-          3);
-          else mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0] -
-          1) / 3);
-          if (delta_y[0] >= 0)
-          mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0]+ 1) /
-          3);
-          else mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0] -
-          1) / 3);
-        }
-        else {
-          ff = make_fraction (65536L, 3 * lt);
-          mem[q + 3].cint = mem[q + 1].cint - take_fraction (delta_x[
-          0], ff);
-          mem[q + 4].cint = mem[q + 2].cint - take_fraction (delta_y[
-          0], ff);
-        }
-        goto lab_exit;
-      }
-      else {
-        cc = mem[s + 5].cint;
-        lt = abs (mem[t + 4].cint);
-        rt = abs (mem[s + 6].cint);
-        if ((rt == 65536L) && (lt == 65536L))
-        uu[0] = make_fraction (cc + cc + 65536L, cc + 131072L);
-        else uu[0] = curl_ratio (cc, rt, lt);
-        vv[0] = - (integer) take_fraction (psi[1], uu[0]);
-        ww[0] = 0;
-      }
-      break;
-    case 4 :
-      {
-        uu[0] = 0;
-        vv[0] = 0;
-        ww[0] = 268435456L;
-      }
-      break;
-    }
-    else switch (mem[s].hhfield.b0)
-    {case 5 :
-    case 4 :
-      {
-        if (abs (mem[r + 6].cint) == 65536L)
-        {
-          aa = 134217728L;
-          dd = 2 * delta[k];
-        }
-        else {
-          aa = make_fraction (65536L, 3 * abs (mem[r + 6].cint) -
-          65536L);
-          dd = take_fraction (delta[k], 805306368L - make_fraction (65536L
-         , abs (mem[r + 6].cint)));
-        }
-        if (abs (mem[t + 4].cint) == 65536L)
-        {
-          bb = 134217728L;
-          ee = 2 * delta[k - 1];
-        }
-        else {
-          bb = make_fraction (65536L, 3 * abs (mem[t + 4].cint) -
-          65536L);
-          ee = take_fraction (delta[k - 1], 805306368L - make_fraction (
-          65536L, abs (mem[t + 4].cint)));
-        }
-        cc = 268435456L - take_fraction (uu[k - 1], aa);
-        dd = take_fraction (dd, cc);
-        lt = abs (mem[s + 4].cint);
-        rt = abs (mem[s + 6].cint);
-        if (lt != rt) {
-          if (lt < rt)
+        case 2:
+          if (mem[t].hh.b0 == 2)
           {
-            ff = make_fraction (lt, rt);
-            ff = take_fraction (ff, ff);
-            dd = take_fraction (dd, ff);
+            aa = n_arg (delta_x[0], delta_y[0]);
+            n_sin_cos(mem[p + 5].cint - aa);
+            ct = n_cos;
+            st = n_sin;
+            n_sin_cos(mem[q + 3].cint - aa);
+            cf = n_cos;
+            sf = - (integer) n_sin;
+            set_controls (p, q, 0);
+            goto lab_exit;
           }
-          else {
-            ff = make_fraction (rt, lt);
-            ff = take_fraction (ff, ff);
-            ee = take_fraction (ee, ff);
+          else
+          {
+            vv[0] = mem[s + 5].cint - n_arg (delta_x[0], delta_y[0]);
+            if (abs (vv[0]) > 188743680L)
+            {
+              if (vv[0] > 0)
+                vv[0] = vv[0] - 377487360L;
+              else
+                vv[0] = vv[0]+ 377487360L;
+            }
+            uu[0] = 0;
+            ww[0] = 0;
           }
-        }
-        ff = make_fraction (ee, ee + dd);
-        uu[k] = take_fraction (ff, bb);
-        acc = - (integer) take_fraction (psi[k + 1], uu[k]);
-        if (mem[r].hhfield.b1 == 3)
-        {
-          ww[k] = 0;
-          vv[k] = acc - take_fraction (psi[1], 268435456L - ff);
-        }
-        else {
-          ff = make_fraction (268435456L - ff, cc);
-          acc = acc - take_fraction (psi[k], ff);
-          ff = take_fraction (ff, aa);
-          vv[k] = acc - take_fraction (vv[k - 1], ff);
-          if (ww[k - 1] == 0)
-          ww[k] = 0;
-          else ww[k] = - (integer) take_fraction (ww[k - 1], ff);
-        }
-        if (mem[s].hhfield.b0 == 5)
-        {
-          aa = 0;
-          bb = 268435456L;
-          do {
-              decr (k);
-            if (k == 0)
-            k = n;
-            aa = vv[k] - take_fraction (aa, uu[k]);
-            bb = ww[k] - take_fraction (bb, uu[k]);
-          }while (!(k == n));
-          aa = make_fraction (aa, 268435456L - bb);
-          theta[n] = aa;
-          vv[0] = aa;
-          {integer for_end; k = 1;for_end = n - 1; if (k <=
-          for_end) do
-            vv[k] = vv[k]+ take_fraction (aa, ww[k]);
-          while (k++ < for_end);}
-          goto found;
-        }
-      }
-      break;
-    case 3 :
-      {
-        cc = mem[s + 3].cint;
-        lt = abs (mem[s + 4].cint);
-        rt = abs (mem[r + 6].cint);
-        if ((rt == 65536L) && (lt == 65536L))
-        ff = make_fraction (cc + cc + 65536L, cc + 131072L);
-        else ff = curl_ratio (cc, lt, rt);
-        theta[n] = - (integer) make_fraction (take_fraction (vv[n - 1],
-        ff), 268435456L - take_fraction (ff, uu[n - 1]));
-        goto found;
-      }
-      break;
-    case 2 :
-      {
-        theta[n] = mem[s + 3].cint - n_arg (delta_x[n - 1], delta_y[
-        n - 1]);
-        if (abs (theta[n]) > 188743680L) {
-          if (theta[n] > 0)
-          theta[n] = theta[n] - 377487360L;
-          else theta[n] = theta[n]+ 377487360L;
-        }
-        goto found;
-      }
-      break;
+          break;
+        case 3:
+          if (mem[t].hh.b0 == 3)
+          {
+            mem[p].hh.b1 = 1;
+            mem[q].hh.b0 = 1;
+            lt = abs (mem[q + 4].cint);
+            rt = abs (mem[p + 6].cint);
+            if (rt == 65536L)
+            {
+              if (delta_x[0] >= 0)
+                mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0]+ 1) / 3);
+              else
+                mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0] - 1) / 3);
+              if (delta_y[0] >= 0)
+                mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0]+ 1) / 3);
+              else
+                mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0] - 1) / 3);
+            }
+            else
+            {
+              ff = make_fraction (65536L, 3 * rt);
+              mem[p + 5].cint = mem[p + 1].cint + take_fraction (delta_x[0], ff);
+              mem[p + 6].cint = mem[p + 2].cint + take_fraction (delta_y[0], ff);
+            }
+            if (lt == 65536L)
+            {
+              if (delta_x[0] >= 0)
+                mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0]+ 1) / 3);
+              else
+                mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0] - 1) / 3);
+              if (delta_y[0] >= 0)
+                mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0]+ 1) / 3);
+              else
+                mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0] - 1) / 3);
+            }
+            else
+            {
+              ff = make_fraction (65536L, 3 * lt);
+              mem[q + 3].cint = mem[q + 1].cint - take_fraction (delta_x[0], ff);
+              mem[q + 4].cint = mem[q + 2].cint - take_fraction (delta_y[0], ff);
+            }
+            goto lab_exit;
+          }
+          else
+          {
+            cc = mem[s + 5].cint;
+            lt = abs (mem[t + 4].cint);
+            rt = abs (mem[s + 6].cint);
+            if ((rt == 65536L) && (lt == 65536L))
+              uu[0] = make_fraction (cc + cc + 65536L, cc + 131072L);
+            else
+              uu[0] = curl_ratio (cc, rt, lt);
+            vv[0] = - (integer) take_fraction (psi[1], uu[0]);
+            ww[0] = 0;
+          }
+          break;
+        case 4:
+          {
+            uu[0] = 0;
+            vv[0] = 0;
+            ww[0] = 268435456L;
+          }
+          break;
     }
+    else
+      switch (mem[s].hh.b0)
+      {
+        case 5:
+        case 4:
+          {
+            if (abs (mem[r + 6].cint) == 65536L)
+            {
+              aa = 134217728L;
+              dd = 2 * delta[k];
+            }
+            else
+            {
+              aa = make_fraction (65536L, 3 * abs (mem[r + 6].cint) - 65536L);
+              dd = take_fraction (delta[k], 805306368L - make_fraction (65536L, abs (mem[r + 6].cint)));
+            }
+            if (abs (mem[t + 4].cint) == 65536L)
+            {
+              bb = 134217728L;
+              ee = 2 * delta[k - 1];
+            }
+            else
+            {
+              bb = make_fraction (65536L, 3 * abs (mem[t + 4].cint) - 65536L);
+              ee = take_fraction (delta[k - 1], 805306368L - make_fraction (65536L, abs (mem[t + 4].cint)));
+            }
+            cc = 268435456L - take_fraction (uu[k - 1], aa);
+            dd = take_fraction (dd, cc);
+            lt = abs (mem[s + 4].cint);
+            rt = abs (mem[s + 6].cint);
+            if (lt != rt)
+            {
+              if (lt < rt)
+              {
+                ff = make_fraction (lt, rt);
+                ff = take_fraction (ff, ff);
+                dd = take_fraction (dd, ff);
+              }
+              else
+              {
+                ff = make_fraction (rt, lt);
+                ff = take_fraction (ff, ff);
+                ee = take_fraction (ee, ff);
+              }
+            }
+            ff = make_fraction (ee, ee + dd);
+            uu[k] = take_fraction (ff, bb);
+            acc = - (integer) take_fraction (psi[k + 1], uu[k]);
+            if (mem[r].hh.b1 == 3)
+            {
+              ww[k] = 0;
+              vv[k] = acc - take_fraction (psi[1], 268435456L - ff);
+            }
+            else
+            {
+              ff = make_fraction (268435456L - ff, cc);
+              acc = acc - take_fraction (psi[k], ff);
+              ff = take_fraction (ff, aa);
+              vv[k] = acc - take_fraction (vv[k - 1], ff);
+              if (ww[k - 1] == 0)
+                ww[k] = 0;
+              else
+                ww[k] = - (integer) take_fraction (ww[k - 1], ff);
+            }
+            if (mem[s].hh.b0 == 5)
+            {
+              aa = 0;
+              bb = 268435456L;
+              do {
+                decr (k);
+                if (k == 0)
+                  k = n;
+                aa = vv[k] - take_fraction (aa, uu[k]);
+                bb = ww[k] - take_fraction (bb, uu[k]);
+              } while (!(k == n));
+              aa = make_fraction (aa, 268435456L - bb);
+              theta[n] = aa;
+              vv[0] = aa;
+              {integer for_end; k = 1;for_end = n - 1; if (k <= for_end)
+                do
+                  vv[k] = vv[k]+ take_fraction (aa, ww[k]);
+                while (k++ < for_end);
+              }
+              goto found;
+            }
+          }
+          break;
+        case 3 :
+          {
+            cc = mem[s + 3].cint;
+            lt = abs (mem[s + 4].cint);
+            rt = abs (mem[r + 6].cint);
+            if ((rt == 65536L) && (lt == 65536L))
+              ff = make_fraction (cc + cc + 65536L, cc + 131072L);
+            else
+              ff = curl_ratio (cc, lt, rt);
+            theta[n] = - (integer) make_fraction (take_fraction (vv[n - 1], ff), 268435456L - take_fraction (ff, uu[n - 1]));
+            goto found;
+          }
+          break;
+        case 2:
+          {
+            theta[n] = mem[s + 3].cint - n_arg (delta_x[n - 1], delta_y[n - 1]);
+            if (abs (theta[n]) > 188743680L)
+            {
+              if (theta[n] > 0)
+                theta[n] = theta[n] - 377487360L;
+              else
+                theta[n] = theta[n]+ 377487360L;
+            }
+            goto found;
+          }
+          break;
+      }
     r = s;
     s = t;
     incr (k);
   }
-  found: {
-      integer for_end; k = n - 1;for_end = 0; if (k >=
-  for_end) do
-    theta[k] = vv[k] - take_fraction (theta[k + 1], uu[k]);
-  while (k-- > for_end);}
+found: 
+  {
+    integer for_end; k = n - 1;for_end = 0; if (k >= for_end)
+      do
+        theta[k] = vv[k] - take_fraction (theta[k + 1], uu[k]);
+      while (k-- > for_end);
+  }
   s = p;
   k = 0;
   do {
-      t = mem[s].hhfield.v.RH;
+    t = mem[s].hh.v.RH;
     n_sin_cos(theta[k]);
     st = n_sin;
     ct = n_cos;
@@ -6918,7 +7243,7 @@ void solve_choices (halfword p, halfword q, halfword n)
     set_controls (s, t, k);
     incr (k);
     s = t;
-  }while (!(k == n));
+  } while (!(k == n));
   lab_exit:;
 }
 
@@ -6930,29 +7255,32 @@ void make_choices (halfword knots)
   halfword s, t;
   scaled delx, dely;
   fraction sine, cosine;
+
   {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
   if (internal[4] > 0)
-  print_path (knots, 526, true);
+    print_path (knots, 526, true);
   p = knots;
   do {
-      q = mem[p].hhfield.v.RH;
-    if (mem[p + 1].cint == mem[q + 1].cint) {
-      if (mem[p + 2].cint == mem[q + 2].cint) {
-        if (mem[p].hhfield.b1 > 1)
+    q = mem[p].hh.v.RH;
+    if (mem[p + 1].cint == mem[q + 1].cint)
+    {
+      if (mem[p + 2].cint == mem[q + 2].cint)
+      {
+        if (mem[p].hh.b1 > 1)
         {
-          mem[p].hhfield.b1 = 1;
-          if (mem[p].hhfield.b0 == 4)
+          mem[p].hh.b1 = 1;
+          if (mem[p].hh.b0 == 4)
           {
-            mem[p].hhfield.b0 = 3;
+            mem[p].hh.b0 = 3;
             mem[p + 3].cint = 65536L;
           }
-          mem[q].hhfield.b0 = 1;
-          if (mem[q].hhfield.b1 == 4)
+          mem[q].hh.b0 = 1;
+          if (mem[q].hh.b1 == 4)
           {
-            mem[q].hhfield.b1 = 3;
+            mem[q].hh.b1 = 3;
             mem[q + 5].cint = 65536L;
           }
           mem[p + 5].cint = mem[p + 1].cint;
@@ -6963,33 +7291,34 @@ void make_choices (halfword knots)
       }
     }
     p = q;
-  }while (!(p == knots));
+  } while (!(p == knots));
   h = knots;
-  while (true) {
-    if (mem[h].hhfield.b0 != 4)
-    goto done;
-    if (mem[h].hhfield.b1 != 4)
-    goto done;
-    h = mem[h].hhfield.v.RH;
+  while (true)
+  {
+    if (mem[h].hh.b0 != 4)
+      goto done;
+    if (mem[h].hh.b1 != 4)
+      goto done;
+    h = mem[h].hh.v.RH;
     if (h == knots)
     {
-      mem[h].hhfield.b0 = 5;
+      mem[h].hh.b0 = 5;
       goto done;
     }
   }
   done:;
   p = h;
   do {
-      q = mem[p].hhfield.v.RH;
-    if (mem[p].hhfield.b1 >= 2)
+    q = mem[p].hh.v.RH;
+    if (mem[p].hh.b1 >= 2)
     {
-      while ((mem[q].hhfield.b0 == 4) && (mem[q].hhfield.b1 == 4
-   )) q = mem[q].hhfield.v.RH;
+      while ((mem[q].hh.b0 == 4) && (mem[q].hh.b1 == 4))
+        q = mem[q].hh.v.RH;
       k = 0;
       s = p;
       n = pathsize;
       do {
-          t = mem[s].hhfield.v.RH;
+        t = mem[s].hh.v.RH;
         delta_x[k] = mem[t + 1].cint - mem[s + 1].cint;
         delta_y[k] = mem[t + 2].cint - mem[s + 2].cint;
         delta[k] = pyth_add (delta_x[k], delta_y[k]);
@@ -7004,53 +7333,55 @@ void make_choices (halfword knots)
         incr (k);
         s = t;
         if (k == pathsize)
-        overflow (531, pathsize);
+          overflow (531, pathsize);
         if (s == q)
-        n = k;
-      }while (!((k >= n) && (mem[s].hhfield.b0 != 5)));
+          n = k;
+      } while (!((k >= n) && (mem[s].hh.b0 != 5)));
       if (k == n)
-      psi[n] = 0;
-      else psi[k] = psi[1];
-      if (mem[q].hhfield.b0 == 4)
+        psi[n] = 0;
+      else
+        psi[k] = psi[1];
+      if (mem[q].hh.b0 == 4)
       {
         delx = mem[q + 5].cint - mem[q + 1].cint;
         dely = mem[q + 6].cint - mem[q + 2].cint;
         if ((delx == 0) && (dely == 0))
         {
-          mem[q].hhfield.b0 = 3;
+          mem[q].hh.b0 = 3;
           mem[q + 3].cint = 65536L;
         }
-        else {
-          mem[q].hhfield.b0 = 2;
+        else
+        {
+          mem[q].hh.b0 = 2;
           mem[q + 3].cint = n_arg (delx, dely);
         }
       }
-      if ((mem[p].hhfield.b1 == 4) && (mem[p].hhfield.b0 == 1)
-   )
+      if ((mem[p].hh.b1 == 4) && (mem[p].hh.b0 == 1))
       {
         delx = mem[p + 1].cint - mem[p + 3].cint;
         dely = mem[p + 2].cint - mem[p + 4].cint;
         if ((delx == 0) && (dely == 0))
         {
-          mem[p].hhfield.b1 = 3;
+          mem[p].hh.b1 = 3;
           mem[p + 5].cint = 65536L;
         }
-        else {
-          mem[p].hhfield.b1 = 2;
+        else
+        {
+          mem[p].hh.b1 = 2;
           mem[p + 5].cint = n_arg (delx, dely);
         }
       }
       solve_choices (p, q, n);
     }
     p = q;
-  }while (!(p == h));
+  } while (!(p == h));
   if (internal[4] > 0)
-  print_path (knots, 527, true);
+    print_path (knots, 527, true);
   if (arith_error)
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -7060,7 +7391,8 @@ void make_choices (halfword knots)
         print(262);
         print(528);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(528);
       }
@@ -7079,23 +7411,26 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
 {
   integer x1, x2, x3, m, r, y1, y2, y3, n, s, l;
   integer q, t, u, x2a, x3a, y2a, y3a;
+
   if ((xx3 < xx0) || (yy3 < yy0))
-  confusion(109);
+    confusion(109);
   l = 16;
   bisect_ptr = 0;
   x1 = xx1 - xx0;
   x2 = xx2 - xx1;
   x3 = xx3 - xx2;
   if (xx0 >= xicorr)
-  r = (xx0 - xicorr) % 65536L;
-  else r = 65535L - ((- (integer) xx0 + xicorr - 1) % 65536L);
+    r = (xx0 - xicorr) % 65536L;
+  else
+    r = 65535L - ((- (integer) xx0 + xicorr - 1) % 65536L);
   m = (xx3 - xx0 + r) / 65536L;
   y1 = yy1 - yy0;
   y2 = yy2 - yy1;
   y3 = yy3 - yy2;
   if (yy0 >= etacorr)
-  s = (yy0 - etacorr) % 65536L;
-  else s = 65535L - ((- (integer) yy0 + etacorr - 1) % 65536L);
+    s = (yy0 - etacorr) % 65536L;
+  else
+    s = 65535L - ((- (integer) yy0 + etacorr - 1) % 65536L);
   n = (yy3 - yy0 + s) / 65536L;
   if ((xx3 - xx0 >= 268435456L) || (yy3 - yy0 >= 268435456L))
   {
@@ -7109,20 +7444,23 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
     s = half (s + etacorr);
     l = 15;
   }
-  while (true) {
+  while (true)
+  {
     lab_continue: if (m == 0)
-    while (n > 0) {
+    while (n > 0)
+    {
       incr (move_ptr);
       move[move_ptr] = 1;
       decr (n);
     }
     else if (n == 0)
-    move[move_ptr] = move[move_ptr]+ m;
+      move[move_ptr] = move[move_ptr]+ m;
     else if (m + n == 2)
     {
       r = two_to_the[l] - r;
       s = two_to_the[l] - s;
-      while (l < 30) {
+      while (l < 30)
+      {
         x3a = x3;
         x2a = half (x2 + x3 + xicorr);
         x2 = half (x1 + x2 + xicorr);
@@ -7135,7 +7473,8 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
         y3 = half (y2 + y2a + etacorr);
         u = y1 + y2 + y3;
         s = s + s - etacorr;
-        if (t < r) {
+        if (t < r)
+        {
           if (u < s)
           {
             x1 = x3;
@@ -7147,7 +7486,8 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
             y3 = y3a;
             s = s - u;
           }
-          else {
+          else
+          {
             {
               incr (move_ptr);
               move[move_ptr] = 2;
@@ -7174,13 +7514,15 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
         incr (move_ptr);
         move[move_ptr] = 1;
       }
-      else {
+      else
+      {
         incr (move_ptr);
         move[move_ptr] = 2;
       }
       done:;
     }
-    else {
+    else
+    {
       incr (l);
       bisect_stack[bisect_ptr + 10] = l;
       bisect_stack[bisect_ptr + 2] = x3;
@@ -7209,7 +7551,7 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
       goto lab_continue;
     }
     if (bisect_ptr == 0)
-    goto lab_exit;
+      goto lab_exit;
     bisect_ptr = bisect_ptr - 11;
     x1 = bisect_stack[bisect_ptr];
     x2 = bisect_stack[bisect_ptr + 1];
@@ -7230,17 +7572,20 @@ void smooth_moves (integer b, integer t)
 {
   integer k;
   integer a, aa, aaa;
+
   if (t - b >= 3)
   {
     k = b + 2;
     aa = move[k - 1];
     aaa = move[k - 2];
     do {
-        a = move[k];
-      if (abs (a - aa) > 1) {
+      a = move[k];
+      if (abs (a - aa) > 1)
+      {
         if (a > aa)
         {
-          if (aaa >= aa) {
+          if (aaa >= aa)
+          {
             if (a >= move[k + 1])
             {
               incr (move[k - 1]);
@@ -7248,8 +7593,10 @@ void smooth_moves (integer b, integer t)
             }
           }
         }
-        else {
-          if (aaa <= aa) {
+        else
+        {
+          if (aaa <= aa)
+          {
             if (a <= move[k + 1])
             {
               decr (move[k - 1]);
@@ -7261,44 +7608,48 @@ void smooth_moves (integer b, integer t)
       incr (k);
       aaa = aa;
       aa = a;
-    }while (!(k == t));
+    } while (!(k == t));
   }
 }
 
 void init_edges (halfword h)
 {
-  mem[h].hhfield.lhfield = h;
-  mem[h].hhfield.v.RH = h;
-  mem[h + 1].hhfield.lhfield = 8191;
-  mem[h + 1].hhfield.v.RH = 1;
-  mem[h + 2].hhfield.lhfield = 8191;
-  mem[h + 2].hhfield.v.RH = 1;
-  mem[h + 3].hhfield.lhfield = 4096;
-  mem[h + 3].hhfield.v.RH = 0;
+  mem[h].hh.lh = h;
+  mem[h].hh.v.RH = h;
+  mem[h + 1].hh.lh = 8191;
+  mem[h + 1].hh.v.RH = 1;
+  mem[h + 2].hh.lh = 8191;
+  mem[h + 2].hh.v.RH = 1;
+  mem[h + 3].hh.lh = 4096;
+  mem[h + 3].hh.v.RH = 0;
   mem[h + 4].cint = 0;
-  mem[h + 5].hhfield.v.RH = h;
-  mem[h + 5].hhfield.lhfield = 0;
+  mem[h + 5].hh.v.RH = h;
+  mem[h + 5].hh.lh = 0;
 }
 
 void fix_offset (void)
 {
   halfword p, q;
   integer delta;
-  delta = 8 * (mem[cur_edges + 3].hhfield.lhfield - 4096);
-  mem[cur_edges + 3].hhfield.lhfield = 4096;
-  q = mem[cur_edges].hhfield.v.RH;
-  while (q != cur_edges) {
-    p = mem[q + 1].hhfield.v.RH;
-    while (p != memtop) {
-      mem[p].hhfield.lhfield = mem[p].hhfield.lhfield - delta;
-      p = mem[p].hhfield.v.RH;
+
+  delta = 8 * (mem[cur_edges + 3].hh.lh - 4096);
+  mem[cur_edges + 3].hh.lh = 4096;
+  q = mem[cur_edges].hh.v.RH;
+  while (q != cur_edges)
+  {
+    p = mem[q + 1].hh.v.RH;
+    while (p != memtop)
+    {
+      mem[p].hh.lh = mem[p].hh.lh - delta;
+      p = mem[p].hh.v.RH;
     }
-    p = mem[q + 1].hhfield.lhfield;
-    while (p > 1) {
-      mem[p].hhfield.lhfield = mem[p].hhfield.lhfield - delta;
-      p = mem[p].hhfield.v.RH;
+    p = mem[q + 1].hh.lh;
+    while (p > 1)
+    {
+      mem[p].hh.lh = mem[p].hh.lh - delta;
+      p = mem[p].hh.v.RH;
     }
-    q = mem[q].hhfield.v.RH;
+    q = mem[q].hh.v.RH;
   }
 }
 
@@ -7307,107 +7658,112 @@ void edge_prep (integer ml, integer mr, integer nl, integer nr)
   halfword delta;
   integer temp;
   halfword p, q;
+
   ml = ml + 4096;
   mr = mr + 4096;
   nl = nl + 4096;
   nr = nr + 4095;
-  if (ml < mem[cur_edges + 2].hhfield.lhfield)
-  mem[cur_edges + 2].hhfield.lhfield = ml;
-  if (mr > mem[cur_edges + 2].hhfield.v.RH)
-  mem[cur_edges + 2].hhfield.v.RH = mr;
-  temp = mem[cur_edges + 3].hhfield.lhfield - 4096;
-  if (!(abs (mem[cur_edges + 2].hhfield.lhfield + temp - 4096) < 4096
-) || !(abs (mem[cur_edges + 2].hhfield.v.RH + temp - 4096) < 4096)
-)
-  fix_offset ();
-  if (mem[cur_edges].hhfield.v.RH == cur_edges)
+  if (ml < mem[cur_edges + 2].hh.lh)
+    mem[cur_edges + 2].hh.lh = ml;
+  if (mr > mem[cur_edges + 2].hh.v.RH)
+    mem[cur_edges + 2].hh.v.RH = mr;
+  temp = mem[cur_edges + 3].hh.lh - 4096;
+  if (!(abs (mem[cur_edges + 2].hh.lh + temp - 4096) < 4096) || !(abs (mem[cur_edges + 2].hh.v.RH + temp - 4096) < 4096))
+    fix_offset ();
+  if (mem[cur_edges].hh.v.RH == cur_edges)
   {
-    mem[cur_edges + 1].hhfield.lhfield = nr + 1;
-    mem[cur_edges + 1].hhfield.v.RH = nr;
+    mem[cur_edges + 1].hh.lh = nr + 1;
+    mem[cur_edges + 1].hh.v.RH = nr;
   }
-  if (nl < mem[cur_edges + 1].hhfield.lhfield)
+  if (nl < mem[cur_edges + 1].hh.lh)
   {
-    delta = mem[cur_edges + 1].hhfield.lhfield - nl;
-    mem[cur_edges + 1].hhfield.lhfield = nl;
-    p = mem[cur_edges].hhfield.v.RH;
+    delta = mem[cur_edges + 1].hh.lh - nl;
+    mem[cur_edges + 1].hh.lh = nl;
+    p = mem[cur_edges].hh.v.RH;
     do {
-        q = get_node (2);
-      mem[q + 1].hhfield.v.RH = memtop;
-      mem[q + 1].hhfield.lhfield = 1;
-      mem[p].hhfield.lhfield = q;
-      mem[q].hhfield.v.RH = p;
+      q = get_node (2);
+      mem[q + 1].hh.v.RH = memtop;
+      mem[q + 1].hh.lh = 1;
+      mem[p].hh.lh = q;
+      mem[q].hh.v.RH = p;
       p = q;
       decr (delta);
-    }while (!(delta == 0));
-    mem[p].hhfield.lhfield = cur_edges;
-    mem[cur_edges].hhfield.v.RH = p;
-    if (mem[cur_edges + 5].hhfield.v.RH == cur_edges)
-    mem[cur_edges + 5].hhfield.lhfield = nl - 1;
+    } while (!(delta == 0));
+    mem[p].hh.lh = cur_edges;
+    mem[cur_edges].hh.v.RH = p;
+    if (mem[cur_edges + 5].hh.v.RH == cur_edges)
+      mem[cur_edges + 5].hh.lh = nl - 1;
   }
-  if (nr > mem[cur_edges + 1].hhfield.v.RH)
+  if (nr > mem[cur_edges + 1].hh.v.RH)
   {
-    delta = nr - mem[cur_edges + 1].hhfield.v.RH;
-    mem[cur_edges + 1].hhfield.v.RH = nr;
-    p = mem[cur_edges].hhfield.lhfield;
+    delta = nr - mem[cur_edges + 1].hh.v.RH;
+    mem[cur_edges + 1].hh.v.RH = nr;
+    p = mem[cur_edges].hh.lh;
     do {
-        q = get_node (2);
-      mem[q + 1].hhfield.v.RH = memtop;
-      mem[q + 1].hhfield.lhfield = 1;
-      mem[p].hhfield.v.RH = q;
-      mem[q].hhfield.lhfield = p;
+      q = get_node (2);
+      mem[q + 1].hh.v.RH = memtop;
+      mem[q + 1].hh.lh = 1;
+      mem[p].hh.v.RH = q;
+      mem[q].hh.lh = p;
       p = q;
       decr (delta);
-    }while (!(delta == 0));
-    mem[p].hhfield.v.RH = cur_edges;
-    mem[cur_edges].hhfield.lhfield = p;
-    if (mem[cur_edges + 5].hhfield.v.RH == cur_edges)
-    mem[cur_edges + 5].hhfield.lhfield = nr + 1;
+    } while (!(delta == 0));
+    mem[p].hh.v.RH = cur_edges;
+    mem[cur_edges].hh.lh = p;
+    if (mem[cur_edges + 5].hh.v.RH == cur_edges)
+      mem[cur_edges + 5].hh.lh = nr + 1;
   }
 }
 
 halfword copy_edges (halfword h)
 {
-  halfword Result; halfword p, r;
+  halfword Result;
+  halfword p, r;
   halfword hh, pp, qq, rr, ss;
+
   hh = get_node (6);
   mem[hh + 1] = mem[h + 1];
   mem[hh + 2] = mem[h + 2];
   mem[hh + 3] = mem[h + 3];
   mem[hh + 4] = mem[h + 4];
-  mem[hh + 5].hhfield.lhfield = mem[hh + 1].hhfield.v.RH + 1;
-  mem[hh + 5].hhfield.v.RH = hh;
-  p = mem[h].hhfield.v.RH;
+  mem[hh + 5].hh.lh = mem[hh + 1].hh.v.RH + 1;
+  mem[hh + 5].hh.v.RH = hh;
+  p = mem[h].hh.v.RH;
   qq = hh;
-  while (p != h) {
+
+  while (p != h)
+  {
     pp = get_node (2);
-    mem[qq].hhfield.v.RH = pp;
-    mem[pp].hhfield.lhfield = qq;
-    r = mem[p + 1].hhfield.v.RH;
+    mem[qq].hh.v.RH = pp;
+    mem[pp].hh.lh = qq;
+    r = mem[p + 1].hh.v.RH;
     rr = pp + 1;
-    while (r != memtop) {
+    while (r != memtop)
+    {
       ss = get_avail ();
-      mem[rr].hhfield.v.RH = ss;
+      mem[rr].hh.v.RH = ss;
       rr = ss;
-      mem[rr].hhfield.lhfield = mem[r].hhfield.lhfield;
-      r = mem[r].hhfield.v.RH;
+      mem[rr].hh.lh = mem[r].hh.lh;
+      r = mem[r].hh.v.RH;
     }
-    mem[rr].hhfield.v.RH = memtop;
-    r = mem[p + 1].hhfield.lhfield;
+    mem[rr].hh.v.RH = memtop;
+    r = mem[p + 1].hh.lh;
     rr = memtop - 1;
-    while (r > 1) {
+    while (r > 1)
+    {
       ss = get_avail ();
-      mem[rr].hhfield.v.RH = ss;
+      mem[rr].hh.v.RH = ss;
       rr = ss;
-      mem[rr].hhfield.lhfield = mem[r].hhfield.lhfield;
-      r = mem[r].hhfield.v.RH;
+      mem[rr].hh.lh = mem[r].hh.lh;
+      r = mem[r].hh.v.RH;
     }
-    mem[rr].hhfield.v.RH = r;
-    mem[pp + 1].hhfield.lhfield = mem[memtop - 1].hhfield.v.RH;
-    p = mem[p].hhfield.v.RH;
+    mem[rr].hh.v.RH = r;
+    mem[pp + 1].hh.lh = mem[memtop - 1].hh.v.RH;
+    p = mem[p].hh.v.RH;
     qq = pp;
   }
-  mem[qq].hhfield.v.RH = hh;
-  mem[hh].hhfield.lhfield = qq;
+  mem[qq].hh.v.RH = hh;
+  mem[hh].hh.lh = qq;
   Result = hh;
   return Result;
 }
@@ -7415,21 +7771,20 @@ halfword copy_edges (halfword h)
 void reflect_edges (void)
 {
   halfword p, q, r;
-  p = mem[cur_edges + 1].hhfield.lhfield;
-  mem[cur_edges + 1].hhfield.lhfield = 8191 - mem[cur_edges + 1]
-  .hhfield.v.RH;
-  mem[cur_edges + 1].hhfield.v.RH = 8191 - p;
-  mem[cur_edges + 5].hhfield.lhfield = 8191 - mem[cur_edges + 5]
-  .hhfield.lhfield;
-  p = mem[cur_edges].hhfield.v.RH;
+
+  p = mem[cur_edges + 1].hh.lh;
+  mem[cur_edges + 1].hh.lh = 8191 - mem[cur_edges + 1].hh.v.RH;
+  mem[cur_edges + 1].hh.v.RH = 8191 - p;
+  mem[cur_edges + 5].hh.lh = 8191 - mem[cur_edges + 5].hh.lh;
+  p = mem[cur_edges].hh.v.RH;
   q = cur_edges;
   do {
-      r = mem[p].hhfield.v.RH;
-    mem[p].hhfield.v.RH = q;
-    mem[q].hhfield.lhfield = p;
+    r = mem[p].hh.v.RH;
+    mem[p].hh.v.RH = q;
+    mem[q].hh.lh = p;
     q = p;
     p = r;
-  }while (!(q == cur_edges));
+  } while (!(q == cur_edges));
   mem[cur_edges + 4].cint = 0;
 }
 
@@ -7437,31 +7792,33 @@ void x_reflect_edges (void)
 {
   halfword p, q, r, s;
   integer m;
-  p = mem[cur_edges + 2].hhfield.lhfield;
-  mem[cur_edges + 2].hhfield.lhfield = 8192 - mem[cur_edges + 2]
-  .hhfield.v.RH;
-  mem[cur_edges + 2].hhfield.v.RH = 8192 - p;
-  m = (4096 + mem[cur_edges + 3].hhfield.lhfield) * 8 + 8;
-  mem[cur_edges + 3].hhfield.lhfield = 4096;
-  p = mem[cur_edges].hhfield.v.RH;
+
+  p = mem[cur_edges + 2].hh.lh;
+  mem[cur_edges + 2].hh.lh = 8192 - mem[cur_edges + 2].hh.v.RH;
+  mem[cur_edges + 2].hh.v.RH = 8192 - p;
+  m = (4096 + mem[cur_edges + 3].hh.lh) * 8 + 8;
+  mem[cur_edges + 3].hh.lh = 4096;
+  p = mem[cur_edges].hh.v.RH;
   do {
-      q = mem[p + 1].hhfield.v.RH;
+    q = mem[p + 1].hh.v.RH;
     r = memtop;
-    while (q != memtop) {
-      s = mem[q].hhfield.v.RH;
-      mem[q].hhfield.v.RH = r;
+    while (q != memtop)
+    {
+      s = mem[q].hh.v.RH;
+      mem[q].hh.v.RH = r;
       r = q;
-      mem[r].hhfield.lhfield = m - mem[q].hhfield.lhfield;
+      mem[r].hh.lh = m - mem[q].hh.lh;
       q = s;
     }
-    mem[p + 1].hhfield.v.RH = r;
-    q = mem[p + 1].hhfield.lhfield;
-    while (q > 1) {
-      mem[q].hhfield.lhfield = m - mem[q].hhfield.lhfield;
-      q = mem[q].hhfield.v.RH;
+    mem[p + 1].hh.v.RH = r;
+    q = mem[p + 1].hh.lh;
+    while (q > 1)
+    {
+      mem[q].hh.lh = m - mem[q].hh.lh;
+      q = mem[q].hh.v.RH;
     }
-    p = mem[p].hhfield.v.RH;
-  }while (!(p == cur_edges));
+    p = mem[p].hh.v.RH;
+  } while (!(p == cur_edges));
   mem[cur_edges + 4].cint = 0;
 }
 
@@ -7469,12 +7826,12 @@ void y_scale_edges (integer s)
 {
   halfword p, q, pp, r, rr, ss;
   integer t;
-  if ((s * (mem[cur_edges + 1].hhfield.v.RH - 4095) >= 4096) || (s *
-  (mem[cur_edges + 1].hhfield.lhfield - 4096) <= -4096))
+
+  if ((s * (mem[cur_edges + 1].hh.v.RH - 4095) >= 4096) || (s * (mem[cur_edges + 1].hh.lh - 4096) <= -4096))
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -7484,7 +7841,8 @@ void y_scale_edges (integer s)
         print(262);
         print(535);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(535);
       }
@@ -7497,48 +7855,48 @@ void y_scale_edges (integer s)
     }
     put_get_error ();
   }
-  else {
-    mem[cur_edges + 1].hhfield.v.RH = s * (mem[cur_edges + 1].hhfield
-  .v.RH - 4095) + 4095;
-    mem[cur_edges + 1].hhfield.lhfield = s * (mem[cur_edges + 1]
-    .hhfield.lhfield - 4096) + 4096;
+  else
+  {
+    mem[cur_edges + 1].hh.v.RH = s * (mem[cur_edges + 1].hh.v.RH - 4095) + 4095;
+    mem[cur_edges + 1].hh.lh = s * (mem[cur_edges + 1].hh.lh - 4096) + 4096;
     p = cur_edges;
     do {
-        q = p;
-      p = mem[p].hhfield.v.RH;
+      q = p;
+      p = mem[p].hh.v.RH;
       {integer for_end; t = 2;for_end = s; if (t <= for_end) do
         {
           pp = get_node (2);
-          mem[q].hhfield.v.RH = pp;
-          mem[p].hhfield.lhfield = pp;
-          mem[pp].hhfield.v.RH = p;
-          mem[pp].hhfield.lhfield = q;
+          mem[q].hh.v.RH = pp;
+          mem[p].hh.lh = pp;
+          mem[pp].hh.v.RH = p;
+          mem[pp].hh.lh = q;
           q = pp;
-          r = mem[p + 1].hhfield.v.RH;
+          r = mem[p + 1].hh.v.RH;
           rr = pp + 1;
-          while (r != memtop) {
+          while (r != memtop)
+          {
             ss = get_avail ();
-            mem[rr].hhfield.v.RH = ss;
+            mem[rr].hh.v.RH = ss;
             rr = ss;
-            mem[rr].hhfield.lhfield = mem[r].hhfield.lhfield;
-            r = mem[r].hhfield.v.RH;
+            mem[rr].hh.lh = mem[r].hh.lh;
+            r = mem[r].hh.v.RH;
           }
-          mem[rr].hhfield.v.RH = memtop;
-          r = mem[p + 1].hhfield.lhfield;
+          mem[rr].hh.v.RH = memtop;
+          r = mem[p + 1].hh.lh;
           rr = memtop - 1;
-          while (r > 1) {
+          while (r > 1)
+          {
             ss = get_avail ();
-            mem[rr].hhfield.v.RH = ss;
+            mem[rr].hh.v.RH = ss;
             rr = ss;
-            mem[rr].hhfield.lhfield = mem[r].hhfield.lhfield;
-            r = mem[r].hhfield.v.RH;
+            mem[rr].hh.lh = mem[r].hh.lh;
+            r = mem[r].hh.v.RH;
           }
-          mem[rr].hhfield.v.RH = r;
-          mem[pp + 1].hhfield.lhfield = mem[memtop - 1].hhfield.v.RH
-        ;
-        }
-      while (t++ < for_end);}
-    }while (!(mem[p].hhfield.v.RH == cur_edges));
+          mem[rr].hh.v.RH = r;
+          mem[pp + 1].hh.lh = mem[memtop - 1].hh.v.RH;
+        } while (t++ < for_end);
+      }
+    } while (!(mem[p].hh.v.RH == cur_edges));
     mem[cur_edges + 4].cint = 0;
   }
 }
@@ -7549,12 +7907,12 @@ void x_scale_edges (integer s)
   unsigned short t;
   unsigned char w;
   integer delta;
-  if ((s * (mem[cur_edges + 2].hhfield.v.RH - 4096) >= 4096) || (s *
-  (mem[cur_edges + 2].hhfield.lhfield - 4096) <= -4096))
+
+  if ((s * (mem[cur_edges + 2].hh.v.RH - 4096) >= 4096) || (s * (mem[cur_edges + 2].hh.lh - 4096) <= -4096))
   {
     {
       if (interaction == 3)
-;
+        ;
       if ((filelineerrorstylep && !(cur_input .name_field == 0)))
       {
         print_nl(261);
@@ -7564,7 +7922,8 @@ void x_scale_edges (integer s)
         print(262);
         print(535);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(535);
       }
@@ -7577,33 +7936,32 @@ void x_scale_edges (integer s)
     }
     put_get_error ();
   }
-  else if ((mem[cur_edges + 2].hhfield.v.RH != 4096) || (mem[
-  cur_edges + 2].hhfield.lhfield != 4096))
+  else if ((mem[cur_edges + 2].hh.v.RH != 4096) || (mem[cur_edges + 2].hh.lh != 4096))
   {
-    mem[cur_edges + 2].hhfield.v.RH = s * (mem[cur_edges + 2].hhfield
-  .v.RH - 4096) + 4096;
-    mem[cur_edges + 2].hhfield.lhfield = s * (mem[cur_edges + 2]
-    .hhfield.lhfield - 4096) + 4096;
-    delta = 8 * (4096 - s * mem[cur_edges + 3].hhfield.lhfield) + 0;
-    mem[cur_edges + 3].hhfield.lhfield = 4096;
-    q = mem[cur_edges].hhfield.v.RH;
+    mem[cur_edges + 2].hh.v.RH = s * (mem[cur_edges + 2].hh.v.RH - 4096) + 4096;
+    mem[cur_edges + 2].hh.lh = s * (mem[cur_edges + 2].hh.lh - 4096) + 4096;
+    delta = 8 * (4096 - s * mem[cur_edges + 3].hh.lh) + 0;
+    mem[cur_edges + 3].hh.lh = 4096;
+    q = mem[cur_edges].hh.v.RH;
     do {
-        p = mem[q + 1].hhfield.v.RH;
-      while (p != memtop) {
-        t = mem[p].hhfield.lhfield;
+      p = mem[q + 1].hh.v.RH;
+      while (p != memtop)
+      {
+        t = mem[p].hh.lh;
         w = t % 8;
-        mem[p].hhfield.lhfield = (t - w) * s + w + delta;
-        p = mem[p].hhfield.v.RH;
+        mem[p].hh.lh = (t - w) * s + w + delta;
+        p = mem[p].hh.v.RH;
       }
-      p = mem[q + 1].hhfield.lhfield;
-      while (p > 1) {
-        t = mem[p].hhfield.lhfield;
+      p = mem[q + 1].hh.lh;
+      while (p > 1)
+      {
+        t = mem[p].hh.lh;
         w = t % 8;
-        mem[p].hhfield.lhfield = (t - w) * s + w + delta;
-        p = mem[p].hhfield.v.RH;
+        mem[p].hh.lh = (t - w) * s + w + delta;
+        p = mem[p].hh.v.RH;
       }
-      q = mem[q].hhfield.v.RH;
-    }while (!(q == cur_edges));
+      q = mem[q].hh.v.RH;
+    } while (!(q == cur_edges));
     mem[cur_edges + 4].cint = 0;
   }
 }
@@ -7611,46 +7969,48 @@ void x_scale_edges (integer s)
 void negate_edges (halfword h)
 {
   halfword p, q, r, s, t, u;
-  p = mem[h].hhfield.v.RH;
-  while (p != h) {
-    q = mem[p + 1].hhfield.lhfield;
-    while (q > 1) {
-      mem[q].hhfield.lhfield = 8 - 2 * ((mem[q].hhfield.lhfield)
-      % 8) + mem[q].hhfield.lhfield;
-      q = mem[q].hhfield.v.RH;
+
+  p = mem[h].hh.v.RH;
+  while (p != h)
+  {
+    q = mem[p + 1].hh.lh;
+    while (q > 1)
+    {
+      mem[q].hh.lh = 8 - 2 * ((mem[q].hh.lh) % 8) + mem[q].hh.lh;
+      q = mem[q].hh.v.RH;
     }
-    q = mem[p + 1].hhfield.v.RH;
+    q = mem[p + 1].hh.v.RH;
     if (q != memtop)
     {
       do {
-          mem[q].hhfield.lhfield = 8 - 2 * ((mem[q].hhfield
-        .lhfield) % 8) + mem[q].hhfield.lhfield;
-        q = mem[q].hhfield.v.RH;
-      }while (!(q == memtop));
+        mem[q].hh.lh = 8 - 2 * ((mem[q].hh.lh) % 8) + mem[q].hh.lh;
+        q = mem[q].hh.v.RH;
+      } while (!(q == memtop));
       u = p + 1;
-      q = mem[u].hhfield.v.RH;
+      q = mem[u].hh.v.RH;
       r = q;
-      s = mem[r].hhfield.v.RH;
-      while (true) if (mem[s].hhfield.lhfield > mem[r].hhfield
-    .lhfield)
-      {
-        mem[u].hhfield.v.RH = q;
-        if (s == memtop)
-        goto done;
-        u = r;
-        q = s;
-        r = q;
-        s = mem[r].hhfield.v.RH;
-      }
-      else {
-        t = s;
-        s = mem[t].hhfield.v.RH;
-        mem[t].hhfield.v.RH = q;
-        q = t;
-      }
-      done: mem[r].hhfield.v.RH = memtop;
+      s = mem[r].hh.v.RH;
+      while (true)
+        if (mem[s].hh.lh > mem[r].hh.lh)
+        {
+          mem[u].hh.v.RH = q;
+          if (s == memtop)
+            goto done;
+          u = r;
+          q = s;
+          r = q;
+          s = mem[r].hh.v.RH;
+        }
+        else
+        {
+          t = s;
+          s = mem[t].hh.v.RH;
+          mem[t].hh.v.RH = q;
+          q = t;
+        }
+        done: mem[r].hh.v.RH = memtop;
     }
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   mem[h + 4].cint = 0;
 }
@@ -7659,38 +8019,42 @@ void sort_edges (halfword h)
 {
   halfword k;
   halfword p, q, r, s;
-  r = mem[h + 1].hhfield.lhfield;
-  mem[h + 1].hhfield.lhfield = 0;
-  p = mem[r].hhfield.v.RH;
-  mem[r].hhfield.v.RH = memtop;
-  mem[memtop - 1].hhfield.v.RH = r;
-  while (p > 1) {
-    k = mem[p].hhfield.lhfield;
+
+  r = mem[h + 1].hh.lh;
+  mem[h + 1].hh.lh = 0;
+  p = mem[r].hh.v.RH;
+  mem[r].hh.v.RH = memtop;
+  mem[memtop - 1].hh.v.RH = r;
+  while (p > 1)
+  {
+    k = mem[p].hh.lh;
     q = memtop - 1;
     do {
-        r = q;
-      q = mem[r].hhfield.v.RH;
-    }while (!(k <= mem[q].hhfield.lhfield));
-    mem[r].hhfield.v.RH = p;
-    r = mem[p].hhfield.v.RH;
-    mem[p].hhfield.v.RH = q;
+      r = q;
+      q = mem[r].hh.v.RH;
+    } while (!(k <= mem[q].hh.lh));
+    mem[r].hh.v.RH = p;
+    r = mem[p].hh.v.RH;
+    mem[p].hh.v.RH = q;
     p = r;
   }
   {
     r = h + 1;
-    q = mem[r].hhfield.v.RH;
-    p = mem[memtop - 1].hhfield.v.RH;
-    while (true) {
-      k = mem[p].hhfield.lhfield;
-      while (k > mem[q].hhfield.lhfield) {
+    q = mem[r].hh.v.RH;
+    p = mem[memtop - 1].hh.v.RH;
+    while (true)
+    {
+      k = mem[p].hh.lh;
+      while (k > mem[q].hh.lh)
+      {
         r = q;
-        q = mem[r].hhfield.v.RH;
+        q = mem[r].hh.v.RH;
       }
-      mem[r].hhfield.v.RH = p;
-      s = mem[p].hhfield.v.RH;
-      mem[p].hhfield.v.RH = q;
+      mem[r].hh.v.RH = p;
+      s = mem[p].hh.v.RH;
+      mem[p].hh.v.RH = q;
       if (s == memtop)
-      goto done;
+        goto done;
       r = p;
       p = s;
     }
@@ -7709,27 +8073,31 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
   integer prevw;
   halfword n, minn, maxn;
   halfword mind, maxd;
+
   mind = 268435455L;
   maxd = 0;
   minn = 268435455L;
   maxn = 0;
-  p = mem[cur_edges].hhfield.v.RH;
-  n = mem[cur_edges + 1].hhfield.lhfield;
-  while (p != cur_edges) {
-    if (mem[p + 1].hhfield.lhfield > 1)
-    sort_edges (p);
-    if (mem[p + 1].hhfield.v.RH != memtop)
+  p = mem[cur_edges].hh.v.RH;
+  n = mem[cur_edges + 1].hh.lh;
+  while (p != cur_edges)
+  {
+    if (mem[p + 1].hh.lh > 1)
+      sort_edges (p);
+    if (mem[p + 1].hh.v.RH != memtop)
     {
       r = memtop - 1;
-      q = mem[p + 1].hhfield.v.RH;
+      q = mem[p + 1].hh.v.RH;
       ww = 0;
       m = 1000000L;
       prevw = 0;
-      while (true) {
+      while (true)
+      {
         if (q == memtop)
-        mm = 1000000L;
-        else {
-          d = mem[q].hhfield.lhfield;
+          mm = 1000000L;
+        else
+        {
+          d = mem[q].hh.lh;
           mm = d / 8;
           ww = ww + (d % 8) - 4;
         }
@@ -7738,84 +8106,88 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
           if (w != prevw)
           {
             s = get_avail ();
-            mem[r].hhfield.v.RH = s;
-            mem[s].hhfield.lhfield = 8 * m + 4 + w - prevw;
+            mem[r].hh.v.RH = s;
+            mem[s].hh.lh = 8 * m + 4 + w - prevw;
             r = s;
             prevw = w;
           }
           if (q == memtop)
-          goto done;
+            goto done;
         }
         m = mm;
-        if (ww >= wlo) {
-          if (ww <= whi)
-          w = win;
-          else w = wout;
-        }
-        else w = wout;
-        s = mem[q].hhfield.v.RH;
+        if (ww >= wlo)
         {
-          mem[q].hhfield.v.RH = avail;
+          if (ww <= whi)
+            w = win;
+          else
+            w = wout;
+        }
+        else
+          w = wout;
+        s = mem[q].hh.v.RH;
+        {
+          mem[q].hh.v.RH = avail;
           avail = q;
-        ;
+          ;
 #ifdef STAT
           decr (dyn_used);
 #endif /* STAT */
         }
         q = s;
       }
-      done: mem[r].hhfield.v.RH = memtop;
-      mem[p + 1].hhfield.v.RH = mem[memtop - 1].hhfield.v.RH;
+      done: mem[r].hh.v.RH = memtop;
+      mem[p + 1].hh.v.RH = mem[memtop - 1].hh.v.RH;
       if (r != memtop - 1)
       {
         if (minn == 268435455L)
-        minn = n;
+          minn = n;
         maxn = n;
-        if (mind > mem[mem[memtop - 1].hhfield.v.RH].hhfield
-        .lhfield)
-        mind = mem[mem[memtop - 1].hhfield.v.RH].hhfield.lhfield;
-        if (maxd < mem[r].hhfield.lhfield)
-        maxd = mem[r].hhfield.lhfield;
+        if (mind > mem[mem[memtop - 1].hh.v.RH].hh.lh)
+          mind = mem[mem[memtop - 1].hh.v.RH].hh.lh;
+        if (maxd < mem[r].hh.lh)
+          maxd = mem[r].hh.lh;
       }
     }
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
     incr (n);
   }
   if (minn > maxn)
   {
-    p = mem[cur_edges].hhfield.v.RH;
-    while (p != cur_edges) {
-      q = mem[p].hhfield.v.RH;
+    p = mem[cur_edges].hh.v.RH;
+    while (p != cur_edges)
+    {
+      q = mem[p].hh.v.RH;
       free_node (p, 2);
       p = q;
     }
     init_edges (cur_edges);
   }
-  else {
-    n = mem[cur_edges + 1].hhfield.lhfield;
-    mem[cur_edges + 1].hhfield.lhfield = minn;
-    while (minn > n) {
-      p = mem[cur_edges].hhfield.v.RH;
-      mem[cur_edges].hhfield.v.RH = mem[p].hhfield.v.RH;
-      mem[mem[p].hhfield.v.RH].hhfield.lhfield = cur_edges;
+  else
+  {
+    n = mem[cur_edges + 1].hh.lh;
+    mem[cur_edges + 1].hh.lh = minn;
+    while (minn > n)
+    {
+      p = mem[cur_edges].hh.v.RH;
+      mem[cur_edges].hh.v.RH = mem[p].hh.v.RH;
+      mem[mem[p].hh.v.RH].hh.lh = cur_edges;
       free_node (p, 2);
       incr (n);
     }
-    n = mem[cur_edges + 1].hhfield.v.RH;
-    mem[cur_edges + 1].hhfield.v.RH = maxn;
-    mem[cur_edges + 5].hhfield.lhfield = maxn + 1;
-    mem[cur_edges + 5].hhfield.v.RH = cur_edges;
-    while (maxn < n) {
-      p = mem[cur_edges].hhfield.lhfield;
-      mem[cur_edges].hhfield.lhfield = mem[p].hhfield.lhfield;
-      mem[mem[p].hhfield.lhfield].hhfield.v.RH = cur_edges;
+    n = mem[cur_edges + 1].hh.v.RH;
+    mem[cur_edges + 1].hh.v.RH = maxn;
+    mem[cur_edges + 5].hh.lh = maxn + 1;
+    mem[cur_edges + 5].hh.v.RH = cur_edges;
+    while (maxn < n)
+    {
+      p = mem[cur_edges].hh.lh;
+      mem[cur_edges].hh.lh = mem[p].hh.lh;
+      mem[mem[p].hh.lh].hh.v.RH = cur_edges;
       free_node (p, 2);
       decr (n);
     }
-    mem[cur_edges + 2].hhfield.lhfield = ((mind) / 8) - mem[cur_edges
-    + 3].hhfield.lhfield + 4096;
-    mem[cur_edges + 2].hhfield.v.RH = ((maxd) / 8) - mem[cur_edges +
-    3].hhfield.lhfield + 4096;
+    mem[cur_edges + 2].hh.lh = ((mind) / 8) - mem[cur_edges + 3].hh.lh + 4096;
+    mem[cur_edges + 2].hh.v.RH = ((maxd) / 8) - mem[cur_edges + 3].hh.lh + 4096;
   }
   mem[cur_edges + 4].cint = 0;
 }
@@ -7835,97 +8207,106 @@ void xy_swap_edges (void)
   integer extras;
   schar xw;
   integer k;
-  mspread = mem[cur_edges + 2].hhfield.v.RH - mem[cur_edges + 2]
-  .hhfield.lhfield;
+
+  mspread = mem[cur_edges + 2].hh.v.RH - mem[cur_edges + 2].hh.lh;
   if (mspread > move_size)
-  overflow (540, move_size);
-  {integer for_end; j = 0;for_end = mspread; if (j <= for_end)
-  do
-    move[j] = memtop;
-  while (j++ < for_end);}
+    overflow (540, move_size);
+  {
+    integer for_end; j = 0;for_end = mspread;
+    if (j <= for_end)
+      do
+        move[j] = memtop;
+      while (j++ < for_end);
+  }
   p = get_node (2);
-  mem[p + 1].hhfield.v.RH = memtop;
-  mem[p + 1].hhfield.lhfield = 0;
-  mem[p].hhfield.lhfield = cur_edges;
-  mem[mem[cur_edges].hhfield.v.RH].hhfield.lhfield = p;
+  mem[p + 1].hh.v.RH = memtop;
+  mem[p + 1].hh.lh = 0;
+  mem[p].hh.lh = cur_edges;
+  mem[mem[cur_edges].hh.v.RH].hh.lh = p;
   p = get_node (2);
-  mem[p + 1].hhfield.v.RH = memtop;
-  mem[p].hhfield.lhfield = mem[cur_edges].hhfield.lhfield;
-  mmagic = mem[cur_edges + 2].hhfield.lhfield + mem[cur_edges + 3]
-  .hhfield.lhfield - 4096;
-  nmagic = 8 * mem[cur_edges + 1].hhfield.v.RH + 12;
+  mem[p + 1].hh.v.RH = memtop;
+  mem[p].hh.lh = mem[cur_edges].hh.lh;
+  mmagic = mem[cur_edges + 2].hh.lh + mem[cur_edges + 3].hh.lh - 4096;
+  nmagic = 8 * mem[cur_edges + 1].hh.v.RH + 12;
   do {
-      q = mem[p].hhfield.lhfield;
-    if (mem[q + 1].hhfield.lhfield > 1)
-    sort_edges (q);
-    r = mem[p + 1].hhfield.v.RH;
+    q = mem[p].hh.lh;
+    if (mem[q + 1].hh.lh > 1)
+     sort_edges (q);
+    r = mem[p + 1].hh.v.RH;
     free_node (p, 2);
     p = r;
-    pd = mem[p].hhfield.lhfield;
+    pd = mem[p].hh.lh;
     pm = pd / 8;
-    r = mem[q + 1].hhfield.v.RH;
-    rd = mem[r].hhfield.lhfield;
+    r = mem[q + 1].hh.v.RH;
+    rd = mem[r].hh.lh;
     rm = rd / 8;
     w = 0;
-    while (true) {
+    while (true)
+    {
       if (pm < rm)
-      mm = pm;
-      else mm = rm;
-      if (w != 0) {
+        mm = pm;
+      else
+        mm = rm;
+      if (w != 0)
+      {
         if (m != mm)
         {
           if (mm - mmagic >= move_size)
-          confusion(510);
+            confusion(510);
           extras = (abs (w) - 1) / 3;
           if (extras > 0)
           {
             if (w > 0)
-            xw = 3;
-            else xw = -3;
+              xw = 3;
+            else
+              xw = -3;
             ww = w - extras * xw;
           }
-          else ww = w;
+          else
+            ww = w;
           do {
-              j = m - mmagic;
-            {integer for_end; k = 1;for_end = extras; if (k <=
-            for_end) do
-              {
-                s = get_avail ();
-                mem[s].hhfield.lhfield = nmagic + xw;
-                mem[s].hhfield.v.RH = move[j];
-                move[j] = s;
-              }
-            while (k++ < for_end);}
+            j = m - mmagic;
+            {
+              integer for_end; k = 1;for_end = extras;
+              if (k <= for_end)
+                do {
+                  s = get_avail ();
+                  mem[s].hh.lh = nmagic + xw;
+                  mem[s].hh.v.RH = move[j];
+                  move[j] = s;
+                } while (k++ < for_end);
+            }
             s = get_avail ();
-            mem[s].hhfield.lhfield = nmagic + ww;
-            mem[s].hhfield.v.RH = move[j];
+            mem[s].hh.lh = nmagic + ww;
+            mem[s].hh.v.RH = move[j];
             move[j] = s;
             incr (m);
-          }while (!(m == mm));
+          } while (!(m == mm));
         }
       }
       if (pd < rd)
       {
         dw = (pd % 8) - 4;
-        s = mem[p].hhfield.v.RH;
+        s = mem[p].hh.v.RH;
         {
-          mem[p].hhfield.v.RH = avail;
+          mem[p].hh.v.RH = avail;
           avail = p;
-        ;
+          ;
 #ifdef STAT
           decr (dyn_used);
 #endif /* STAT */
         }
         p = s;
-        pd = mem[p].hhfield.lhfield;
+        pd = mem[p].hh.lh;
         pm = pd / 8;
       }
-      else {
+      else
+      {
         if (r == memtop)
-        goto done;
+          goto done;
         dw = - (integer) ((rd % 8) - 4);
-        r = mem[r].hhfield.v.RH;
-        rd = mem[r].hhfield.lhfield;
+        r = mem[r].hh.v.RH;
+        rd = mem[r].hh.lh;
         rm = rd / 8;
       }
       m = mm;
@@ -7934,39 +8315,39 @@ void xy_swap_edges (void)
     done:;
     p = q;
     nmagic = nmagic - 8;
-  }while (!(mem[p].hhfield.lhfield == cur_edges));
+  } while (!(mem[p].hh.lh == cur_edges));
   free_node (p, 2);
   move[mspread] = 0;
   j = 0;
-  while (move[j] == memtop) incr (j);
+  while (move[j] == memtop)
+    incr (j);
   if (j == mspread)
-  init_edges (cur_edges);
-  else {
-    mm = mem[cur_edges + 2].hhfield.lhfield;
-    mem[cur_edges + 2].hhfield.lhfield = mem[cur_edges + 1].hhfield
-  .lhfield;
-    mem[cur_edges + 2].hhfield.v.RH = mem[cur_edges + 1].hhfield.v.RH
-    + 1;
-    mem[cur_edges + 3].hhfield.lhfield = 4096;
+    init_edges (cur_edges);
+  else
+  {
+    mm = mem[cur_edges + 2].hh.lh;
+    mem[cur_edges + 2].hh.lh = mem[cur_edges + 1].hh.lh;
+    mem[cur_edges + 2].hh.v.RH = mem[cur_edges + 1].hh.v.RH + 1;
+    mem[cur_edges + 3].hh.lh = 4096;
     jj = mspread - 1;
-    while (move[jj] == memtop) decr (jj);
-    mem[cur_edges + 1].hhfield.lhfield = j + mm;
-    mem[cur_edges + 1].hhfield.v.RH = jj + mm;
+    while (move[jj] == memtop)
+      decr (jj);
+    mem[cur_edges + 1].hh.lh = j + mm;
+    mem[cur_edges + 1].hh.v.RH = jj + mm;
     q = cur_edges;
     do {
-        p = get_node (2);
-      mem[q].hhfield.v.RH = p;
-      mem[p].hhfield.lhfield = q;
-      mem[p + 1].hhfield.v.RH = move[j];
-      mem[p + 1].hhfield.lhfield = 0;
+      p = get_node (2);
+      mem[q].hh.v.RH = p;
+      mem[p].hh.lh = q;
+      mem[p + 1].hh.v.RH = move[j];
+      mem[p + 1].hh.lh = 0;
       incr (j);
       q = p;
-    }while (!(j > jj));
-    mem[q].hhfield.v.RH = cur_edges;
-    mem[cur_edges].hhfield.lhfield = q;
-    mem[cur_edges + 5].hhfield.lhfield = mem[cur_edges + 1].hhfield
-  .v.RH + 1;
-    mem[cur_edges + 5].hhfield.v.RH = cur_edges;
+    } while (!(j > jj));
+    mem[q].hh.v.RH = cur_edges;
+    mem[cur_edges].hh.lh = q;
+    mem[cur_edges + 5].hh.lh = mem[cur_edges + 1].hh.v.RH + 1;
+    mem[cur_edges + 5].hh.v.RH = cur_edges;
     mem[cur_edges + 4].cint = 0;
   }
 }
@@ -7977,111 +8358,118 @@ void merge_edges (halfword h)
   integer n;
   halfword k;
   integer delta;
-  if (mem[h].hhfield.v.RH != h)
+
+  if (mem[h].hh.v.RH != h)
   {
-    if ((mem[h + 2].hhfield.lhfield < mem[cur_edges + 2].hhfield
-  .lhfield) || (mem[h + 2].hhfield.v.RH > mem[cur_edges + 2]
-    .hhfield.v.RH) || (mem[h + 1].hhfield.lhfield < mem[cur_edges + 1
-  ].hhfield.lhfield) || (mem[h + 1].hhfield.v.RH > mem[cur_edges +
-    1].hhfield.v.RH))
-    edge_prep (mem[h + 2].hhfield.lhfield - 4096, mem[h + 2].hhfield
-  .v.RH - 4096, mem[h + 1].hhfield.lhfield - 4096, mem[h + 1]
-    .hhfield.v.RH - 4095);
-    if (mem[h + 3].hhfield.lhfield != mem[cur_edges + 3].hhfield
-  .lhfield)
+    if ((mem[h + 2].hh.lh < mem[cur_edges + 2].hh.lh) ||
+      (mem[h + 2].hh.v.RH > mem[cur_edges + 2].hh.v.RH) ||
+      (mem[h + 1].hh.lh < mem[cur_edges + 1].hh.lh) ||
+      (mem[h + 1].hh.v.RH > mem[cur_edges + 1].hh.v.RH))
+      edge_prep (mem[h + 2].hh.lh - 4096, mem[h + 2].hh.v.RH - 4096, mem[h + 1].hh.lh - 4096, mem[h + 1].hh.v.RH - 4095);
+    if (mem[h + 3].hh.lh != mem[cur_edges + 3].hh.lh)
     {
-      pp = mem[h].hhfield.v.RH;
-      delta = 8 * (mem[cur_edges + 3].hhfield.lhfield - mem[h + 3]
-      .hhfield.lhfield);
+      pp = mem[h].hh.v.RH;
+      delta = 8 * (mem[cur_edges + 3].hh.lh - mem[h + 3].hh.lh);
       do {
-          qq = mem[pp + 1].hhfield.v.RH;
-        while (qq != memtop) {
-          mem[qq].hhfield.lhfield = mem[qq].hhfield.lhfield + delta
-        ;
-          qq = mem[qq].hhfield.v.RH;
+        qq = mem[pp + 1].hh.v.RH;
+        while (qq != memtop)
+        {
+          mem[qq].hh.lh = mem[qq].hh.lh + delta;
+          qq = mem[qq].hh.v.RH;
         }
-        qq = mem[pp + 1].hhfield.lhfield;
-        while (qq > 1) {
-          mem[qq].hhfield.lhfield = mem[qq].hhfield.lhfield + delta
-        ;
-          qq = mem[qq].hhfield.v.RH;
+        qq = mem[pp + 1].hh.lh;
+        while (qq > 1)
+        {
+          mem[qq].hh.lh = mem[qq].hh.lh + delta;
+          qq = mem[qq].hh.v.RH;
         }
-        pp = mem[pp].hhfield.v.RH;
-      }while (!(pp == h));
+        pp = mem[pp].hh.v.RH;
+      } while (!(pp == h));
     }
-    n = mem[cur_edges + 1].hhfield.lhfield;
-    p = mem[cur_edges].hhfield.v.RH;
-    pp = mem[h].hhfield.v.RH;
-    while (n < mem[h + 1].hhfield.lhfield) {
+    n = mem[cur_edges + 1].hh.lh;
+    p = mem[cur_edges].hh.v.RH;
+    pp = mem[h].hh.v.RH;
+    while (n < mem[h + 1].hh.lh)
+    {
       incr (n);
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
     }
     do {
-        qq = mem[pp + 1].hhfield.lhfield;
-      if (qq > 1) {
-        if (mem[p + 1].hhfield.lhfield <= 1)
-        mem[p + 1].hhfield.lhfield = qq;
-        else {
-          while (mem[qq].hhfield.v.RH > 1) qq = mem[qq].hhfield
-        .v.RH;
-          mem[qq].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-          mem[p + 1].hhfield.lhfield = mem[pp + 1].hhfield.lhfield;
+      qq = mem[pp + 1].hh.lh;
+      if (qq > 1)
+      {
+        if (mem[p + 1].hh.lh <= 1)
+          mem[p + 1].hh.lh = qq;
+        else
+        {
+          while (mem[qq].hh.v.RH > 1)
+            qq = mem[qq].hh.v.RH;
+          mem[qq].hh.v.RH = mem[p + 1].hh.lh;
+          mem[p + 1].hh.lh = mem[pp + 1].hh.lh;
         }
       }
-      mem[pp + 1].hhfield.lhfield = 0;
-      qq = mem[pp + 1].hhfield.v.RH;
+      mem[pp + 1].hh.lh = 0;
+      qq = mem[pp + 1].hh.v.RH;
       if (qq != memtop)
       {
-        if (mem[p + 1].hhfield.lhfield == 1)
-        mem[p + 1].hhfield.lhfield = 0;
-        mem[pp + 1].hhfield.v.RH = memtop;
+        if (mem[p + 1].hh.lh == 1)
+          mem[p + 1].hh.lh = 0;
+        mem[pp + 1].hh.v.RH = memtop;
         r = p + 1;
-        q = mem[r].hhfield.v.RH;
+        q = mem[r].hh.v.RH;
         if (q == memtop)
-        mem[p + 1].hhfield.v.RH = qq;
-        else while (true) {
-          k = mem[qq].hhfield.lhfield;
-          while (k > mem[q].hhfield.lhfield) {
-            r = q;
-            q = mem[r].hhfield.v.RH;
+          mem[p + 1].hh.v.RH = qq;
+        else
+          while (true)
+          {
+            k = mem[qq].hh.lh;
+            while (k > mem[q].hh.lh)
+            {
+              r = q;
+              q = mem[r].hh.v.RH;
+            }
+            mem[r].hh.v.RH = qq;
+            rr = mem[qq].hh.v.RH;
+            mem[qq].hh.v.RH = q;
+            if (rr == memtop)
+              goto done;
+            r = qq;
+            qq = rr;
           }
-          mem[r].hhfield.v.RH = qq;
-          rr = mem[qq].hhfield.v.RH;
-          mem[qq].hhfield.v.RH = q;
-          if (rr == memtop)
-          goto done;
-          r = qq;
-          qq = rr;
-        }
       }
       done:;
-      pp = mem[pp].hhfield.v.RH;
-      p = mem[p].hhfield.v.RH;
-    }while (!(pp == h));
+      pp = mem[pp].hh.v.RH;
+      p = mem[p].hh.v.RH;
+    } while (!(pp == h));
   }
 }
 
 integer total_weight (halfword h)
 {
-  integer Result; halfword p, q;
+  integer Result;
+  halfword p, q;
   integer n;
   unsigned short m;
+
   n = 0;
-  p = mem[h].hhfield.v.RH;
-  while (p != h) {
-    q = mem[p + 1].hhfield.v.RH;
-    while (q != memtop) {
-      m = mem[q].hhfield.lhfield;
+  p = mem[h].hh.v.RH;
+  while (p != h)
+  {
+    q = mem[p + 1].hh.v.RH;
+    while (q != memtop)
+    {
+      m = mem[q].hh.lh;
       n = n - ((m % 8) - 4) * (m / 8);
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
-    q = mem[p + 1].hhfield.lhfield;
-    while (q > 1) {
-      m = mem[q].hhfield.lhfield;
+    q = mem[p + 1].hh.lh;
+    while (q > 1)
+    {
+      m = mem[q].hh.lh;
       n = n - ((m % 8) - 4) * (m / 8);
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   Result = n;
   return Result;
@@ -8099,7 +8487,7 @@ void begin_edge_tracing (void)
 void trace_a_corner (void)
 {
   if (file_offset > maxprintline - 13)
-  print_nl(261);
+    print_nl(261);
   print_char(40);
   print_int (trace_x);
   print_char(44);
@@ -8111,8 +8499,9 @@ void trace_a_corner (void)
 void end_edge_tracing (void)
 {
   if (trace_x == -4096)
-  print_nl(543);
-  else {
+    print_nl(543);
+  else
+  {
     trace_a_corner ();
     print_char(46);
   }
@@ -8124,15 +8513,17 @@ void trace_new_edge (halfword r, integer n)
   integer d;
   schar w;
   integer m, n0, n1;
-  d = mem[r].hhfield.lhfield;
+
+  d = mem[r].hh.lh;
   w = (d % 8) - 4;
-  m = (d / 8) - mem[cur_edges + 3].hhfield.lhfield;
+  m = (d / 8) - mem[cur_edges + 3].hh.lh;
   if (w == cur_wt)
   {
     n0 = n + 1;
     n1 = n;
   }
-  else {
+  else
+  {
     n0 = n;
     n1 = n + 1;
   }
@@ -8144,17 +8535,18 @@ void trace_new_edge (halfword r, integer n)
       trace_yy = n0;
     }
     else if (trace_yy != n0)
-    print_char(63);
-    else trace_a_corner ();
+      print_char(63);
+    else
+      trace_a_corner ();
     trace_x = m;
     trace_a_corner ();
   }
-  else {
+  else
+  {
     if (n0 != trace_yy)
-    print_char(33);
-    if (((n0 < n1) && (trace_y > trace_yy)) || ((n0 > n1) && (trace_y
-    < trace_yy)))
-    trace_a_corner ();
+      print_char(33);
+    if (((n0 < n1) && (trace_y > trace_yy)) || ((n0 > n1) && (trace_y < trace_yy)))
+      trace_a_corner ();
   }
   trace_yy = n1;
 }
@@ -8168,6 +8560,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
   halfword p, r;
   integer base;
   integer n;
+
   n0 = roundunscaled (y0);
   n1 = roundunscaled (y1);
   if (n0 != n1)
@@ -8181,83 +8574,92 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
     y1 = y1 - yt;
     if (n0 < n1)
     {
-      base = 8 * mem[cur_edges + 3].hhfield.lhfield + 4 - cur_wt;
+      base = 8 * mem[cur_edges + 3].hh.lh + 4 - cur_wt;
       if (m0 <= m1)
-      edge_prep (m0, m1, n0, n1);
-      else edge_prep (m1, m0, n0, n1);
-      n = mem[cur_edges + 5].hhfield.lhfield - 4096;
-      p = mem[cur_edges + 5].hhfield.v.RH;
-      if (n != n0) {
+        edge_prep (m0, m1, n0, n1);
+      else
+        edge_prep (m1, m0, n0, n1);
+      n = mem[cur_edges + 5].hh.lh - 4096;
+      p = mem[cur_edges + 5].hh.v.RH;
+      if (n != n0)
+      {
         if (n < n0)
-        do {
+          do {
             incr (n);
-          p = mem[p].hhfield.v.RH;
-        }while (!(n == n0));
-        else do {
+            p = mem[p].hh.v.RH;
+          } while (!(n == n0));
+        else
+          do {
             decr (n);
-          p = mem[p].hhfield.lhfield;
-        }while (!(n == n0));
+            p = mem[p].hh.lh;
+          } while (!(n == n0));
       }
       y0 = 65536L - y0;
-      while (true) {
+      while (true)
+      {
         r = get_avail ();
-        mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-        mem[p + 1].hhfield.lhfield = r;
+        mem[r].hh.v.RH = mem[p + 1].hh.lh;
+        mem[p + 1].hh.lh = r;
         tx = take_fraction (delx, make_fraction (y0, dely));
         if (ab_vs_cd (delx, y0, dely, tx) < 0)
-        decr (tx);
-        mem[r].hhfield.lhfield = 8 * roundunscaled (x0 + tx) + base;
+          decr (tx);
+        mem[r].hh.lh = 8 * roundunscaled (x0 + tx) + base;
         y1 = y1 - 65536L;
         if (internal[10] > 0)
-        trace_new_edge (r, n);
+          trace_new_edge (r, n);
         if (y1 < 65536L)
-        goto done;
-        p = mem[p].hhfield.v.RH;
+          goto done;
+        p = mem[p].hh.v.RH;
         y0 = y0 + 65536L;
         incr (n);
       }
       done:;
     }
-    else {
-      base = 8 * mem[cur_edges + 3].hhfield.lhfield + 4 + cur_wt;
+    else
+    {
+      base = 8 * mem[cur_edges + 3].hh.lh + 4 + cur_wt;
       if (m0 <= m1)
-      edge_prep (m0, m1, n1, n0);
-      else edge_prep (m1, m0, n1, n0);
+        edge_prep (m0, m1, n1, n0);
+      else
+        edge_prep (m1, m0, n1, n0);
       decr (n0);
-      n = mem[cur_edges + 5].hhfield.lhfield - 4096;
-      p = mem[cur_edges + 5].hhfield.v.RH;
-      if (n != n0) {
+      n = mem[cur_edges + 5].hh.lh - 4096;
+      p = mem[cur_edges + 5].hh.v.RH;
+      if (n != n0)
+      {
         if (n < n0)
-        do {
+          do {
             incr (n);
-          p = mem[p].hhfield.v.RH;
-        }while (!(n == n0));
-        else do {
+            p = mem[p].hh.v.RH;
+          } while (!(n == n0));
+        else
+          do {
             decr (n);
-          p = mem[p].hhfield.lhfield;
-        }while (!(n == n0));
+            p = mem[p].hh.lh;
+          } while (!(n == n0));
       }
-      while (true) {
+      while (true)
+      {
         r = get_avail ();
-        mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-        mem[p + 1].hhfield.lhfield = r;
+        mem[r].hh.v.RH = mem[p + 1].hh.lh;
+        mem[p + 1].hh.lh = r;
         tx = take_fraction (delx, make_fraction (y0, dely));
         if (ab_vs_cd (delx, y0, dely, tx) < 0)
-        incr (tx);
-        mem[r].hhfield.lhfield = 8 * roundunscaled (x0 - tx) + base;
+          incr (tx);
+        mem[r].hh.lh = 8 * roundunscaled (x0 - tx) + base;
         y1 = y1 + 65536L;
         if (internal[10] > 0)
-        trace_new_edge (r, n);
+          trace_new_edge (r, n);
         if (y1 >= 0)
-        goto done1;
-        p = mem[p].hhfield.lhfield;
+          goto done1;
+        p = mem[p].hh.lh;
         y0 = y0 + 65536L;
         decr (n);
       }
       done1:;
     }
-    mem[cur_edges + 5].hhfield.v.RH = p;
-    mem[cur_edges + 5].hhfield.lhfield = n + 4096;
+    mem[cur_edges + 5].hh.v.RH = p;
+    mem[cur_edges + 5].hh.lh = n + 4096;
   }
 }
 
@@ -8273,334 +8675,354 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
 #ifdef TEXMF_DEBUG
   integer sum;
 #endif /* TEXMF_DEBUG */
+
   delta = n1 - n0;
-        ;
+  ;
 #ifdef TEXMF_DEBUG
   sum = move[0];
-  {integer for_end; k = 1;for_end = delta; if (k <= for_end) do
-    sum = sum + abs (move[k]);
-  while (k++ < for_end);}
+  {
+    integer for_end;
+    k = 1; for_end = delta;
+    if (k <= for_end)
+      do
+        sum = sum + abs (move[k]);
+      while (k++ < for_end);
+  }
   if (sum != m1 - m0)
-  confusion(48);
+    confusion(48);
 #endif /* TEXMF_DEBUG */
   switch (octant)
-  {case 1 :
-    {
-      dx = 8;
-      edge_prep (m0, m1, n0, n1);
-      goto lab60;
-    }
-    break;
-  case 5 :
-    {
-      dx = 8;
-      edge_prep (n0, n1, m0, m1);
-      goto lab62;
-    }
-    break;
-  case 6 :
-    {
-      dx = -8;
-      edge_prep (- (integer) n1, - (integer) n0, m0, m1);
-      n0 = - (integer) n0;
-      goto lab62;
-    }
-    break;
-  case 2 :
-    {
-      dx = -8;
-      edge_prep (- (integer) m1, - (integer) m0, n0, n1);
-      m0 = - (integer) m0;
-      goto lab60;
-    }
-    break;
-  case 4 :
-    {
-      dx = -8;
-      edge_prep (- (integer) m1, - (integer) m0, - (integer) n1 ,
-      - (integer) n0);
-      m0 = - (integer) m0;
-      goto lab61;
-    }
-    break;
-  case 8 :
-    {
-      dx = -8;
-      edge_prep (- (integer) n1, - (integer) n0, - (integer) m1 ,
-      - (integer) m0);
-      n0 = - (integer) n0;
-      goto lab63;
-    }
-    break;
-  case 7 :
-    {
-      dx = 8;
-      edge_prep (n0, n1, - (integer) m1, - (integer) m0);
-      goto lab63;
-    }
-    break;
-  case 3 :
-    {
-      dx = 8;
-      edge_prep (m0, m1, - (integer) n1, - (integer) n0);
-      goto lab61;
-    }
-    break;
+  {
+    case 1:
+      {
+        dx = 8;
+        edge_prep (m0, m1, n0, n1);
+        goto lab60;
+      }
+      break;
+    case 5:
+      {
+        dx = 8;
+        edge_prep (n0, n1, m0, m1);
+        goto lab62;
+      }
+      break;
+    case 6:
+      {
+        dx = -8;
+        edge_prep (- (integer) n1, - (integer) n0, m0, m1);
+        n0 = - (integer) n0;
+        goto lab62;
+      }
+      break;
+    case 2:
+      {
+        dx = -8;
+        edge_prep (- (integer) m1, - (integer) m0, n0, n1);
+        m0 = - (integer) m0;
+        goto lab60;
+      }
+      break;
+    case 4:
+      {
+        dx = -8;
+        edge_prep (- (integer) m1, - (integer) m0, - (integer) n1, - (integer) n0);
+        m0 = - (integer) m0;
+        goto lab61;
+      }
+      break;
+    case 8:
+      {
+        dx = -8;
+        edge_prep (- (integer) n1, - (integer) n0, - (integer) m1, - (integer) m0);
+        n0 = - (integer) n0;
+        goto lab63;
+      }
+      break;
+    case 7:
+      {
+        dx = 8;
+        edge_prep (n0, n1, - (integer) m1, - (integer) m0);
+        goto lab63;
+      }
+      break;
+    case 3:
+      {
+        dx = 8;
+        edge_prep (m0, m1, - (integer) n1, - (integer) n0);
+        goto lab61;
+      }
+      break;
   }
-  lab60: n = mem[cur_edges + 5].hhfield.lhfield - 4096;
-  p = mem[cur_edges + 5].hhfield.v.RH;
-  if (n != n0) {
+  lab60: n = mem[cur_edges + 5].hh.lh - 4096;
+  p = mem[cur_edges + 5].hh.v.RH;
+  if (n != n0)
+  {
     if (n < n0)
-    do {
+      do {
         incr (n);
-      p = mem[p].hhfield.v.RH;
-    }while (!(n == n0));
-    else do {
+        p = mem[p].hh.v.RH;
+      } while (!(n == n0));
+    else
+      do {
         decr (n);
-      p = mem[p].hhfield.lhfield;
-    }while (!(n == n0));
+        p = mem[p].hh.lh;
+      } while (!(n == n0));
   }
   if (delta > 0)
   {
     k = 0;
-    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hhfield.lhfield) + 4 -
-    cur_wt;
+    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hh.lh) + 4 - cur_wt;
     do {
-        edgeandweight = edgeandweight + dx * move[k];
+      edgeandweight = edgeandweight + dx * move[k];
       {
         r = avail;
         if (r == 0)
-        r = get_avail ();
-        else {
-          avail = mem[r].hhfield.v.RH;
-          mem[r].hhfield.v.RH = 0;
-        ;
+          r = get_avail ();
+        else
+        {
+          avail = mem[r].hh.v.RH;
+          mem[r].hh.v.RH = 0;
+          ;
 #ifdef STAT
           incr (dyn_used);
 #endif /* STAT */
         }
       }
-      mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-      mem[r].hhfield.lhfield = edgeandweight;
+      mem[r].hh.v.RH = mem[p + 1].hh.lh;
+      mem[r].hh.lh = edgeandweight;
       if (internal[10] > 0)
-      trace_new_edge (r, n);
-      mem[p + 1].hhfield.lhfield = r;
-      p = mem[p].hhfield.v.RH;
+        trace_new_edge (r, n);
+      mem[p + 1].hh.lh = r;
+      p = mem[p].hh.v.RH;
       incr (k);
       incr (n);
-    }while (!(k == delta));
+    } while (!(k == delta));
   }
   goto done;
   lab61: n0 = - (integer) n0 - 1;
-  n = mem[cur_edges + 5].hhfield.lhfield - 4096;
-  p = mem[cur_edges + 5].hhfield.v.RH;
-  if (n != n0) {
+  n = mem[cur_edges + 5].hh.lh - 4096;
+  p = mem[cur_edges + 5].hh.v.RH;
+  if (n != n0)
+  {
     if (n < n0)
-    do {
+      do {
         incr (n);
-      p = mem[p].hhfield.v.RH;
-    }while (!(n == n0));
-    else do {
+        p = mem[p].hh.v.RH;
+      } while (!(n == n0));
+    else
+      do {
         decr (n);
-      p = mem[p].hhfield.lhfield;
-    }while (!(n == n0));
+        p = mem[p].hh.lh;
+      } while (!(n == n0));
   }
   if (delta > 0)
   {
     k = 0;
-    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hhfield.lhfield) + 4 +
-    cur_wt;
+    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hh.lh) + 4 + cur_wt;
     do {
-        edgeandweight = edgeandweight + dx * move[k];
+      edgeandweight = edgeandweight + dx * move[k];
       {
         r = avail;
         if (r == 0)
-        r = get_avail ();
-        else {
-          avail = mem[r].hhfield.v.RH;
-          mem[r].hhfield.v.RH = 0;
-        ;
+          r = get_avail ();
+        else
+        {
+          avail = mem[r].hh.v.RH;
+          mem[r].hh.v.RH = 0;
+          ;
 #ifdef STAT
           incr (dyn_used);
 #endif /* STAT */
         }
       }
-      mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-      mem[r].hhfield.lhfield = edgeandweight;
+      mem[r].hh.v.RH = mem[p + 1].hh.lh;
+      mem[r].hh.lh = edgeandweight;
       if (internal[10] > 0)
-      trace_new_edge (r, n);
-      mem[p + 1].hhfield.lhfield = r;
-      p = mem[p].hhfield.lhfield;
+        trace_new_edge (r, n);
+      mem[p + 1].hh.lh = r;
+      p = mem[p].hh.lh;
       incr (k);
       decr (n);
-    }while (!(k == delta));
+    } while (!(k == delta));
   }
   goto done;
-  lab62: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hhfield.lhfield) +
+  lab62: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hh.lh) +
   4 - cur_wt;
   n0 = m0;
   k = 0;
-  n = mem[cur_edges + 5].hhfield.lhfield - 4096;
-  p = mem[cur_edges + 5].hhfield.v.RH;
-  if (n != n0) {
+  n = mem[cur_edges + 5].hh.lh - 4096;
+  p = mem[cur_edges + 5].hh.v.RH;
+  if (n != n0)
+  {
     if (n < n0)
-    do {
+      do {
         incr (n);
-      p = mem[p].hhfield.v.RH;
-    }while (!(n == n0));
-    else do {
+        p = mem[p].hh.v.RH;
+      } while (!(n == n0));
+    else
+      do {
         decr (n);
-      p = mem[p].hhfield.lhfield;
-    }while (!(n == n0));
+        p = mem[p].hh.lh;
+      } while (!(n == n0));
   }
   do {
-      j = move[k];
-    while (j > 0) {
+    j = move[k];
+    while (j > 0)
+    {
       {
         r = avail;
         if (r == 0)
-        r = get_avail ();
-        else {
-
-          avail = mem[r].hhfield.v.RH;
-          mem[r].hhfield.v.RH = 0;
-        ;
+          r = get_avail ();
+        else
+        {
+          avail = mem[r].hh.v.RH;
+          mem[r].hh.v.RH = 0;
+          ;
 #ifdef STAT
           incr (dyn_used);
 #endif /* STAT */
         }
       }
-      mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-      mem[r].hhfield.lhfield = edgeandweight;
+      mem[r].hh.v.RH = mem[p + 1].hh.lh;
+      mem[r].hh.lh = edgeandweight;
       if (internal[10] > 0)
-      trace_new_edge (r, n);
-      mem[p + 1].hhfield.lhfield = r;
-      p = mem[p].hhfield.v.RH;
+        trace_new_edge (r, n);
+      mem[p + 1].hh.lh = r;
+      p = mem[p].hh.v.RH;
       decr (j);
       incr (n);
     }
     edgeandweight = edgeandweight + dx;
     incr (k);
-  }while (!(k > delta));
+  } while (!(k > delta));
   goto done;
-  lab63: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hhfield.lhfield) +
-  4 + cur_wt;
+  lab63: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hh.lh) + 4 + cur_wt;
   n0 = - (integer) m0 - 1;
   k = 0;
-  n = mem[cur_edges + 5].hhfield.lhfield - 4096;
-  p = mem[cur_edges + 5].hhfield.v.RH;
-  if (n != n0) {
+  n = mem[cur_edges + 5].hh.lh - 4096;
+  p = mem[cur_edges + 5].hh.v.RH;
+  if (n != n0)
+  {
     if (n < n0)
-    do {
+      do {
         incr (n);
-      p = mem[p].hhfield.v.RH;
-    }while (!(n == n0));
-    else do {
+        p = mem[p].hh.v.RH;
+      } while (!(n == n0));
+    else
+      do {
         decr (n);
-      p = mem[p].hhfield.lhfield;
-    }while (!(n == n0));
+        p = mem[p].hh.lh;
+      } while (!(n == n0));
   }
   do {
-      j = move[k];
-    while (j > 0) {
+    j = move[k];
+    while (j > 0)
+    {
       {
         r = avail;
         if (r == 0)
-        r = get_avail ();
-        else {
-          avail = mem[r].hhfield.v.RH;
-          mem[r].hhfield.v.RH = 0;
-        ;
+          r = get_avail ();
+        else
+        {
+          avail = mem[r].hh.v.RH;
+          mem[r].hh.v.RH = 0;
+          ;
 #ifdef STAT
           incr (dyn_used);
 #endif /* STAT */
         }
       }
-      mem[r].hhfield.v.RH = mem[p + 1].hhfield.lhfield;
-      mem[r].hhfield.lhfield = edgeandweight;
+      mem[r].hh.v.RH = mem[p + 1].hh.lh;
+      mem[r].hh.lh = edgeandweight;
       if (internal[10] > 0)
-      trace_new_edge (r, n);
-      mem[p + 1].hhfield.lhfield = r;
-      p = mem[p].hhfield.lhfield;
+        trace_new_edge (r, n);
+      mem[p + 1].hh.lh = r;
+      p = mem[p].hh.lh;
       decr (j);
       decr (n);
     }
     edgeandweight = edgeandweight + dx;
     incr (k);
-  }while (!(k > delta));
+  } while (!(k > delta));
   goto done;
-  done: mem[cur_edges + 5].hhfield.lhfield = n + 4096;
-  mem[cur_edges + 5].hhfield.v.RH = p;
+  done: mem[cur_edges + 5].hh.lh = n + 4096;
+  mem[cur_edges + 5].hh.v.RH = p;
 }
 
 void skew (scaled x, scaled y, small_number octant)
 {
   switch (octant)
-  {case 1 :
-    {
-      cur_x = x - y;
-      cur_y = y;
-    }
-    break;
-  case 5 :
-    {
-      cur_x = y - x;
-      cur_y = x;
-    }
-    break;
-  case 6 :
-    {
-      cur_x = y + x;
-      cur_y = - (integer) x;
-    }
-    break;
-  case 2 :
-    {
-      cur_x = - (integer) x - y;
-      cur_y = y;
-    }
-    break;
-  case 4 :
-    {
-      cur_x = - (integer) x + y;
-      cur_y = - (integer) y;
-    }
-    break;
-  case 8 :
-    {
-      cur_x = - (integer) y + x;
-      cur_y = - (integer) x;
-    }
-    break;
-  case 7 :
-    {
-      cur_x = - (integer) y - x;
-      cur_y = x;
-    }
-    break;
-  case 3 :
-    {
-      cur_x = x + y;
-      cur_y = - (integer) y;
-    }
-    break;
+  {
+    case 1:
+      {
+        cur_x = x - y;
+        cur_y = y;
+      }
+      break;
+    case 5:
+      {
+        cur_x = y - x;
+        cur_y = x;
+      }
+      break;
+    case 6:
+      {
+        cur_x = y + x;
+        cur_y = - (integer) x;
+      }
+      break;
+    case 2:
+      {
+        cur_x = - (integer) x - y;
+        cur_y = y;
+      }
+      break;
+    case 4:
+      {
+        cur_x = - (integer) x + y;
+        cur_y = - (integer) y;
+      }
+      break;
+    case 8:
+      {
+        cur_x = - (integer) y + x;
+        cur_y = - (integer) x;
+      }
+      break;
+    case 7:
+      {
+        cur_x = - (integer) y - x;
+        cur_y = x;
+      }
+      break;
+    case 3:
+      {
+        cur_x = x + y;
+        cur_y = - (integer) y;
+      }
+      break;
   }
 }
 
 void abnegate (scaled x, scaled y, small_number octantbefore, small_number octantafter)
 {
   if (odd (octantbefore) == odd (octantafter))
-  cur_x = x;
-  else cur_x = - (integer) x;
+    cur_x = x;
+  else
+    cur_x = - (integer) x;
   if ((octantbefore > 2) == (octantafter > 2))
-  cur_y = y;
-  else cur_y = - (integer) y;
+    cur_y = y;
+  else
+    cur_y = - (integer) y;
 }
 
 fraction crossing_point (integer a, integer b, integer c)
 {
-  fraction Result; integer d;
+  fraction Result;
+  integer d;
   integer x, xx, x0, x1, x2;
+
   if (a < 0)
   {
     Result = 0;
@@ -8608,7 +9030,8 @@ fraction crossing_point (integer a, integer b, integer c)
   }
   if (c >= 0)
   {
-    if (b >= 0) {
+    if (b >= 0)
+    {
       if (c > 0)
       {
         Result = 268435457L;
@@ -8619,7 +9042,8 @@ fraction crossing_point (integer a, integer b, integer c)
         Result = 268435457L;
         goto lab_exit;
       }
-      else {
+      else
+      {
         Result = 268435456L;
         goto lab_exit;
       }
@@ -8630,7 +9054,8 @@ fraction crossing_point (integer a, integer b, integer c)
       goto lab_exit;
     }
   }
-  else if (a == 0) {
+  else if (a == 0)
+  {
     if (b <= 0)
     {
       Result = 0;
@@ -8642,14 +9067,15 @@ fraction crossing_point (integer a, integer b, integer c)
   x1 = a - b;
   x2 = b - c;
   do {
-      x = half (x1 + x2);
+    x = half (x1 + x2);
     if (x1 - x0 > x0)
     {
       x2 = x;
       x0 = x0 + x0;
       d = d + d;
     }
-    else {
+    else
+    {
       xx = x1 + x - x0;
       if (xx > x0)
       {
@@ -8657,9 +9083,11 @@ fraction crossing_point (integer a, integer b, integer c)
         x0 = x0 + x0;
         d = d + d;
       }
-      else {
+      else
+      {
         x0 = x0 - xx;
-        if (x <= x0) {
+        if (x <= x0)
+        {
           if (x + x2 <= x0)
           {
             Result = 268435457L;
@@ -8670,7 +9098,7 @@ fraction crossing_point (integer a, integer b, integer c)
         d = d + d + 1;
       }
     }
-  }while (!(d >= 268435456L));
+  } while (!(d >= 268435456L));
   Result = d - 268435456L;
   lab_exit:;
   return Result;
@@ -8680,6 +9108,7 @@ void print_spec (str_number s)
 {
   halfword p, q;
   small_number octant;
+
   print_diagnostic(544, s, true);
   p = cur_spec;
   octant = mem[p + 3].cint;
@@ -8687,13 +9116,15 @@ void print_spec (str_number s)
   unskew (mem[cur_spec + 1].cint, mem[cur_spec + 2].cint, octant);
   print_two (cur_x, cur_y);
   print(545);
-  while (true) {
+  while (true)
+  {
     print(octant_dir[octant]);
     print_char(39);
-    while (true) {
-      q = mem[p].hhfield.v.RH;
-      if (mem[p].hhfield.b1 == 0)
-      goto not_found;
+    while (true)
+    {
+      q = mem[p].hh.v.RH;
+      if (mem[p].hh.b1 == 0)
+        goto not_found;
       {
         print_nl(556);
         unskew (mem[p + 5].cint, mem[p + 6].cint, octant);
@@ -8705,17 +9136,19 @@ void print_spec (str_number s)
         unskew (mem[q + 1].cint, mem[q + 2].cint, octant);
         print_two (cur_x, cur_y);
         print(557);
-        print_int (mem[q].hhfield.b0 - 1);
+        print_int (mem[q].hh.b0 - 1);
       }
       p = q;
     }
-    not_found: if (q == cur_spec)
-    goto done;
+  not_found:
+    if (q == cur_spec)
+      goto done;
     p = q;
     octant = mem[p + 3].cint;
     print_nl(546);
   }
-  done: print_nl(547);
+done:
+  print_nl(547);
   end_diagnostic (true);
 }
 
@@ -8725,48 +9158,50 @@ void print_strange (str_number s)
   halfword f;
   halfword q;
   integer t;
+
   if (interaction == 3)
-;
+    ;
   print_nl(62);
   p = cur_spec;
   t = 256;
   do {
-      p = mem[p].hhfield.v.RH;
-    if (mem[p].hhfield.b0 != 0)
+    p = mem[p].hh.v.RH;
+    if (mem[p].hh.b0 != 0)
     {
-      if (mem[p].hhfield.b0 < t)
-      f = p;
-      t = mem[p].hhfield.b0;
+      if (mem[p].hh.b0 < t)
+        f = p;
+      t = mem[p].hh.b0;
     }
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   p = cur_spec;
   q = p;
   do {
-      p = mem[p].hhfield.v.RH;
-    if (mem[p].hhfield.b0 == 0)
-    q = p;
-  }while (!(p == f));
+    p = mem[p].hh.v.RH;
+    if (mem[p].hh.b0 == 0)
+      q = p;
+  } while (!(p == f));
   t = 0;
   do {
-      if (mem[p].hhfield.b0 != 0)
+    if (mem[p].hh.b0 != 0)
     {
-      if (mem[p].hhfield.b0 != t)
+      if (mem[p].hh.b0 != t)
       {
-        t = mem[p].hhfield.b0;
+        t = mem[p].hh.b0;
         print_char(32);
         print_int (t - 1);
       }
       if (q != 0)
       {
-        if (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0)
+        if (mem[mem[q].hh.v.RH].hh.b0 == 0)
         {
           print(558);
           print(octant_dir[mem[q + 3].cint]);
-          q = mem[q].hhfield.v.RH;
-          while (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0) {
+          q = mem[q].hh.v.RH;
+          while (mem[mem[q].hh.v.RH].hh.b0 == 0)
+          {
             print_char(32);
             print(octant_dir[mem[q + 3].cint]);
-            q = mem[q].hhfield.v.RH;
+            q = mem[q].hh.v.RH;
           }
           print_char(41);
         }
@@ -8777,27 +9212,29 @@ void print_strange (str_number s)
     }
     else if (q == 0)
     q = p;
-    p = mem[p].hhfield.v.RH;
-  }while (!(p == f));
+    p = mem[p].hh.v.RH;
+  } while (!(p == f));
   print_char(32);
-  print_int (mem[p].hhfield.b0 - 1);
-  if (q != 0) {
-    if (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0)
+  print_int (mem[p].hh.b0 - 1);
+  if (q != 0)
+  {
+    if (mem[mem[q].hh.v.RH].hh.b0 == 0)
     {
       print(558);
       print(octant_dir[mem[q + 3].cint]);
-      q = mem[q].hhfield.v.RH;
-      while (mem[mem[q].hhfield.v.RH].hhfield.b0 == 0) {
+      q = mem[q].hh.v.RH;
+      while (mem[mem[q].hh.v.RH].hh.b0 == 0)
+      {
         print_char(32);
         print(octant_dir[mem[q + 3].cint]);
-        q = mem[q].hhfield.v.RH;
+        q = mem[q].hh.v.RH;
       }
       print_char(41);
     }
   }
   {
     if (interaction == 3)
-;
+      ;
     if ((filelineerrorstylep && !(cur_input .name_field == 0)))
     {
       print_nl(261);
@@ -8807,7 +9244,8 @@ void print_strange (str_number s)
       print(262);
       print(s);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(s);
     }
@@ -8817,9 +9255,10 @@ void print_strange (str_number s)
 void remove_cubic (halfword p)
 {
   halfword q;
-  q = mem[p].hhfield.v.RH;
-  mem[p].hhfield.b1 = mem[q].hhfield.b1;
-  mem[p].hhfield.v.RH = mem[q].hhfield.v.RH;
+
+  q = mem[p].hh.v.RH;
+  mem[p].hh.b1 = mem[q].hh.b1;
+  mem[p].hh.v.RH = mem[q].hh.v.RH;
   mem[p + 1].cint = mem[q + 1].cint;
   mem[p + 2].cint = mem[q + 2].cint;
   mem[p + 5].cint = mem[q + 5].cint;
@@ -8831,34 +9270,25 @@ void split_cubic (halfword p, fraction t, scaled xq, scaled yq)
 {
   scaled v;
   halfword q, r;
-  q = mem[p].hhfield.v.RH;
+
+  q = mem[p].hh.v.RH;
   r = get_node (7);
-  mem[p].hhfield.v.RH = r;
-  mem[r].hhfield.v.RH = q;
-  mem[r].hhfield.b0 = mem[q].hhfield.b0;
-  mem[r].hhfield.b1 = mem[p].hhfield.b1;
-  v = mem[p + 5].cint - take_fraction (mem[p + 5].cint - mem[q + 3]
-  .cint, t);
-  mem[p + 5].cint = mem[p + 1].cint - take_fraction (mem[p + 1]
-  .cint - mem[p + 5].cint, t);
-  mem[q + 3].cint = mem[q + 3].cint - take_fraction (mem[q + 3]
-  .cint - xq, t);
-  mem[r + 3].cint = mem[p + 5].cint - take_fraction (mem[p + 5]
-  .cint - v, t);
+  mem[p].hh.v.RH = r;
+  mem[r].hh.v.RH = q;
+  mem[r].hh.b0 = mem[q].hh.b0;
+  mem[r].hh.b1 = mem[p].hh.b1;
+  v = mem[p + 5].cint - take_fraction (mem[p + 5].cint - mem[q + 3].cint, t);
+  mem[p + 5].cint = mem[p + 1].cint - take_fraction (mem[p + 1].cint - mem[p + 5].cint, t);
+  mem[q + 3].cint = mem[q + 3].cint - take_fraction (mem[q + 3].cint - xq, t);
+  mem[r + 3].cint = mem[p + 5].cint - take_fraction (mem[p + 5].cint - v, t);
   mem[r + 5].cint = v - take_fraction (v - mem[q + 3].cint, t);
-  mem[r + 1].cint = mem[r + 3].cint - take_fraction (mem[r + 3]
-  .cint - mem[r + 5].cint, t);
-  v = mem[p + 6].cint - take_fraction (mem[p + 6].cint - mem[q + 4]
-  .cint, t);
-  mem[p + 6].cint = mem[p + 2].cint - take_fraction (mem[p + 2]
-  .cint - mem[p + 6].cint, t);
-  mem[q + 4].cint = mem[q + 4].cint - take_fraction (mem[q + 4]
-  .cint - yq, t);
-  mem[r + 4].cint = mem[p + 6].cint - take_fraction (mem[p + 6]
-  .cint - v, t);
+  mem[r + 1].cint = mem[r + 3].cint - take_fraction (mem[r + 3].cint - mem[r + 5].cint, t);
+  v = mem[p + 6].cint - take_fraction (mem[p + 6].cint - mem[q + 4].cint, t);
+  mem[p + 6].cint = mem[p + 2].cint - take_fraction (mem[p + 2].cint - mem[p + 6].cint, t);
+  mem[q + 4].cint = mem[q + 4].cint - take_fraction (mem[q + 4].cint - yq, t);
+  mem[r + 4].cint = mem[p + 6].cint - take_fraction (mem[p + 6].cint - v, t);
   mem[r + 6].cint = v - take_fraction (v - mem[q + 4].cint, t);
-  mem[r + 2].cint = mem[r + 4].cint - take_fraction (mem[r + 4]
-  .cint - mem[r + 6].cint, t);
+  mem[r + 2].cint = mem[r + 4].cint - take_fraction (mem[r + 4].cint - mem[r + 6].cint, t);
 }
 
 void quadrant_sub_divide (void)
@@ -8869,17 +9299,20 @@ void quadrant_sub_divide (void)
   fraction t;
   scaled destx, desty;
   boolean constantx;
+
   p = cur_spec;
   firstx = mem[cur_spec + 1].cint;
   firsty = mem[cur_spec + 2].cint;
   do {
-      lab_continue: q = mem[p].hhfield.v.RH;
+lab_continue:
+    q = mem[p].hh.v.RH;
     if (q == cur_spec)
     {
       destx = firstx;
       desty = firsty;
     }
-    else {
+    else
+    {
       destx = mem[q + 1].cint;
       desty = mem[q + 2].cint;
     }
@@ -8887,18 +9320,20 @@ void quadrant_sub_divide (void)
     del2 = mem[q + 3].cint - mem[p + 5].cint;
     del3 = destx - mem[q + 3].cint;
     if (del1 != 0)
-    del = del1;
+      del = del1;
     else if (del2 != 0)
-    del = del2;
-    else del = del3;
+      del = del2;
+    else
+      del = del3;
     if (del != 0)
     {
       dmax = abs (del1);
       if (abs (del2) > dmax)
-      dmax = abs (del2);
+        dmax = abs (del2);
       if (abs (del3) > dmax)
-      dmax = abs (del3);
-      while (dmax < 134217728L) {
+        dmax = abs (del3);
+      while (dmax < 134217728L)
+      {
         dmax = dmax + dmax;
         del1 = del1 + del1;
         del2 = del2 + del2;
@@ -8906,8 +9341,9 @@ void quadrant_sub_divide (void)
       }
     }
     if (del == 0)
-    constantx = true;
-    else {
+      constantx = true;
+    else
+    {
       constantx = false;
       if (del < 0)
       {
@@ -8918,48 +9354,50 @@ void quadrant_sub_divide (void)
         del2 = - (integer) del2;
         del3 = - (integer) del3;
         destx = - (integer) destx;
-        mem[p].hhfield.b1 = 2;
+        mem[p].hh.b1 = 2;
       }
       t = crossing_point (del1, del2, del3);
       if (t < 268435456L)
       {
         split_cubic (p, t, destx, desty);
-        r = mem[p].hhfield.v.RH;
-        if (mem[r].hhfield.b1 > 1)
-        mem[r].hhfield.b1 = 1;
-        else mem[r].hhfield.b1 = 2;
+        r = mem[p].hh.v.RH;
+        if (mem[r].hh.b1 > 1)
+          mem[r].hh.b1 = 1;
+        else
+          mem[r].hh.b1 = 2;
         if (mem[r + 1].cint < mem[p + 1].cint)
-        mem[r + 1].cint = mem[p + 1].cint;
+          mem[r + 1].cint = mem[p + 1].cint;
         mem[r + 3].cint = mem[r + 1].cint;
         if (mem[p + 5].cint > mem[r + 1].cint)
-        mem[p + 5].cint = mem[r + 1].cint;
+          mem[p + 5].cint = mem[r + 1].cint;
         mem[r + 1].cint = - (integer) mem[r + 1].cint;
         mem[r + 5].cint = mem[r + 1].cint;
         mem[q + 3].cint = - (integer) mem[q + 3].cint;
         destx = - (integer) destx;
         del2 = del2 - take_fraction (del2 - del3, t);
         if (del2 > 0)
-        del2 = 0;
+          del2 = 0;
         t = crossing_point (0, - (integer) del2, - (integer) del3);
         if (t < 268435456L)
         {
           split_cubic (r, t, destx, desty);
-          s = mem[r].hhfield.v.RH;
+          s = mem[r].hh.v.RH;
           if (mem[s + 1].cint < destx)
-          mem[s + 1].cint = destx;
+            mem[s + 1].cint = destx;
           if (mem[s + 1].cint < mem[r + 1].cint)
-          mem[s + 1].cint = mem[r + 1].cint;
-          mem[s].hhfield.b1 = mem[p].hhfield.b1;
+            mem[s + 1].cint = mem[r + 1].cint;
+          mem[s].hh.b1 = mem[p].hh.b1;
           mem[s + 3].cint = mem[s + 1].cint;
           if (mem[q + 3].cint < destx)
-          mem[q + 3].cint = - (integer) destx;
+            mem[q + 3].cint = - (integer) destx;
           else if (mem[q + 3].cint > mem[s + 1].cint)
-          mem[q + 3].cint = - (integer) mem[s + 1].cint;
+            mem[q + 3].cint = - (integer) mem[s + 1].cint;
           else mem[q + 3].cint = - (integer) mem[q + 3].cint;
-          mem[s + 1].cint = - (integer) mem[s + 1].cint;
+            mem[s + 1].cint = - (integer) mem[s + 1].cint;
           mem[s + 5].cint = mem[s + 1].cint;
         }
-        else {
+        else
+        {
           if (mem[r + 1].cint > destx)
           {
             mem[r + 1].cint = destx;
@@ -8967,35 +9405,36 @@ void quadrant_sub_divide (void)
             mem[r + 5].cint = mem[r + 1].cint;
           }
           if (mem[q + 3].cint > destx)
-          mem[q + 3].cint = destx;
+            mem[q + 3].cint = destx;
           else if (mem[q + 3].cint < mem[r + 1].cint)
-          mem[q + 3].cint = mem[r + 1].cint;
+            mem[q + 3].cint = mem[r + 1].cint;
         }
       }
     }
     pp = p;
     do {
-        qq = mem[pp].hhfield.v.RH;
-      abnegate (mem[qq + 1].cint, mem[qq + 2].cint, mem[qq]
-      .hhfield.b1, mem[pp].hhfield.b1);
+      qq = mem[pp].hh.v.RH;
+      abnegate (mem[qq + 1].cint, mem[qq + 2].cint, mem[qq].hh.b1, mem[pp].hh.b1);
       destx = cur_x;
       desty = cur_y;
       del1 = mem[pp + 6].cint - mem[pp + 2].cint;
       del2 = mem[qq + 4].cint - mem[pp + 6].cint;
       del3 = desty - mem[qq + 4].cint;
       if (del1 != 0)
-      del = del1;
+        del = del1;
       else if (del2 != 0)
-      del = del2;
-      else del = del3;
+        del = del2;
+      else
+        del = del3;
       if (del != 0)
       {
         dmax = abs (del1);
         if (abs (del2) > dmax)
-        dmax = abs (del2);
+          dmax = abs (del2);
         if (abs (del3) > dmax)
-        dmax = abs (del3);
-        while (dmax < 134217728L) {
+          dmax = abs (del3);
+        while (dmax < 134217728L)
+        {
           dmax = dmax + dmax;
           del1 = del1 + del1;
           del2 = del2 + del2;
@@ -9013,80 +9452,83 @@ void quadrant_sub_divide (void)
           del2 = - (integer) del2;
           del3 = - (integer) del3;
           desty = - (integer) desty;
-          mem[pp].hhfield.b1 = mem[pp].hhfield.b1 + 2;
+          mem[pp].hh.b1 = mem[pp].hh.b1 + 2;
         }
         t = crossing_point (del1, del2, del3);
         if (t < 268435456L)
         {
           split_cubic (pp, t, destx, desty);
-          r = mem[pp].hhfield.v.RH;
-          if (mem[r].hhfield.b1 > 2)
-          mem[r].hhfield.b1 = mem[r].hhfield.b1 - 2;
-          else mem[r].hhfield.b1 = mem[r].hhfield.b1 + 2;
+          r = mem[pp].hh.v.RH;
+          if (mem[r].hh.b1 > 2)
+            mem[r].hh.b1 = mem[r].hh.b1 - 2;
+          else
+            mem[r].hh.b1 = mem[r].hh.b1 + 2;
           if (mem[r + 2].cint < mem[pp + 2].cint)
-          mem[r + 2].cint = mem[pp + 2].cint;
+            mem[r + 2].cint = mem[pp + 2].cint;
           mem[r + 4].cint = mem[r + 2].cint;
           if (mem[pp + 6].cint > mem[r + 2].cint)
-          mem[pp + 6].cint = mem[r + 2].cint;
+            mem[pp + 6].cint = mem[r + 2].cint;
           mem[r + 2].cint = - (integer) mem[r + 2].cint;
           mem[r + 6].cint = mem[r + 2].cint;
           mem[qq + 4].cint = - (integer) mem[qq + 4].cint;
           desty = - (integer) desty;
           if (mem[r + 1].cint < mem[pp + 1].cint)
-          mem[r + 1].cint = mem[pp + 1].cint;
+            mem[r + 1].cint = mem[pp + 1].cint;
           else if (mem[r + 1].cint > destx)
-          mem[r + 1].cint = destx;
+            mem[r + 1].cint = destx;
           if (mem[r + 3].cint > mem[r + 1].cint)
           {
             mem[r + 3].cint = mem[r + 1].cint;
             if (mem[pp + 5].cint > mem[r + 1].cint)
-            mem[pp + 5].cint = mem[r + 1].cint;
+              mem[pp + 5].cint = mem[r + 1].cint;
           }
           if (mem[r + 5].cint < mem[r + 1].cint)
           {
             mem[r + 5].cint = mem[r + 1].cint;
             if (mem[qq + 3].cint < mem[r + 1].cint)
-            mem[qq + 3].cint = mem[r + 1].cint;
+              mem[qq + 3].cint = mem[r + 1].cint;
           }
           del2 = del2 - take_fraction (del2 - del3, t);
           if (del2 > 0)
-          del2 = 0;
+            del2 = 0;
           t = crossing_point (0, - (integer) del2, - (integer) del3);
           if (t < 268435456L)
           {
             split_cubic (r, t, destx, desty);
-            s = mem[r].hhfield.v.RH;
+            s = mem[r].hh.v.RH;
             if (mem[s + 2].cint < desty)
-            mem[s + 2].cint = desty;
+              mem[s + 2].cint = desty;
             if (mem[s + 2].cint < mem[r + 2].cint)
-            mem[s + 2].cint = mem[r + 2].cint;
-            mem[s].hhfield.b1 = mem[pp].hhfield.b1;
+              mem[s + 2].cint = mem[r + 2].cint;
+            mem[s].hh.b1 = mem[pp].hh.b1;
             mem[s + 4].cint = mem[s + 2].cint;
             if (mem[qq + 4].cint < desty)
-            mem[qq + 4].cint = - (integer) desty;
+              mem[qq + 4].cint = - (integer) desty;
             else if (mem[qq + 4].cint > mem[s + 2].cint)
-            mem[qq + 4].cint = - (integer) mem[s + 2].cint;
-            else mem[qq + 4].cint = - (integer) mem[qq + 4].cint;
+              mem[qq + 4].cint = - (integer) mem[s + 2].cint;
+            else
+              mem[qq + 4].cint = - (integer) mem[qq + 4].cint;
             mem[s + 2].cint = - (integer) mem[s + 2].cint;
             mem[s + 6].cint = mem[s + 2].cint;
             if (mem[s + 1].cint < mem[r + 1].cint)
-            mem[s + 1].cint = mem[r + 1].cint;
+              mem[s + 1].cint = mem[r + 1].cint;
             else if (mem[s + 1].cint > destx)
-            mem[s + 1].cint = destx;
+              mem[s + 1].cint = destx;
             if (mem[s + 3].cint > mem[s + 1].cint)
             {
               mem[s + 3].cint = mem[s + 1].cint;
               if (mem[r + 5].cint > mem[s + 1].cint)
-              mem[r + 5].cint = mem[s + 1].cint;
+                mem[r + 5].cint = mem[s + 1].cint;
             }
             if (mem[s + 5].cint < mem[s + 1].cint)
             {
               mem[s + 5].cint = mem[s + 1].cint;
               if (mem[qq + 3].cint < mem[s + 1].cint)
-              mem[qq + 3].cint = mem[s + 1].cint;
+                mem[qq + 3].cint = mem[s + 1].cint;
             }
           }
-          else {
+          else
+          {
             if (mem[r + 2].cint > desty)
             {
               mem[r + 2].cint = desty;
@@ -9094,9 +9536,9 @@ void quadrant_sub_divide (void)
               mem[r + 6].cint = mem[r + 2].cint;
             }
             if (mem[qq + 4].cint > desty)
-            mem[qq + 4].cint = desty;
+              mem[qq + 4].cint = desty;
             else if (mem[qq + 4].cint < mem[r + 2].cint)
-            mem[qq + 4].cint = mem[r + 2].cint;
+              mem[qq + 4].cint = mem[r + 2].cint;
           }
         }
       }
@@ -9106,15 +9548,15 @@ void quadrant_sub_divide (void)
         {
           remove_cubic (p);
           if (cur_spec != q)
-          goto lab_continue;
-          else {
-
+            goto lab_continue;
+          else
+          {
             cur_spec = p;
             goto lab_exit;
           }
         }
       }
-      else if (!odd (mem[pp].hhfield.b1))
+      else if (!odd (mem[pp].hh.b1))
       {
         mem[pp + 2].cint = - (integer) mem[pp + 2].cint;
         mem[pp + 6].cint = - (integer) mem[pp + 6].cint;
@@ -9123,27 +9565,27 @@ void quadrant_sub_divide (void)
         del2 = - (integer) del2;
         del3 = - (integer) del3;
         desty = - (integer) desty;
-        mem[pp].hhfield.b1 = mem[pp].hhfield.b1 + 2;
+        mem[pp].hh.b1 = mem[pp].hh.b1 + 2;
       }
       pp = qq;
-    }while (!(pp == q));
+    } while (!(pp == q));
     if (constantx)
     {
       pp = p;
       do {
-          qq = mem[pp].hhfield.v.RH;
-        if (mem[pp].hhfield.b1 > 2)
+        qq = mem[pp].hh.v.RH;
+        if (mem[pp].hh.b1 > 2)
         {
-          mem[pp].hhfield.b1 = mem[pp].hhfield.b1 + 1;
+          mem[pp].hh.b1 = mem[pp].hh.b1 + 1;
           mem[pp + 1].cint = - (integer) mem[pp + 1].cint;
           mem[pp + 5].cint = - (integer) mem[pp + 5].cint;
           mem[qq + 3].cint = - (integer) mem[qq + 3].cint;
         }
         pp = qq;
-      }while (!(pp == q));
+      } while (!(pp == q));
     }
     p = q;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   lab_exit:;
 }
 
@@ -9153,23 +9595,23 @@ void octant_sub_divide (void)
   scaled del1, del2, del3, del, dmax;
   fraction t;
   scaled destx, desty;
+
   p = cur_spec;
   do {
-      q = mem[p].hhfield.v.RH;
+    q = mem[p].hh.v.RH;
     mem[p + 1].cint = mem[p + 1].cint - mem[p + 2].cint;
     mem[p + 5].cint = mem[p + 5].cint - mem[p + 6].cint;
     mem[q + 3].cint = mem[q + 3].cint - mem[q + 4].cint;
     if (q == cur_spec)
     {
-      unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hhfield
-     .b1);
-      skew (cur_x, cur_y, mem[p].hhfield.b1);
+      unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1);
+      skew (cur_x, cur_y, mem[p].hh.b1);
       destx = cur_x;
       desty = cur_y;
     }
-    else {
-      abnegate (mem[q + 1].cint, mem[q + 2].cint, mem[q]
-      .hhfield.b1, mem[p].hhfield.b1);
+    else
+    {
+      abnegate (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1, mem[p].hh.b1);
       destx = cur_x - cur_y;
       desty = cur_y;
     }
@@ -9177,18 +9619,20 @@ void octant_sub_divide (void)
     del2 = mem[q + 3].cint - mem[p + 5].cint;
     del3 = destx - mem[q + 3].cint;
     if (del1 != 0)
-    del = del1;
+      del = del1;
     else if (del2 != 0)
-    del = del2;
-    else del = del3;
+      del = del2;
+    else
+      del = del3;
     if (del != 0)
     {
       dmax = abs (del1);
       if (abs (del2) > dmax)
-      dmax = abs (del2);
+        dmax = abs (del2);
       if (abs (del3) > dmax)
-      dmax = abs (del3);
-      while (dmax < 134217728L) {
+        dmax = abs (del3);
+      while (dmax < 134217728L)
+      {
         dmax = dmax + dmax;
         del1 = del1 + del1;
         del2 = del2 + del2;
@@ -9210,41 +9654,42 @@ void octant_sub_divide (void)
         del3 = - (integer) del3;
         desty = destx + desty;
         destx = - (integer) destx;
-        mem[p].hhfield.b1 = mem[p].hhfield.b1 + 4;
+        mem[p].hh.b1 = mem[p].hh.b1 + 4;
       }
       t = crossing_point (del1, del2, del3);
       if (t < 268435456L)
       {
         split_cubic (p, t, destx, desty);
-        r = mem[p].hhfield.v.RH;
-        if (mem[r].hhfield.b1 > 4)
-        mem[r].hhfield.b1 = mem[r].hhfield.b1 - 4;
-        else mem[r].hhfield.b1 = mem[r].hhfield.b1 + 4;
+        r = mem[p].hh.v.RH;
+        if (mem[r].hh.b1 > 4)
+          mem[r].hh.b1 = mem[r].hh.b1 - 4;
+        else
+          mem[r].hh.b1 = mem[r].hh.b1 + 4;
         if (mem[r + 2].cint < mem[p + 2].cint)
-        mem[r + 2].cint = mem[p + 2].cint;
+          mem[r + 2].cint = mem[p + 2].cint;
         else if (mem[r + 2].cint > desty)
-        mem[r + 2].cint = desty;
+          mem[r + 2].cint = desty;
         if (mem[p + 1].cint + mem[r + 2].cint > destx + desty)
-        mem[r + 2].cint = destx + desty - mem[p + 1].cint;
+          mem[r + 2].cint = destx + desty - mem[p + 1].cint;
         if (mem[r + 4].cint > mem[r + 2].cint)
         {
           mem[r + 4].cint = mem[r + 2].cint;
           if (mem[p + 6].cint > mem[r + 2].cint)
-          mem[p + 6].cint = mem[r + 2].cint;
+            mem[p + 6].cint = mem[r + 2].cint;
         }
         if (mem[r + 6].cint < mem[r + 2].cint)
         {
           mem[r + 6].cint = mem[r + 2].cint;
           if (mem[q + 4].cint < mem[r + 2].cint)
-          mem[q + 4].cint = mem[r + 2].cint;
+            mem[q + 4].cint = mem[r + 2].cint;
         }
         if (mem[r + 1].cint < mem[p + 1].cint)
-        mem[r + 1].cint = mem[p + 1].cint;
+          mem[r + 1].cint = mem[p + 1].cint;
         else if (mem[r + 1].cint + mem[r + 2].cint > destx + desty)
-        mem[r + 1].cint = destx + desty - mem[r + 2].cint;
+          mem[r + 1].cint = destx + desty - mem[r + 2].cint;
         mem[r + 3].cint = mem[r + 1].cint;
         if (mem[p + 5].cint > mem[r + 1].cint)
-        mem[p + 5].cint = mem[r + 1].cint;
+          mem[p + 5].cint = mem[r + 1].cint;
         mem[r + 2].cint = mem[r + 2].cint + mem[r + 1].cint;
         mem[r + 6].cint = mem[r + 6].cint + mem[r + 1].cint;
         mem[r + 1].cint = - (integer) mem[r + 1].cint;
@@ -9257,43 +9702,44 @@ void octant_sub_divide (void)
         {
           mem[r + 6].cint = mem[r + 2].cint;
           if (mem[q + 4].cint < mem[r + 2].cint)
-          mem[q + 4].cint = mem[r + 2].cint;
+            mem[q + 4].cint = mem[r + 2].cint;
         }
         del2 = del2 - take_fraction (del2 - del3, t);
         if (del2 > 0)
-        del2 = 0;
+          del2 = 0;
         t = crossing_point (0, - (integer) del2, - (integer) del3);
         if (t < 268435456L)
         {
           split_cubic (r, t, destx, desty);
-          s = mem[r].hhfield.v.RH;
+          s = mem[r].hh.v.RH;
           if (mem[s + 2].cint < mem[r + 2].cint)
-          mem[s + 2].cint = mem[r + 2].cint;
+            mem[s + 2].cint = mem[r + 2].cint;
           else if (mem[s + 2].cint > desty)
-          mem[s + 2].cint = desty;
+            mem[s + 2].cint = desty;
           if (mem[r + 1].cint + mem[s + 2].cint > destx + desty)
-          mem[s + 2].cint = destx + desty - mem[r + 1].cint;
+            mem[s + 2].cint = destx + desty - mem[r + 1].cint;
           if (mem[s + 4].cint > mem[s + 2].cint)
           {
             mem[s + 4].cint = mem[s + 2].cint;
             if (mem[r + 6].cint > mem[s + 2].cint)
-            mem[r + 6].cint = mem[s + 2].cint;
+              mem[r + 6].cint = mem[s + 2].cint;
           }
           if (mem[s + 6].cint < mem[s + 2].cint)
           {
             mem[s + 6].cint = mem[s + 2].cint;
             if (mem[q + 4].cint < mem[s + 2].cint)
-            mem[q + 4].cint = mem[s + 2].cint;
+              mem[q + 4].cint = mem[s + 2].cint;
           }
           if (mem[s + 1].cint + mem[s + 2].cint > destx + desty)
-          mem[s + 1].cint = destx + desty - mem[s + 2].cint;
-          else {
+            mem[s + 1].cint = destx + desty - mem[s + 2].cint;
+          else
+          {
             if (mem[s + 1].cint < destx)
-            mem[s + 1].cint = destx;
+              mem[s + 1].cint = destx;
             if (mem[s + 1].cint < mem[r + 1].cint)
-            mem[s + 1].cint = mem[r + 1].cint;
+              mem[s + 1].cint = mem[r + 1].cint;
           }
-          mem[s].hhfield.b1 = mem[p].hhfield.b1;
+          mem[s].hh.b1 = mem[p].hh.b1;
           mem[s + 3].cint = mem[s + 1].cint;
           if (mem[q + 3].cint < destx)
           {
@@ -9305,7 +9751,8 @@ void octant_sub_divide (void)
             mem[q + 4].cint = mem[q + 4].cint + mem[s + 1].cint;
             mem[q + 3].cint = - (integer) mem[s + 1].cint;
           }
-          else {
+          else
+          {
             mem[q + 4].cint = mem[q + 4].cint + mem[q + 3].cint;
             mem[q + 3].cint = - (integer) mem[q + 3].cint;
           }
@@ -9317,10 +9764,11 @@ void octant_sub_divide (void)
           {
             mem[s + 6].cint = mem[s + 2].cint;
             if (mem[q + 4].cint < mem[s + 2].cint)
-            mem[q + 4].cint = mem[s + 2].cint;
+              mem[q + 4].cint = mem[s + 2].cint;
           }
         }
-        else {
+        else
+        {
           if (mem[r + 1].cint > destx)
           {
             mem[r + 1].cint = destx;
@@ -9328,14 +9776,14 @@ void octant_sub_divide (void)
             mem[r + 5].cint = mem[r + 1].cint;
           }
           if (mem[q + 3].cint > destx)
-          mem[q + 3].cint = destx;
+            mem[q + 3].cint = destx;
           else if (mem[q + 3].cint < mem[r + 1].cint)
-          mem[q + 3].cint = mem[r + 1].cint;
+            mem[q + 3].cint = mem[r + 1].cint;
         }
       }
     }
     p = q;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
 }
 
 void make_safe (void)
@@ -9344,39 +9792,43 @@ void make_safe (void)
   boolean allsafe;
   scaled nexta;
   scaled deltaa, deltab;
+
   before[cur_rounding_ptr] = before[0];
   node_to_round[cur_rounding_ptr] = node_to_round[0];
   do {
-      after[cur_rounding_ptr] = after[0];
+    after[cur_rounding_ptr] = after[0];
     allsafe = true;
     nexta = after[0];
-    {integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k
-    <= for_end) do
+    {integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k <= for_end) do
       {
         deltab = before[k + 1] - before[k];
         if (deltab >= 0)
-        deltaa = after[k + 1] - nexta;
-        else deltaa = nexta - after[k + 1];
+          deltaa = after[k + 1] - nexta;
+        else
+          deltaa = nexta - after[k + 1];
         nexta = after[k + 1];
         if ((deltaa < 0) || (deltaa > abs (deltab + deltab)))
         {
           allsafe = false;
           after[k] = before[k];
           if (k == cur_rounding_ptr - 1)
-          after[0] = before[0];
-          else after[k + 1] = before[k + 1];
+            after[0] = before[0];
+          else
+            after[k + 1] = before[k + 1];
         }
-      }
-    while (k++ < for_end);}
-  }while (!(allsafe));
+      } while (k++ < for_end);
+    }
+  } while (!(allsafe));
 }
 
 void before_and_after (scaled b, scaled a, halfword p)
 {
-  if (cur_rounding_ptr == max_rounding_ptr) {
+  if (cur_rounding_ptr == max_rounding_ptr)
+  {
     if (max_rounding_ptr < max_wiggle)
-    incr (max_rounding_ptr);
-    else overflow (568, max_wiggle);
+      incr (max_rounding_ptr);
+    else
+      overflow (568, max_wiggle);
   }
   after[cur_rounding_ptr] = a;
   before[cur_rounding_ptr] = b;
@@ -9386,21 +9838,26 @@ void before_and_after (scaled b, scaled a, halfword p)
 
 scaled good_val (scaled b, scaled o)
 {
-  scaled Result; scaled a;
+  scaled Result;
+  scaled a;
+
   a = b + o;
   if (a >= 0)
-  a = a - (a % cur_gran) - o;
-  else a = a + ((- (integer) (a + 1)) % cur_gran) - cur_gran + 1 - o;
+    a = a - (a % cur_gran) - o;
+  else
+    a = a + ((- (integer) (a + 1)) % cur_gran) - cur_gran + 1 - o;
   if (b - a < a + cur_gran - b)
-  Result = a;
-  else Result = a + cur_gran;
+    Result = a;
+  else
+    Result = a + cur_gran;
   return Result;
 }
 
 scaled compromise (scaled u, scaled v)
 {
-  scaled Result; Result = half (good_val (u + u, - (integer) u -
-  v));
+  scaled Result;
+  
+  Result = half (good_val (u + u, - (integer) u - v));
   return Result;
 }
 
@@ -9410,143 +9867,143 @@ void xy_round (void)
   scaled b, a;
   scaled penedge;
   fraction alpha;
+
   cur_gran = abs (internal[37]);
   if (cur_gran == 0)
-  cur_gran = 65536L;
+    cur_gran = 65536L;
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
-      q = mem[p].hhfield.v.RH;
-    if (odd (mem[p].hhfield.b1) != odd (mem[q].hhfield.b1))
+    q = mem[p].hh.v.RH;
+    if (odd (mem[p].hh.b1) != odd (mem[q].hh.b1))
     {
-      if (odd (mem[q].hhfield.b1))
-      b = mem[q + 1].cint;
-      else b = - (integer) mem[q + 1].cint;
-      if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (
-      abs (mem[q + 1].cint + mem[q + 3].cint) < 655))
+      if (odd (mem[q].hh.b1))
+        b = mem[q + 1].cint;
+      else
+        b = - (integer) mem[q + 1].cint;
+      if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs (mem[q + 1].cint + mem[q + 3].cint) < 655))
       {
         if (cur_pen == 3)
-        penedge = 0;
+          penedge = 0;
         else if (cur_path_type == 0)
-        penedge = compromise (mem[mem[cur_pen + 5].hhfield.v.RH + 2]
-        .cint, mem[mem[cur_pen + 7].hhfield.v.RH + 2].cint);
-        else if (odd (mem[q].hhfield.b1))
-        penedge = mem[mem[cur_pen + 7].hhfield.v.RH + 2].cint;
-        else penedge = mem[mem[cur_pen + 5].hhfield.v.RH + 2].cint;
+         penedge = compromise (mem[mem[cur_pen + 5].hh.v.RH + 2].cint, mem[mem[cur_pen + 7].hh.v.RH + 2].cint);
+        else if (odd (mem[q].hh.b1))
+          penedge = mem[mem[cur_pen + 7].hh.v.RH + 2].cint;
+        else
+          penedge = mem[mem[cur_pen + 5].hh.v.RH + 2].cint;
         a = good_val (b, penedge);
       }
-      else a = b;
-      if (abs (a) > max_allowed) {
+      else
+        a = b;
+      if (abs (a) > max_allowed)
+      {
         if (a > 0)
-        a = max_allowed;
-        else a = - (integer) max_allowed;
+          a = max_allowed;
+        else
+          a = - (integer) max_allowed;
       }
       before_and_after (b, a, q);
     }
     p = q;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   if (cur_rounding_ptr > 0)
   {
     make_safe ();
     do {
-        decr (cur_rounding_ptr);
-      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (
-      after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
+      decr (cur_rounding_ptr);
+      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
       {
         p = node_to_round[cur_rounding_ptr];
-        if (odd (mem[p].hhfield.b1))
+        if (odd (mem[p].hh.b1))
         {
           b = before[cur_rounding_ptr];
           a = after[cur_rounding_ptr];
         }
-        else {
+        else
+        {
           b = - (integer) before[cur_rounding_ptr];
           a = - (integer) after[cur_rounding_ptr];
         }
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
-        alpha = 268435456L;
-        else alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
+          alpha = 268435456L;
+        else
+          alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
         cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
         cur_rounding_ptr]);
         do {
-            mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint
-          - b) + a;
-          mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b
-        ) + a;
-          p = mem[p].hhfield.v.RH;
-          mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b
-        ) + a;
-        }while (!(p == node_to_round[cur_rounding_ptr + 1]));
+          mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint - b) + a;
+          mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b) + a;
+          p = mem[p].hh.v.RH;
+          mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b) + a;
+        } while (!(p == node_to_round[cur_rounding_ptr + 1]));
       }
-    }while (!(cur_rounding_ptr == 0));
+    } while (!(cur_rounding_ptr == 0));
   }
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
-      q = mem[p].hhfield.v.RH;
-    if ((mem[p].hhfield.b1 > 2) != (mem[q].hhfield.b1 > 2))
+    q = mem[p].hh.v.RH;
+    if ((mem[p].hh.b1 > 2) != (mem[q].hh.b1 > 2))
     {
-      if (mem[q].hhfield.b1 <= 2)
-      b = mem[q + 2].cint;
-      else b = - (integer) mem[q + 2].cint;
-      if ((abs (mem[q + 2].cint - mem[q + 6].cint) < 655) || (
-      abs (mem[q + 2].cint + mem[q + 4].cint) < 655))
+      if (mem[q].hh.b1 <= 2)
+        b = mem[q + 2].cint;
+      else
+        b = - (integer) mem[q + 2].cint;
+      if ((abs (mem[q + 2].cint - mem[q + 6].cint) < 655) || (abs (mem[q + 2].cint + mem[q + 4].cint) < 655))
       {
         if (cur_pen == 3)
-        penedge = 0;
+          penedge = 0;
         else if (cur_path_type == 0)
-        penedge = compromise (mem[mem[cur_pen + 2].hhfield.v.RH + 2]
-        .cint, mem[mem[cur_pen + 1].hhfield.v.RH + 2].cint);
-        else if (mem[q].hhfield.b1 <= 2)
-        penedge = mem[mem[cur_pen + 1].hhfield.v.RH + 2].cint;
-        else penedge = mem[mem[cur_pen + 2].hhfield.v.RH + 2].cint;
+          penedge = compromise (mem[mem[cur_pen + 2].hh.v.RH + 2].cint, mem[mem[cur_pen + 1].hh.v.RH + 2].cint);
+        else if (mem[q].hh.b1 <= 2)
+          penedge = mem[mem[cur_pen + 1].hh.v.RH + 2].cint;
+        else
+          penedge = mem[mem[cur_pen + 2].hh.v.RH + 2].cint;
         a = good_val (b, penedge);
       }
-      else a = b;
-      if (abs (a) > max_allowed) {
-
+      else
+        a = b;
+      if (abs (a) > max_allowed)
+      {
         if (a > 0)
-        a = max_allowed;
-        else a = - (integer) max_allowed;
+          a = max_allowed;
+        else
+          a = - (integer) max_allowed;
       }
       before_and_after (b, a, q);
     }
     p = q;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   if (cur_rounding_ptr > 0)
   {
     make_safe ();
     do {
-        decr (cur_rounding_ptr);
-      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (
-      after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
+      decr (cur_rounding_ptr);
+      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
       {
         p = node_to_round[cur_rounding_ptr];
-        if (mem[p].hhfield.b1 <= 2)
+        if (mem[p].hh.b1 <= 2)
         {
           b = before[cur_rounding_ptr];
           a = after[cur_rounding_ptr];
         }
-        else {
+        else
+        {
           b = - (integer) before[cur_rounding_ptr];
           a = - (integer) after[cur_rounding_ptr];
         }
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
-        alpha = 268435456L;
-        else alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
-        cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
-        cur_rounding_ptr]);
+          alpha = 268435456L;
+        else
+          alpha = make_fraction (after[cur_rounding_ptr + 1] - after[cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[cur_rounding_ptr]);
         do {
-            mem[p + 2].cint = take_fraction (alpha, mem[p + 2].cint
-          - b) + a;
-          mem[p + 6].cint = take_fraction (alpha, mem[p + 6].cint - b
-        ) + a;
-          p = mem[p].hhfield.v.RH;
-          mem[p + 4].cint = take_fraction (alpha, mem[p + 4].cint - b
-        ) + a;
-        }while (!(p == node_to_round[cur_rounding_ptr + 1]));
+          mem[p + 2].cint = take_fraction (alpha, mem[p + 2].cint - b) + a;
+          mem[p + 6].cint = take_fraction (alpha, mem[p + 6].cint - b) + a;
+          p = mem[p].hh.v.RH;
+          mem[p + 4].cint = take_fraction (alpha, mem[p + 4].cint - b) + a;
+        } while (!(p == node_to_round[cur_rounding_ptr + 1]));
       }
-    }while (!(cur_rounding_ptr == 0));
+    } while (!(cur_rounding_ptr == 0));
   }
 }
 
@@ -9563,55 +10020,55 @@ void diag_round (void)
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
-      q = mem[p].hhfield.v.RH;
-    if (mem[p].hhfield.b1 != mem[q].hhfield.b1)
+      q = mem[p].hh.v.RH;
+    if (mem[p].hh.b1 != mem[q].hh.b1)
     {
-      if (mem[q].hhfield.b1 > 4)
+      if (mem[q].hh.b1 > 4)
       b = - (integer) mem[q + 1].cint;
       else b = mem[q + 1].cint;
-      if (abs (mem[q].hhfield.b1 - mem[p].hhfield.b1) == 4) {
+      if (abs (mem[q].hh.b1 - mem[p].hh.b1) == 4) {
         if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (
         abs (mem[q + 1].cint + mem[q + 3].cint) < 655))
         {
           if (cur_pen == 3)
           penedge = 0;
           else if (cur_path_type == 0)
-          switch (mem[q].hhfield.b1)
+          switch (mem[q].hh.b1)
           {case 1 :
           case 5 :
-            penedge = compromise (mem[mem[mem[cur_pen + 1].hhfield
-          .v.RH].hhfield.lhfield + 1].cint, - (integer) mem[mem[
-            mem[cur_pen + 4].hhfield.v.RH].hhfield.lhfield + 1].cint
+            penedge = compromise (mem[mem[mem[cur_pen + 1].hh
+          .v.RH].hh.lh + 1].cint, - (integer) mem[mem[
+            mem[cur_pen + 4].hh.v.RH].hh.lh + 1].cint
          );
             break;
           case 4 :
           case 8 :
             penedge = - (integer) compromise (mem[mem[mem[cur_pen + 1]
-            .hhfield.v.RH].hhfield.lhfield + 1].cint, - (integer) mem[
-            mem[mem[cur_pen + 4].hhfield.v.RH].hhfield.lhfield + 1]
+            .hh.v.RH].hh.lh + 1].cint, - (integer) mem[
+            mem[mem[cur_pen + 4].hh.v.RH].hh.lh + 1]
             .cint);
             break;
           case 6 :
           case 2 :
-            penedge = compromise (mem[mem[mem[cur_pen + 2].hhfield
-          .v.RH].hhfield.lhfield + 1].cint, - (integer) mem[mem[
-            mem[cur_pen + 3].hhfield.v.RH].hhfield.lhfield + 1].cint
+            penedge = compromise (mem[mem[mem[cur_pen + 2].hh
+          .v.RH].hh.lh + 1].cint, - (integer) mem[mem[
+            mem[cur_pen + 3].hh.v.RH].hh.lh + 1].cint
          );
             break;
           case 7 :
           case 3 :
             penedge = - (integer) compromise (mem[mem[mem[cur_pen + 2]
-            .hhfield.v.RH].hhfield.lhfield + 1].cint, - (integer) mem[
-            mem[mem[cur_pen + 3].hhfield.v.RH].hhfield.lhfield + 1]
+            .hh.v.RH].hh.lh + 1].cint, - (integer) mem[
+            mem[mem[cur_pen + 3].hh.v.RH].hh.lh + 1]
             .cint);
             break;
           }
-          else if (mem[q].hhfield.b1 <= 4)
-          penedge = mem[mem[mem[cur_pen + mem[q].hhfield.b1]
-          .hhfield.v.RH].hhfield.lhfield + 1].cint;
+          else if (mem[q].hh.b1 <= 4)
+          penedge = mem[mem[mem[cur_pen + mem[q].hh.b1]
+          .hh.v.RH].hh.lh + 1].cint;
           else penedge = - (integer) mem[mem[mem[cur_pen + mem[q]
-          .hhfield.b1].hhfield.v.RH].hhfield.lhfield + 1].cint;
-          if (odd (mem[q].hhfield.b1))
+          .hh.b1].hh.v.RH].hh.lh + 1].cint;
+          if (odd (mem[q].hh.b1))
           a = good_val (b, penedge + halfp (cur_gran));
           else a = good_val (b - 1, penedge + halfp (cur_gran));
         }
@@ -9621,7 +10078,7 @@ void diag_round (void)
       before_and_after (b, a, q);
     }
     p = q;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   if (cur_rounding_ptr > 0)
   {
     p = node_to_round[0];
@@ -9648,22 +10105,22 @@ void diag_round (void)
             if (aa == bb)
             {
               if (pp == node_to_round[0])
-              unskew (firstx, firsty, mem[pp].hhfield.b1);
+              unskew (firstx, firsty, mem[pp].hh.b1);
               else unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem
-            [pp].hhfield.b1);
-              skew (cur_x, cur_y, mem[p].hhfield.b1);
+            [pp].hh.b1);
+              skew (cur_x, cur_y, mem[p].hh.b1);
               bb = cur_x;
               aa = bb;
               dd = cur_y;
               cc = dd;
-              if (mem[p].hhfield.b1 > 4)
+              if (mem[p].hh.b1 > 4)
               {
                 b = - (integer) b;
                 a = - (integer) a;
               }
             }
             else {
-              if (mem[p].hhfield.b1 > 4)
+              if (mem[p].hh.b1 > 4)
               {
                 bb = - (integer) bb;
                 aa = - (integer) aa;
@@ -9674,7 +10131,7 @@ void diag_round (void)
               dd = firsty - bb;
               else dd = mem[pp + 2].cint - bb;
               if (odd (aa - bb)) {
-                if (mem[p].hhfield.b1 > 4)
+                if (mem[p].hh.b1 > 4)
                 cc = dd - half (aa - bb + 1);
                 else cc = dd - half (aa - bb - 1);
               }
@@ -9682,7 +10139,7 @@ void diag_round (void)
             }
             d = mem[p + 2].cint;
             if (odd (a - b)) {
-              if (mem[p].hhfield.b1 > 4)
+              if (mem[p].hh.b1 > 4)
               c = d - half (a - b - 1);
               else c = d - half (a - b + 1);
             }
@@ -9699,7 +10156,7 @@ void diag_round (void)
           }
         }
       while (k++ < for_end);}
-    }while (!(allsafe));
+    } while (!(allsafe));
     {integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k
     <= for_end) do
       {
@@ -9714,22 +10171,22 @@ void diag_round (void)
           if (aa == bb)
           {
             if (pp == node_to_round[0])
-            unskew (firstx, firsty, mem[pp].hhfield.b1);
+            unskew (firstx, firsty, mem[pp].hh.b1);
             else unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[
-            pp].hhfield.b1);
-            skew (cur_x, cur_y, mem[p].hhfield.b1);
+            pp].hh.b1);
+            skew (cur_x, cur_y, mem[p].hh.b1);
             bb = cur_x;
             aa = bb;
             dd = cur_y;
             cc = dd;
-            if (mem[p].hhfield.b1 > 4)
+            if (mem[p].hh.b1 > 4)
             {
               b = - (integer) b;
               a = - (integer) a;
             }
           }
           else {
-            if (mem[p].hhfield.b1 > 4)
+            if (mem[p].hh.b1 > 4)
             {
               bb = - (integer) bb;
               aa = - (integer) aa;
@@ -9740,7 +10197,7 @@ void diag_round (void)
             dd = firsty - bb;
             else dd = mem[pp + 2].cint - bb;
             if (odd (aa - bb)) {
-              if (mem[p].hhfield.b1 > 4)
+              if (mem[p].hh.b1 > 4)
               cc = dd - half (aa - bb + 1);
               else cc = dd - half (aa - bb - 1);
             }
@@ -9748,7 +10205,7 @@ void diag_round (void)
           }
           d = mem[p + 2].cint;
           if (odd (a - b)) {
-            if (mem[p].hhfield.b1 > 4)
+            if (mem[p].hh.b1 > 4)
             c = d - half (a - b - 1);
             else c = d - half (a - b + 1);
           }
@@ -9768,12 +10225,12 @@ void diag_round (void)
             b) + a;
             mem[p + 6].cint = take_fraction (beta, mem[p + 6].cint -
             d) + c;
-            p = mem[p].hhfield.v.RH;
+            p = mem[p].hh.v.RH;
             mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint -
             b) + a;
             mem[p + 4].cint = take_fraction (beta, mem[p + 4].cint -
             d) + c;
-          }while (!(p == pp));
+          } while (!(p == pp));
         }
       }
     while (k++ < for_end);}
@@ -9783,18 +10240,18 @@ void diag_round (void)
 void new_boundary (halfword p, small_number octant)
 {
   halfword q, r;
-  q = mem[p].hhfield.v.RH;
+  q = mem[p].hh.v.RH;
   r = get_node (7);
-  mem[r].hhfield.v.RH = q;
-  mem[p].hhfield.v.RH = r;
-  mem[r].hhfield.b0 = mem[q].hhfield.b0;
+  mem[r].hh.v.RH = q;
+  mem[p].hh.v.RH = r;
+  mem[r].hh.b0 = mem[q].hh.b0;
   mem[r + 3].cint = mem[q + 3].cint;
   mem[r + 4].cint = mem[q + 4].cint;
-  mem[r].hhfield.b1 = 0;
-  mem[q].hhfield.b0 = 0;
+  mem[r].hh.b1 = 0;
+  mem[q].hh.b0 = 0;
   mem[r + 5].cint = octant;
-  mem[q + 3].cint = mem[q].hhfield.b1;
-  unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hhfield.b1
+  mem[q + 3].cint = mem[q].hh.b1;
+  unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1
 );
   skew (cur_x, cur_y, octant);
   mem[r + 1].cint = cur_x;
@@ -9885,12 +10342,12 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       else if (chopped == 0)
       chopped = -1;
     }
-    p = mem[p].hhfield.v.RH;
-    mem[p].hhfield.b0 = k;
+    p = mem[p].hh.v.RH;
+    mem[p].hh.b0 = k;
     if (k < 255)
     incr (k);
     else k = 1;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   if (chopped > 0)
   {
     {
@@ -9927,7 +10384,7 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
   diag_round ();
   p = cur_spec;
   do {
-      lab_continue: q = mem[p].hhfield.v.RH;
+      lab_continue: q = mem[p].hh.v.RH;
     if (p != q)
     {
       if (mem[p + 1].cint == mem[p + 5].cint) {
@@ -9936,8 +10393,8 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
             if (mem[p + 2].cint == mem[q + 4].cint)
             {
               unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q]
-              .hhfield.b1);
-              skew (cur_x, cur_y, mem[p].hhfield.b1);
+              .hh.b1);
+              skew (cur_x, cur_y, mem[p].hh.b1);
               if (mem[p + 1].cint == cur_x) {
                 if (mem[p + 2].cint == cur_y)
                 {
@@ -9954,18 +10411,18 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       }
     }
     p = q;
-  }while (!(p == cur_spec));
+  } while (!(p == cur_spec));
   turning_number = 0;
   p = cur_spec;
-  q = mem[p].hhfield.v.RH;
+  q = mem[p].hh.v.RH;
   do {
-      r = mem[q].hhfield.v.RH;
-    if ((mem[p].hhfield.b1 != mem[q].hhfield.b1) || (q == r))
+      r = mem[q].hh.v.RH;
+    if ((mem[p].hh.b1 != mem[q].hh.b1) || (q == r))
     {
-      new_boundary (p, mem[p].hhfield.b1);
-      s = mem[p].hhfield.v.RH;
-      o1 = octant_number[mem[p].hhfield.b1];
-      o2 = octant_number[mem[q].hhfield.b1];
+      new_boundary (p, mem[p].hh.b1);
+      s = mem[p].hh.v.RH;
+      o1 = octant_number[mem[p].hh.b1];
+      o2 = octant_number[mem[q].hh.b1];
       switch (o2 - o1)
       {case 1 :
       case -7 :
@@ -10018,15 +10475,15 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
               if (dx2 == 0) {
                 if (dy2 == 0)
                 {
-                  if (mem[r].hhfield.b1 == 0)
+                  if (mem[r].hh.b1 == 0)
                   {
                     cur_x = mem[r + 1].cint;
                     cur_y = mem[r + 2].cint;
                   }
                   else {
                     unskew (mem[r + 1].cint, mem[r + 2].cint, mem[
-                    r].hhfield.b1);
-                    skew (cur_x, cur_y, mem[q].hhfield.b1);
+                    r].hh.b1);
+                    skew (cur_x, cur_y, mem[q].hh.b1);
                   }
                   dx2 = cur_x - mem[q + 1].cint;
                   dy2 = cur_y - mem[q + 2].cint;
@@ -10042,11 +10499,11 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
             dx2 = dx2 + dx2;
             dy2 = dy2 + dy2;
           }
-          unskew (dx1, dy1, mem[p].hhfield.b1);
+          unskew (dx1, dy1, mem[p].hh.b1);
           del = pyth_add (cur_x, cur_y);
           dx1 = make_fraction (cur_x, del);
           dy1 = make_fraction (cur_y, del);
-          unskew (dx2, dy2, mem[q].hhfield.b1);
+          unskew (dx2, dy2, mem[q].hh.b1);
           del = pyth_add (cur_x, cur_y);
           dx2 = make_fraction (cur_x, del);
           dy2 = make_fraction (cur_y, del);
@@ -10078,23 +10535,23 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
         if (o1 == o2)
         goto done;
         new_boundary (s, octant_code[o1]);
-        s = mem[s].hhfield.v.RH;
+        s = mem[s].hh.v.RH;
         mem[s + 3].cint = mem[s + 5].cint;
       }
       done: if (q == r)
       {
-        q = mem[q].hhfield.v.RH;
+        q = mem[q].hh.v.RH;
         r = q;
         p = s;
-        mem[s].hhfield.v.RH = q;
+        mem[s].hh.v.RH = q;
         mem[q + 3].cint = mem[q + 5].cint;
-        mem[q].hhfield.b0 = 0;
+        mem[q].hh.b0 = 0;
         free_node (cur_spec, 7);
         cur_spec = q;
       }
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
       do {
-          s = mem[p].hhfield.v.RH;
+          s = mem[p].hh.v.RH;
         o1 = octant_number[mem[p + 5].cint];
         o2 = octant_number[mem[s + 3].cint];
         if (abs (o1 - o2) == 1)
@@ -10113,13 +10570,13 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
         }
         mem[s + 4].cint = mem[p + 6].cint;
         p = s;
-      }while (!(p == q));
+      } while (!(p == q));
     }
     p = q;
     q = r;
-  }while (!(p == cur_spec));
-  while (mem[cur_spec].hhfield.b0 != 0) cur_spec = mem[cur_spec]
-  .hhfield.v.RH;
+  } while (!(p == cur_spec));
+  while (mem[cur_spec].hh.b0 != 0) cur_spec = mem[cur_spec]
+  .hh.v.RH;
   if (tracing > 0) {
     if ((internal[36]<= 0) || (chopped != 0))
     print_spec (560);
@@ -10151,7 +10608,7 @@ void fill_spec (halfword h)
   do {
       octant = mem[p + 3].cint;
     q = p;
-    while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
+    while (mem[q].hh.b1 != 0) q = mem[q].hh.v.RH;
     if (q != p)
     {
       end_round (mem[p + 1].cint, mem[p + 2].cint);
@@ -10165,20 +10622,20 @@ void fill_spec (halfword h)
       move_ptr = 0;
       r = p;
       do {
-          s = mem[r].hhfield.v.RH;
+          s = mem[r].hh.v.RH;
         make_moves (mem[r + 1].cint, mem[r + 5].cint, mem[s + 3]
         .cint, mem[s + 1].cint, mem[r + 2].cint + 32768L, mem[r +
         6].cint + 32768L, mem[s + 4].cint + 32768L, mem[s + 2]
         .cint + 32768L, xy_corr[octant], y_corr[octant]);
         r = s;
-      }while (!(r == q));
+      } while (!(r == q));
       move[move_ptr] = move[move_ptr] - d1;
       if (internal[35] > 0)
       smooth_moves (0, move_ptr);
       move_to_edges (m0, n0, m1, n1);
     }
-    p = mem[q].hhfield.v.RH;
-  }while (!(p == h));
+    p = mem[q].hh.v.RH;
+  } while (!(p == h));
   toss_knot_list (h);
   if (internal[10] > 0)
   end_edge_tracing ();
@@ -10190,10 +10647,10 @@ void dup_offset (halfword w)
   r = get_node (3);
   mem[r + 1].cint = mem[w + 1].cint;
   mem[r + 2].cint = mem[w + 2].cint;
-  mem[r].hhfield.v.RH = mem[w].hhfield.v.RH;
-  mem[mem[w].hhfield.v.RH].hhfield.lhfield = r;
-  mem[r].hhfield.lhfield = w;
-  mem[w].hhfield.v.RH = r;
+  mem[r].hh.v.RH = mem[w].hh.v.RH;
+  mem[mem[w].hh.v.RH].hh.lh = r;
+  mem[r].hh.lh = w;
+  mem[w].hh.v.RH = r;
 }
 
 halfword make_pen (halfword h)
@@ -10205,12 +10662,12 @@ halfword make_pen (halfword h)
   scaled dx, dy;
   scaled mc;
   q = h;
-  r = mem[q].hhfield.v.RH;
+  r = mem[q].hh.v.RH;
   mc = abs (mem[h + 1].cint);
   if (q == r)
   {
     hh = h;
-    mem[h].hhfield.b1 = 0;
+    mem[h].hh.b1 = 0;
     if (mc < abs (mem[h + 2].cint))
     mc = abs (mem[h + 2].cint);
   }
@@ -10218,7 +10675,7 @@ halfword make_pen (halfword h)
     o = 0;
     hh = 0;
     while (true) {
-      s = mem[r].hhfield.v.RH;
+      s = mem[r].hh.v.RH;
       if (mc < abs (mem[r + 1].cint))
       mc = abs (mem[r + 1].cint);
       if (mc < abs (mem[r + 2].cint))
@@ -10254,7 +10711,7 @@ halfword make_pen (halfword h)
       }
       if (dx < dy)
       octant = octant + 4;
-      mem[q].hhfield.b1 = octant;
+      mem[q].hh.b1 = octant;
       oo = octant_number[octant];
       if (o > oo)
       {
@@ -10275,9 +10732,9 @@ halfword make_pen (halfword h)
   p = get_node (10);
   q = hh;
   mem[p + 9].cint = mc;
-  mem[p].hhfield.lhfield = 0;
-  if (mem[q].hhfield.v.RH != q)
-  mem[p].hhfield.v.RH = 1;
+  mem[p].hh.lh = 0;
+  if (mem[q].hh.v.RH != q)
+  mem[p].hh.v.RH = 1;
   {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
     {
       octant = octant_code[k];
@@ -10289,48 +10746,48 @@ halfword make_pen (halfword h)
         mem[r + 1].cint = cur_x;
         mem[r + 2].cint = cur_y;
         if (n == 0)
-        mem[h].hhfield.v.RH = r;
+        mem[h].hh.v.RH = r;
         else if (odd (k))
         {
-          mem[w].hhfield.v.RH = r;
-          mem[r].hhfield.lhfield = w;
+          mem[w].hh.v.RH = r;
+          mem[r].hh.lh = w;
         }
         else {
-          mem[w].hhfield.lhfield = r;
-          mem[r].hhfield.v.RH = w;
+          mem[w].hh.lh = r;
+          mem[r].hh.v.RH = w;
         }
         w = r;
-        if (mem[q].hhfield.b1 != octant)
+        if (mem[q].hh.b1 != octant)
         goto done1;
-        q = mem[q].hhfield.v.RH;
+        q = mem[q].hh.v.RH;
         incr (n);
       }
-      done1: r = mem[h].hhfield.v.RH;
+      done1: r = mem[h].hh.v.RH;
       if (odd (k))
       {
-        mem[w].hhfield.v.RH = r;
-        mem[r].hhfield.lhfield = w;
+        mem[w].hh.v.RH = r;
+        mem[r].hh.lh = w;
       }
       else {
-        mem[w].hhfield.lhfield = r;
-        mem[r].hhfield.v.RH = w;
-        mem[h].hhfield.v.RH = w;
+        mem[w].hh.lh = r;
+        mem[r].hh.v.RH = w;
+        mem[h].hh.v.RH = w;
         r = w;
       }
-      if ((mem[r + 2].cint != mem[mem[r].hhfield.v.RH + 2].cint
+      if ((mem[r + 2].cint != mem[mem[r].hh.v.RH + 2].cint
    ) || (n == 0))
       {
         dup_offset (r);
         incr (n);
       }
-      r = mem[r].hhfield.lhfield;
-      if (mem[r + 1].cint != mem[mem[r].hhfield.lhfield + 1]
+      r = mem[r].hh.lh;
+      if (mem[r + 1].cint != mem[mem[r].hh.lh + 1]
       .cint)
       dup_offset (r);
       else decr (n);
       if (n >= 255)
       overflow (579, 255);
-      mem[h].hhfield.lhfield = n;
+      mem[h].hh.lh = n;
     }
   while (k++ < for_end);}
   goto found;
@@ -10396,8 +10853,8 @@ halfword trivial_knot (scaled x, scaled y)
 {
   halfword Result; halfword p;
   p = get_node (7);
-  mem[p].hhfield.b0 = 1;
-  mem[p].hhfield.b1 = 1;
+  mem[p].hh.b0 = 1;
+  mem[p].hh.b1 = 1;
   mem[p + 1].cint = x;
   mem[p + 3].cint = x;
   mem[p + 5].cint = x;
@@ -10420,22 +10877,22 @@ halfword make_path (halfword penhead)
     {
       octant = octant_code[k];
       h = penhead + octant;
-      n = mem[h].hhfield.lhfield;
-      w = mem[h].hhfield.v.RH;
+      n = mem[h].hh.lh;
+      w = mem[h].hh.v.RH;
       if (!odd (k))
-      w = mem[w].hhfield.lhfield;
+      w = mem[w].hh.lh;
       {integer for_end; m = 1;for_end = n + 1; if (m <= for_end)
       do
         {
           if (odd (k))
-          ww = mem[w].hhfield.v.RH;
-          else ww = mem[w].hhfield.lhfield;
+          ww = mem[w].hh.v.RH;
+          else ww = mem[w].hh.lh;
           if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww +
           2].cint != mem[w + 2].cint))
           {
             unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
-            mem[p].hhfield.v.RH = trivial_knot (cur_x, cur_y);
-            p = mem[p].hhfield.v.RH;
+            mem[p].hh.v.RH = trivial_knot (cur_x, cur_y);
+            p = mem[p].hh.v.RH;
           }
           w = ww;
         }
@@ -10444,13 +10901,13 @@ halfword make_path (halfword penhead)
   while (k++ < for_end);}
   if (p == memtop - 1)
   {
-    w = mem[penhead + 1].hhfield.v.RH;
+    w = mem[penhead + 1].hh.v.RH;
     p = trivial_knot (mem[w + 1].cint + mem[w + 2].cint, mem[w + 2
   ].cint);
-    mem[memtop - 1].hhfield.v.RH = p;
+    mem[memtop - 1].hh.v.RH = p;
   }
-  mem[p].hhfield.v.RH = mem[memtop - 1].hhfield.v.RH;
-  Result = mem[memtop - 1].hhfield.v.RH;
+  mem[p].hh.v.RH = mem[memtop - 1].hh.v.RH;
+  Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
@@ -10496,15 +10953,15 @@ void find_offset (scaled x, scaled y, halfword p)
   s = -1;
   else s = 1;
   h = p + octant;
-  w = mem[mem[h].hhfield.v.RH].hhfield.v.RH;
-  ww = mem[w].hhfield.v.RH;
-  n = mem[h].hhfield.lhfield;
+  w = mem[mem[h].hh.v.RH].hh.v.RH;
+  ww = mem[w].hh.v.RH;
+  n = mem[h].hh.lh;
   while (n > 1) {
     if (ab_vs_cd (x, mem[ww + 2].cint - mem[w + 2].cint, y, mem[
     ww + 1].cint - mem[w + 1].cint) != s)
     goto done;
     w = ww;
-    ww = mem[w].hhfield.v.RH;
+    ww = mem[w].hh.v.RH;
     decr (n);
   }
   done: unskew (mem[w + 1].cint, mem[w + 2].cint, octant);
@@ -10515,9 +10972,9 @@ void split_for_offset (halfword p, fraction t)
 {
   halfword q;
   halfword r;
-  q = mem[p].hhfield.v.RH;
+  q = mem[p].hh.v.RH;
   split_cubic (p, t, mem[q + 1].cint, mem[q + 2].cint);
-  r = mem[p].hhfield.v.RH;
+  r = mem[p].hh.v.RH;
   if (mem[r + 2].cint < mem[p + 2].cint)
   mem[r + 2].cint = mem[p + 2].cint;
   else if (mem[r + 2].cint > mem[q + 2].cint)
@@ -10537,15 +10994,15 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
   fraction s;
   integer v;
   while (true) {
-    mem[p].hhfield.b1 = k;
+    mem[p].hh.b1 = k;
     if (rising) {
       if (k == n)
       goto lab_exit;
-      else ww = mem[w].hhfield.v.RH;
+      else ww = mem[w].hh.v.RH;
     }
     else if (k == 1)
     goto lab_exit;
-    else ww = mem[w].hhfield.lhfield;
+    else ww = mem[w].hh.lh;
     du = mem[ww + 1].cint - mem[w + 1].cint;
     dv = mem[ww + 2].cint - mem[w + 2].cint;
     if (abs (du) >= abs (dv))
@@ -10566,8 +11023,8 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
     goto lab_exit;
     {
       split_for_offset (p, t);
-      mem[p].hhfield.b1 = k;
-      p = mem[p].hhfield.v.RH;
+      mem[p].hh.b1 = k;
+      p = mem[p].hh.v.RH;
       v = x0 - take_fraction (x0 - x1, t);
       x1 = x1 - take_fraction (x1 - x2, t);
       x0 = v - take_fraction (v - x1, t);
@@ -10581,7 +11038,7 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
       if (t < 268435456L)
       {
         split_for_offset (p, t);
-        mem[mem[p].hhfield.v.RH].hhfield.b1 = k;
+        mem[mem[p].hh.v.RH].hh.b1 = k;
         v = x1 - take_fraction (x1 - x2, t);
         x1 = x0 - take_fraction (x0 - x1, t);
         x2 = x1 - take_fraction (x1 - v, t);
@@ -10612,12 +11069,12 @@ void offset_prep (halfword c, halfword h)
   fraction t;
   fraction s;
   p = c;
-  n = mem[h].hhfield.lhfield;
-  lh = mem[h].hhfield.v.RH;
-  while (mem[p].hhfield.b1 != 0) {
-    q = mem[p].hhfield.v.RH;
+  n = mem[h].hh.lh;
+  lh = mem[h].hh.v.RH;
+  while (mem[p].hh.b1 != 0) {
+    q = mem[p].hh.v.RH;
     if (n <= 1)
-    mem[p].hhfield.b1 = 1;
+    mem[p].hh.b1 = 1;
     else {
       x0 = mem[p + 5].cint - mem[p + 1].cint;
       x2 = mem[q + 1].cint - mem[q + 3].cint;
@@ -10664,16 +11121,16 @@ void offset_prep (halfword c, halfword h)
         }
       }
       if (dx == 0)
-      fin_offset_prep (p, n, mem[mem[lh].hhfield.lhfield].hhfield
-    .lhfield, - (integer) x0, - (integer) x1, - (integer) x2 ,
+      fin_offset_prep (p, n, mem[mem[lh].hh.lh].hh
+    .lh, - (integer) x0, - (integer) x1, - (integer) x2 ,
       - (integer) y0, - (integer) y1, - (integer) y2, false, n);
       else {
         k = 1;
-        w = mem[lh].hhfield.v.RH;
+        w = mem[lh].hh.v.RH;
         while (true) {
           if (k == n)
           goto done;
-          ww = mem[w].hhfield.v.RH;
+          ww = mem[w].hh.v.RH;
           if (ab_vs_cd (dy, abs (mem[ww + 1].cint - mem[w + 1].cint
         ), dx, abs (mem[ww + 2].cint - mem[w + 2].cint)) >= 0)
           {
@@ -10686,7 +11143,7 @@ void offset_prep (halfword c, halfword h)
         if (k == 1)
         t = 268435457L;
         else {
-          ww = mem[w].hhfield.lhfield;
+          ww = mem[w].hh.lh;
           du = mem[ww + 1].cint - mem[w + 1].cint;
           dv = mem[ww + 2].cint - mem[w + 2].cint;
           if (abs (du) >= abs (dv))
@@ -10709,7 +11166,7 @@ void offset_prep (halfword c, halfword h)
         fin_offset_prep (p, k, w, x0, x1, x2, y0, y1, y2, true, n);
         else {
           split_for_offset (p, t);
-          r = mem[p].hhfield.v.RH;
+          r = mem[p].hh.v.RH;
           x1a = x0 - take_fraction (x0 - x1, t);
           x1 = x1 - take_fraction (x1 - x2, t);
           x2a = x1a - take_fraction (x1a - x1, t);
@@ -10733,7 +11190,7 @@ void offset_prep (halfword c, halfword h)
             y1a = y1 - take_fraction (y1 - y2, t);
             y1 = y0 - take_fraction (y0 - y1, t);
             y0a = y1 - take_fraction (y1 - y1a, t);
-            fin_offset_prep (mem[r].hhfield.v.RH, k, w, x0a, x1a, x2
+            fin_offset_prep (mem[r].hh.v.RH, k, w, x0a, x1a, x2
            , y0a, y1a, y2, true, n);
             x2 = x0a;
             y2 = y0a;
@@ -10746,7 +11203,7 @@ void offset_prep (halfword c, halfword h)
       not_found:;
     }
     do {
-        r = mem[p].hhfield.v.RH;
+        r = mem[p].hh.v.RH;
       if (mem[p + 1].cint == mem[p + 5].cint) {
         if (mem[p + 2].cint == mem[p + 6].cint) {
           if (mem[p + 1].cint == mem[r + 3].cint) {
@@ -10765,7 +11222,7 @@ void offset_prep (halfword c, halfword h)
         }
       }
       p = r;
-    }while (!(p == q));
+    } while (!(p == q));
   }
 }
 
@@ -10807,9 +11264,9 @@ void dual_moves (halfword h, halfword p, halfword q)
   halfword w, ww;
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
-  k = mem[h].hhfield.lhfield + 1;
-  ww = mem[h].hhfield.v.RH;
-  w = mem[ww].hhfield.lhfield;
+  k = mem[h].hh.lh + 1;
+  ww = mem[h].hh.v.RH;
+  w = mem[ww].hh.lh;
   mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[
   octant]);
   mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[
@@ -10825,7 +11282,7 @@ void dual_moves (halfword h, halfword p, halfword q)
   while (true) {
     if (r == q)
     smoothtop = move_ptr;
-    while (mem[r].hhfield.b1 != k) {
+    while (mem[r].hh.b1 != k) {
       xx = mem[r + 1].cint + mem[w + 1].cint;
       yy = mem[r + 2].cint + mem[w + 2].cint + 32768L;
         ;
@@ -10839,10 +11296,10 @@ void dual_moves (halfword h, halfword p, halfword q)
         print_two (cur_x, cur_y);
       }
 #endif /* STAT */
-      if (mem[r].hhfield.b1 < k)
+      if (mem[r].hh.b1 < k)
       {
         decr (k);
-        w = mem[w].hhfield.lhfield;
+        w = mem[w].hh.lh;
         xp = mem[r + 1].cint + mem[w + 1].cint;
         yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
         if (yp != yy)
@@ -10875,7 +11332,7 @@ void dual_moves (halfword h, halfword p, halfword q)
       }
       else {
         incr (k);
-        w = mem[w].hhfield.v.RH;
+        w = mem[w].hh.v.RH;
         xp = mem[r + 1].cint + mem[w + 1].cint;
         yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
       }
@@ -10900,7 +11357,7 @@ void dual_moves (halfword h, halfword p, halfword q)
     goto done;
     move[move_ptr] = 1;
     n = move_ptr;
-    s = mem[r].hhfield.v.RH;
+    s = mem[r].hh.v.RH;
     make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5]
     .cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint ,
     mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w
@@ -10912,7 +11369,7 @@ void dual_moves (halfword h, halfword p, halfword q)
       env_move[n] = m;
       m = m + move[n] - 1;
       incr (n);
-    }while (!(n > move_ptr));
+    } while (!(n > move_ptr));
     r = s;
   }
   done:
@@ -10932,8 +11389,8 @@ void dual_moves (halfword h, halfword p, halfword q)
   move_to_edges (m0, n0, m1, n1);
   if (mem[q + 6].cint == 1)
   {
-    w = mem[h].hhfield.v.RH;
-    skew_line_edges (q, w, mem[w].hhfield.lhfield);
+    w = mem[h].hh.v.RH;
+    skew_line_edges (q, w, mem[w].hh.lh);
   }
 }
 
@@ -10955,10 +11412,10 @@ void fill_envelope (halfword spechead)
       octant = mem[p + 3].cint;
     h = cur_pen + octant;
     q = p;
-    while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
-    w = mem[h].hhfield.v.RH;
+    while (mem[q].hh.b1 != 0) q = mem[q].hh.v.RH;
+    w = mem[h].hh.v.RH;
     if (mem[p + 4].cint == 1)
-    w = mem[w].hhfield.lhfield;
+    w = mem[w].hh.lh;
         ;
 #ifdef STAT
     if (internal[10] > 65536L)
@@ -10966,28 +11423,28 @@ void fill_envelope (halfword spechead)
       print_nl(580);
       print(octant_dir[octant]);
       print(558);
-      print_int (mem[h].hhfield.lhfield);
-      if (mem[h].hhfield.lhfield != 1)
+      print_int (mem[h].hh.lh);
+      if (mem[h].hh.lh != 1)
       print(581);
       else print(582);
       print(583);
       unskew (mem[p + 1].cint + mem[w + 1].cint, mem[p + 2].cint
       + mem[w + 2].cint, octant);
       print_two (cur_x, cur_y);
-      ww = mem[h].hhfield.v.RH;
+      ww = mem[h].hh.v.RH;
       if (mem[q + 6].cint == 1)
-      ww = mem[ww].hhfield.lhfield;
+      ww = mem[ww].hh.lh;
       print(584);
       unskew (mem[q + 1].cint + mem[ww + 1].cint, mem[q + 2]
       .cint + mem[ww + 2].cint, octant);
       print_two (cur_x, cur_y);
     }
 #endif /* STAT */
-    ww = mem[h].hhfield.v.RH;
+    ww = mem[h].hh.v.RH;
     www = ww;
     if (odd (octant_number[octant]))
-    www = mem[www].hhfield.lhfield;
-    else ww = mem[ww].hhfield.lhfield;
+    www = mem[www].hh.lh;
+    else ww = mem[ww].hh.lh;
     if (w != ww)
     skew_line_edges (p, w, ww);
     end_round (mem[p + 1].cint + mem[ww + 1].cint, mem[p + 2]
@@ -11001,12 +11458,12 @@ void fill_envelope (halfword spechead)
     overflow (540, move_size);
     offset_prep (p, h);
     q = p;
-    while (mem[q].hhfield.b1 != 0) q = mem[q].hhfield.v.RH;
+    while (mem[q].hh.b1 != 0) q = mem[q].hh.v.RH;
     if (odd (octant_number[octant]))
     {
       k = 0;
-      w = mem[h].hhfield.v.RH;
-      ww = mem[w].hhfield.lhfield;
+      w = mem[h].hh.v.RH;
+      ww = mem[w].hh.lh;
       mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr
     [octant]);
       mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint -
@@ -11019,11 +11476,11 @@ void fill_envelope (halfword spechead)
       move_ptr = 0;
       m = mm0;
       r = p;
-      mem[q].hhfield.b1 = mem[h].hhfield.lhfield + 1;
+      mem[q].hh.b1 = mem[h].hh.lh + 1;
       while (true) {
         if (r == q)
         smoothtop = move_ptr;
-        while (mem[r].hhfield.b1 != k) {
+        while (mem[r].hh.b1 != k) {
           xx = mem[r + 1].cint + mem[w + 1].cint;
           yy = mem[r + 2].cint + mem[w + 2].cint + 32768L;
         ;
@@ -11037,10 +11494,10 @@ void fill_envelope (halfword spechead)
             print_two (cur_x, cur_y);
           }
 #endif /* STAT */
-          if (mem[r].hhfield.b1 > k)
+          if (mem[r].hh.b1 > k)
           {
             incr (k);
-            w = mem[w].hhfield.v.RH;
+            w = mem[w].hh.v.RH;
             xp = mem[r + 1].cint + mem[w + 1].cint;
             yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
             if (yp != yy)
@@ -11073,7 +11530,7 @@ void fill_envelope (halfword spechead)
           }
           else {
             decr (k);
-            w = mem[w].hhfield.lhfield;
+            w = mem[w].hh.lh;
             xp = mem[r + 1].cint + mem[w + 1].cint;
             yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
           }
@@ -11098,7 +11555,7 @@ void fill_envelope (halfword spechead)
         goto done;
         move[move_ptr] = 1;
         n = move_ptr;
-        s = mem[r].hhfield.v.RH;
+        s = mem[r].hh.v.RH;
         make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5]
         .cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1]
         .cint, mem[s + 1].cint + mem[w + 1].cint, mem[r + 2]
@@ -11111,7 +11568,7 @@ void fill_envelope (halfword spechead)
           if (m > env_move[n])
           env_move[n] = m;
           incr (n);
-        }while (!(n > move_ptr));
+        } while (!(n > move_ptr));
         r = s;
       }
       done:
@@ -11131,14 +11588,14 @@ void fill_envelope (halfword spechead)
       move_to_edges (m0, n0, m1, n1);
       if (mem[q + 6].cint == 0)
       {
-        w = mem[h].hhfield.v.RH;
-        skew_line_edges (q, mem[w].hhfield.lhfield, w);
+        w = mem[h].hh.v.RH;
+        skew_line_edges (q, mem[w].hh.lh, w);
       }
     }
     else dual_moves (h, p, q);
-    mem[q].hhfield.b1 = 0;
-    p = mem[q].hhfield.v.RH;
-  }while (!(p == spechead));
+    mem[q].hh.b1 = 0;
+    p = mem[q].hh.v.RH;
+  } while (!(p == spechead));
   if (internal[10] > 0)
   end_edge_tracing ();
   toss_knot_list (spechead);
@@ -11191,9 +11648,9 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
   s = 0;
   else s = get_node (7);
   h = p;
-  mem[p].hhfield.v.RH = q;
-  mem[q].hhfield.v.RH = r;
-  mem[r].hhfield.v.RH = s;
+  mem[p].hh.v.RH = q;
+  mem[q].hh.v.RH = r;
+  mem[r].hh.v.RH = s;
   if (beta == 0)
   beta = 1;
   if (gamma == 0)
@@ -11285,8 +11742,8 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
       }
       else {
         s = get_node (7);
-        mem[p].hhfield.v.RH = s;
-        mem[s].hhfield.v.RH = q;
+        mem[p].hh.v.RH = s;
+        mem[s].hh.v.RH = q;
         mem[s + 1].cint = mem[q + 1].cint + delta * mem[q + 3]
         .cint;
         mem[s + 2].cint = mem[q + 2].cint - delta * mem[p + 5]
@@ -11306,23 +11763,23 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
     }
     else p = q;
     while (true) {
-      q = mem[p].hhfield.v.RH;
+      q = mem[p].hh.v.RH;
       if (q == 0)
       goto done;
       if (mem[q + 4].cint == 0)
       {
-        mem[p].hhfield.v.RH = mem[q].hhfield.v.RH;
+        mem[p].hh.v.RH = mem[q].hh.v.RH;
         mem[p + 6].cint = mem[q + 6].cint;
         mem[p + 5].cint = mem[q + 5].cint;
         free_node (q, 7);
       }
       else {
-        r = mem[q].hhfield.v.RH;
+        r = mem[q].hh.v.RH;
         if (r == 0)
         goto done;
         if (mem[r + 4].cint == 0)
         {
-          mem[p].hhfield.v.RH = r;
+          mem[p].hh.v.RH = r;
           free_node (q, 7);
           p = r;
         }
@@ -11338,45 +11795,45 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
     q = h;
     while (true) {
       r = get_node (7);
-      mem[r].hhfield.v.RH = s;
+      mem[r].hh.v.RH = s;
       s = r;
       mem[s + 1].cint = mem[q + 1].cint;
       mem[s + 2].cint = - (integer) mem[q + 2].cint;
       if (q == p)
       goto done1;
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
       if (mem[q + 2].cint == 0)
       goto done1;
     }
-    done1: if ((mem[p].hhfield.v.RH != 0))
-    free_node (mem[p].hhfield.v.RH, 7);
-    mem[p].hhfield.v.RH = s;
+    done1: if ((mem[p].hh.v.RH != 0))
+    free_node (mem[p].hh.v.RH, 7);
+    mem[p].hh.v.RH = s;
     beta = - (integer) mem[h + 2].cint;
-    while (mem[p + 2].cint != beta) p = mem[p].hhfield.v.RH;
-    q = mem[p].hhfield.v.RH;
+    while (mem[p + 2].cint != beta) p = mem[p].hh.v.RH;
+    q = mem[p].hh.v.RH;
   }
   if (q != 0)
   {
     if (mem[h + 5].cint == 0)
     {
       p = h;
-      h = mem[h].hhfield.v.RH;
+      h = mem[h].hh.v.RH;
       free_node (p, 7);
       mem[q + 1].cint = - (integer) mem[h + 1].cint;
     }
     p = q;
   }
   else q = p;
-  r = mem[h].hhfield.v.RH;
+  r = mem[h].hh.v.RH;
   do {
       s = get_node (7);
-    mem[p].hhfield.v.RH = s;
+    mem[p].hh.v.RH = s;
     p = s;
     mem[p + 1].cint = - (integer) mem[r + 1].cint;
     mem[p + 2].cint = - (integer) mem[r + 2].cint;
-    r = mem[r].hhfield.v.RH;
-  }while (!(r == q));
-  mem[p].hhfield.v.RH = h;
+    r = mem[r].hh.v.RH;
+  } while (!(r == q));
+  mem[p].hh.v.RH = h;
   Result = h;
   return Result;
 }
@@ -11411,9 +11868,9 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
   n = 0;
   p = h;
   while (true) {
-    if (mem[p].hhfield.b1 == 0)
+    if (mem[p].hh.b1 == 0)
     goto not_found;
-    q = mem[p].hhfield.v.RH;
+    q = mem[p].hh.v.RH;
     tt = 0;
     x1 = mem[p + 5].cint - mem[p + 1].cint;
     x2 = mem[q + 3].cint - mem[p + 5].cint;
@@ -11579,8 +12036,8 @@ void cubic_intersection (halfword p, halfword pp)
   halfword q, qq;
   time_to_go = 5000;
   max_t = 2;
-  q = mem[p].hhfield.v.RH;
-  qq = mem[pp].hhfield.v.RH;
+  q = mem[p].hh.v.RH;
+  qq = mem[pp].hh.v.RH;
   bisect_ptr = 20;
   bisect_stack[bisect_ptr - 5] = mem[p + 5].cint - mem[p + 1].cint;
   bisect_stack[bisect_ptr - 4] = mem[q + 3].cint - mem[p + 5].cint;
@@ -12346,33 +12803,33 @@ void path_intersection (halfword h, halfword hh)
 {
   halfword p, pp;
   integer n, nn;
-  if (mem[h].hhfield.b1 == 0)
+  if (mem[h].hh.b1 == 0)
   {
     mem[h + 5].cint = mem[h + 1].cint;
     mem[h + 3].cint = mem[h + 1].cint;
     mem[h + 6].cint = mem[h + 2].cint;
     mem[h + 4].cint = mem[h + 2].cint;
-    mem[h].hhfield.b1 = 1;
+    mem[h].hh.b1 = 1;
   }
-  if (mem[hh].hhfield.b1 == 0)
+  if (mem[hh].hh.b1 == 0)
   {
     mem[hh + 5].cint = mem[hh + 1].cint;
     mem[hh + 3].cint = mem[hh + 1].cint;
     mem[hh + 6].cint = mem[hh + 2].cint;
     mem[hh + 4].cint = mem[hh + 2].cint;
-    mem[hh].hhfield.b1 = 1;
+    mem[hh].hh.b1 = 1;
   }
   tol_step = 0;
   do {
       n = -65536L;
     p = h;
     do {
-        if (mem[p].hhfield.b1 != 0)
+        if (mem[p].hh.b1 != 0)
       {
         nn = -65536L;
         pp = hh;
         do {
-            if (mem[pp].hhfield.b1 != 0)
+            if (mem[pp].hh.b1 != 0)
           {
             cubic_intersection (p, pp);
             if (cur_t > 0)
@@ -12383,14 +12840,14 @@ void path_intersection (halfword h, halfword hh)
             }
           }
           nn = nn + 65536L;
-          pp = mem[pp].hhfield.v.RH;
-        }while (!(pp == hh));
+          pp = mem[pp].hh.v.RH;
+        } while (!(pp == hh));
       }
       n = n + 65536L;
-      p = mem[p].hhfield.v.RH;
-    }while (!(p == h));
+      p = mem[p].hh.v.RH;
+    } while (!(p == h));
     tol_step = tol_step + 3;
-  }while (!(tol_step > 3));
+  } while (!(tol_step > 3));
   cur_t = -65536L;
   cur_tt = -65536L;
   lab_exit:;
@@ -12464,39 +12921,39 @@ void disp_edges (window_number k)
       if (top_row[k]< bot_row[k])
       {
         alreadythere = false;
-        if (mem[cur_edges + 3].hhfield.v.RH == k) {
+        if (mem[cur_edges + 3].hh.v.RH == k) {
           if (mem[cur_edges + 4].cint == window_time[k])
           alreadythere = true;
         }
         if (!alreadythere)
         blankrectangle (left_col[k], right_col[k], top_row[k],
         bot_row[k]);
-        madjustment = m_window[k] - mem[cur_edges + 3].hhfield.lhfield;
+        madjustment = m_window[k] - mem[cur_edges + 3].hh.lh;
         rightedge = 8 * (right_col[k] - madjustment);
         mincol = left_col[k];
-        p = mem[cur_edges].hhfield.v.RH;
-        r = n_window[k] - (mem[cur_edges + 1].hhfield.lhfield - 4096)
+        p = mem[cur_edges].hh.v.RH;
+        r = n_window[k] - (mem[cur_edges + 1].hh.lh - 4096)
         ;
         while ((p != cur_edges) && (r >= top_row[k])) {
           if (r < bot_row[k])
           {
-            if (mem[p + 1].hhfield.lhfield > 1)
+            if (mem[p + 1].hh.lh > 1)
             sort_edges (p);
-            else if (mem[p + 1].hhfield.lhfield == 1) {
+            else if (mem[p + 1].hh.lh == 1) {
               if (alreadythere)
               goto done;
             }
-            mem[p + 1].hhfield.lhfield = 1;
+            mem[p + 1].hh.lh = 1;
             n = 0;
             ww = 0;
             m = -1;
             w = 0;
-            q = mem[p + 1].hhfield.v.RH;
+            q = mem[p + 1].hh.v.RH;
             row_transition[0] = mincol;
             while (true) {
               if (q == memtop)
               d = rightedge;
-              else d = mem[q].hhfield.lhfield;
+              else d = mem[q].hh.lh;
               mm = (d / 8) + madjustment;
               if (mm != m)
               {
@@ -12533,7 +12990,7 @@ void disp_edges (window_number k)
               if (d >= rightedge)
               goto found;
               ww = ww + (d % 8) - 4;
-              q = mem[q].hhfield.v.RH;
+              q = mem[q].hh.v.RH;
             }
             found: if (alreadythere || (ww > 0))
             {
@@ -12550,12 +13007,12 @@ void disp_edges (window_number k)
             paintrow (r, b, row_transition, n);
             done:;
           }
-          p = mem[p].hhfield.v.RH;
+          p = mem[p].hh.v.RH;
           decr (r);
         }
         updatescreen ();
         incr (window_time[k]);
-        mem[cur_edges + 3].hhfield.v.RH = k;
+        mem[cur_edges + 3].hh.v.RH = k;
         mem[cur_edges + 4].cint = window_time[k];
       }
     }
@@ -12566,10 +13023,10 @@ fraction max_coef (halfword p)
 {
   fraction Result; fraction x;
   x = 0;
-  while (mem[p].hhfield.lhfield != 0) {
+  while (mem[p].hh.lh != 0) {
     if (abs (mem[p + 1].cint) > x)
     x = abs (mem[p + 1].cint);
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   Result = x;
   return Result;
@@ -12585,8 +13042,8 @@ halfword p_plus_q (halfword p, halfword q, small_number t)
   threshold = 2685;
   else threshold = 8;
   r = memtop - 1;
-  pp = mem[p].hhfield.lhfield;
-  qq = mem[q].hhfield.lhfield;
+  pp = mem[p].hh.lh;
+  qq = mem[q].hh.lh;
   while (true) if (pp == qq) {
     if (pp == 0)
     goto done;
@@ -12594,46 +13051,46 @@ halfword p_plus_q (halfword p, halfword q, small_number t)
       v = mem[p + 1].cint + mem[q + 1].cint;
       mem[p + 1].cint = v;
       s = p;
-      p = mem[p].hhfield.v.RH;
-      pp = mem[p].hhfield.lhfield;
+      p = mem[p].hh.v.RH;
+      pp = mem[p].hh.lh;
       if (abs (v) < threshold)
       free_node (s, 2);
       else {
         if (abs (v) >= 626349397L) {
           if (watch_coefs)
           {
-            mem[qq].hhfield.b0 = 0;
+            mem[qq].hh.b0 = 0;
             fix_needed = true;
           }
         }
-        mem[r].hhfield.v.RH = s;
+        mem[r].hh.v.RH = s;
         r = s;
       }
-      q = mem[q].hhfield.v.RH;
-      qq = mem[q].hhfield.lhfield;
+      q = mem[q].hh.v.RH;
+      qq = mem[q].hh.lh;
     }
   }
   else if (mem[pp + 1].cint < mem[qq + 1].cint)
   {
     s = get_node (2);
-    mem[s].hhfield.lhfield = qq;
+    mem[s].hh.lh = qq;
     mem[s + 1].cint = mem[q + 1].cint;
-    q = mem[q].hhfield.v.RH;
-    qq = mem[q].hhfield.lhfield;
-    mem[r].hhfield.v.RH = s;
+    q = mem[q].hh.v.RH;
+    qq = mem[q].hh.lh;
+    mem[r].hh.v.RH = s;
     r = s;
   }
   else {
-    mem[r].hhfield.v.RH = p;
+    mem[r].hh.v.RH = p;
     r = p;
-    p = mem[p].hhfield.v.RH;
-    pp = mem[p].hhfield.lhfield;
+    p = mem[p].hh.v.RH;
+    pp = mem[p].hh.lh;
   }
   done: mem[p + 1].cint = slow_add (mem[p + 1].cint, mem[q + 1]
   .cint);
-  mem[r].hhfield.v.RH = p;
+  mem[r].hh.v.RH = p;
   dep_final = p;
-  Result = mem[memtop - 1].hhfield.v.RH;
+  Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
@@ -12650,13 +13107,13 @@ halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boo
   threshold = 1342;
   else threshold = 4;
   r = memtop - 1;
-  while (mem[p].hhfield.lhfield != 0) {
+  while (mem[p].hh.lh != 0) {
     if (scalingdown)
     w = take_fraction (v, mem[p + 1].cint);
     else w = take_scaled (v, mem[p + 1].cint);
     if (abs (w) <= threshold)
     {
-      s = mem[p].hhfield.v.RH;
+      s = mem[p].hh.v.RH;
       free_node (p, 2);
       p = s;
     }
@@ -12664,19 +13121,19 @@ halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boo
       if (abs (w) >= 626349397L)
       {
         fix_needed = true;
-        mem[mem[p].hhfield.lhfield].hhfield.b0 = 0;
+        mem[mem[p].hh.lh].hh.b0 = 0;
       }
-      mem[r].hhfield.v.RH = p;
+      mem[r].hh.v.RH = p;
       r = p;
       mem[p + 1].cint = w;
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
     }
   }
-  mem[r].hhfield.v.RH = p;
+  mem[r].hh.v.RH = p;
   if (visscaled)
   mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
   else mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
-  Result = mem[memtop - 1].hhfield.v.RH;
+  Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
@@ -12688,18 +13145,18 @@ halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t
   s = p;
   r = memtop - 1;
   sx = mem[x + 1].cint;
-  while (mem[mem[s].hhfield.lhfield + 1].cint > sx) {
+  while (mem[mem[s].hh.lh + 1].cint > sx) {
     r = s;
-    s = mem[s].hhfield.v.RH;
+    s = mem[s].hh.v.RH;
   }
-  if (mem[s].hhfield.lhfield != x)
+  if (mem[s].hh.lh != x)
   Result = p;
   else {
-    mem[memtop - 1].hhfield.v.RH = p;
-    mem[r].hhfield.v.RH = mem[s].hhfield.v.RH;
+    mem[memtop - 1].hh.v.RH = p;
+    mem[r].hh.v.RH = mem[s].hh.v.RH;
     v = mem[s + 1].cint;
     free_node (s, 2);
-    Result = p_plus_fq (mem[memtop - 1].hhfield.v.RH, v, q, t, 17);
+    Result = p_plus_fq (mem[memtop - 1].hh.v.RH, v, q, t, 17);
   }
   return Result;
 }
@@ -12707,19 +13164,19 @@ halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t
 void new_dep (halfword q, halfword p)
 {
   halfword r;
-  mem[q + 1].hhfield.v.RH = p;
-  mem[q + 1].hhfield.lhfield = 13;
-  r = mem[13].hhfield.v.RH;
-  mem[dep_final].hhfield.v.RH = r;
-  mem[r + 1].hhfield.lhfield = dep_final;
-  mem[13].hhfield.v.RH = q;
+  mem[q + 1].hh.v.RH = p;
+  mem[q + 1].hh.lh = 13;
+  r = mem[13].hh.v.RH;
+  mem[dep_final].hh.v.RH = r;
+  mem[r + 1].hh.lh = dep_final;
+  mem[13].hh.v.RH = q;
 }
 
 halfword const_dependency (scaled v)
 {
   halfword Result; dep_final = get_node (2);
   mem[dep_final + 1].cint = v;
-  mem[dep_final].hhfield.lhfield = 0;
+  mem[dep_final].hh.lh = 0;
   Result = dep_final;
   return Result;
 }
@@ -12734,8 +13191,8 @@ halfword single_dependency (halfword p)
   else {
     q = get_node (2);
     mem[q + 1].cint = two_to_the[28 - m];
-    mem[q].hhfield.lhfield = p;
-    mem[q].hhfield.v.RH = const_dependency (0);
+    mem[q].hh.lh = p;
+    mem[q].hh.v.RH = const_dependency (0);
     Result = q;
   }
   return Result;
@@ -12747,13 +13204,13 @@ halfword copy_dep_list (halfword p)
   q = get_node (2);
   dep_final = q;
   while (true) {
-    mem[dep_final].hhfield.lhfield = mem[p].hhfield.lhfield;
+    mem[dep_final].hh.lh = mem[p].hh.lh;
     mem[dep_final + 1].cint = mem[p + 1].cint;
-    if (mem[dep_final].hhfield.lhfield == 0)
+    if (mem[dep_final].hh.lh == 0)
     goto done;
-    mem[dep_final].hhfield.v.RH = get_node (2);
-    dep_final = mem[dep_final].hhfield.v.RH;
-    p = mem[p].hhfield.v.RH;
+    mem[dep_final].hh.v.RH = get_node (2);
+    dep_final = mem[dep_final].hh.v.RH;
+    p = mem[p].hh.v.RH;
   }
   done: Result = q;
   return Result;
@@ -12769,32 +13226,32 @@ void linear_eq (halfword p, small_number t)
   halfword finalnode;
   integer w;
   q = p;
-  r = mem[p].hhfield.v.RH;
+  r = mem[p].hh.v.RH;
   v = mem[q + 1].cint;
-  while (mem[r].hhfield.lhfield != 0) {
+  while (mem[r].hh.lh != 0) {
     if (abs (mem[r + 1].cint) > abs (v))
     {
       q = r;
       v = mem[r + 1].cint;
     }
-    r = mem[r].hhfield.v.RH;
+    r = mem[r].hh.v.RH;
   }
-  x = mem[q].hhfield.lhfield;
+  x = mem[q].hh.lh;
   n = mem[x + 1].cint % 64;
   s = memtop - 1;
-  mem[s].hhfield.v.RH = p;
+  mem[s].hh.v.RH = p;
   r = p;
   do {
       if (r == q)
     {
-      mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
+      mem[s].hh.v.RH = mem[r].hh.v.RH;
       free_node (r, 2);
     }
     else {
       w = make_fraction (mem[r + 1].cint, v);
       if (abs (w) <= 1342)
       {
-        mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
+        mem[s].hh.v.RH = mem[r].hh.v.RH;
         free_node (r, 2);
       }
       else {
@@ -12802,14 +13259,14 @@ void linear_eq (halfword p, small_number t)
         s = r;
       }
     }
-    r = mem[s].hhfield.v.RH;
-  }while (!(mem[r].hhfield.lhfield == 0));
+    r = mem[s].hh.v.RH;
+  } while (!(mem[r].hh.lh == 0));
   if (t == 18)
   mem[r + 1].cint = - (integer) make_scaled (mem[r + 1].cint, v);
   else if (v != -268435456L)
   mem[r + 1].cint = - (integer) make_fraction (mem[r + 1].cint, v);
   finalnode = r;
-  p = mem[memtop - 1].hhfield.v.RH;
+  p = mem[memtop - 1].hh.v.RH;
   if (internal[2] > 0) {
     if (interesting (x))
     {
@@ -12827,46 +13284,46 @@ void linear_eq (halfword p, small_number t)
     }
   }
   prevr = 13;
-  r = mem[13].hhfield.v.RH;
+  r = mem[13].hh.v.RH;
   while (r != 13) {
-    s = mem[r + 1].hhfield.v.RH;
-    q = p_with_x_becoming_q (s, x, p, mem[r].hhfield.b0);
-    if (mem[q].hhfield.lhfield == 0)
+    s = mem[r + 1].hh.v.RH;
+    q = p_with_x_becoming_q (s, x, p, mem[r].hh.b0);
+    if (mem[q].hh.lh == 0)
     make_known (r, q);
     else {
-      mem[r + 1].hhfield.v.RH = q;
+      mem[r + 1].hh.v.RH = q;
       do {
-          q = mem[q].hhfield.v.RH;
-      }while (!(mem[q].hhfield.lhfield == 0));
+          q = mem[q].hh.v.RH;
+      } while (!(mem[q].hh.lh == 0));
       prevr = q;
     }
-    r = mem[prevr].hhfield.v.RH;
+    r = mem[prevr].hh.v.RH;
   }
   if (n > 0)
   {
     s = memtop - 1;
-    mem[memtop - 1].hhfield.v.RH = p;
+    mem[memtop - 1].hh.v.RH = p;
     r = p;
     do {
         if (n > 30)
       w = 0;
       else w = mem[r + 1].cint / two_to_the[n];
-      if ((abs (w) <= 1342) && (mem[r].hhfield.lhfield != 0))
+      if ((abs (w) <= 1342) && (mem[r].hh.lh != 0))
       {
-        mem[s].hhfield.v.RH = mem[r].hhfield.v.RH;
+        mem[s].hh.v.RH = mem[r].hh.v.RH;
         free_node (r, 2);
       }
       else {
         mem[r + 1].cint = w;
         s = r;
       }
-      r = mem[s].hhfield.v.RH;
-    }while (!(mem[s].hhfield.lhfield == 0));
-    p = mem[memtop - 1].hhfield.v.RH;
+      r = mem[s].hh.v.RH;
+    } while (!(mem[s].hh.lh == 0));
+    p = mem[memtop - 1].hh.v.RH;
   }
-  if (mem[p].hhfield.lhfield == 0)
+  if (mem[p].hh.lh == 0)
   {
-    mem[x].hhfield.b0 = 16;
+    mem[x].hh.b0 = 16;
     mem[x + 1].cint = mem[p + 1].cint;
     if (abs (mem[x + 1].cint) >= 268435456L)
     val_too_big (mem[x + 1].cint);
@@ -12881,7 +13338,7 @@ void linear_eq (halfword p, small_number t)
     }
   }
   else {
-    mem[x].hhfield.b0 = 17;
+    mem[x].hh.b0 = 17;
     dep_final = finalnode;
     new_dep (x, p);
     if (cur_exp == x) {
@@ -12897,8 +13354,8 @@ halfword new_ring_entry (halfword p)
 {
   halfword Result; halfword q;
   q = get_node (2);
-  mem[q].hhfield.b1 = 11;
-  mem[q].hhfield.b0 = mem[p].hhfield.b0;
+  mem[q].hh.b1 = 11;
+  mem[q].hh.b0 = mem[p].hh.b0;
   if (mem[p + 1].cint == 0)
   mem[q + 1].cint = p;
   else mem[q + 1].cint = mem[p + 1].cint;
@@ -12911,14 +13368,14 @@ void non_linear_eq (integer v, halfword p, boolean flushp)
 {
   small_number t;
   halfword q, r;
-  t = mem[p].hhfield.b0 - 1;
+  t = mem[p].hh.b0 - 1;
   q = mem[p + 1].cint;
   if (flushp)
-  mem[p].hhfield.b0 = 1;
+  mem[p].hh.b0 = 1;
   else p = q;
   do {
       r = mem[q + 1].cint;
-    mem[q].hhfield.b0 = t;
+    mem[q].hh.b0 = t;
     switch (t)
     {case 2 :
       mem[q + 1].cint = v;
@@ -12935,7 +13392,7 @@ void non_linear_eq (integer v, halfword p, boolean flushp)
     case 6 :
       {
         mem[q + 1].cint = v;
-        incr (mem[v].hhfield.lhfield);
+        incr (mem[v].hh.lh);
       }
       break;
     case 9 :
@@ -12946,7 +13403,7 @@ void non_linear_eq (integer v, halfword p, boolean flushp)
       break;
     }
     q = r;
-  }while (!(q == p));
+  } while (!(q == p));
 }
 
 void ring_merge (halfword p, halfword q)
@@ -13064,7 +13521,7 @@ void show_context (void)
             p = param_stack[cur_input .limit_field];
             if (p != 0) {
 
-              if (mem[p].hhfield.v.RH == 1)
+              if (mem[p].hh.v.RH == 1)
               print_exp (p, 0);
               else show_token_list (p, 0, 20, tally);
             }
@@ -13095,12 +13552,12 @@ void show_context (void)
              , tally);
               else {
                 q = p;
-                while (mem[q].hhfield.v.RH != 0) q = mem[q].hhfield
+                while (mem[q].hh.v.RH != 0) q = mem[q].hh
                 .v.RH;
-                mem[q].hhfield.v.RH = param_stack[cur_input .limit_field +
+                mem[q].hh.v.RH = param_stack[cur_input .limit_field +
                 1];
                 show_token_list (p, 0, 20, tally);
-                mem[q].hhfield.v.RH = 0;
+                mem[q].hh.v.RH = 0;
               }
             }
             print(501);
@@ -13203,7 +13660,7 @@ void end_token_list (void)
     decr (param_ptr);
     p = param_stack[param_ptr];
     if (p != 0) {
-      if (mem[p].hhfield.v.RH == 1)
+      if (mem[p].hh.v.RH == 1)
       {
         recycle_value (p);
         free_node (p, 2);
@@ -13224,43 +13681,43 @@ void end_token_list (void)
 void encapsulate (halfword p)
 {
   cur_exp = get_node (2);
-  mem[cur_exp].hhfield.b0 = cur_type;
-  mem[cur_exp].hhfield.b1 = 11;
+  mem[cur_exp].hh.b0 = cur_type;
+  mem[cur_exp].hh.b1 = 11;
   new_dep (cur_exp, p);
 }
 
 void install (halfword r, halfword q)
 {
   halfword p;
-  if (mem[q].hhfield.b0 == 16)
+  if (mem[q].hh.b0 == 16)
   {
     mem[r + 1].cint = mem[q + 1].cint;
-    mem[r].hhfield.b0 = 16;
+    mem[r].hh.b0 = 16;
   }
-  else if (mem[q].hhfield.b0 == 19)
+  else if (mem[q].hh.b0 == 19)
   {
     p = single_dependency (q);
     if (p == dep_final)
     {
-      mem[r].hhfield.b0 = 16;
+      mem[r].hh.b0 = 16;
       mem[r + 1].cint = 0;
       free_node (p, 2);
     }
     else {
-      mem[r].hhfield.b0 = 17;
+      mem[r].hh.b0 = 17;
       new_dep (r, p);
     }
   }
   else {
-    mem[r].hhfield.b0 = mem[q].hhfield.b0;
-    new_dep (r, copy_dep_list (mem[q + 1].hhfield.v.RH));
+    mem[r].hh.b0 = mem[q].hh.b0;
+    new_dep (r, copy_dep_list (mem[q + 1].hh.v.RH));
   }
 }
 
 void make_exp_copy (halfword p)
 {
   halfword q, r, t;
-  lab_restart: cur_type = mem[p].hhfield.b0;
+  lab_restart: cur_type = mem[p].hh.b0;
   switch (cur_type)
   {case 1 :
   case 2 :
@@ -13286,7 +13743,7 @@ void make_exp_copy (halfword p)
   case 6 :
     {
       cur_exp = mem[p + 1].cint;
-      incr (mem[cur_exp].hhfield.lhfield);
+      incr (mem[cur_exp].hh.lh);
     }
     break;
   case 11 :
@@ -13302,8 +13759,8 @@ void make_exp_copy (halfword p)
       if (mem[p + 1].cint == 0)
       init_big_node (p);
       t = get_node (2);
-      mem[t].hhfield.b1 = 11;
-      mem[t].hhfield.b0 = cur_type;
+      mem[t].hh.b1 = 11;
+      mem[t].hh.b0 = cur_type;
       init_big_node (t);
       q = mem[p + 1].cint + big_node_size[cur_type];
       r = mem[t + 1].cint + big_node_size[cur_type];
@@ -13311,20 +13768,20 @@ void make_exp_copy (halfword p)
           q = q - 2;
         r = r - 2;
         install (r, q);
-      }while (!(q == mem[p + 1].cint));
+      } while (!(q == mem[p + 1].cint));
       cur_exp = t;
     }
     break;
   case 17 :
   case 18 :
-    encapsulate (copy_dep_list (mem[p + 1].hhfield.v.RH));
+    encapsulate (copy_dep_list (mem[p + 1].hh.v.RH));
     break;
   case 15 :
     {
       {
         if (serial_no > 2147483583L)
         overflow (588, serial_no / 64);
-        mem[p].hhfield.b0 = 19;
+        mem[p].hh.b0 = 19;
         serial_no = serial_no + 64;
         mem[p + 1].cint = serial_no;
       }
@@ -13364,17 +13821,17 @@ halfword cur_tok (void)
       saveexp = cur_exp;
       make_exp_copy (cur_mod);
       p = stash_cur_exp ();
-      mem[p].hhfield.v.RH = 0;
+      mem[p].hh.v.RH = 0;
       cur_type = savetype;
       cur_exp = saveexp;
     }
     else {
       p = get_node (2);
       mem[p + 1].cint = cur_mod;
-      mem[p].hhfield.b1 = 12;
+      mem[p].hh.b1 = 12;
       if (cur_cmd == 42)
-      mem[p].hhfield.b0 = 16;
-      else mem[p].hhfield.b0 = 4;
+      mem[p].hh.b0 = 16;
+      else mem[p].hh.b0 = 4;
     }
   }
   else {
@@ -13383,15 +13840,15 @@ halfword cur_tok (void)
       if (p == 0)
       p = get_avail ();
       else {
-        avail = mem[p].hhfield.v.RH;
-        mem[p].hhfield.v.RH = 0;
+        avail = mem[p].hh.v.RH;
+        mem[p].hh.v.RH = 0;
         ;
 #ifdef STAT
         incr (dyn_used);
 #endif /* STAT */
       }
     }
-    mem[p].hhfield.lhfield = cur_sym;
+    mem[p].hh.lh = cur_sym;
   }
   Result = p;
   return Result;
@@ -13479,7 +13936,7 @@ boolean check_outer_validity (void)
     if (cur_sym != 0)
     {
       p = get_avail ();
-      mem[p].hhfield.lhfield = cur_sym;
+      mem[p].hh.lh = cur_sym;
       begin_token_list (p, 19);
     }
     if (scanner_status > 1)
@@ -13709,7 +14166,7 @@ void get_next (void)
           buffer[cur_input .limit_field + 1] = 34;
           do {
               incr (cur_input.loc_field);
-          }while (!(buffer[cur_input.loc_field] == 34));
+          } while (!(buffer[cur_input.loc_field] == 34));
           if (cur_input.loc_field > cur_input .limit_field)
           {
             cur_input.loc_field = cur_input .limit_field;
@@ -13759,7 +14216,7 @@ void get_next (void)
                 incr (pool_ptr);
               }
               incr (k);
-            }while (!(k == cur_input.loc_field));
+            } while (!(k == cur_input.loc_field));
             cur_mod = make_string ();
           }
         }
@@ -13836,7 +14293,7 @@ void get_next (void)
         incr (k);
       }
       incr (cur_input.loc_field);
-    }while (!(char_class[buffer[cur_input.loc_field]]!= 0));
+    } while (!(char_class[buffer[cur_input.loc_field]]!= 0));
     f = round_decimals (k);
     if (f == 65536L)
     {
@@ -13879,8 +14336,8 @@ void get_next (void)
   }
   else if (cur_input.loc_field >= hi_mem_min)
   {
-    cur_sym = mem[cur_input.loc_field].hhfield.lhfield;
-    cur_input.loc_field = mem[cur_input.loc_field].hhfield.v.RH;
+    cur_sym = mem[cur_input.loc_field].hh.lh;
+    cur_input.loc_field = mem[cur_input.loc_field].hh.v.RH;
     if (cur_sym >= 9770) {
       if (cur_sym >= 9920)
       {
@@ -13900,10 +14357,10 @@ void get_next (void)
   }
   else if (cur_input.loc_field > 0)
   {
-    if (mem[cur_input.loc_field].hhfield.b1 == 12)
+    if (mem[cur_input.loc_field].hh.b1 == 12)
     {
       cur_mod = mem[cur_input.loc_field + 1].cint;
-      if (mem[cur_input.loc_field].hhfield.b0 == 16)
+      if (mem[cur_input.loc_field].hh.b0 == 16)
       cur_cmd = 42;
       else {
         cur_cmd = 39;
@@ -13917,14 +14374,14 @@ void get_next (void)
       cur_mod = cur_input.loc_field;
       cur_cmd = 38;
     }
-    cur_input.loc_field = mem[cur_input.loc_field].hhfield.v.RH;
+    cur_input.loc_field = mem[cur_input.loc_field].hh.v.RH;
     goto lab_exit;
   }
   else {
     end_token_list ();
     goto lab_restart;
   }
-  cur_cmd = eqtb[cur_sym].lhfield;
+  cur_cmd = eqtb[cur_sym].lh;
   cur_mod = eqtb[cur_sym].v.RH;
   if (cur_cmd >= 86) {
     if (check_outer_validity ())
@@ -13973,7 +14430,7 @@ halfword scan_toks (commandcode terminator, halfword substlist, halfword tailend
   integer balance;
   p = memtop - 2;
   balance = 1;
-  mem[memtop - 2].hhfield.v.RH = 0;
+  mem[memtop - 2].hh.v.RH = 0;
   while (true) {
     get_next ();
     if (cur_sym > 0)
@@ -13981,13 +14438,13 @@ halfword scan_toks (commandcode terminator, halfword substlist, halfword tailend
       {
         q = substlist;
         while (q != 0) {
-          if (mem[q].hhfield.lhfield == cur_sym)
+          if (mem[q].hh.lh == cur_sym)
           {
             cur_sym = mem[q + 1].cint;
             cur_cmd = 7;
             goto found;
           }
-          q = mem[q].hhfield.v.RH;
+          q = mem[q].hh.v.RH;
         }
         found:;
       }
@@ -14008,12 +14465,12 @@ halfword scan_toks (commandcode terminator, halfword substlist, halfword tailend
         cur_sym = 9919 + cur_mod;
       }
     }
-    mem[p].hhfield.v.RH = cur_tok ();
-    p = mem[p].hhfield.v.RH;
+    mem[p].hh.v.RH = cur_tok ();
+    p = mem[p].hh.v.RH;
   }
-  done: mem[p].hhfield.v.RH = tailend;
+  done: mem[p].hh.v.RH = tailend;
   flush_node_list (substlist);
-  Result = mem[memtop - 2].hhfield.v.RH;
+  Result = mem[memtop - 2].hh.v.RH;
   return Result;
 }
 
@@ -14093,26 +14550,26 @@ void make_op_def (void)
   m = cur_mod;
   get_symbol ();
   q = get_node (2);
-  mem[q].hhfield.lhfield = cur_sym;
+  mem[q].hh.lh = cur_sym;
   mem[q + 1].cint = 9770;
   get_clear_symbol ();
   warning_info = cur_sym;
   get_symbol ();
   p = get_node (2);
-  mem[p].hhfield.lhfield = cur_sym;
+  mem[p].hh.lh = cur_sym;
   mem[p + 1].cint = 9771;
-  mem[p].hhfield.v.RH = q;
+  mem[p].hh.v.RH = q;
   get_next ();
   check_equals ();
   scanner_status = 5;
   q = get_avail ();
-  mem[q].hhfield.lhfield = 0;
+  mem[q].hh.lh = 0;
   r = get_avail ();
-  mem[q].hhfield.v.RH = r;
-  mem[r].hhfield.lhfield = 0;
-  mem[r].hhfield.v.RH = scan_toks (16, p, 0, 0);
+  mem[q].hh.v.RH = r;
+  mem[r].hh.lh = 0;
+  mem[r].hh.v.RH = scan_toks (16, p, 0, 0);
   scanner_status = 0;
-  eqtb[warning_info].lhfield = m;
+  eqtb[warning_info].lh = m;
   eqtb[warning_info].v.RH = q;
   get_x_next ();
 }
@@ -14174,7 +14631,7 @@ halfword scan_declared_variable (void)
   if (cur_cmd != 41)
   clear_symbol (x, false);
   h = get_avail ();
-  mem[h].hhfield.lhfield = x;
+  mem[h].hh.lh = x;
   t = h;
   while (true) {
     get_x_next ();
@@ -14198,11 +14655,11 @@ halfword scan_declared_variable (void)
         else goto done;
       }
     }
-    mem[t].hhfield.v.RH = get_avail ();
-    t = mem[t].hhfield.v.RH;
-    mem[t].hhfield.lhfield = cur_sym;
+    mem[t].hh.v.RH = get_avail ();
+    t = mem[t].hh.v.RH;
+    mem[t].hh.lh = cur_sym;
   }
-  done: if (eqtb[x].lhfield % 86 != 41)
+  done: if (eqtb[x].lh % 86 != 41)
   clear_symbol (x, false);
   if (eqtb[x].v.RH == 0)
   new_root (x);
@@ -14223,9 +14680,9 @@ void scan_def (void)
   halfword ldelim, rdelim;
   m = cur_mod;
   c = 0;
-  mem[memtop - 2].hhfield.v.RH = 0;
+  mem[memtop - 2].hh.v.RH = 0;
   q = get_avail ();
-  mem[q].hhfield.lhfield = 0;
+  mem[q].hh.lh = 0;
   r = 0;
   if (m == 1)
   {
@@ -14234,13 +14691,13 @@ void scan_def (void)
     get_next ();
     scanner_status = 5;
     n = 0;
-    eqtb[warning_info].lhfield = 10;
+    eqtb[warning_info].lh = 10;
     eqtb[warning_info].v.RH = q;
   }
   else {
     p = scan_declared_variable ();
-    flush_variable (eqtb[mem[p].hhfield.lhfield].v.RH, mem[p]
-    .hhfield.v.RH, true);
+    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p]
+    .hh.v.RH, true);
     warning_info = find_variable (p);
     flush_list (p);
     if (warning_info == 0)
@@ -14279,7 +14736,7 @@ void scan_def (void)
         get_next ();
       }
     }
-    mem[warning_info].hhfield.b0 = 20 + n;
+    mem[warning_info].hh.b0 = 20 + n;
     mem[warning_info + 1].cint = q;
   }
   k = n;
@@ -14316,23 +14773,23 @@ void scan_def (void)
       base = 9770;
     }
     do {
-        mem[q].hhfield.v.RH = get_avail ();
-      q = mem[q].hhfield.v.RH;
-      mem[q].hhfield.lhfield = base + k;
+        mem[q].hh.v.RH = get_avail ();
+      q = mem[q].hh.v.RH;
+      mem[q].hh.lh = base + k;
       get_symbol ();
       p = get_node (2);
       mem[p + 1].cint = base + k;
-      mem[p].hhfield.lhfield = cur_sym;
+      mem[p].hh.lh = cur_sym;
       if (k == 150)
       overflow (687, 150);
       incr (k);
-      mem[p].hhfield.v.RH = r;
+      mem[p].hh.v.RH = r;
       r = p;
       get_next ();
-    }while (!(cur_cmd != 82));
+    } while (!(cur_cmd != 82));
     check_delimiter (ldelim, rdelim);
     get_next ();
-  }while (!(cur_cmd != 31));
+  } while (!(cur_cmd != 31));
   if (cur_cmd == 56)
   {
     p = get_node (2);
@@ -14353,8 +14810,8 @@ void scan_def (void)
     overflow (687, 150);
     incr (k);
     get_symbol ();
-    mem[p].hhfield.lhfield = cur_sym;
-    mem[p].hhfield.v.RH = r;
+    mem[p].hh.lh = cur_sym;
+    mem[p].hh.v.RH = r;
     r = p;
     get_next ();
     if (c == 4) {
@@ -14366,8 +14823,8 @@ void scan_def (void)
         overflow (687, 150);
         mem[p + 1].cint = 9770 + k;
         get_symbol ();
-        mem[p].hhfield.lhfield = cur_sym;
-        mem[p].hhfield.v.RH = r;
+        mem[p].hh.lh = cur_sym;
+        mem[p].hh.v.RH = r;
         r = p;
         get_next ();
       }
@@ -14375,17 +14832,17 @@ void scan_def (void)
   }
   check_equals ();
   p = get_avail ();
-  mem[p].hhfield.lhfield = c;
-  mem[q].hhfield.v.RH = p;
+  mem[p].hh.lh = c;
+  mem[q].hh.v.RH = p;
   if (m == 1)
-  mem[p].hhfield.v.RH = scan_toks (16, r, 0, n);
+  mem[p].hh.v.RH = scan_toks (16, r, 0, n);
   else {
     q = get_avail ();
-    mem[q].hhfield.lhfield = bg_loc;
-    mem[p].hhfield.v.RH = q;
+    mem[q].hh.lh = bg_loc;
+    mem[p].hh.v.RH = q;
     p = get_avail ();
-    mem[p].hhfield.lhfield = eg_loc;
-    mem[q].hhfield.v.RH = scan_toks (16, r, p, n);
+    mem[p].hh.lh = eg_loc;
+    mem[q].hh.v.RH = scan_toks (16, r, p, n);
   }
   if (warning_info == 21)
   flush_token_list (mem[22].cint);
@@ -14399,31 +14856,31 @@ void print_macro_name (halfword a, halfword n)
   if (n != 0)
   slow_print(hash[n].v.RH);
   else {
-    p = mem[a].hhfield.lhfield;
+    p = mem[a].hh.lh;
     if (p == 0)
-    slow_print(hash[mem[mem[mem[a].hhfield.v.RH].hhfield
-  .lhfield].hhfield.lhfield].v.RH);
+    slow_print(hash[mem[mem[mem[a].hh.v.RH].hh
+  .lh].hh.lh].v.RH);
     else {
       q = p;
-      while (mem[q].hhfield.v.RH != 0) q = mem[q].hhfield.v.RH;
-      mem[q].hhfield.v.RH = mem[mem[a].hhfield.v.RH].hhfield
-    .lhfield;
+      while (mem[q].hh.v.RH != 0) q = mem[q].hh.v.RH;
+      mem[q].hh.v.RH = mem[mem[a].hh.v.RH].hh
+    .lh;
       show_token_list (p, 0, 1000, 0);
-      mem[q].hhfield.v.RH = 0;
+      mem[q].hh.v.RH = 0;
     }
   }
 }
 
 void print_arg (halfword q, integer n, halfword b)
 {
-  if (mem[q].hhfield.v.RH == 1)
+  if (mem[q].hh.v.RH == 1)
   print_nl(498);
   else if ((b < 10070) && (b != 7))
   print_nl(499);
   else print_nl(500);
   print_int (n);
   print(703);
-  if (mem[q].hhfield.v.RH == 1)
+  if (mem[q].hh.v.RH == 1)
   print_exp (q, 1);
   else show_token_list (q, 0, 1000, 0);
 }
@@ -14436,7 +14893,7 @@ void scan_text_arg (halfword ldelim, halfword rdelim)
   scanner_status = 3;
   p = memtop - 2;
   balance = 1;
-  mem[memtop - 2].hhfield.v.RH = 0;
+  mem[memtop - 2].hh.v.RH = 0;
   while (true) {
     get_next ();
     if (ldelim == 0)
@@ -14466,10 +14923,10 @@ void scan_text_arg (halfword ldelim, halfword rdelim)
         incr (balance);
       }
     }
-    mem[p].hhfield.v.RH = cur_tok ();
-    p = mem[p].hhfield.v.RH;
+    mem[p].hh.v.RH = cur_tok ();
+    p = mem[p].hh.v.RH;
   }
-  done: cur_exp = mem[memtop - 2].hhfield.v.RH;
+  done: cur_exp = mem[memtop - 2].hh.v.RH;
   cur_type = 20;
   scanner_status = 0;
 }
@@ -14481,16 +14938,16 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
   integer n;
   halfword ldelim, rdelim;
   halfword tail;
-  r = mem[defref].hhfield.v.RH;
-  incr (mem[defref].hhfield.lhfield);
+  r = mem[defref].hh.v.RH;
+  incr (mem[defref].hh.lh);
   if (arglist == 0)
   n = 0;
   else {
     n = 1;
     tail = arglist;
-    while (mem[tail].hhfield.v.RH != 0) {
+    while (mem[tail].hh.v.RH != 0) {
       incr (n);
-      tail = mem[tail].hhfield.v.RH;
+      tail = mem[tail].hh.v.RH;
     }
   }
   if (internal[9] > 0)
@@ -14506,16 +14963,16 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
       n = 0;
       p = arglist;
       do {
-          q = mem[p].hhfield.lhfield;
+          q = mem[p].hh.lh;
         print_arg (q, n, 0);
         incr (n);
-        p = mem[p].hhfield.v.RH;
-      }while (!(p == 0));
+        p = mem[p].hh.v.RH;
+      } while (!(p == 0));
     }
     end_diagnostic (false);
   }
   cur_cmd = 83;
-  while (mem[r].hhfield.lhfield >= 9770) {
+  while (mem[r].hh.lh >= 9770) {
     if (cur_cmd != 82)
     {
       get_x_next ();
@@ -14545,7 +15002,7 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
           help_line[1] = 711;
           help_line[0] = 712;
         }
-        if (mem[r].hhfield.lhfield >= 9920)
+        if (mem[r].hh.lh >= 9920)
         {
           cur_exp = 0;
           cur_type = 20;
@@ -14561,17 +15018,17 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
       ldelim = cur_sym;
       rdelim = cur_mod;
     }
-    if (mem[r].hhfield.lhfield >= 10070)
+    if (mem[r].hh.lh >= 10070)
     scan_text_arg (ldelim, rdelim);
     else {
       get_x_next ();
-      if (mem[r].hhfield.lhfield >= 9920)
+      if (mem[r].hh.lh >= 9920)
       scan_suffix ();
       else scan_expression ();
     }
     if (cur_cmd != 82) {
       if ((cur_cmd != 62) || (cur_mod != ldelim)) {
-        if (mem[mem[r].hhfield.v.RH].hhfield.lhfield >= 9770)
+        if (mem[mem[r].hh.v.RH].hh.lh >= 9770)
         {
           missing_err (44);
           {
@@ -14597,22 +15054,22 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
     found: {
       p = get_avail ();
       if (cur_type == 20)
-      mem[p].hhfield.lhfield = cur_exp;
-      else mem[p].hhfield.lhfield = stash_cur_exp ();
+      mem[p].hh.lh = cur_exp;
+      else mem[p].hh.lh = stash_cur_exp ();
       if (internal[9] > 0)
       {
         begin_diagnostic ();
-        print_arg (mem[p].hhfield.lhfield, n, mem[r].hhfield
-        .lhfield);
+        print_arg (mem[p].hh.lh, n, mem[r].hh
+        .lh);
         end_diagnostic (false);
       }
       if (arglist == 0)
       arglist = p;
-      else mem[tail].hhfield.v.RH = p;
+      else mem[tail].hh.v.RH = p;
       tail = p;
       incr (n);
     }
-    r = mem[r].hhfield.v.RH;
+    r = mem[r].hh.v.RH;
   }
   if (cur_cmd == 82)
   {
@@ -14646,17 +15103,17 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
     }
     error ();
   }
-  if (mem[r].hhfield.lhfield != 0)
+  if (mem[r].hh.lh != 0)
   {
-    if (mem[r].hhfield.lhfield < 7)
+    if (mem[r].hh.lh < 7)
     {
       get_x_next ();
-      if (mem[r].hhfield.lhfield != 6) {
+      if (mem[r].hh.lh != 6) {
         if ((cur_cmd == 51) || (cur_cmd == 77))
         get_x_next ();
       }
     }
-    switch (mem[r].hhfield.lhfield)
+    switch (mem[r].hh.lh)
     {case 1 :
       scan_primary ();
       break;
@@ -14673,16 +15130,16 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
       {
         scan_expression ();
         p = get_avail ();
-        mem[p].hhfield.lhfield = stash_cur_exp ();
+        mem[p].hh.lh = stash_cur_exp ();
         if (internal[9] > 0)
         {
           begin_diagnostic ();
-          print_arg (mem[p].hhfield.lhfield, n, 0);
+          print_arg (mem[p].hh.lh, n, 0);
           end_diagnostic (false);
         }
         if (arglist == 0)
         arglist = p;
-        else mem[tail].hhfield.v.RH = p;
+        else mem[tail].hh.v.RH = p;
         tail = p;
         incr (n);
         if (cur_cmd != 69)
@@ -14734,23 +15191,23 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
     {
       p = get_avail ();
       if (cur_type == 20)
-      mem[p].hhfield.lhfield = cur_exp;
-      else mem[p].hhfield.lhfield = stash_cur_exp ();
+      mem[p].hh.lh = cur_exp;
+      else mem[p].hh.lh = stash_cur_exp ();
       if (internal[9] > 0)
       {
         begin_diagnostic ();
-        print_arg (mem[p].hhfield.lhfield, n, mem[r].hhfield
-        .lhfield);
+        print_arg (mem[p].hh.lh, n, mem[r].hh
+        .lh);
         end_diagnostic (false);
       }
       if (arglist == 0)
       arglist = p;
-      else mem[tail].hhfield.v.RH = p;
+      else mem[tail].hh.v.RH = p;
       tail = p;
       incr (n);
     }
   }
-  r = mem[r].hhfield.v.RH;
+  r = mem[r].hh.v.RH;
   while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
   end_token_list ();
   if (param_ptr + n > max_param_stack)
@@ -14766,10 +15223,10 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
   {
     p = arglist;
     do {
-        param_stack[param_ptr] = mem[p].hhfield.lhfield;
+        param_stack[param_ptr] = mem[p].hh.lh;
       incr (param_ptr);
-      p = mem[p].hhfield.v.RH;
-    }while (!(p == 0));
+      p = mem[p].hh.v.RH;
+    } while (!(p == 0));
     flush_list (arglist);
   }
 }
@@ -14827,9 +15284,9 @@ void expand (void)
       {
         p = cond_ptr;
         if_line = mem[p + 1].cint;
-        cur_if = mem[p].hhfield.b1;
-        if_limit = mem[p].hhfield.b0;
-        cond_ptr = mem[p].hhfield.v.RH;
+        cur_if = mem[p].hh.b1;
+        if_limit = mem[p].hh.b0;
+        cond_ptr = mem[p].hh.v.RH;
         free_node (p, 2);
       }
     }
@@ -14944,8 +15401,8 @@ void expand (void)
               p = cur_input .start_field;
               end_token_list ();
             }
-          }while (!(p != 0));
-          if (p != mem[loop_ptr].hhfield.lhfield)
+          } while (!(p != 0));
+          if (p != mem[loop_ptr].hh.lh)
           fatal_error (699);
           stop_iteration ();
         }
@@ -15039,7 +15496,7 @@ void get_x_next (void)
       macro_call (cur_mod, 0, cur_sym);
       else expand ();
       get_next ();
-    }while (!(cur_cmd >= 11));
+    } while (!(cur_cmd >= 11));
     unstash_cur_exp (saveexp);
   }
 }
@@ -15096,12 +15553,12 @@ void change_if_limit (small_number l, halfword p)
     while (true) {
       if (q == 0)
       confusion(718);
-      if (mem[q].hhfield.v.RH == p)
+      if (mem[q].hh.v.RH == p)
       {
-        mem[q].hhfield.b0 = l;
+        mem[q].hh.b0 = l;
         goto lab_exit;
       }
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
   }
   lab_exit:;
@@ -15128,9 +15585,9 @@ void conditional (void)
   halfword p;
   {
     p = get_node (2);
-    mem[p].hhfield.v.RH = cond_ptr;
-    mem[p].hhfield.b0 = if_limit;
-    mem[p].hhfield.b1 = cur_if;
+    mem[p].hh.v.RH = cond_ptr;
+    mem[p].hh.b0 = if_limit;
+    mem[p].hh.b1 = cur_if;
     mem[p + 1].cint = if_line;
     cond_ptr = p;
     if_limit = 1;
@@ -15162,9 +15619,9 @@ void conditional (void)
     {
       p = cond_ptr;
       if_line = mem[p + 1].cint;
-      cur_if = mem[p].hhfield.b1;
-      if_limit = mem[p].hhfield.b0;
-      cond_ptr = mem[p].hhfield.v.RH;
+      cur_if = mem[p].hh.b1;
+      if_limit = mem[p].hh.b0;
+      cond_ptr = mem[p].hh.v.RH;
       free_node (p, 2);
     }
   }
@@ -15174,9 +15631,9 @@ void conditional (void)
   {
     p = cond_ptr;
     if_line = mem[p + 1].cint;
-    cur_if = mem[p].hhfield.b1;
-    if_limit = mem[p].hhfield.b0;
-    cond_ptr = mem[p].hhfield.v.RH;
+    cur_if = mem[p].hh.b1;
+    if_limit = mem[p].hh.b0;
+    cond_ptr = mem[p].hh.v.RH;
     free_node (p, 2);
   }
   else if (cur_mod == 4)
@@ -15215,14 +15672,14 @@ void begin_iteration (void)
   s = get_node (2);
   if (m == 1)
   {
-    mem[s + 1].hhfield.lhfield = 1;
+    mem[s + 1].hh.lh = 1;
     p = 0;
     get_x_next ();
     goto found;
   }
   get_symbol ();
   p = get_node (2);
-  mem[p].hhfield.lhfield = cur_sym;
+  mem[p].hh.lh = cur_sym;
   mem[p + 1].cint = m;
   get_x_next ();
   if ((cur_cmd != 51) && (cur_cmd != 77))
@@ -15236,9 +15693,9 @@ void begin_iteration (void)
     }
     back_error ();
   }
-  mem[s + 1].hhfield.lhfield = 0;
+  mem[s + 1].hh.lh = 0;
   q = s + 1;
-  mem[q].hhfield.v.RH = 0;
+  mem[q].hh.v.RH = 0;
   do {
       get_x_next ();
     if (m != 9770)
@@ -15276,18 +15733,18 @@ void begin_iteration (void)
           if (cur_type != 16)
           bad_for (741);
           mem[pp + 3].cint = cur_exp;
-          mem[s + 1].hhfield.lhfield = pp;
+          mem[s + 1].hh.lh = pp;
           goto done;
         }
       }
       cur_exp = stash_cur_exp ();
     }
-    mem[q].hhfield.v.RH = get_avail ();
-    q = mem[q].hhfield.v.RH;
-    mem[q].hhfield.lhfield = cur_exp;
+    mem[q].hh.v.RH = get_avail ();
+    q = mem[q].hh.v.RH;
+    mem[q].hh.lh = cur_exp;
     cur_type = 1;
     lab_continue:;
-  }while (!(cur_cmd != 82));
+  } while (!(cur_cmd != 82));
   done:;
   found: if (cur_cmd != 81)
   {
@@ -15301,12 +15758,12 @@ void begin_iteration (void)
     back_error ();
   }
   q = get_avail ();
-  mem[q].hhfield.lhfield = 9758;
+  mem[q].hh.lh = 9758;
   scanner_status = 6;
   warning_info = n;
-  mem[s].hhfield.lhfield = scan_toks (4, p, q, 0);
+  mem[s].hh.lh = scan_toks (4, p, q, 0);
   scanner_status = 0;
-  mem[s].hhfield.v.RH = loop_ptr;
+  mem[s].hh.v.RH = loop_ptr;
   loop_ptr = s;
   resume_iteration ();
 }
@@ -15314,7 +15771,7 @@ void begin_iteration (void)
 void resume_iteration (void)
 {
   halfword p, q;
-  p = mem[loop_ptr + 1].hhfield.lhfield;
+  p = mem[loop_ptr + 1].hh.lh;
   if (p > 1)
   {
     cur_exp = mem[p + 1].cint;
@@ -15327,13 +15784,13 @@ void resume_iteration (void)
   }
   else if (p < 1)
   {
-    p = mem[loop_ptr + 1].hhfield.v.RH;
+    p = mem[loop_ptr + 1].hh.v.RH;
     if (p == 0)
     goto not_found;
-    mem[loop_ptr + 1].hhfield.v.RH = mem[p].hhfield.v.RH;
-    q = mem[p].hhfield.lhfield;
+    mem[loop_ptr + 1].hh.v.RH = mem[p].hh.v.RH;
+    q = mem[p].hh.lh;
     {
-      mem[p].hhfield.v.RH = avail;
+      mem[p].hh.v.RH = avail;
       avail = p;
         ;
 #ifdef STAT
@@ -15342,16 +15799,16 @@ void resume_iteration (void)
     }
   }
   else {
-    begin_token_list (mem[loop_ptr].hhfield.lhfield, 16);
+    begin_token_list (mem[loop_ptr].hh.lh, 16);
     goto lab_exit;
   }
-  begin_token_list (mem[loop_ptr].hhfield.lhfield, 17);
+  begin_token_list (mem[loop_ptr].hh.lh, 17);
   stack_argument (q);
   if (internal[7] > 65536L)
   {
     begin_diagnostic ();
     print_nl(736);
-    if ((q != 0) && (mem[q].hhfield.v.RH == 1))
+    if ((q != 0) && (mem[q].hh.v.RH == 1))
     print_exp (q, 1);
     else show_token_list (q, 0, 50, 0);
     print_char(125);
@@ -15365,16 +15822,16 @@ void resume_iteration (void)
 void stop_iteration (void)
 {
   halfword p, q;
-  p = mem[loop_ptr + 1].hhfield.lhfield;
+  p = mem[loop_ptr + 1].hh.lh;
   if (p > 1)
   free_node (p, 4);
   else if (p < 1)
   {
-    q = mem[loop_ptr + 1].hhfield.v.RH;
+    q = mem[loop_ptr + 1].hh.v.RH;
     while (q != 0) {
-      p = mem[q].hhfield.lhfield;
+      p = mem[q].hh.lh;
       if (p != 0) {
-        if (mem[p].hhfield.v.RH == 1)
+        if (mem[p].hh.v.RH == 1)
         {
           recycle_value (p);
           free_node (p, 2);
@@ -15382,9 +15839,9 @@ void stop_iteration (void)
         else flush_token_list (p);
       }
       p = q;
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
       {
-        mem[p].hhfield.v.RH = avail;
+        mem[p].hh.v.RH = avail;
         avail = p;
         ;
 #ifdef STAT
@@ -15394,8 +15851,8 @@ void stop_iteration (void)
     }
   }
   p = loop_ptr;
-  loop_ptr = mem[p].hhfield.v.RH;
-  flush_token_list (mem[p].hhfield.lhfield);
+  loop_ptr = mem[p].hh.v.RH;
+  flush_token_list (mem[p].hh.lh);
   free_node (p, 2);
 }
 
@@ -15973,7 +16430,7 @@ void bad_exp (str_number s)
 void stash_in (halfword p)
 {
   halfword q;
-  mem[p].hhfield.b0 = cur_type;
+  mem[p].hh.b0 = cur_type;
   if (cur_type == 16)
   mem[p + 1].cint = cur_exp;
   else {
@@ -15982,19 +16439,19 @@ void stash_in (halfword p)
       q = single_dependency (cur_exp);
       if (q == dep_final)
       {
-        mem[p].hhfield.b0 = 16;
+        mem[p].hh.b0 = 16;
         mem[p + 1].cint = 0;
         free_node (q, 2);
       }
       else {
-        mem[p].hhfield.b0 = 17;
+        mem[p].hh.b0 = 17;
         new_dep (p, q);
       }
       recycle_value (cur_exp);
     }
     else {
       mem[p + 1] = mem[cur_exp + 1];
-      mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = p;
+      mem[mem[p + 1].hh.lh].hh.v.RH = p;
     }
     free_node (cur_exp, 2);
   }
@@ -16005,7 +16462,7 @@ void back_expr (void)
 {
   halfword p;
   p = stash_cur_exp ();
-  mem[p].hhfield.v.RH = 0;
+  mem[p].hh.v.RH = 0;
   begin_token_list (p, 19);
 }
 
@@ -16057,9 +16514,9 @@ void binary_mac (halfword p, halfword c, halfword n)
   halfword q, r;
   q = get_avail ();
   r = get_avail ();
-  mem[q].hhfield.v.RH = r;
-  mem[q].hhfield.lhfield = p;
-  mem[r].hhfield.lhfield = stash_cur_exp ();
+  mem[q].hh.v.RH = r;
+  mem[q].hh.lh = p;
+  mem[r].hh.lh = stash_cur_exp ();
   macro_call (c, q, n);
 }
 
@@ -16070,7 +16527,7 @@ void materialize_pen (void)
   halfword p;
   halfword q;
   q = cur_exp;
-  if (mem[q].hhfield.b0 == 0)
+  if (mem[q].hh.b0 == 0)
   {
     {
       if (interaction == 3)
@@ -16098,7 +16555,7 @@ void materialize_pen (void)
     cur_exp = 3;
     goto common_ending;
   }
-  else if (mem[q].hhfield.b0 == 4)
+  else if (mem[q].hh.b0 == 4)
   {
     tx = mem[q + 1].cint;
     ty = mem[q + 2].cint;
@@ -16122,8 +16579,8 @@ void materialize_pen (void)
       do {
           mem[p + 1].cint = mem[p + 1].cint + tx;
         mem[p + 2].cint = mem[p + 2].cint + ty;
-        p = mem[p].hhfield.v.RH;
-      }while (!(p == q));
+        p = mem[p].hh.v.RH;
+      } while (!(p == q));
     }
   }
   cur_exp = make_pen (q);
@@ -16151,7 +16608,7 @@ void known_pair (void)
   }
   else {
     p = mem[cur_exp + 1].cint;
-    if (mem[p].hhfield.b0 == 16)
+    if (mem[p].hh.b0 == 16)
     cur_x = mem[p + 1].cint;
     else {
       disp_err (p, 815);
@@ -16167,7 +16624,7 @@ void known_pair (void)
       recycle_value (p);
       cur_x = 0;
     }
-    if (mem[p + 2].hhfield.b0 == 16)
+    if (mem[p + 2].hh.b0 == 16)
     cur_y = mem[p + 3].cint;
     else {
       disp_err (p + 2, 817);
@@ -16191,9 +16648,9 @@ halfword new_knot (void)
 {
   halfword Result; halfword q;
   q = get_node (7);
-  mem[q].hhfield.b0 = 0;
-  mem[q].hhfield.b1 = 0;
-  mem[q].hhfield.v.RH = q;
+  mem[q].hh.b0 = 0;
+  mem[q].hh.b1 = 0;
+  mem[q].hh.v.RH = q;
   known_pair ();
   mem[q + 1].cint = cur_x;
   mem[q + 2].cint = cur_y;
@@ -16331,9 +16788,9 @@ void do_nullary (quarterword c)
     {
       cur_type = 8;
       cur_exp = get_node (7);
-      mem[cur_exp].hhfield.b0 = 4;
-      mem[cur_exp].hhfield.b1 = 4;
-      mem[cur_exp].hhfield.v.RH = cur_exp;
+      mem[cur_exp].hh.b0 = 4;
+      mem[cur_exp].hh.b1 = 4;
+      mem[cur_exp].hh.v.RH = cur_exp;
       mem[cur_exp + 1].cint = 0;
       mem[cur_exp + 2].cint = 0;
       mem[cur_exp + 3].cint = 65536L;
@@ -16393,8 +16850,8 @@ boolean nice_pair (integer p, quarterword t)
   boolean Result; if (t == 14)
   {
     p = mem[p + 1].cint;
-    if (mem[p].hhfield.b0 == 16) {
-      if (mem[p + 2].hhfield.b0 == 16)
+    if (mem[p].hh.b0 == 16) {
+      if (mem[p + 2].hh.b0 == 16)
       {
         Result = true;
         goto lab_exit;
@@ -16438,9 +16895,9 @@ void negate_dep_list (halfword p)
 {
   while (true) {
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
-    if (mem[p].hhfield.lhfield == 0)
+    if (mem[p].hh.lh == 0)
     goto lab_exit;
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   lab_exit:;
 }
@@ -16456,8 +16913,8 @@ void take_part (quarterword c)
   halfword p;
   p = mem[cur_exp + 1].cint;
   mem[18].cint = p;
-  mem[17].hhfield.b0 = cur_type;
-  mem[p].hhfield.v.RH = 17;
+  mem[17].hh.b0 = cur_type;
+  mem[p].hh.v.RH = 17;
   free_node (cur_exp, 2);
   make_exp_copy (p + 2 * (c - 53));
   recycle_value (17);
@@ -16555,13 +17012,13 @@ scaled path_length (void)
   scaled Result; scaled n;
   halfword p;
   p = cur_exp;
-  if (mem[p].hhfield.b0 == 0)
+  if (mem[p].hh.b0 == 0)
   n = -65536L;
   else n = 0;
   do {
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
     n = n + 65536L;
-  }while (!(p == cur_exp));
+  } while (!(p == cur_exp));
   Result = n;
   return Result;
 }
@@ -16589,9 +17046,9 @@ void test_known (quarterword c)
       q = p + big_node_size[cur_type];
       do {
           q = q - 2;
-        if (mem[q].hhfield.b0 != 16)
+        if (mem[q].hh.b0 != 16)
         goto done;
-      }while (!(q == p));
+      } while (!(q == p));
       b = 30;
       done:;
     }
@@ -16640,16 +17097,16 @@ void do_unary (quarterword c)
         q = cur_exp;
         make_exp_copy (q);
         if (cur_type == 17)
-        negate_dep_list (mem[cur_exp + 1].hhfield.v.RH);
+        negate_dep_list (mem[cur_exp + 1].hh.v.RH);
         else if (cur_type == 14)
         {
           p = mem[cur_exp + 1].cint;
-          if (mem[p].hhfield.b0 == 16)
+          if (mem[p].hh.b0 == 16)
           mem[p + 1].cint = - (integer) mem[p + 1].cint;
-          else negate_dep_list (mem[p + 1].hhfield.v.RH);
-          if (mem[p + 2].hhfield.b0 == 16)
+          else negate_dep_list (mem[p + 1].hh.v.RH);
+          if (mem[p + 2].hh.b0 == 16)
           mem[p + 3].cint = - (integer) mem[p + 3].cint;
-          else negate_dep_list (mem[p + 3].hhfield.v.RH);
+          else negate_dep_list (mem[p + 3].hh.v.RH);
         }
         recycle_value (q);
         free_node (q, 2);
@@ -16657,7 +17114,7 @@ void do_unary (quarterword c)
       break;
     case 17 :
     case 18 :
-      negate_dep_list (mem[cur_exp + 1].hhfield.v.RH);
+      negate_dep_list (mem[cur_exp + 1].hh.v.RH);
       break;
     case 16 :
       cur_exp = - (integer) cur_exp;
@@ -16820,7 +17277,7 @@ void do_unary (quarterword c)
     flush_cur_exp (0);
     else if (cur_type != 9)
     bad_unary (52);
-    else if (mem[cur_exp].hhfield.b0 == 0)
+    else if (mem[cur_exp].hh.b0 == 0)
     flush_cur_exp (0);
     else {
       cur_pen = 3;
@@ -16894,7 +17351,7 @@ void do_unary (quarterword c)
     {
       if (cur_type != 9)
       flush_cur_exp (31);
-      else if (mem[cur_exp].hhfield.b0 != 0)
+      else if (mem[cur_exp].hh.b0 != 0)
       flush_cur_exp (30);
       else flush_cur_exp (31);
       cur_type = 2;
@@ -16930,8 +17387,8 @@ void do_unary (quarterword c)
     if (cur_type == 9)
     {
       p = htap_ypoc (cur_exp);
-      if (mem[p].hhfield.b1 == 0)
-      p = mem[p].hhfield.v.RH;
+      if (mem[p].hh.b1 == 0)
+      p = mem[p].hh.v.RH;
       toss_knot_list (cur_exp);
       cur_exp = p;
     }
@@ -16952,7 +17409,7 @@ void bad_binary (halfword p, quarterword c)
   disp_err (0, 838);
   if (c >= 94)
   print_op (c);
-  print_known_or_unknown_type (mem[p].hhfield.b0, p);
+  print_known_or_unknown_type (mem[p].hh.b0, p);
   if (c >= 94)
   print(479);
   else print_op (c);
@@ -16971,15 +17428,15 @@ halfword tarnished (halfword p)
   halfword Result; halfword q;
   halfword r;
   q = mem[p + 1].cint;
-  r = q + big_node_size[mem[p].hhfield.b0];
+  r = q + big_node_size[mem[p].hh.b0];
   do {
       r = r - 2;
-    if (mem[r].hhfield.b0 == 19)
+    if (mem[r].hh.b0 == 19)
     {
       Result = 1;
       goto lab_exit;
     }
-  }while (!(r == q));
+  } while (!(r == q));
   Result = 0;
   lab_exit:;
   return Result;
@@ -16992,16 +17449,16 @@ void dep_finish (halfword v, halfword q, small_number t)
   if (q == 0)
   p = cur_exp;
   else p = q;
-  mem[p + 1].hhfield.v.RH = v;
-  mem[p].hhfield.b0 = t;
-  if (mem[v].hhfield.lhfield == 0)
+  mem[p + 1].hh.v.RH = v;
+  mem[p].hh.b0 = t;
+  if (mem[v].hh.lh == 0)
   {
     vv = mem[v + 1].cint;
     if (q == 0)
     flush_cur_exp (vv);
     else {
       recycle_value (p);
-      mem[q].hhfield.b0 = 16;
+      mem[q].hh.b0 = 16;
       mem[q + 1].cint = vv;
     }
   }
@@ -17021,19 +17478,19 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
     t = cur_type;
     if (t < 17)
     v = cur_exp;
-    else v = mem[cur_exp + 1].hhfield.v.RH;
+    else v = mem[cur_exp + 1].hh.v.RH;
   }
   else {
-    t = mem[q].hhfield.b0;
+    t = mem[q].hh.b0;
     if (t < 17)
     v = mem[q + 1].cint;
-    else v = mem[q + 1].hhfield.v.RH;
+    else v = mem[q + 1].hh.v.RH;
   }
   if (t == 16)
   {
     if (c == 70)
     v = - (integer) v;
-    if (mem[p].hhfield.b0 == 16)
+    if (mem[p].hh.b0 == 16)
     {
       v = slow_add (mem[p + 1].cint, v);
       if (q == 0)
@@ -17041,35 +17498,35 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
       else mem[q + 1].cint = v;
       goto lab_exit;
     }
-    r = mem[p + 1].hhfield.v.RH;
-    while (mem[r].hhfield.lhfield != 0) r = mem[r].hhfield.v.RH;
+    r = mem[p + 1].hh.v.RH;
+    while (mem[r].hh.lh != 0) r = mem[r].hh.v.RH;
     mem[r + 1].cint = slow_add (mem[r + 1].cint, v);
     if (q == 0)
     {
       q = get_node (2);
       cur_exp = q;
-      cur_type = mem[p].hhfield.b0;
-      mem[q].hhfield.b1 = 11;
+      cur_type = mem[p].hh.b0;
+      mem[q].hh.b1 = 11;
     }
-    mem[q + 1].hhfield.v.RH = mem[p + 1].hhfield.v.RH;
-    mem[q].hhfield.b0 = mem[p].hhfield.b0;
-    mem[q + 1].hhfield.lhfield = mem[p + 1].hhfield.lhfield;
-    mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = q;
-    mem[p].hhfield.b0 = 16;
+    mem[q + 1].hh.v.RH = mem[p + 1].hh.v.RH;
+    mem[q].hh.b0 = mem[p].hh.b0;
+    mem[q + 1].hh.lh = mem[p + 1].hh.lh;
+    mem[mem[p + 1].hh.lh].hh.v.RH = q;
+    mem[p].hh.b0 = 16;
   }
   else {
     if (c == 70)
     negate_dep_list (v);
-    if (mem[p].hhfield.b0 == 16)
+    if (mem[p].hh.b0 == 16)
     {
-      while (mem[v].hhfield.lhfield != 0) v = mem[v].hhfield.v.RH
+      while (mem[v].hh.lh != 0) v = mem[v].hh.v.RH
 ;
       mem[v + 1].cint = slow_add (mem[p + 1].cint, mem[v + 1]
       .cint);
     }
     else {
-      s = mem[p].hhfield.b0;
-      r = mem[p + 1].hhfield.v.RH;
+      s = mem[p].hh.b0;
+      r = mem[p + 1].hh.v.RH;
       if (t == 17)
       {
         if (s == 17) {
@@ -17102,7 +17559,7 @@ void dep_mult (halfword p, integer v, boolean visscaled)
   small_number s, t;
   if (p == 0)
   q = cur_exp;
-  else if (mem[p].hhfield.b0 != 16)
+  else if (mem[p].hh.b0 != 16)
   q = p;
   else {
     if (visscaled)
@@ -17110,8 +17567,8 @@ void dep_mult (halfword p, integer v, boolean visscaled)
     else mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
     goto lab_exit;
   }
-  t = mem[q].hhfield.b0;
-  q = mem[q + 1].hhfield.v.RH;
+  t = mem[q].hh.b0;
+  q = mem[q + 1].hh.v.RH;
   s = t;
   if (t == 17) {
     if (visscaled) {
@@ -17129,7 +17586,7 @@ void hard_times (halfword p)
   halfword q;
   halfword r;
   scaled u, v;
-  if (mem[p].hhfield.b0 == 14)
+  if (mem[p].hh.b0 == 14)
   {
     q = stash_cur_exp ();
     unstash_cur_exp (p);
@@ -17138,11 +17595,11 @@ void hard_times (halfword p)
   r = mem[cur_exp + 1].cint;
   u = mem[r + 1].cint;
   v = mem[r + 3].cint;
-  mem[r + 2].hhfield.b0 = mem[p].hhfield.b0;
-  new_dep (r + 2, copy_dep_list (mem[p + 1].hhfield.v.RH));
-  mem[r].hhfield.b0 = mem[p].hhfield.b0;
+  mem[r + 2].hh.b0 = mem[p].hh.b0;
+  new_dep (r + 2, copy_dep_list (mem[p + 1].hh.v.RH));
+  mem[r].hh.b0 = mem[p].hh.b0;
   mem[r + 1] = mem[p + 1];
-  mem[mem[p + 1].hhfield.lhfield].hhfield.v.RH = r;
+  mem[mem[p + 1].hh.lh].hh.v.RH = r;
   free_node (p, 2);
   dep_mult (r, u, true);
   dep_mult (r + 2, v, true);
@@ -17154,14 +17611,14 @@ void dep_div (halfword p, scaled v)
   small_number s, t;
   if (p == 0)
   q = cur_exp;
-  else if (mem[p].hhfield.b0 != 16)
+  else if (mem[p].hh.b0 != 16)
   q = p;
   else {
     mem[p + 1].cint = make_scaled (mem[p + 1].cint, v);
     goto lab_exit;
   }
-  t = mem[q].hhfield.b0;
-  q = mem[q + 1].hhfield.v.RH;
+  t = mem[q].hh.b0;
+  q = mem[q + 1].hh.v.RH;
   s = t;
   if (t == 17) {
     if (ab_vs_cd (max_coef (q), 65536L, 626349396L, abs (v)) >= 0)
@@ -17183,7 +17640,7 @@ void setup_trans (quarterword c)
     q = mem[cur_exp + 1].cint;
     switch (c)
     {case 84 :
-      if (mem[p].hhfield.b0 == 16)
+      if (mem[p].hh.b0 == 16)
       {
         n_sin_cos((mem[p + 1].cint % 23592960L) * 16);
         mem[q + 5].cint = roundfraction (n_cos);
@@ -17194,14 +17651,14 @@ void setup_trans (quarterword c)
       }
       break;
     case 85 :
-      if (mem[p].hhfield.b0 > 14)
+      if (mem[p].hh.b0 > 14)
       {
         install (q + 6, p);
         goto done;
       }
       break;
     case 86 :
-      if (mem[p].hhfield.b0 > 14)
+      if (mem[p].hh.b0 > 14)
       {
         install (q + 4, p);
         install (q + 10, p);
@@ -17209,7 +17666,7 @@ void setup_trans (quarterword c)
       }
       break;
     case 87 :
-      if (mem[p].hhfield.b0 == 14)
+      if (mem[p].hh.b0 == 14)
       {
         r = mem[p + 1].cint;
         install (q, r);
@@ -17218,29 +17675,29 @@ void setup_trans (quarterword c)
       }
       break;
     case 89 :
-      if (mem[p].hhfield.b0 > 14)
+      if (mem[p].hh.b0 > 14)
       {
         install (q + 4, p);
         goto done;
       }
       break;
     case 90 :
-      if (mem[p].hhfield.b0 > 14)
+      if (mem[p].hh.b0 > 14)
       {
         install (q + 10, p);
         goto done;
       }
       break;
     case 91 :
-      if (mem[p].hhfield.b0 == 14)
+      if (mem[p].hh.b0 == 14)
       {
         r = mem[p + 1].cint;
         install (q + 4, r);
         install (q + 10, r);
         install (q + 8, r + 2);
-        if (mem[r + 2].hhfield.b0 == 16)
+        if (mem[r + 2].hh.b0 == 16)
         mem[r + 3].cint = - (integer) mem[r + 3].cint;
-        else negate_dep_list (mem[r + 3].hhfield.v.RH);
+        else negate_dep_list (mem[r + 3].hh.v.RH);
         install (q + 6, r + 2);
         goto done;
       }
@@ -17264,9 +17721,9 @@ void setup_trans (quarterword c)
   r = q + 12;
   do {
       r = r - 2;
-    if (mem[r].hhfield.b0 != 16)
+    if (mem[r].hh.b0 != 16)
     goto lab_exit;
-  }while (!(r == q));
+  } while (!(r == q));
   txx = mem[q + 5].cint;
   txy = mem[q + 7].cint;
   tyx = mem[q + 9].cint;
@@ -17327,13 +17784,13 @@ void path_trans (halfword p, quarterword c)
   }
   q = cur_exp;
   do {
-      if (mem[q].hhfield.b0 != 0)
+      if (mem[q].hh.b0 != 0)
     trans (q + 3, q + 4);
     trans (q + 1, q + 2);
-    if (mem[q].hhfield.b1 != 0)
+    if (mem[q].hh.b1 != 0)
     trans (q + 5, q + 6);
-    q = mem[q].hhfield.v.RH;
-  }while (!(q == cur_exp));
+    q = mem[q].hh.v.RH;
+  } while (!(q == cur_exp));
   lab_exit:;
 }
 
@@ -17342,7 +17799,7 @@ void edges_trans (halfword p, quarterword c)
   setup_known_trans (c);
   unstash_cur_exp (p);
   cur_edges = cur_exp;
-  if (mem[cur_edges].hhfield.v.RH == cur_edges)
+  if (mem[cur_edges].hh.v.RH == cur_edges)
   goto lab_exit;
   if (txx == 0) {
     if (tyy == 0) {
@@ -17354,7 +17811,7 @@ void edges_trans (halfword p, quarterword c)
           tyy = tyx;
           txy = 0;
           tyx = 0;
-          if (mem[cur_edges].hhfield.v.RH == cur_edges)
+          if (mem[cur_edges].hh.v.RH == cur_edges)
           goto lab_exit;
         }
       }
@@ -17388,10 +17845,10 @@ void edges_trans (halfword p, quarterword c)
             y_scale_edges (tyy / 65536L);
             tx = roundunscaled (tx);
             ty = roundunscaled (ty);
-            if ((mem[cur_edges + 2].hhfield.lhfield + tx <= 0) || (mem
-          [cur_edges + 2].hhfield.v.RH + tx >= 8192) || (mem[cur_edges
-            + 1].hhfield.lhfield + ty <= 0) || (mem[cur_edges + 1]
-            .hhfield.v.RH + ty >= 8191) || (abs (tx) >= 4096) || (abs (
+            if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem
+          [cur_edges + 2].hh.v.RH + tx >= 8192) || (mem[cur_edges
+            + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1]
+            .hh.v.RH + ty >= 8191) || (abs (tx) >= 4096) || (abs (
             ty) >= 4096))
             {
               {
@@ -17423,25 +17880,25 @@ void edges_trans (halfword p, quarterword c)
             else {
               if (tx != 0)
               {
-                if (!(abs (mem[cur_edges + 3].hhfield.lhfield - tx -
+                if (!(abs (mem[cur_edges + 3].hh.lh - tx -
                 4096) < 4096))
                 fix_offset ();
-                mem[cur_edges + 2].hhfield.lhfield = mem[cur_edges + 2]
-                .hhfield.lhfield + tx;
-                mem[cur_edges + 2].hhfield.v.RH = mem[cur_edges + 2]
-                .hhfield.v.RH + tx;
-                mem[cur_edges + 3].hhfield.lhfield = mem[cur_edges + 3]
-                .hhfield.lhfield - tx;
+                mem[cur_edges + 2].hh.lh = mem[cur_edges + 2]
+                .hh.lh + tx;
+                mem[cur_edges + 2].hh.v.RH = mem[cur_edges + 2]
+                .hh.v.RH + tx;
+                mem[cur_edges + 3].hh.lh = mem[cur_edges + 3]
+                .hh.lh - tx;
                 mem[cur_edges + 4].cint = 0;
               }
               if (ty != 0)
               {
-                mem[cur_edges + 1].hhfield.lhfield = mem[cur_edges + 1]
-                .hhfield.lhfield + ty;
-                mem[cur_edges + 1].hhfield.v.RH = mem[cur_edges + 1]
-                .hhfield.v.RH + ty;
-                mem[cur_edges + 5].hhfield.lhfield = mem[cur_edges + 5]
-                .hhfield.lhfield + ty;
+                mem[cur_edges + 1].hh.lh = mem[cur_edges + 1]
+                .hh.lh + ty;
+                mem[cur_edges + 1].hh.v.RH = mem[cur_edges + 1]
+                .hh.v.RH + ty;
+                mem[cur_edges + 5].hh.lh = mem[cur_edges + 5]
+                .hh.lh + ty;
                 mem[cur_edges + 4].cint = 0;
               }
             }
@@ -17484,32 +17941,32 @@ void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
   if (t != 65536L)
   dep_mult (p, t, true);
   if (u != 0) {
-    if (mem[q].hhfield.b0 == 16)
+    if (mem[q].hh.b0 == 16)
     delta = delta + take_scaled (mem[q + 1].cint, u);
     else {
-      if (mem[p].hhfield.b0 != 18)
+      if (mem[p].hh.b0 != 18)
       {
-        if (mem[p].hhfield.b0 == 16)
+        if (mem[p].hh.b0 == 16)
         new_dep (p, const_dependency (mem[p + 1].cint));
-        else mem[p + 1].hhfield.v.RH = p_times_v (mem[p + 1].hhfield
+        else mem[p + 1].hh.v.RH = p_times_v (mem[p + 1].hh
         .v.RH, 65536L, 17, 18, true);
-        mem[p].hhfield.b0 = 18;
+        mem[p].hh.b0 = 18;
       }
-      mem[p + 1].hhfield.v.RH = p_plus_fq (mem[p + 1].hhfield.v.RH ,
-      u, mem[q + 1].hhfield.v.RH, 18, mem[q].hhfield.b0);
+      mem[p + 1].hh.v.RH = p_plus_fq (mem[p + 1].hh.v.RH ,
+      u, mem[q + 1].hh.v.RH, 18, mem[q].hh.b0);
     }
   }
-  if (mem[p].hhfield.b0 == 16)
+  if (mem[p].hh.b0 == 16)
   mem[p + 1].cint = mem[p + 1].cint + delta;
   else {
-    r = mem[p + 1].hhfield.v.RH;
-    while (mem[r].hhfield.lhfield != 0) r = mem[r].hhfield.v.RH;
+    r = mem[p + 1].hh.v.RH;
+    while (mem[r].hh.lh != 0) r = mem[r].hh.v.RH;
     delta = mem[r + 1].cint + delta;
-    if (r != mem[p + 1].hhfield.v.RH)
+    if (r != mem[p + 1].hh.v.RH)
     mem[r + 1].cint = delta;
     else {
       recycle_value (p);
-      mem[p].hhfield.b0 = 16;
+      mem[p].hh.b0 = 16;
       mem[p + 1].cint = delta;
     }
   }
@@ -17519,12 +17976,12 @@ void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
 
 void add_mult_dep (halfword p, scaled v, halfword r)
 {
-  if (mem[r].hhfield.b0 == 16)
+  if (mem[r].hh.b0 == 16)
   mem[dep_final + 1].cint = mem[dep_final + 1].cint + take_scaled (mem[
   r + 1].cint, v);
   else {
-    mem[p + 1].hhfield.v.RH = p_plus_fq (mem[p + 1].hhfield.v.RH, v
-   , mem[r + 1].hhfield.v.RH, 18, mem[r].hhfield.b0);
+    mem[p + 1].hh.v.RH = p_plus_fq (mem[p + 1].hh.v.RH, v
+   , mem[r + 1].hh.v.RH, 18, mem[r].hh.b0);
     if (fix_needed)
     fix_dependencies ();
   }
@@ -17534,7 +17991,7 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 {
   scaled vv;
   vv = mem[p + 1].cint;
-  mem[p].hhfield.b0 = 18;
+  mem[p].hh.b0 = 18;
   new_dep (p, const_dependency (0));
   if (vv != 0)
   add_mult_dep (p, vv, t);
@@ -17542,11 +17999,11 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
   add_mult_dep (p, v, u);
   if (q != 0)
   add_mult_dep (p, 65536L, q);
-  if (mem[p + 1].hhfield.v.RH == dep_final)
+  if (mem[p + 1].hh.v.RH == dep_final)
   {
     vv = mem[dep_final + 1].cint;
     recycle_value (p);
-    mem[p].hhfield.b0 = 16;
+    mem[p].hh.b0 = 16;
     mem[p + 1].cint = vv;
   }
 }
@@ -17565,12 +18022,12 @@ void big_trans (halfword p, quarterword c)
 {
   halfword q, r, pp, qq;
   small_number s;
-  s = big_node_size[mem[p].hhfield.b0];
+  s = big_node_size[mem[p].hh.b0];
   q = mem[p + 1].cint;
   r = q + s;
   do {
       r = r - 2;
-    if (mem[r].hhfield.b0 != 16)
+    if (mem[r].hh.b0 != 16)
     {
       setup_known_trans (c);
       make_exp_copy (p);
@@ -17586,7 +18043,7 @@ void big_trans (halfword p, quarterword c)
       bilin1 (r, txx, q + 2, txy, tx);
       goto lab_exit;
     }
-  }while (!(r == q));
+  } while (!(r == q));
   setup_trans (c);
   if (cur_type == 16)
   {
@@ -17746,7 +18203,7 @@ void chop_path (halfword p)
     b = k;
   }
   if (a < 0) {
-    if (mem[cur_exp].hhfield.b0 == 0)
+    if (mem[cur_exp].hh.b0 == 0)
     {
       a = 0;
       if (b < 0)
@@ -17755,10 +18212,10 @@ void chop_path (halfword p)
     else do {
         a = a + l;
       b = b + l;
-    }while (!(a >= 0));
+    } while (!(a >= 0));
   }
   if (b > l) {
-    if (mem[cur_exp].hhfield.b0 == 0)
+    if (mem[cur_exp].hh.b0 == 0)
     {
       b = l;
       if (a > l)
@@ -17771,7 +18228,7 @@ void chop_path (halfword p)
   }
   q = cur_exp;
   while (a >= 65536L) {
-    q = mem[q].hhfield.v.RH;
+    q = mem[q].hh.v.RH;
     a = a - 65536L;
     b = b - 65536L;
   }
@@ -17779,10 +18236,10 @@ void chop_path (halfword p)
   {
     if (a > 0)
     {
-      qq = mem[q].hhfield.v.RH;
+      qq = mem[q].hh.v.RH;
       split_cubic (q, a * 4096, mem[qq + 1].cint, mem[qq + 2].cint
    );
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
     pp = copy_knot (q);
     qq = pp;
@@ -17791,19 +18248,19 @@ void chop_path (halfword p)
     pp = copy_knot (q);
     qq = pp;
     do {
-        q = mem[q].hhfield.v.RH;
+        q = mem[q].hh.v.RH;
       rr = qq;
       qq = copy_knot (q);
-      mem[rr].hhfield.v.RH = qq;
+      mem[rr].hh.v.RH = qq;
       b = b - 65536L;
-    }while (!(b <= 0));
+    } while (!(b <= 0));
     if (a > 0)
     {
       ss = pp;
-      pp = mem[pp].hhfield.v.RH;
+      pp = mem[pp].hh.v.RH;
       split_cubic (ss, a * 4096, mem[pp + 1].cint, mem[pp + 2].cint
    );
-      pp = mem[ss].hhfield.v.RH;
+      pp = mem[ss].hh.v.RH;
       free_node (ss, 7);
       if (rr == ss)
       {
@@ -17816,16 +18273,16 @@ void chop_path (halfword p)
       split_cubic (rr, (b + 65536L) * 4096, mem[qq + 1].cint, mem[
       qq + 2].cint);
       free_node (qq, 7);
-      qq = mem[rr].hhfield.v.RH;
+      qq = mem[rr].hh.v.RH;
     }
   }
-  mem[pp].hhfield.b0 = 0;
-  mem[qq].hhfield.b1 = 0;
-  mem[qq].hhfield.v.RH = pp;
+  mem[pp].hh.b0 = 0;
+  mem[qq].hh.b1 = 0;
+  mem[qq].hh.v.RH = pp;
   toss_knot_list (cur_exp);
   if (reversed)
   {
-    cur_exp = mem[htap_ypoc (pp)].hhfield.v.RH;
+    cur_exp = mem[htap_ypoc (pp)].hh.v.RH;
     toss_knot_list (pp);
   }
   else cur_exp = pp;
@@ -17837,13 +18294,13 @@ void pair_value (scaled x, scaled y)
   p = get_node (2);
   flush_cur_exp (p);
   cur_type = 14;
-  mem[p].hhfield.b0 = 14;
-  mem[p].hhfield.b1 = 11;
+  mem[p].hh.b0 = 14;
+  mem[p].hh.b1 = 11;
   init_big_node (p);
   p = mem[p + 1].cint;
-  mem[p].hhfield.b0 = 16;
+  mem[p].hh.b0 = 16;
   mem[p + 1].cint = x;
-  mem[p + 2].hhfield.b0 = 16;
+  mem[p + 2].hh.b0 = 16;
   mem[p + 3].cint = y;
 }
 
@@ -17865,47 +18322,47 @@ void find_point (scaled v, quarterword c)
   scaled n;
   halfword q;
   p = cur_exp;
-  if (mem[p].hhfield.b0 == 0)
+  if (mem[p].hh.b0 == 0)
   n = -65536L;
   else n = 0;
   do {
-      p = mem[p].hhfield.v.RH;
+      p = mem[p].hh.v.RH;
     n = n + 65536L;
-  }while (!(p == cur_exp));
+  } while (!(p == cur_exp));
   if (n == 0)
   v = 0;
   else if (v < 0) {
-    if (mem[p].hhfield.b0 == 0)
+    if (mem[p].hh.b0 == 0)
     v = 0;
     else v = n - 1 - ((- (integer) v - 1) % n);
   }
   else if (v > n) {
-    if (mem[p].hhfield.b0 == 0)
+    if (mem[p].hh.b0 == 0)
     v = n;
     else v = v % n;
   }
   p = cur_exp;
   while (v >= 65536L) {
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
     v = v - 65536L;
   }
   if (v != 0)
   {
-    q = mem[p].hhfield.v.RH;
+    q = mem[p].hh.v.RH;
     split_cubic (p, v * 4096, mem[q + 1].cint, mem[q + 2].cint);
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   switch (c)
   {case 97 :
     pair_value (mem[p + 1].cint, mem[p + 2].cint);
     break;
   case 98 :
-    if (mem[p].hhfield.b0 == 0)
+    if (mem[p].hh.b0 == 0)
     pair_value (mem[p + 1].cint, mem[p + 2].cint);
     else pair_value (mem[p + 3].cint, mem[p + 4].cint);
     break;
   case 99 :
-    if (mem[p].hhfield.b1 == 0)
+    if (mem[p].hh.b1 == 0)
     pair_value (mem[p + 1].cint, mem[p + 2].cint);
     else pair_value (mem[p + 5].cint, mem[p + 6].cint);
     break;
@@ -17933,7 +18390,7 @@ void do_binary (halfword p, quarterword c)
     print(842);
     end_diagnostic (false);
   }
-  switch (mem[p].hhfield.b0)
+  switch (mem[p].hh.b0)
   {case 13 :
   case 14 :
     oldp = tarnished (p);
@@ -17973,8 +18430,8 @@ void do_binary (halfword p, quarterword c)
   switch (c)
   {case 69 :
   case 70 :
-    if ((cur_type < 14) || (mem[p].hhfield.b0 < 14)) {
-      if ((cur_type == 11) && (mem[p].hhfield.b0 == 11))
+    if ((cur_type < 14) || (mem[p].hh.b0 < 14)) {
+      if ((cur_type == 11) && (mem[p].hh.b0 == 11))
       {
         if (c == 70)
         negate_edges (cur_exp);
@@ -17984,7 +18441,7 @@ void do_binary (halfword p, quarterword c)
       else bad_binary (p, c);
     }
     else if (cur_type == 14) {
-      if (mem[p].hhfield.b0 != 14)
+      if (mem[p].hh.b0 != 14)
       bad_binary (p, c);
       else {
         q = mem[p + 1].cint;
@@ -17993,7 +18450,7 @@ void do_binary (halfword p, quarterword c)
         add_or_sub_tract (q + 2, r + 2, c);
       }
     }
-    else if (mem[p].hhfield.b0 == 14)
+    else if (mem[p].hh.b0 == 14)
     bad_binary (p, c);
     else add_or_sub_tract (p, 0, c);
     break;
@@ -18004,9 +18461,9 @@ void do_binary (halfword p, quarterword c)
   case 81 :
   case 82 :
     {
-      if ((cur_type > 14) && (mem[p].hhfield.b0 > 14))
+      if ((cur_type > 14) && (mem[p].hh.b0 > 14))
       add_or_sub_tract (p, 0, 70);
-      else if (cur_type != mem[p].hhfield.b0)
+      else if (cur_type != mem[p].hh.b0)
       {
         bad_binary (p, c);
         goto done;
@@ -18027,7 +18484,7 @@ void do_binary (halfword p, quarterword c)
         rr = r + big_node_size[cur_type] - 2;
         while (true) {
           add_or_sub_tract (q, r, 70);
-          if (mem[r].hhfield.b0 != 16)
+          if (mem[r].hh.b0 != 16)
           goto done1;
           if (mem[r + 1].cint != 0)
           goto done1;
@@ -18100,17 +18557,17 @@ void do_binary (halfword p, quarterword c)
     break;
   case 76 :
   case 75 :
-    if ((mem[p].hhfield.b0 != 2) || (cur_type != 2))
+    if ((mem[p].hh.b0 != 2) || (cur_type != 2))
     bad_binary (p, c);
     else if (mem[p + 1].cint == c - 45)
     cur_exp = mem[p + 1].cint;
     break;
   case 71 :
-    if ((cur_type < 14) || (mem[p].hhfield.b0 < 14))
+    if ((cur_type < 14) || (mem[p].hh.b0 < 14))
     bad_binary (p, 71);
-    else if ((cur_type == 16) || (mem[p].hhfield.b0 == 16))
+    else if ((cur_type == 16) || (mem[p].hh.b0 == 16))
     {
-      if (mem[p].hhfield.b0 == 16)
+      if (mem[p].hh.b0 == 16)
       {
         v = mem[p + 1].cint;
         free_node (p, 2);
@@ -18130,8 +18587,8 @@ void do_binary (halfword p, quarterword c)
       else dep_mult (0, v, true);
       goto lab_exit;
     }
-    else if ((nice_pair (p, mem[p].hhfield.b0) && (cur_type > 14))
-    || (nice_pair (cur_exp, cur_type) && (mem[p].hhfield.b0 > 14)))
+    else if ((nice_pair (p, mem[p].hh.b0) && (cur_type > 14))
+    || (nice_pair (cur_exp, cur_type) && (mem[p].hh.b0 > 14)))
     {
       hard_times (p);
       goto lab_exit;
@@ -18139,7 +18596,7 @@ void do_binary (halfword p, quarterword c)
     else bad_binary (p, 71);
     break;
   case 72 :
-    if ((cur_type != 16) || (mem[p].hhfield.b0 < 14))
+    if ((cur_type != 16) || (mem[p].hh.b0 < 14))
     bad_binary (p, 72);
     else {
       v = cur_exp;
@@ -18170,7 +18627,7 @@ void do_binary (halfword p, quarterword c)
     break;
   case 73 :
   case 74 :
-    if ((cur_type == 16) && (mem[p].hhfield.b0 == 16)) {
+    if ((cur_type == 16) && (mem[p].hh.b0 == 16)) {
       if (c == 73)
       cur_exp = pyth_add (mem[p + 1].cint, cur_exp);
       else cur_exp = pyth_sub (mem[p + 1].cint, cur_exp);
@@ -18185,16 +18642,16 @@ void do_binary (halfword p, quarterword c)
   case 89 :
   case 90 :
   case 91 :
-    if ((mem[p].hhfield.b0 == 9) || (mem[p].hhfield.b0 == 8) ||
-    (mem[p].hhfield.b0 == 6))
+    if ((mem[p].hh.b0 == 9) || (mem[p].hh.b0 == 8) ||
+    (mem[p].hh.b0 == 6))
     {
       path_trans (p, c);
       goto lab_exit;
     }
-    else if ((mem[p].hhfield.b0 == 14) || (mem[p].hhfield.b0 ==
+    else if ((mem[p].hh.b0 == 14) || (mem[p].hh.b0 ==
     13))
     big_trans (p, c);
-    else if (mem[p].hhfield.b0 == 11)
+    else if (mem[p].hh.b0 == 11)
     {
       edges_trans (p, c);
       goto lab_exit;
@@ -18202,12 +18659,12 @@ void do_binary (halfword p, quarterword c)
     else bad_binary (p, c);
     break;
   case 83 :
-    if ((cur_type == 4) && (mem[p].hhfield.b0 == 4))
+    if ((cur_type == 4) && (mem[p].hh.b0 == 4))
     cat (p);
     else bad_binary (p, 83);
     break;
   case 94 :
-    if (nice_pair (p, mem[p].hhfield.b0) && (cur_type == 4))
+    if (nice_pair (p, mem[p].hh.b0) && (cur_type == 4))
     chop_string (mem[p + 1].cint);
     else bad_binary (p, 94);
     break;
@@ -18215,7 +18672,7 @@ void do_binary (halfword p, quarterword c)
     {
       if (cur_type == 14)
       pair_to_path ();
-      if (nice_pair (p, mem[p].hhfield.b0) && (cur_type == 9))
+      if (nice_pair (p, mem[p].hh.b0) && (cur_type == 9))
       chop_path (mem[p + 1].cint);
       else bad_binary (p, 95);
     }
@@ -18226,7 +18683,7 @@ void do_binary (halfword p, quarterword c)
     {
       if (cur_type == 14)
       pair_to_path ();
-      if ((cur_type == 9) && (mem[p].hhfield.b0 == 16))
+      if ((cur_type == 9) && (mem[p].hh.b0 == 16))
       find_point (mem[p + 1].cint, c);
       else bad_binary (p, c);
     }
@@ -18235,7 +18692,7 @@ void do_binary (halfword p, quarterword c)
     {
       if (cur_type == 8)
       materialize_pen ();
-      if ((cur_type == 6) && nice_pair (p, mem[p].hhfield.b0))
+      if ((cur_type == 6) && nice_pair (p, mem[p].hh.b0))
       setup_offset (mem[p + 1].cint);
       else bad_binary (p, 100);
     }
@@ -18244,14 +18701,14 @@ void do_binary (halfword p, quarterword c)
     {
       if (cur_type == 14)
       pair_to_path ();
-      if ((cur_type == 9) && nice_pair (p, mem[p].hhfield.b0))
+      if ((cur_type == 9) && nice_pair (p, mem[p].hh.b0))
       setup_direction_time (mem[p + 1].cint);
       else bad_binary (p, 96);
     }
     break;
   case 92 :
     {
-      if (mem[p].hhfield.b0 == 14)
+      if (mem[p].hh.b0 == 14)
       {
         q = stash_cur_exp ();
         unstash_cur_exp (p);
@@ -18261,7 +18718,7 @@ void do_binary (halfword p, quarterword c)
       }
       if (cur_type == 14)
       pair_to_path ();
-      if ((cur_type == 9) && (mem[p].hhfield.b0 == 9))
+      if ((cur_type == 9) && (mem[p].hh.b0 == 9))
       {
         path_intersection (mem[p + 1].cint, cur_exp);
         pair_value (cur_t, cur_tt);
@@ -18732,12 +19189,12 @@ void shipout (eight_bits c)
     }
   }
   prevn = 4096;
-  p = mem[cur_edges].hhfield.lhfield;
-  n = mem[cur_edges + 1].hhfield.v.RH - 4096;
+  p = mem[cur_edges].hh.lh;
+  n = mem[cur_edges + 1].hh.v.RH - 4096;
   while (p != cur_edges) {
-    if (mem[p + 1].hhfield.lhfield > 1)
+    if (mem[p + 1].hh.lh > 1)
     sort_edges (p);
-    q = mem[p + 1].hhfield.v.RH;
+    q = mem[p + 1].hh.v.RH;
     w = 0;
     prevm = -268435456L;
     ww = 0;
@@ -18747,7 +19204,7 @@ void shipout (eight_bits c)
         if (q == memtop)
       mm = 268435456L;
       else {
-        d = mem[q].hhfield.lhfield;
+        d = mem[q].hh.lh;
         mm = d / 8;
         ww = ww + (d % 8) - 4;
       }
@@ -18761,11 +19218,11 @@ void shipout (eight_bits c)
             {
               if (prevn == 4096)
               {
-                gf_boc (mem[cur_edges + 2].hhfield.lhfield + xoff - 4096 ,
-                mem[cur_edges + 2].hhfield.v.RH + xoff - 4096, mem[
-                cur_edges + 1].hhfield.lhfield + yoff - 4096, n + yoff);
-                curminm = mem[cur_edges + 2].hhfield.lhfield - 4096 + mem
-                [cur_edges + 3].hhfield.lhfield;
+                gf_boc (mem[cur_edges + 2].hh.lh + xoff - 4096 ,
+                mem[cur_edges + 2].hh.v.RH + xoff - 4096, mem[
+                cur_edges + 1].hh.lh + yoff - 4096, n + yoff);
+                curminm = mem[cur_edges + 2].hh.lh - 4096 + mem
+                [cur_edges + 3].hh.lh;
               }
               else if (prevn > n + 1)
               {
@@ -18831,13 +19288,13 @@ void shipout (eight_bits c)
         m = mm;
       }
       w = ww;
-      q = mem[q].hhfield.v.RH;
-    }while (!(mm == 268435456L));
+      q = mem[q].hh.v.RH;
+    } while (!(mm == 268435456L));
     if (w != 0)
     print_nl(1058);
-    if (prevm - mem[cur_edges + 3].hhfield.lhfield + xoff > gf_max_m)
-    gf_max_m = prevm - mem[cur_edges + 3].hhfield.lhfield + xoff;
-    p = mem[p].hhfield.lhfield;
+    if (prevm - mem[cur_edges + 3].hh.lh + xoff > gf_max_m)
+    gf_max_m = prevm - mem[cur_edges + 3].hh.lh + xoff;
+    p = mem[p].hh.lh;
     decr (n);
   }
   if (prevn == 4096)
@@ -18872,7 +19329,7 @@ void try_eq (halfword l, halfword r)
   halfword pp;
   unsigned char tt;
   boolean copied;
-  t = mem[l].hhfield.b0;
+  t = mem[l].hh.b0;
   if (t == 16)
   {
     t = 17;
@@ -18887,19 +19344,19 @@ void try_eq (halfword l, halfword r)
     q = dep_final;
   }
   else {
-    p = mem[l + 1].hhfield.v.RH;
+    p = mem[l + 1].hh.v.RH;
     q = p;
     while (true) {
       mem[q + 1].cint = - (integer) mem[q + 1].cint;
-      if (mem[q].hhfield.lhfield == 0)
+      if (mem[q].hh.lh == 0)
       goto done;
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
-    done: mem[mem[l + 1].hhfield.lhfield].hhfield.v.RH = mem[q]
-    .hhfield.v.RH;
-    mem[mem[q].hhfield.v.RH + 1].hhfield.lhfield = mem[l + 1]
-    .hhfield.lhfield;
-    mem[l].hhfield.b0 = 16;
+    done: mem[mem[l + 1].hh.lh].hh.v.RH = mem[q]
+    .hh.v.RH;
+    mem[mem[q].hh.v.RH + 1].hh.lh = mem[l + 1]
+    .hh.lh;
+    mem[l].hh.b0 = 16;
   }
   if (r == 0) {
     if (cur_type == 16)
@@ -18911,19 +19368,19 @@ void try_eq (halfword l, halfword r)
       tt = cur_type;
       if (tt == 19)
       pp = single_dependency (cur_exp);
-      else pp = mem[cur_exp + 1].hhfield.v.RH;
+      else pp = mem[cur_exp + 1].hh.v.RH;
     }
   }
-  else if (mem[r].hhfield.b0 == 16)
+  else if (mem[r].hh.b0 == 16)
   {
     mem[q + 1].cint = mem[q + 1].cint + mem[r + 1].cint;
     goto done1;
   }
   else {
-    tt = mem[r].hhfield.b0;
+    tt = mem[r].hh.b0;
     if (tt == 19)
     pp = single_dependency (r);
-    else pp = mem[r + 1].hhfield.v.RH;
+    else pp = mem[r + 1].hh.v.RH;
   }
   if (tt != 19)
   copied = false;
@@ -18938,9 +19395,9 @@ void try_eq (halfword l, halfword r)
   p = p_plus_fq (p, 65536L, pp, 18, 17);
   else {
     q = p;
-    while (mem[q].hhfield.lhfield != 0) {
+    while (mem[q].hh.lh != 0) {
       mem[q + 1].cint = roundfraction (mem[q + 1].cint);
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
     t = 18;
     p = p_plus_q (p, pp, t);
@@ -18949,7 +19406,7 @@ void try_eq (halfword l, halfword r)
   if (copied)
   flush_node_list (pp);
   done1:;
-  if (mem[p].hhfield.lhfield == 0)
+  if (mem[p].hh.lh == 0)
   {
     if (abs (mem[p + 1].cint) > 64)
     {
@@ -19012,7 +19469,7 @@ void try_eq (halfword l, halfword r)
     linear_eq (p, t);
     if (r == 0) {
       if (cur_type != 16) {
-        if (mem[cur_exp].hhfield.b0 == 16)
+        if (mem[cur_exp].hh.b0 == 16)
         {
           pp = cur_exp;
           cur_exp = mem[cur_exp + 1].cint;
@@ -19029,7 +19486,7 @@ void make_eq (halfword lhs)
   small_number t;
   integer v;
   halfword p, q;
-  lab_restart: t = mem[lhs].hhfield.b0;
+  lab_restart: t = mem[lhs].hh.b0;
   if (t <= 14)
   v = mem[lhs + 1].cint;
   switch (t)
@@ -19165,7 +19622,7 @@ void make_eq (halfword lhs)
           p = p - 2;
         q = q - 2;
         try_eq (p, q);
-      }while (!(p == v));
+      } while (!(p == v));
       goto done;
     }
     break;
@@ -19185,8 +19642,8 @@ void make_eq (halfword lhs)
   }
   disp_err (lhs, 261);
   disp_err (0, 891);
-  if (mem[lhs].hhfield.b0 <= 14)
-  print_type (mem[lhs].hhfield.b0);
+  if (mem[lhs].hh.b0 <= 14)
+  print_type (mem[lhs].hh.b0);
   else print(340);
   print_char(61);
   if (cur_type <= 14)
@@ -19230,7 +19687,7 @@ void do_equation (void)
     end_diagnostic (false);
   }
   if (cur_type == 10) {
-    if (mem[lhs].hhfield.b0 == 14)
+    if (mem[lhs].hh.b0 == 14)
     {
       p = stash_cur_exp ();
       unstash_cur_exp (lhs);
@@ -19270,20 +19727,20 @@ void do_assignment (void)
     {
       begin_diagnostic ();
       print_nl(123);
-      if (mem[lhs].hhfield.lhfield > 9769)
-      slow_print(int_name[mem[lhs].hhfield.lhfield - (9769)]);
+      if (mem[lhs].hh.lh > 9769)
+      slow_print(int_name[mem[lhs].hh.lh - (9769)]);
       else show_token_list (lhs, 0, 1000, 0);
       print(461);
       print_exp (0, 0);
       print_char(125);
       end_diagnostic (false);
     }
-    if (mem[lhs].hhfield.lhfield > 9769) {
+    if (mem[lhs].hh.lh > 9769) {
       if (cur_type == 16)
-      internal[mem[lhs].hhfield.lhfield - (9769)] = cur_exp;
+      internal[mem[lhs].hh.lh - (9769)] = cur_exp;
       else {
         disp_err (0, 887);
-        slow_print(int_name[mem[lhs].hhfield.lhfield - (9769)]);
+        slow_print(int_name[mem[lhs].hh.lh - (9769)]);
         print(888);
         {
           help_ptr = 2;
@@ -19300,7 +19757,7 @@ void do_assignment (void)
         q = stash_cur_exp ();
         cur_type = und_type (p);
         recycle_value (p);
-        mem[p].hhfield.b0 = cur_type;
+        mem[p].hh.b0 = cur_type;
         mem[p + 1].cint = 0;
         make_exp_copy (p);
         p = stash_cur_exp ();
@@ -19326,12 +19783,12 @@ void do_type_declaration (void)
   else t = cur_mod + 1;
   do {
       p = scan_declared_variable ();
-    flush_variable (eqtb[mem[p].hhfield.lhfield].v.RH, mem[p]
-    .hhfield.v.RH, false);
+    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p]
+    .hh.v.RH, false);
     q = find_variable (p);
     if (q != 0)
     {
-      mem[q].hhfield.b0 = t;
+      mem[q].hh.b0 = t;
       mem[q + 1].cint = 0;
     }
     else {
@@ -19402,10 +19859,10 @@ void do_type_declaration (void)
             else flush_string (cur_mod);
           }
         }
-      }while (!(cur_cmd >= 82));
+      } while (!(cur_cmd >= 82));
       scanner_status = 0;
     }
-  }while (!(cur_cmd > 82));
+  } while (!(cur_cmd > 82));
 }
 
 void do_random_seed (void)
@@ -19454,16 +19911,16 @@ void do_protection (void)
   m = cur_mod;
   do {
       get_symbol ();
-    t = eqtb[cur_sym].lhfield;
+    t = eqtb[cur_sym].lh;
     if (m == 0)
     {
       if (t >= 86)
-      eqtb[cur_sym].lhfield = t - 86;
+      eqtb[cur_sym].lh = t - 86;
     }
     else if (t < 86)
-    eqtb[cur_sym].lhfield = t + 86;
+    eqtb[cur_sym].lh = t + 86;
     get_x_next ();
-  }while (!(cur_cmd != 82));
+  } while (!(cur_cmd != 82));
 }
 
 void def_delims (void)
@@ -19473,9 +19930,9 @@ void def_delims (void)
   ldelim = cur_sym;
   get_clear_symbol ();
   rdelim = cur_sym;
-  eqtb[ldelim].lhfield = 31;
+  eqtb[ldelim].lh = 31;
   eqtb[ldelim].v.RH = rdelim;
-  eqtb[rdelim].lhfield = 62;
+  eqtb[rdelim].lh = 62;
   eqtb[rdelim].v.RH = ldelim;
   get_x_next ();
 }
@@ -19544,14 +20001,14 @@ void do_let (void)
   case 53 :
   case 44 :
   case 49 :
-    incr (mem[cur_mod].hhfield.lhfield);
+    incr (mem[cur_mod].hh.lh);
     break;
     default:
 ;
     break;
   }
   clear_symbol (l, false);
-  eqtb[l].lhfield = cur_cmd;
+  eqtb[l].lh = cur_cmd;
   if (cur_cmd == 41)
   eqtb[l].v.RH = 0;
   else eqtb[l].v.RH = cur_mod;
@@ -19565,12 +20022,12 @@ void do_new_internal (void)
     overflow (934, max_internal);
     get_clear_symbol ();
     incr (int_ptr);
-    eqtb[cur_sym].lhfield = 40;
+    eqtb[cur_sym].lh = 40;
     eqtb[cur_sym].v.RH = int_ptr;
     int_name[int_ptr] = hash[cur_sym].v.RH;
     internal[int_ptr] = 0;
     get_x_next ();
-  }while (!(cur_cmd != 82));
+  } while (!(cur_cmd != 82));
 }
 
 void do_show (void)
@@ -19581,7 +20038,7 @@ void do_show (void)
     print_nl(765);
     print_exp (0, 2);
     flush_cur_exp (0);
-  }while (!(cur_cmd != 82));
+  } while (!(cur_cmd != 82));
 }
 
 void disp_token (void)
@@ -19612,7 +20069,7 @@ void disp_token (void)
   else {
     slow_print(hash[cur_sym].v.RH);
     print_char(61);
-    if (eqtb[cur_sym].lhfield >= 86)
+    if (eqtb[cur_sym].lh >= 86)
     print(941);
     print_cmd_mod (cur_cmd, cur_mod);
     if (cur_cmd == 10)
@@ -19629,7 +20086,7 @@ void do_show_token (void)
       get_next ();
     disp_token ();
     get_x_next ();
-  }while (!(cur_cmd != 82));
+  } while (!(cur_cmd != 82));
 }
 
 void do_show_stats (void)
@@ -19664,24 +20121,24 @@ void zdisp_var (halfword p)
 {
   halfword q;
   integer n;
-  if (mem[p].hhfield.b0 == 21)
+  if (mem[p].hh.b0 == 21)
   {
-    q = mem[p + 1].hhfield.lhfield;
+    q = mem[p + 1].hh.lh;
     do {
         disp_var (q);
-      q = mem[q].hhfield.v.RH;
-    }while (!(q == 17));
-    q = mem[p + 1].hhfield.v.RH;
-    while (mem[q].hhfield.b1 == 3) {
+      q = mem[q].hh.v.RH;
+    } while (!(q == 17));
+    q = mem[p + 1].hh.v.RH;
+    while (mem[q].hh.b1 == 3) {
       disp_var (q);
-      q = mem[q].hhfield.v.RH;
+      q = mem[q].hh.v.RH;
     }
   }
-  else if (mem[p].hhfield.b0 >= 22)
+  else if (mem[p].hh.b0 >= 22)
   {
     print_nl(261);
     print_variable_name(p);
-    if (mem[p].hhfield.b0 > 22)
+    if (mem[p].hh.b0 > 22)
     print(665);
     print(953);
     if (file_offset >= maxprintline - 20)
@@ -19689,7 +20146,7 @@ void zdisp_var (halfword p)
     else n = maxprintline - file_offset - 15;
     show_macro (mem[p + 1].cint, 0, n);
   }
-  else if (mem[p].hhfield.b0 != 0)
+  else if (mem[p].hh.b0 != 0)
   {
     print_nl(261);
     print_variable_name(p);
@@ -19715,27 +20172,27 @@ void do_show_var (void)
     }
     disp_token ();
     done: get_x_next ();
-  }while (!(cur_cmd != 82));
+  } while (!(cur_cmd != 82));
 }
 
 void do_show_dependencies (void)
 {
   halfword p;
-  p = mem[13].hhfield.v.RH;
+  p = mem[13].hh.v.RH;
   while (p != 13) {
     if (interesting (p))
     {
       print_nl(261);
       print_variable_name(p);
-      if (mem[p].hhfield.b0 == 17)
+      if (mem[p].hh.b0 == 17)
       print_char(61);
       else print(768);
-      print_dependency(mem[p + 1].hhfield.v.RH, mem[p].hhfield.b0
+      print_dependency(mem[p + 1].hh.v.RH, mem[p].hh.b0
    );
     }
-    p = mem[p + 1].hhfield.v.RH;
-    while (mem[p].hhfield.lhfield != 0) p = mem[p].hhfield.v.RH;
-    p = mem[p].hhfield.v.RH;
+    p = mem[p + 1].hh.v.RH;
+    while (mem[p].hh.lh != 0) p = mem[p].hh.v.RH;
+    p = mem[p].hh.v.RH;
   }
   get_x_next ();
 }
@@ -19861,7 +20318,7 @@ void find_edges_var (halfword t)
     obliterated (t);
     put_get_error ();
   }
-  else if (mem[p].hhfield.b0 != 11)
+  else if (mem[p].hh.b0 != 11)
   {
     {
       if (interaction == 3)
@@ -19882,7 +20339,7 @@ void find_edges_var (halfword t)
     }
     show_token_list (t, 0, 1000, 0);
     print(968);
-    print_type (mem[p].hhfield.b0);
+    print_type (mem[p].hh.b0);
     print_char(41);
     {
       help_ptr = 2;
@@ -19965,9 +20422,9 @@ void do_add_to (void)
           if (cur_type == 16)
           w = cur_exp;
           else {
-            if (mem[cur_pen].hhfield.lhfield == 0)
+            if (mem[cur_pen].hh.lh == 0)
             toss_pen (cur_pen);
-            else decr (mem[cur_pen].hhfield.lhfield);
+            else decr (mem[cur_pen].hh.lh);
             cur_pen = cur_exp;
           }
         }
@@ -19977,29 +20434,29 @@ void do_add_to (void)
         else {
           lhs = 0;
           cur_path_type = addtotype;
-          if (mem[rhs].hhfield.b0 == 0) {
+          if (mem[rhs].hh.b0 == 0) {
             if (cur_path_type == 0) {
-              if (mem[rhs].hhfield.v.RH == rhs)
+              if (mem[rhs].hh.v.RH == rhs)
               {
                 mem[rhs + 5].cint = mem[rhs + 1].cint;
                 mem[rhs + 6].cint = mem[rhs + 2].cint;
                 mem[rhs + 3].cint = mem[rhs + 1].cint;
                 mem[rhs + 4].cint = mem[rhs + 2].cint;
-                mem[rhs].hhfield.b0 = 1;
-                mem[rhs].hhfield.b1 = 1;
+                mem[rhs].hh.b0 = 1;
+                mem[rhs].hh.b1 = 1;
               }
               else {
                 p = htap_ypoc (rhs);
-                q = mem[p].hhfield.v.RH;
+                q = mem[p].hh.v.RH;
                 mem[path_tail + 5].cint = mem[q + 5].cint;
                 mem[path_tail + 6].cint = mem[q + 6].cint;
-                mem[path_tail].hhfield.b1 = mem[q].hhfield.b1;
-                mem[path_tail].hhfield.v.RH = mem[q].hhfield.v.RH;
+                mem[path_tail].hh.b1 = mem[q].hh.b1;
+                mem[path_tail].hh.v.RH = mem[q].hh.v.RH;
                 free_node (q, 7);
                 mem[p + 5].cint = mem[rhs + 5].cint;
                 mem[p + 6].cint = mem[rhs + 6].cint;
-                mem[p].hhfield.b1 = mem[rhs].hhfield.b1;
-                mem[p].hhfield.v.RH = mem[rhs].hhfield.v.RH;
+                mem[p].hh.b1 = mem[rhs].hh.b1;
+                mem[p].hh.v.RH = mem[rhs].hh.v.RH;
                 free_node (rhs, 7);
                 rhs = p;
               }
@@ -20040,13 +20497,13 @@ void do_add_to (void)
           if (turning_number <= 0) {
             if (cur_path_type != 0) {
               if (internal[39] > 0) {
-                if ((turning_number < 0) && (mem[cur_pen].hhfield.v.RH
+                if ((turning_number < 0) && (mem[cur_pen].hh.v.RH
                 == 0))
                 cur_wt = - (integer) cur_wt;
                 else {
                   if (turning_number == 0) {
                     if ((internal[39]<= 65536L) && (mem[cur_pen]
-                    .hhfield.v.RH == 0))
+                    .hh.v.RH == 0))
                     goto done;
                     else print_strange (980);
                   }
@@ -20078,9 +20535,9 @@ void do_add_to (void)
           }
           not_found:;
         }
-        if (mem[cur_pen].hhfield.lhfield == 0)
+        if (mem[cur_pen].hh.lh == 0)
         toss_pen (cur_pen);
-        else decr (mem[cur_pen].hhfield.lhfield);
+        else decr (mem[cur_pen].hh.lh);
       }
     }
   }
@@ -20605,7 +21062,7 @@ void do_tfm_command (void)
                 lll = lig_kern[ll].b0;
               lig_kern[ll].b0 = 128;
               ll = ll - lll;
-            }while (!(lll == 0));
+            } while (!(lll == 0));
           }
           skip_table[c] = lig_table_size;
         }
@@ -20668,13 +21125,13 @@ void do_tfm_command (void)
                     lll = lig_kern[ll].b0;
                   lig_kern[ll].b0 = 128;
                   ll = ll - lll;
-                }while (!(lll == 0));
+                } while (!(lll == 0));
               }
               goto lab_continue;
             }
             lig_kern[ll].b0 = nl - ll - 1;
             ll = ll - lll;
-          }while (!(lll == 0));
+          } while (!(lll == 0));
         }
         goto lab_continue;
       }
@@ -20834,7 +21291,7 @@ void do_tfm_command (void)
           overflow (1007, header_size);
           header_byte[j] = get_code ();
           incr (j);
-        }while (!(cur_cmd != 82));
+        } while (!(cur_cmd != 82));
         else do {
             if (j > max_font_dimen)
           overflow (1008, max_font_dimen);
@@ -20855,7 +21312,7 @@ void do_tfm_command (void)
           }
           param[j] = cur_exp;
           incr (j);
-        }while (!(cur_cmd != 82));
+        } while (!(cur_cmd != 82));
       }
     }
     break;
@@ -21018,7 +21475,7 @@ void do_statement (void)
           get_symbol ();
         save_variable (cur_sym);
         get_x_next ();
-      }while (!(cur_cmd != 82));
+      } while (!(cur_cmd != 82));
       break;
     case 13 :
       do_interim ();
@@ -21106,7 +21563,7 @@ void do_statement (void)
           else flush_string (cur_mod);
         }
       }
-    }while (!(cur_cmd > 82));
+    } while (!(cur_cmd > 82));
     scanner_status = 0;
   }
   error_count = 0;
@@ -21142,7 +21599,7 @@ void main_control (void)
       }
       flush_error (0);
     }
-  }while (!(cur_cmd == 85));
+  } while (!(cur_cmd == 85));
 }
 
 halfword sort_in (scaled v)
@@ -21150,7 +21607,7 @@ halfword sort_in (scaled v)
   halfword Result; halfword p, q, r;
   p = memtop - 1;
   while (true) {
-    q = mem[p].hhfield.v.RH;
+    q = mem[p].hh.v.RH;
     if (v <= mem[q + 1].cint)
     goto found;
     p = q;
@@ -21159,10 +21616,10 @@ halfword sort_in (scaled v)
   {
     r = get_node (2);
     mem[r + 1].cint = v;
-    mem[r].hhfield.v.RH = q;
-    mem[p].hhfield.v.RH = r;
+    mem[r].hh.v.RH = q;
+    mem[p].hh.v.RH = r;
   }
-  Result = mem[p].hhfield.v.RH;
+  Result = mem[p].hh.v.RH;
   return Result;
 }
 
@@ -21172,14 +21629,14 @@ integer min_cover (scaled d)
   scaled l;
   integer m;
   m = 0;
-  p = mem[memtop - 1].hhfield.v.RH;
+  p = mem[memtop - 1].hh.v.RH;
   perturbation = 2147483647L;
   while (p != 19) {
     incr (m);
     l = mem[p + 1].cint;
     do {
-        p = mem[p].hhfield.v.RH;
-    }while (!(mem[p + 1].cint > l + d));
+        p = mem[p].hh.v.RH;
+    } while (!(mem[p + 1].cint > l + d));
     if (mem[p + 1].cint - l < perturbation)
     perturbation = mem[p + 1].cint - l;
   }
@@ -21196,7 +21653,7 @@ scaled threshold_fn (integer m)
   else {
     do {
         d = perturbation;
-    }while (!(min_cover (d + d) <= m));
+    } while (!(min_cover (d + d) <= m));
     while (min_cover (d) > m) d = perturbation;
     Result = d;
   }
@@ -21213,32 +21670,32 @@ integer skimp (integer m)
   perturbation = 0;
   q = memtop - 1;
   m = 0;
-  p = mem[memtop - 1].hhfield.v.RH;
+  p = mem[memtop - 1].hh.v.RH;
   while (p != 19) {
     incr (m);
     l = mem[p + 1].cint;
-    mem[p].hhfield.lhfield = m;
-    if (mem[mem[p].hhfield.v.RH + 1].cint <= l + d)
+    mem[p].hh.lh = m;
+    if (mem[mem[p].hh.v.RH + 1].cint <= l + d)
     {
       do {
-          p = mem[p].hhfield.v.RH;
-        mem[p].hhfield.lhfield = m;
+          p = mem[p].hh.v.RH;
+        mem[p].hh.lh = m;
         decr (excess);
         if (excess == 0)
         d = 0;
-      }while (!(mem[mem[p].hhfield.v.RH + 1].cint > l + d));
+      } while (!(mem[mem[p].hh.v.RH + 1].cint > l + d));
       v = l + halfp (mem[p + 1].cint - l);
       if (mem[p + 1].cint - v > perturbation)
       perturbation = mem[p + 1].cint - v;
       r = q;
       do {
-          r = mem[r].hhfield.v.RH;
+          r = mem[r].hh.v.RH;
         mem[r + 1].cint = v;
-      }while (!(r == p));
-      mem[q].hhfield.v.RH = p;
+      } while (!(r == p));
+      mem[q].hh.v.RH = p;
     }
     q = p;
-    p = mem[p].hhfield.v.RH;
+    p = mem[p].hh.v.RH;
   }
   Result = m;
   return Result;
@@ -21428,8 +21885,8 @@ void scan_primary (void)
       if ((cur_cmd == 82) && (cur_type >= 16))
       {
         p = get_node (2);
-        mem[p].hhfield.b0 = 14;
-        mem[p].hhfield.b1 = 11;
+        mem[p].hh.b0 = 14;
+        mem[p].hh.b1 = 11;
         init_big_node (p);
         q = mem[p + 1].cint;
         stash_in (q);
@@ -21462,13 +21919,13 @@ void scan_primary (void)
       show_cmd_mod (cur_cmd, cur_mod);
       {
         p = get_avail ();
-        mem[p].hhfield.lhfield = 0;
-        mem[p].hhfield.v.RH = save_ptr;
+        mem[p].hh.lh = 0;
+        mem[p].hh.v.RH = save_ptr;
         save_ptr = p;
       }
       do {
           do_statement ();
-      }while (!(cur_cmd != 83));
+      } while (!(cur_cmd != 83));
       if (cur_cmd != 84)
       {
         {
@@ -21640,7 +22097,7 @@ void scan_primary (void)
         if (cur_cmd == 77)
         {
           cur_exp = get_avail ();
-          mem[cur_exp].hhfield.lhfield = q + 9769;
+          mem[cur_exp].hh.lh = q + 9769;
           cur_type = 20;
           goto done;
         }
@@ -21660,8 +22117,8 @@ void scan_primary (void)
         if (prehead == 0)
         prehead = get_avail ();
         else {
-          avail = mem[prehead].hhfield.v.RH;
-          mem[prehead].hhfield.v.RH = 0;
+          avail = mem[prehead].hh.v.RH;
+          mem[prehead].hh.v.RH = 0;
         ;
 #ifdef STAT
           incr (dyn_used);
@@ -21673,36 +22130,36 @@ void scan_primary (void)
       tt = 1;
       while (true) {
         t = cur_tok ();
-        mem[tail].hhfield.v.RH = t;
+        mem[tail].hh.v.RH = t;
         if (tt != 0)
         {
           {
-            p = mem[prehead].hhfield.v.RH;
-            q = mem[p].hhfield.lhfield;
+            p = mem[prehead].hh.v.RH;
+            q = mem[p].hh.lh;
             tt = 0;
-            if (eqtb[q].lhfield % 86 == 41)
+            if (eqtb[q].lh % 86 == 41)
             {
               q = eqtb[q].v.RH;
               if (q == 0)
               goto done2;
               while (true) {
-                p = mem[p].hhfield.v.RH;
+                p = mem[p].hh.v.RH;
                 if (p == 0)
                 {
-                  tt = mem[q].hhfield.b0;
+                  tt = mem[q].hh.b0;
                   goto done2;
                 }
-                if (mem[q].hhfield.b0 != 21)
+                if (mem[q].hh.b0 != 21)
                 goto done2;
-                q = mem[mem[q + 1].hhfield.lhfield].hhfield.v.RH;
+                q = mem[mem[q + 1].hh.lh].hh.v.RH;
                 if (p >= hi_mem_min)
                 {
                   do {
-                      q = mem[q].hhfield.v.RH;
-                  }while (!(mem[q + 2].hhfield.lhfield >= mem[p]
-                  .hhfield.lhfield));
-                  if (mem[q + 2].hhfield.lhfield > mem[p].hhfield
-                .lhfield)
+                      q = mem[q].hh.v.RH;
+                  } while (!(mem[q + 2].hh.lh >= mem[p]
+                  .hh.lh));
+                  if (mem[q + 2].hh.lh > mem[p].hh
+                .lh)
                   goto done2;
                 }
               }
@@ -21711,22 +22168,22 @@ void scan_primary (void)
           }
           if (tt >= 22)
           {
-            mem[tail].hhfield.v.RH = 0;
+            mem[tail].hh.v.RH = 0;
             if (tt > 22)
             {
               posthead = get_avail ();
               tail = posthead;
-              mem[tail].hhfield.v.RH = t;
+              mem[tail].hh.v.RH = t;
               tt = 0;
               macroref = mem[q + 1].cint;
-              incr (mem[macroref].hhfield.lhfield);
+              incr (mem[macroref].hh.lh);
             }
             else {
               p = get_avail ();
-              mem[prehead].hhfield.lhfield = mem[prehead].hhfield
+              mem[prehead].hh.lh = mem[prehead].hh
             .v.RH;
-              mem[prehead].hhfield.v.RH = p;
-              mem[p].hhfield.lhfield = t;
+              mem[prehead].hh.v.RH = p;
+              mem[p].hh.lh = t;
               macro_call (mem[q + 1].cint, prehead, 0);
               get_x_next ();
               goto lab_restart;
@@ -21764,21 +22221,21 @@ void scan_primary (void)
       {
         back_input ();
         p = get_avail ();
-        q = mem[posthead].hhfield.v.RH;
-        mem[prehead].hhfield.lhfield = mem[prehead].hhfield.v.RH;
-        mem[prehead].hhfield.v.RH = posthead;
-        mem[posthead].hhfield.lhfield = q;
-        mem[posthead].hhfield.v.RH = p;
-        mem[p].hhfield.lhfield = mem[q].hhfield.v.RH;
-        mem[q].hhfield.v.RH = 0;
+        q = mem[posthead].hh.v.RH;
+        mem[prehead].hh.lh = mem[prehead].hh.v.RH;
+        mem[prehead].hh.v.RH = posthead;
+        mem[posthead].hh.lh = q;
+        mem[posthead].hh.v.RH = p;
+        mem[p].hh.lh = mem[q].hh.v.RH;
+        mem[q].hh.v.RH = 0;
         macro_call (macroref, prehead, 0);
-        decr (mem[macroref].hhfield.lhfield);
+        decr (mem[macroref].hh.lh);
         get_x_next ();
         goto lab_restart;
       }
-      q = mem[prehead].hhfield.v.RH;
+      q = mem[prehead].hh.v.RH;
       {
-        mem[prehead].hhfield.v.RH = avail;
+        mem[prehead].hh.v.RH = avail;
         avail = prehead;
         ;
 #ifdef STAT
@@ -21888,16 +22345,16 @@ void scan_suffix (void)
     else if ((cur_cmd == 41) || (cur_cmd == 40))
     {
       p = get_avail ();
-      mem[p].hhfield.lhfield = cur_sym;
+      mem[p].hh.lh = cur_sym;
     }
     else goto done;
-    mem[t].hhfield.v.RH = p;
+    mem[t].hh.v.RH = p;
     t = p;
     get_x_next ();
   }
-  done: cur_exp = mem[h].hhfield.v.RH;
+  done: cur_exp = mem[h].hh.v.RH;
   {
-    mem[h].hhfield.v.RH = avail;
+    mem[h].hh.v.RH = avail;
     avail = h;
         ;
 #ifdef STAT
@@ -21924,7 +22381,7 @@ void scan_secondary (void)
       if (d == 53)
       {
         macname = cur_sym;
-        incr (mem[c].hhfield.lhfield);
+        incr (mem[c].hh.lh);
       }
       get_x_next ();
       scan_primary ();
@@ -21933,7 +22390,7 @@ void scan_secondary (void)
       else {
         back_input ();
         binary_mac (p, c, macname);
-        decr (mem[c].hhfield.lhfield);
+        decr (mem[c].hh.lh);
         get_x_next ();
         goto lab_restart;
       }
@@ -21961,7 +22418,7 @@ void scan_tertiary (void)
       if (d == 44)
       {
         macname = cur_sym;
-        incr (mem[c].hhfield.lhfield);
+        incr (mem[c].hh.lh);
       }
       get_x_next ();
       scan_secondary ();
@@ -21970,7 +22427,7 @@ void scan_tertiary (void)
       else {
         back_input ();
         binary_mac (p, c, macname);
-        decr (mem[c].hhfield.lhfield);
+        decr (mem[c].hh.lh);
         get_x_next ();
         goto lab_restart;
       }
@@ -22002,10 +22459,10 @@ void scan_expression (void)
         if (d == 49)
         {
           macname = cur_sym;
-          incr (mem[c].hhfield.lhfield);
+          incr (mem[c].hh.lh);
         }
-        if ((d < 48) || ((d == 48) && ((mem[p].hhfield.b0 == 14)
-        || (mem[p].hhfield.b0 == 9))))
+        if ((d < 48) || ((d == 48) && ((mem[p].hh.b0 == 14)
+        || (mem[p].hh.b0 == 9))))
         {
           cyclehit = false;
           {
@@ -22016,27 +22473,27 @@ void scan_expression (void)
             p = cur_exp;
             else goto lab_exit;
             q = p;
-            while (mem[q].hhfield.v.RH != p) q = mem[q].hhfield
+            while (mem[q].hh.v.RH != p) q = mem[q].hh
           .v.RH;
-            if (mem[p].hhfield.b0 != 0)
+            if (mem[p].hh.b0 != 0)
             {
               r = copy_knot (p);
-              mem[q].hhfield.v.RH = r;
+              mem[q].hh.v.RH = r;
               q = r;
             }
-            mem[p].hhfield.b0 = 4;
-            mem[q].hhfield.b1 = 4;
+            mem[p].hh.b0 = 4;
+            mem[q].hh.b1 = 4;
           }
           lab25: if (cur_cmd == 46)
           {
             t = scan_direction ();
             if (t != 4)
             {
-              mem[q].hhfield.b1 = t;
+              mem[q].hh.b1 = t;
               mem[q + 5].cint = cur_exp;
-              if (mem[q].hhfield.b0 == 4)
+              if (mem[q].hh.b0 == 4)
               {
-                mem[q].hhfield.b0 = t;
+                mem[q].hh.b0 = t;
                 mem[q + 3].cint = cur_exp;
               }
             }
@@ -22087,7 +22544,7 @@ void scan_expression (void)
             }
             else if (cur_cmd == 57)
             {
-              mem[q].hhfield.b1 = 1;
+              mem[q].hh.b1 = 1;
               t = 1;
               get_x_next ();
               scan_primary ();
@@ -22130,11 +22587,11 @@ void scan_expression (void)
           if (cur_cmd == 46)
           {
             t = scan_direction ();
-            if (mem[q].hhfield.b1 != 1)
+            if (mem[q].hh.b1 != 1)
             x = cur_exp;
             else t = 1;
           }
-          else if (mem[q].hhfield.b1 != 1)
+          else if (mem[q].hh.b1 != 1)
           {
             t = 4;
             x = 0;
@@ -22161,16 +22618,16 @@ void scan_expression (void)
               pp = new_knot ();
               else pp = cur_exp;
               qq = pp;
-              while (mem[qq].hhfield.v.RH != pp) qq = mem[qq]
-              .hhfield.v.RH;
-              if (mem[pp].hhfield.b0 != 0)
+              while (mem[qq].hh.v.RH != pp) qq = mem[qq]
+              .hh.v.RH;
+              if (mem[pp].hh.b0 != 0)
               {
                 r = copy_knot (pp);
-                mem[qq].hhfield.v.RH = r;
+                mem[qq].hh.v.RH = r;
                 qq = r;
               }
-              mem[pp].hhfield.b0 = 4;
-              mem[qq].hhfield.b1 = 4;
+              mem[pp].hh.b0 = 4;
+              mem[qq].hh.b1 = 4;
             }
           }
           {
@@ -22208,31 +22665,31 @@ void scan_expression (void)
                 y = 65536L;
               }
             }
-            if (mem[pp].hhfield.b1 == 4) {
+            if (mem[pp].hh.b1 == 4) {
               if ((t == 3) || (t == 2))
               {
-                mem[pp].hhfield.b1 = t;
+                mem[pp].hh.b1 = t;
                 mem[pp + 5].cint = x;
               }
             }
             if (d == 48)
             {
-              if (mem[q].hhfield.b0 == 4) {
-                if (mem[q].hhfield.b1 == 4)
+              if (mem[q].hh.b0 == 4) {
+                if (mem[q].hh.b1 == 4)
                 {
-                  mem[q].hhfield.b0 = 3;
+                  mem[q].hh.b0 = 3;
                   mem[q + 3].cint = 65536L;
                 }
               }
-              if (mem[pp].hhfield.b1 == 4) {
+              if (mem[pp].hh.b1 == 4) {
                 if (t == 4)
                 {
-                  mem[pp].hhfield.b1 = 3;
+                  mem[pp].hh.b1 = 3;
                   mem[pp + 5].cint = 65536L;
                 }
               }
-              mem[q].hhfield.b1 = mem[pp].hhfield.b1;
-              mem[q].hhfield.v.RH = mem[pp].hhfield.v.RH;
+              mem[q].hh.b1 = mem[pp].hh.b1;
+              mem[q].hh.v.RH = mem[pp].hh.v.RH;
               mem[q + 5].cint = mem[pp + 5].cint;
               mem[q + 6].cint = mem[pp + 6].cint;
               free_node (pp, 7);
@@ -22240,20 +22697,20 @@ void scan_expression (void)
               qq = q;
             }
             else {
-              if (mem[q].hhfield.b1 == 4) {
-                if ((mem[q].hhfield.b0 == 3) || (mem[q].hhfield
+              if (mem[q].hh.b1 == 4) {
+                if ((mem[q].hh.b0 == 3) || (mem[q].hh
                 .b0 == 2))
                 {
-                  mem[q].hhfield.b1 = mem[q].hhfield.b0;
+                  mem[q].hh.b1 = mem[q].hh.b0;
                   mem[q + 5].cint = mem[q + 3].cint;
                 }
               }
-              mem[q].hhfield.v.RH = pp;
+              mem[q].hh.v.RH = pp;
               mem[pp + 4].cint = y;
               if (t != 4)
               {
                 mem[pp + 3].cint = x;
-                mem[pp].hhfield.b0 = t;
+                mem[pp].hh.b0 = t;
               }
             }
             q = qq;
@@ -22270,19 +22727,19 @@ void scan_expression (void)
             p = q;
           }
           else {
-            mem[p].hhfield.b0 = 0;
-            if (mem[p].hhfield.b1 == 4)
+            mem[p].hh.b0 = 0;
+            if (mem[p].hh.b1 == 4)
             {
-              mem[p].hhfield.b1 = 3;
+              mem[p].hh.b1 = 3;
               mem[p + 5].cint = 65536L;
             }
-            mem[q].hhfield.b1 = 0;
-            if (mem[q].hhfield.b0 == 4)
+            mem[q].hh.b1 = 0;
+            if (mem[q].hh.b0 == 4)
             {
-              mem[q].hhfield.b0 = 3;
+              mem[q].hh.b0 = 3;
               mem[q + 3].cint = 65536L;
             }
-            mem[q].hhfield.v.RH = p;
+            mem[q].hh.v.RH = p;
           }
           make_choices (p);
           cur_type = 9;
@@ -22296,7 +22753,7 @@ void scan_expression (void)
           else {
             back_input ();
             binary_mac (p, c, macname);
-            decr (mem[c].hhfield.lhfield);
+            decr (mem[c].hh.lh);
             get_x_next ();
             goto lab_restart;
           }
@@ -22366,29 +22823,29 @@ void close_files_and_terminate (void)
   if ((gf_prev_ptr > 0) || (internal[33] > 0))
   {
     rover = 23;
-    mem[rover].hhfield.v.RH = 268435455L;
+    mem[rover].hh.v.RH = 268435455L;
     lo_mem_max = hi_mem_min - 1;
     if (lo_mem_max - rover > 268435455L)
     lo_mem_max = 268435455L + rover;
-    mem[rover].hhfield.lhfield = lo_mem_max - rover;
-    mem[rover + 1].hhfield.lhfield = rover;
-    mem[rover + 1].hhfield.v.RH = rover;
-    mem[lo_mem_max].hhfield.v.RH = 0;
-    mem[lo_mem_max].hhfield.lhfield = 0;
-    mem[memtop - 1].hhfield.v.RH = 19;
+    mem[rover].hh.lh = lo_mem_max - rover;
+    mem[rover + 1].hh.lh = rover;
+    mem[rover + 1].hh.v.RH = rover;
+    mem[lo_mem_max].hh.v.RH = 0;
+    mem[lo_mem_max].hh.lh = 0;
+    mem[memtop - 1].hh.v.RH = 19;
     {integer for_end; k = bc;for_end = ec; if (k <= for_end) do
       if (char_exists[k])
       tfm_width[k] = sort_in (tfm_width[k]);
     while (k++ < for_end);}
     nw = skimp (255) + 1;
-    dimen_head[1] = mem[memtop - 1].hhfield.v.RH;
+    dimen_head[1] = mem[memtop - 1].hh.v.RH;
     if (perturbation >= 4096)
     tfmwarning (20);
     fixdesignsize ();
     fixchecksum ();
     if (internal[33] > 0)
     {
-      mem[memtop - 1].hhfield.v.RH = 19;
+      mem[memtop - 1].hh.v.RH = 19;
       {integer for_end; k = bc;for_end = ec; if (k <= for_end)
       do
         if (char_exists[k]) {
@@ -22399,10 +22856,10 @@ void close_files_and_terminate (void)
         }
       while (k++ < for_end);}
       nh = skimp (15) + 1;
-      dimen_head[2] = mem[memtop - 1].hhfield.v.RH;
+      dimen_head[2] = mem[memtop - 1].hh.v.RH;
       if (perturbation >= 4096)
       tfmwarning (21);
-      mem[memtop - 1].hhfield.v.RH = 19;
+      mem[memtop - 1].hh.v.RH = 19;
       {integer for_end; k = bc;for_end = ec; if (k <= for_end)
       do
         if (char_exists[k]) {
@@ -22412,10 +22869,10 @@ void close_files_and_terminate (void)
         }
       while (k++ < for_end);}
       nd = skimp (15) + 1;
-      dimen_head[3] = mem[memtop - 1].hhfield.v.RH;
+      dimen_head[3] = mem[memtop - 1].hh.v.RH;
       if (perturbation >= 4096)
       tfmwarning (22);
-      mem[memtop - 1].hhfield.v.RH = 19;
+      mem[memtop - 1].hh.v.RH = 19;
       {integer for_end; k = bc;for_end = ec; if (k <= for_end)
       do
         if (char_exists[k]) {
@@ -22425,7 +22882,7 @@ void close_files_and_terminate (void)
         }
       while (k++ < for_end);}
       ni = skimp (63) + 1;
-      dimen_head[4] = mem[memtop - 1].hhfield.v.RH;
+      dimen_head[4] = mem[memtop - 1].hh.v.RH;
       if (perturbation >= 4096)
       tfmwarning (23);
       internal[33] = 0;
@@ -22463,7 +22920,7 @@ void close_files_and_terminate (void)
           }
           incr (lkoffset);
           decr (k);
-        }while (!(lkoffset + label_loc[k]< 256));
+        } while (!(lkoffset + label_loc[k]< 256));
       }
       if (lkoffset > 0)
       while (k > 0) {
@@ -22505,10 +22962,10 @@ void close_files_and_terminate (void)
         if (!char_exists[k])
         put4bytes (tfm_file, 0);
         else {
-          putbyte (mem[tfm_width[k]].hhfield.lhfield, tfm_file);
-          putbyte ((mem[tfm_height[k]].hhfield.lhfield) * 16 + mem[
-          tfm_depth[k]].hhfield.lhfield, tfm_file);
-          putbyte ((mem[tfm_ital_corr[k]].hhfield.lhfield) * 4 +
+          putbyte (mem[tfm_width[k]].hh.lh, tfm_file);
+          putbyte ((mem[tfm_height[k]].hh.lh) * 16 + mem[
+          tfm_depth[k]].hh.lh, tfm_file);
+          putbyte ((mem[tfm_ital_corr[k]].hh.lh) * 4 +
           char_tag[k], tfm_file);
           putbyte (char_remainder[k], tfm_file);
         }
@@ -22520,7 +22977,7 @@ void close_files_and_terminate (void)
           p = dimen_head[k];
           while (p != 19) {
             put4bytes (tfm_file, dimenout (mem[p + 1].cint));
-            p = mem[p].hhfield.v.RH;
+            p = mem[p].hh.v.RH;
           }
         }
       while (k++ < for_end);}
@@ -22536,7 +22993,7 @@ void close_files_and_terminate (void)
               lll = lig_kern[ll].b0;
             lig_kern[ll].b0 = 128;
             ll = ll - lll;
-          }while (!(lll == 0));
+          } while (!(lll == 0));
         }
       while (k++ < for_end);}
       if (lk_started)
@@ -22562,7 +23019,7 @@ void close_files_and_terminate (void)
           put2bytes (tfm_file, ll + lkoffset);
           do {
               decr (label_ptr);
-          }while (!(label_loc[label_ptr]< ll));
+          } while (!(label_loc[label_ptr]< ll));
         }
       while (k++ < for_end);}
       {integer for_end; k = 0;for_end = nl - 1; if (k <=
@@ -22783,14 +23240,14 @@ debughelp (void)
         print_word (mem[n]);
         break;
       case 2 :
-        print_int (mem[n].hhfield.lhfield);
+        print_int (mem[n].hh.lh);
         break;
       case 3 :
-        print_int (mem[n].hhfield.v.RH);
+        print_int (mem[n].hh.v.RH);
         break;
       case 4 :
         {
-          print_int (eqtb[n].lhfield);
+          print_int (eqtb[n].lh);
           print_char(58);
           print_int (eqtb[n].v.RH);
         }
