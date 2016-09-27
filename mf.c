@@ -7420,7 +7420,7 @@ void make_choices (halfword knots)
         q = mem[q].hh.v.RH;
       k = 0;
       s = p;
-      n = pathsize;
+      n = path_size;
       do {
         t = mem[s].hh.v.RH;
         delta_x[k] = mem[t + 1].cint - mem[s + 1].cint;
@@ -7436,8 +7436,8 @@ void make_choices (halfword knots)
         }
         incr (k);
         s = t;
-        if (k == pathsize)
-          overflow (531, pathsize);
+        if (k == path_size)
+          overflow (531, path_size);
         if (s == q)
           n = k;
       } while (!((k >= n) && (mem[s].hh.b0 != 5)));

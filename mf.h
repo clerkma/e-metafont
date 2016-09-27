@@ -16,7 +16,7 @@
 #define max_wiggle (1000) 
 #define pool_name (TEXMFpool_name) 
 #define enginename (TEXMFENGINENAME) 
-#define pathsize (1000) 
+#define path_size (1000) 
 #define bi_stack_size (1500) 
 #define header_size (100)
 #define lig_table_size (15000)
@@ -109,7 +109,7 @@ EXTERN str_number max_str_ptr;
 EXTERN uint8_t str_ref[max_strings + 1];
 
 #ifdef INIMF
-EXTERN alpha_file poolfile;
+EXTERN alpha_file pool_file;
 #endif /* INIMF */
 
 EXTERN alpha_file log_file;
@@ -178,8 +178,8 @@ EXTERN uint8_t char_class[256];
 EXTERN halfword hash_used;
 EXTERN integer st_count;
 
-EXTERN twohalves hash[9770];
-EXTERN twohalves eqtb[9770];
+EXTERN two_halves hash[9770];
+EXTERN two_halves eqtb[9770];
 
 EXTERN halfword g_pointer;
 
@@ -191,13 +191,13 @@ EXTERN halfword save_ptr;
 
 EXTERN halfword path_tail;
 
-EXTERN scaled delta_x[pathsize + 1], delta_y[pathsize + 1], delta[pathsize + 1];
-EXTERN angle psi[pathsize + 1];
+EXTERN scaled delta_x[path_size + 1], delta_y[path_size + 1], delta[path_size + 1];
+EXTERN angle psi[path_size + 1];
 
-EXTERN angle theta[pathsize + 1];
-EXTERN fraction uu[pathsize + 1];
-EXTERN angle vv[pathsize + 1];
-EXTERN fraction ww[pathsize + 1];
+EXTERN angle theta[path_size + 1];
+EXTERN fraction uu[path_size + 1];
+EXTERN angle vv[path_size + 1];
+EXTERN fraction ww[path_size + 1];
 
 EXTERN fraction st, ct, sf, cf;
 
