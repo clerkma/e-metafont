@@ -2,66 +2,74 @@
 
 boolean get_strings_started (void)
 {
-  boolean Result; unsigned char k, l;
+  boolean Result;
+  unsigned char k, l;
   str_number g;
+
   pool_ptr = 0;
   str_ptr = 0;
   max_pool_ptr = 0;
   max_str_ptr = 0;
   str_start[0] = 0;
-  {integer for_end; k = 0; for_end = 255; if (k <= for_end) do
   {
-    if (((k < 32) || (k > 126)))
+    integer for_end; k = 0; for_end = 255;
+    if (k <= for_end) do
     {
+      if (((k < 32) || (k > 126)))
       {
-        str_pool[pool_ptr] = 94;
-        incr(pool_ptr);
-      }
-      {
-        str_pool[pool_ptr] = 94;
-        incr(pool_ptr);
-      }
-      if (k < 64)
-      {
-        str_pool[pool_ptr] = k + 64;
-        incr(pool_ptr);
-      }
-      else if (k < 128)
-      {
-        str_pool[pool_ptr] = k - 64;
-        incr(pool_ptr);
-      }
-      else {
-
-        l = k / 16;
-        if (l < 10)
         {
-          str_pool[pool_ptr] = l + 48;
+          str_pool[pool_ptr] = 94;
           incr(pool_ptr);
         }
-        else {
-          str_pool[pool_ptr] = l + 87;
-          incr(pool_ptr);
-        }
-        l = k % 16;
-        if (l < 10)
         {
-          str_pool[pool_ptr] = l + 48;
+          str_pool[pool_ptr] = 94;
           incr(pool_ptr);
         }
-        else {
-          str_pool[pool_ptr] = l + 87;
+        if (k < 64)
+        {
+          str_pool[pool_ptr] = k + 64;
           incr(pool_ptr);
+        }
+        else if (k < 128)
+        {
+          str_pool[pool_ptr] = k - 64;
+          incr(pool_ptr);
+        }
+        else
+        {
+          l = k / 16;
+          if (l < 10)
+          {
+            str_pool[pool_ptr] = l + 48;
+            incr(pool_ptr);
+          }
+          else
+          {
+            str_pool[pool_ptr] = l + 87;
+            incr(pool_ptr);
+          }
+          l = k % 16;
+          if (l < 10)
+          {
+            str_pool[pool_ptr] = l + 48;
+            incr(pool_ptr);
+          }
+          else
+          {
+            str_pool[pool_ptr] = l + 87;
+            incr(pool_ptr);
+          }
         }
       }
-    }
-    else {
-      str_pool[pool_ptr] = k;
-      incr(pool_ptr);
-    }
-    g = make_string();
-    str_ref[g] = 127;
-  } while (k++ < for_end); }
+      else
+      {
+        str_pool[pool_ptr] = k;
+        incr(pool_ptr);
+      }
+      g = make_string();
+      str_ref[g] = 127;
+    } while (k++ < for_end);
+  }
   g = loadpoolstrings((pool_size - string_vacancies));
   if (g == 0)
   {
@@ -79,28 +87,32 @@ void sort_avail(void)
 {
   halfword p, q, r;
   halfword oldrover;
+
   p = get_node(1073741824L);
   p = mem[rover + 1].hh.v.RH;
   mem[rover + 1].hh.v.RH = 268435455L;
   oldrover = rover;
-  while (p != oldrover) if (p < rover)
-  {
-    q = p;
-    p = mem[q + 1].hh.v.RH;
-    mem[q + 1].hh.v.RH = rover;
-    rover = q;
-  }
-  else {
-    q = rover;
-    while (mem[q + 1].hh.v.RH < p) q = mem[q + 1].hh
-      .v.RH;
-    r = mem[p + 1].hh.v.RH;
-    mem[p + 1].hh.v.RH = mem[q + 1].hh.v.RH;
-    mem[q + 1].hh.v.RH = p;
-    p = r;
-  }
+  while (p != oldrover)
+    if (p < rover)
+    {
+      q = p;
+      p = mem[q + 1].hh.v.RH;
+      mem[q + 1].hh.v.RH = rover;
+      rover = q;
+    }
+    else
+    {
+      q = rover;
+      while (mem[q + 1].hh.v.RH < p)
+        q = mem[q + 1].hh.v.RH;
+      r = mem[p + 1].hh.v.RH;
+      mem[p + 1].hh.v.RH = mem[q + 1].hh.v.RH;
+      mem[q + 1].hh.v.RH = p;
+      p = r;
+    }
   p = rover;
-  while (mem[p + 1].hh.v.RH != 268435455L) {
+  while (mem[p + 1].hh.v.RH != 268435455L)
+  {
     mem[mem[p + 1].hh.v.RH + 1].hh.lh = p;
     p = mem[p + 1].hh.v.RH;
   }
@@ -113,11 +125,14 @@ void primitive (str_number s, halfword c, halfword o)
   pool_pointer k;
   small_number j;
   small_number l;
+
   k = str_start[s];
   l = str_start[s + 1] - k;
-  {integer for_end; j = 0; for_end = l - 1; if (j <= for_end) do
+  {
+    integer for_end; j = 0; for_end = l - 1; if (j <= for_end) do
     buffer[j] = str_pool[k + j];
-  while (j++ < for_end); }
+    while (j++ < for_end);
+  }
   cur_sym = idlookup(0, l);
   if (s >= 256)
   {
@@ -135,6 +150,7 @@ void store_base_file (void)
   integer x;
   four_quarters w;
   ASCII_code * baseengine;
+
   selector = 5;
   print(1073);
   print(job_name);
@@ -147,7 +163,8 @@ void store_base_file (void)
   print_char(41);
   if (interaction == 0)
     selector = 2;
-  else selector = 3;
+  else
+    selector = 3;
   {
     if (pool_ptr + 1 > max_pool_ptr)
     {
@@ -159,7 +176,8 @@ void store_base_file (void)
   base_ident = make_string();
   str_ref[base_ident] = 127;
   pack_job_name(742);
-  while (!w_open_out(base_file)) prompt_file_name(1074, 742);
+  while (!w_open_out(base_file))
+    prompt_file_name(1074, 742);
   print_nl(1075);
   slow_print(w_make_name_string(base_file));
   flush_string(str_ptr - 1);
@@ -169,9 +187,11 @@ void store_base_file (void)
   x = strlen(enginename);
   baseengine = xmallocarray(ASCII_code, x + 4);
   strcpy(stringcast(baseengine), enginename);
-  {integer for_end; k = x; for_end = x + 3; if (k <= for_end) do
+  {
+    integer for_end; k = x; for_end = x + 3; if (k <= for_end) do
     baseengine[k] = 0;
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   x = x + 4 - (x % 4);
   dump_int(x);
   dumpthings(baseengine[0], x);
@@ -187,16 +207,19 @@ void store_base_file (void)
   dump_int(15);
   dump_int(pool_ptr);
   dump_int(str_ptr);
-  {integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
+  {
+    integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
     dump_int(str_start[k]);
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   k = 0;
-  while (k + 4 < pool_ptr) {
+  while (k + 4 < pool_ptr)
+  {
     w.b0 = str_pool[k];
     w.b1 = str_pool[k + 1];
     w.b2 = str_pool[k + 2];
     w.b3 = str_pool[k + 3];
-    dumpqqqq(w);
+    dump_qqqq(w);
     k = k + 4;
   }
   k = pool_ptr - 4;
@@ -204,8 +227,8 @@ void store_base_file (void)
   w.b1 = str_pool[k + 1];
   w.b2 = str_pool[k + 2];
   w.b3 = str_pool[k + 3];
-  dumpqqqq(w);
-  println();
+  dump_qqqq(w);
+  print_ln();
   print_int(str_ptr);
   print(1070);
   print_int(pool_ptr);
@@ -217,10 +240,11 @@ void store_base_file (void)
   q = rover;
   x = 0;
   do {
-    { integer for_end; k = p; for_end = q + 1; if (k <=
-      for_end) do
+    {
+      integer for_end; k = p; for_end = q + 1; if (k <= for_end) do
       dumpwd(mem[k]);
-    while (k++ < for_end); }
+      while (k++ < for_end);
+    }
     x = x + q + 2 - p;
     var_used = var_used + q - p;
     p = q + mem[q].hh.lh;
@@ -228,26 +252,30 @@ void store_base_file (void)
   } while (!(q == rover));
   var_used = var_used + lo_mem_max - p;
   dyn_used = mem_end + 1 - hi_mem_min;
-  {integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
+  {
+    integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
     do
       dumpwd(mem[k]);
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   x = x + lo_mem_max + 1 - p;
   dump_int(hi_mem_min);
   dump_int(avail);
-  {integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
-    for_end) do
+  {
+    integer for_end; k = hi_mem_min; for_end = mem_end; if (k <= for_end) do
     dumpwd(mem[k]);
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   x = x + mem_end + 1 - hi_mem_min;
   p = avail;
-  while (p != 0) {
+  while (p != 0)
+  {
     decr(dyn_used);
     p = mem[p].hh.v.RH;
   }
   dump_int(var_used);
   dump_int(dyn_used);
-  println();
+  print_ln();
   print_int(x);
   print(1071);
   print_int(var_used);
@@ -255,7 +283,8 @@ void store_base_file (void)
   print_int(dyn_used);
   dump_int(hash_used);
   st_count = 9756 - hash_used;
-  {integer for_end; p = 1; for_end = hash_used; if (p <= for_end)
+  {
+    integer for_end; p = 1; for_end = hash_used; if (p <= for_end)
     do
       if (hash[p].v.RH != 0)
       {
@@ -264,23 +293,27 @@ void store_base_file (void)
         dumphh(eqtb[p]);
         incr(st_count);
       }
-  while (p++ < for_end); }
-  {integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
-    for_end) do
+    while (p++ < for_end);
+  }
   {
-    dumphh(hash[p]);
-    dumphh(eqtb[p]);
-  } while (p++ < for_end); }
+    integer for_end; p = hash_used + 1; for_end = 9769; if (p <= for_end) do
+    {
+      dumphh(hash[p]);
+      dumphh(eqtb[p]);
+    } while (p++ < for_end);
+  }
   dump_int(st_count);
-  println();
+  print_ln();
   print_int(st_count);
   print(1072);
   dump_int(int_ptr);
-  {integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
   {
-    dump_int(internal[k]);
-    dump_int(int_name[k]);
-  } while (k++ < for_end); }
+    integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
+    {
+      dump_int(internal[k]);
+      dump_int(int_name[k]);
+    } while (k++ < for_end);
+  }
   dump_int(start_sym);
   dump_int(interaction);
   dump_int(base_ident);
@@ -302,6 +335,7 @@ boolean load_base_file (void)
   ASCII_code dummyxord;
   ASCII_code dummyxchr;
   ASCII_code dummyxprn;
+
   undump_int(x);
   if (x != 1462914374L)
     goto lab6666;
@@ -338,7 +372,8 @@ boolean load_base_file (void)
       undumpthings(dummyxprn, 1);
     while (k++ < for_end); }
   }
-  else {
+  else
+  {
     undumpthings(xord[0], 256);
     undumpthings(xchr[0], 256);
     undumpthings(xprn[0], 256);
@@ -407,10 +442,10 @@ boolean load_base_file (void)
       else str_start[k] = x;
     }
     str_ref[k] = 127;
-  } while (k++ < for_end); }
+  } while (k++ < for_end);}
   k = 0;
-  while (k + 4 < pool_ptr) {
-
+  while (k + 4 < pool_ptr)
+  {
     undumpqqqq(w);
     str_pool[k] = w.b0;
     str_pool[k + 1] = w.b1;
@@ -432,13 +467,15 @@ boolean load_base_file (void)
     undump_int(x);
     if ((x < 1022) || (x > memtop - 3))
       goto lab6666;
-    else lo_mem_max = x;
+    else
+      lo_mem_max = x;
   }
   {
     undump_int(x);
     if ((x < 23) || (x > lo_mem_max))
       goto lab6666;
-    else rover = x;
+    else
+      rover = x;
   }
   p = 0;
   q = rover;
@@ -446,41 +483,47 @@ boolean load_base_file (void)
     { integer for_end; k = p; for_end = q + 1; if (k <=
       for_end) do
       undumpwd(mem[k]);
-    while (k++ < for_end); }
+      while (k++ < for_end);
+    }
     p = q + mem[q].hh.lh;
-    if ((p > lo_mem_max) || ((q >= mem[q + 1].hh.v.RH) && (mem
-      [q + 1].hh.v.RH != rover)))
+    if ((p > lo_mem_max) || ((q >= mem[q + 1].hh.v.RH) && (mem[q + 1].hh.v.RH != rover)))
       goto lab6666;
     q = mem[q + 1].hh.v.RH;
   } while (!(q == rover));
-  {integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
+  {
+    integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
     do
       undumpwd(mem[k]);
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   {
     undump_int(x);
     if ((x < lo_mem_max + 1) || (x > memtop - 2))
       goto lab6666;
-    else hi_mem_min = x;
+    else
+      hi_mem_min = x;
   }
   {
     undump_int(x);
     if ((x < 0) || (x > memtop))
       goto lab6666;
-    else avail = x;
+    else
+      avail = x;
   }
   mem_end = memtop;
-  {integer for_end; k = hi_mem_min; for_end = mem_end; if (k <=
-    for_end) do
+  {
+    integer for_end; k = hi_mem_min; for_end = mem_end; if (k <= for_end) do
     undumpwd(mem[k]);
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   undump_int(var_used);
   undump_int(dyn_used);
   {
     undump_int(x);
     if ((x < 1) || (x > 9757))
       goto lab6666;
-    else hash_used = x;
+    else
+      hash_used = x;
   }
   p = 0;
   do {
@@ -488,45 +531,53 @@ boolean load_base_file (void)
       undump_int(x);
       if ((x < p + 1) || (x > hash_used))
         goto lab6666;
-      else p = x;
+      else
+        p = x;
     }
     undumphh(hash[p]);
     undumphh(eqtb[p]);
   } while (!(p == hash_used));
-  {integer for_end; p = hash_used + 1; for_end = 9769; if (p <=
-    for_end) do
   {
-    undumphh(hash[p]);
-    undumphh(eqtb[p]);
-  } while (p++ < for_end); }
+    integer for_end; p = hash_used + 1; for_end = 9769; if (p <= for_end) do
+    {
+      undumphh(hash[p]);
+      undumphh(eqtb[p]);
+    } while (p++ < for_end);
+  }
   undump_int(st_count);
   {
     undump_int(x);
     if ((x < 41) || (x > max_internal))
       goto lab6666;
-    else int_ptr = x;
+    else
+      int_ptr = x;
   }
-  {integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
   {
-    undump_int(internal[k]);
+    integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
     {
-      undump_int(x);
-      if ((x < 0) || (x > str_ptr))
-        goto lab6666;
-      else int_name[k] = x;
-    }
-  } while (k++ < for_end); }
+      undump_int(internal[k]);
+      {
+        undump_int(x);
+        if ((x < 0) || (x > str_ptr))
+          goto lab6666;
+        else
+          int_name[k] = x;
+      }
+    } while (k++ < for_end);
+  }
   {
     undump_int(x);
     if ((x < 0) || (x > 9757))
       goto lab6666;
-    else start_sym = x;
+    else
+      start_sym = x;
   }
   {
     undump_int(x);
     if ((x < 0) || (x > 3))
       goto lab6666;
-    else interaction = x;
+    else
+      interaction = x;
   }
   if (interactionoption != 4)
     interaction = interactionoption;
@@ -534,19 +585,22 @@ boolean load_base_file (void)
     undump_int(x);
     if ((x < 0) || (x > str_ptr))
       goto lab6666;
-    else base_ident = x;
+    else
+      base_ident = x;
   }
   {
     undump_int(x);
     if ((x < 1) || (x > 9769))
       goto lab6666;
-    else bg_loc = x;
+    else
+      bg_loc = x;
   }
   {
     undump_int(x);
     if ((x < 1) || (x > 9769))
       goto lab6666;
-    else eg_loc = x;
+    else
+      eg_loc = x;
   }
   undump_int(serial_no);
   undump_int(x);
@@ -564,18 +618,24 @@ lab_exit:;
 void final_cleanup (void)
 {
   small_number c;
+
   c = cur_mod;
   if (job_name == 0)
     open_log_file();
-  while (input_ptr > 0) if ((cur_input.index_field > 15))
-    end_token_list();
-  else end_file_reading();
-  while (loop_ptr != 0) stop_iteration();
-  while (open_parens > 0) {
+  while (input_ptr > 0)
+    if ((cur_input.index_field > 15))
+      end_token_list();
+    else
+      end_file_reading();
+  while (loop_ptr != 0)
+    stop_iteration();
+  while (open_parens > 0)
+  {
     print(1077);
     decr(open_parens);
   }
-  while (cond_ptr != 0) {
+  while (cond_ptr != 0)
+  {
     print_nl(1078);
     print_cmd_mod(2, cur_if);
     if (if_line != 0)
@@ -590,8 +650,10 @@ void final_cleanup (void)
     cond_ptr = mem[cond_ptr].hh.v.RH;
     freenode(loop_ptr, 2);
   }
-  if (history != 0) {
-    if (((history == 1) || (interaction < 3))) {
+  if (history != 0)
+  {
+    if (((history == 1) || (interaction < 3)))
+    {
       if (selector == 3)
       {
         selector = 1;
@@ -867,10 +929,11 @@ void init_tab (void)
   lo_mem_max = rover + 1000;
   mem[lo_mem_max].hh.v.RH = 0;
   mem[lo_mem_max].hh.lh = 0;
-  {integer for_end; k = memtop - 2; for_end = memtop; if (k <=
-    for_end) do
+  {
+    integer for_end; k = memtop - 2; for_end = memtop; if (k <= for_end) do
     mem[k] = mem[lo_mem_max];
-  while (k++ < for_end); }
+    while (k++ < for_end);
+  }
   avail = 0;
   mem_end = memtop;
   hi_mem_min = memtop - 2;
@@ -938,9 +1001,12 @@ void init_tab (void)
   mem[3].hh.v.RH = 0;
   mem[4].hh.lh = 1;
   mem[4].hh.v.RH = 0;
-  {integer for_end; k = 5; for_end = 11; if (k <= for_end) do
-    mem[k] = mem[4];
-  while (k++ < for_end); }
+  {
+    integer for_end; k = 5; for_end = 11;
+    if (k <= for_end) do
+      mem[k] = mem[4];
+    while (k++ < for_end);
+  }
   mem[12].cint = 0;
   mem[0].hh.v.RH = 0;
   mem[0].hh.lh = 0;
@@ -965,7 +1031,8 @@ void init_tab (void)
     base_ident = 1069;
 }
 
-void mainbody (void) {
+void mainbody (void)
+{
   bounddefault = 250000L;
   boundname = "main_memory";
   setupboundvariable(addressof(mainmemory), boundname, bounddefault);
@@ -977,20 +1044,16 @@ void mainbody (void) {
   setupboundvariable(addressof(errorline), boundname, bounddefault);
   bounddefault = 50;
   boundname = "half_error_line";
-  setupboundvariable(addressof(halferrorline), boundname, bounddefault
-  );
+  setupboundvariable(addressof(halferrorline), boundname, bounddefault);
   bounddefault = 79;
   boundname = "max_print_line";
-  setupboundvariable(addressof(maxprintline), boundname, bounddefault)
-    ;
+  setupboundvariable(addressof(maxprintline), boundname, bounddefault);
   bounddefault = 768;
   boundname = "screen_width";
-  setupboundvariable(addressof(screenwidth), boundname, bounddefault)
-    ;
+  setupboundvariable(addressof(screenwidth), boundname, bounddefault);
   bounddefault = 1024;
   boundname = "screen_depth";
-  setupboundvariable(addressof(screendepth), boundname, bounddefault)
-    ;
+  setupboundvariable(addressof(screendepth), boundname, bounddefault);
   bounddefault = 16384;
   boundname = "gf_buf_size";
   setupboundvariable(addressof(gf_buf_size), boundname, bounddefault);
@@ -1094,7 +1157,8 @@ void mainbody (void) {
   }
 #endif /* INIMF */
   ready_already = 314159L;
-lab1: selector = 1;
+lab1:
+  selector = 1;
   tally = 0;
   term_offset = 0;
   file_offset = 0;
@@ -1102,9 +1166,10 @@ lab1: selector = 1;
   Fputs(stdout, versionstring);
   if (base_ident == 0)
     fprintf(stdout, "%s%s%c\n", " (preloaded base=", dumpname, ')');
-  else {
+  else
+  {
     slow_print(base_ident);
-    println();
+    print_ln();
   }
   if (translatefilename)
   {
@@ -1157,8 +1222,10 @@ lab1: selector = 1;
     initrandoms((internal[17] / 65536L) + internal[16]);
     if (interaction == 0)
       selector = 0;
-    else selector = 1;
-    if (cur_input.loc_field < cur_input.limit_field) {
+    else
+      selector = 1;
+    if (cur_input.loc_field < cur_input.limit_field)
+    {
       if (buffer[cur_input.loc_field] != 92)
         start_input();
     }
@@ -1172,12 +1239,14 @@ lab1: selector = 1;
   main_control();
   final_cleanup();
   close_files_and_terminate();
-lab9999: {
-  fflush(stdout);
-  ready_already = 0;
-  if ((history != 0) && (history != 1))
-    uexit(1);
-  else uexit(0);
+lab9999:
+  {
+    fflush(stdout);
+    ready_already = 0;
+    if ((history != 0) && (history != 1))
+      uexit(1);
+    else
+      uexit(0);
   }
 }
 
@@ -1185,6 +1254,7 @@ void initialize (void)
 {
   integer i;
   integer k;
+
   xchr[32] = ' ';
   xchr[33] = '!';
   xchr[34] = '"';
@@ -1282,27 +1352,34 @@ void initialize (void)
   xchr[126] = '~';
   {integer for_end; i = 0;for_end = 31; if (i <= for_end) do
     xchr[i] = i;
-  while (i++ < for_end);}
+    while (i++ < for_end);
+  }
   {integer for_end; i = 127;for_end = 255; if (i <= for_end) do
     xchr[i] = i;
-  while (i++ < for_end);}
+    while (i++ < for_end);
+  }
   {integer for_end; i = 0;for_end = 255; if (i <= for_end) do
     xord[chr (i)] = 127;
-  while (i++ < for_end);}
+    while (i++ < for_end);
+  }
   {integer for_end; i = 128;for_end = 255; if (i <= for_end) do
     xord[xchr[i]] = i;
-  while (i++ < for_end);}
+    while (i++ < for_end);
+  }
   {integer for_end; i = 0;for_end = 126; if (i <= for_end) do
     xord[xchr[i]] = i;
-  while (i++ < for_end);}
+    while (i++ < for_end);
+  }
   {integer for_end; i = 0;for_end = 255; if (i <= for_end) do
     xprn[i] = (eightbitp || ((i >= 32) && (i <= 126)));
-  while (i++ < for_end);}
+    while (i++ < for_end);
+  }
   if (translatefilename)
-  readtcxfile ();
+    readtcxfile ();
   if (interactionoption == 4)
-  interaction = 3;
-  else interaction = interactionoption;
+    interaction = 3;
+  else
+    interaction = interactionoption;
   deletions_allowed = true;
   error_count = 0;
   help_ptr = 0;
@@ -1312,9 +1389,11 @@ void initialize (void)
   OK_to_interrupt = true;
   arith_error = false;
   two_to_the[0] = 1;
-  {integer for_end; k = 1;for_end = 30; if (k <= for_end) do
+  {
+    integer for_end; k = 1;for_end = 30; if (k <= for_end) do
     two_to_the[k] = 2 * two_to_the[k - 1];
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   spec_log[1] = 93032640L;
   spec_log[2] = 38612034L;
   spec_log[3] = 17922280L;
@@ -1328,9 +1407,11 @@ void initialize (void)
   spec_log[11] = 65552L;
   spec_log[12] = 32772L;
   spec_log[13] = 16385;
-  {integer for_end; k = 14;for_end = 27; if (k <= for_end) do
+  {
+    integer for_end; k = 14;for_end = 27; if (k <= for_end) do
     spec_log[k] = two_to_the[27 - k];
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   spec_log[28] = 1;
   spec_atan[1] = 27855475L;
   spec_atan[2] = 14718068L;
@@ -1358,20 +1439,24 @@ void initialize (void)
   spec_atan[24] = 4;
   spec_atan[25] = 2;
   spec_atan[26] = 1;
-        ;
+  ;
 #ifdef TEXMF_DEBUG
   was_mem_end = 0;
   was_lo_max = 0;
   was_hi_min = memmax;
   panicking = false;
 #endif /* TEXMF_DEBUG */
-  {integer for_end; k = 1;for_end = 41; if (k <= for_end) do
+  {
+    integer for_end; k = 1;for_end = 41; if (k <= for_end) do
     internal[k] = 0;
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   int_ptr = 41;
-  {integer for_end; k = 48;for_end = 57; if (k <= for_end) do
+  {
+    integer for_end; k = 48;for_end = 57; if (k <= for_end) do
     char_class[k] = 0;
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   char_class[46] = 1;
   char_class[32] = 2;
   char_class[37] = 3;
@@ -1380,12 +1465,16 @@ void initialize (void)
   char_class[59] = 6;
   char_class[40] = 7;
   char_class[41] = 8;
-  {integer for_end; k = 65;for_end = 90; if (k <= for_end) do
+  {
+    integer for_end; k = 65;for_end = 90; if (k <= for_end) do
     char_class[k] = 9;
-  while (k++ < for_end);}
-  {integer for_end; k = 97;for_end = 122; if (k <= for_end) do
+    while (k++ < for_end);
+  }
+  {
+    integer for_end; k = 97;for_end = 122; if (k <= for_end) do
     char_class[k] = 9;
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   char_class[95] = 9;
   char_class[60] = 10;
   char_class[61] = 10;
@@ -1411,24 +1500,30 @@ void initialize (void)
   char_class[93] = 18;
   char_class[123] = 19;
   char_class[125] = 19;
-  {integer for_end; k = 0;for_end = 31; if (k <= for_end) do
+  {
+    integer for_end; k = 0;for_end = 31; if (k <= for_end) do
     char_class[k] = 20;
-  while (k++ < for_end);}
-  {integer for_end; k = 127;for_end = 255; if (k <= for_end) do
+    while (k++ < for_end);
+  }
+  {
+    integer for_end; k = 127;for_end = 255; if (k <= for_end) do
     char_class[k] = 20;
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   char_class[9] = 2;
   char_class[12] = 2;
   hash[1].lh = 0;
   hash[1].v.RH = 0;
   eqtb[1].lh = 41;
   eqtb[1].v.RH = 0;
-  {integer for_end; k = 2;for_end = 9769; if (k <= for_end) do
+  {
+    integer for_end; k = 2;for_end = 9769; if (k <= for_end) do
     {
       hash[k] = hash[1];
       eqtb[k] = eqtb[1];
     }
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   big_node_size[13] = 12;
   big_node_size[14] = 4;
   save_ptr = 0;
@@ -1449,9 +1544,11 @@ void initialize (void)
   octant_code[6] = 8;
   octant_code[7] = 7;
   octant_code[8] = 3;
-  {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
+  {
+    integer for_end; k = 1;for_end = 8; if (k <= for_end) do
     octant_number[octant_code[k]] = k;
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   rev_turns = false;
   x_corr[1] = 0;
   y_corr[1] = 0;
@@ -1477,17 +1574,21 @@ void initialize (void)
   x_corr[3] = -1;
   y_corr[3] = 1;
   xy_corr[3] = 0;
-  {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
+  {
+    integer for_end; k = 1;for_end = 8; if (k <= for_end) do
     z_corr[k] = xy_corr[k] - x_corr[k];
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   screen_started = false;
   screen_OK = false;
-  {integer for_end; k = 0;for_end = 15; if (k <= for_end) do
+  {
+    integer for_end; k = 0;for_end = 15; if (k <= for_end) do
     {
       window_open[k] = false;
       window_time[k] = 0;
     }
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   fix_needed = false;
   watch_coefs = true;
   cond_ptr = 0;
@@ -1499,7 +1600,8 @@ void initialize (void)
   var_flag = 0;
   start_sym = 0;
   long_help_seen = false;
-  {integer for_end; k = 0;for_end = 255; if (k <= for_end) do
+  {
+    integer for_end; k = 0;for_end = 255; if (k <= for_end) do
     {
       tfm_width[k] = 0;
       tfm_height[k] = 0;
@@ -1510,11 +1612,13 @@ void initialize (void)
       char_remainder[k] = 0;
       skip_table[k] = lig_table_size;
     }
-  while (k++ < for_end);}
-  {integer for_end; k = 1;for_end = header_size; if (k <=
-  for_end) do
+    while (k++ < for_end);
+  }
+  {
+    integer for_end; k = 1;for_end = header_size; if (k <= for_end) do
     header_byte[k] = -1;
-  while (k++ < for_end);}
+    while (k++ < for_end);
+  }
   bc = 255;
   ec = 0;
   nl = 0;
@@ -2021,7 +2125,7 @@ void error (void)
 #ifdef TEXMF_DEBUG
         case 68:
         {
-          debughelp ();
+          debug_help ();
           goto lab_continue;
         }
         break;
@@ -2100,7 +2204,7 @@ void error (void)
             cur_input.loc_field = first;
           }
           first = last + 1;
-          cur_input .limit_field = last;
+          cur_input.limit_field = last;
           goto lab_exit;
         }
         break;
@@ -2201,7 +2305,7 @@ void fatal_error (str_number s)
   {
     if (interaction == 3)
       do_nothing();
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -2228,7 +2332,7 @@ void fatal_error (str_number s)
     ;
 #ifdef TEXMF_DEBUG
     if (interaction > 0)
-      debughelp ();
+      debug_help ();
 #endif /* TEXMF_DEBUG */
     history = 3;
     jump_out ();
@@ -2241,7 +2345,7 @@ void overflow (str_number s, integer n)
   {
     if (interaction == 3)
       ;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -2273,7 +2377,7 @@ void overflow (str_number s, integer n)
     ;
 #ifdef TEXMF_DEBUG
     if (interaction > 0)
-      debughelp ();
+      debug_help ();
 #endif /* TEXMF_DEBUG */
     history = 3;
     jump_out ();
@@ -2288,7 +2392,7 @@ void confusion (str_number s)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -2315,7 +2419,7 @@ void confusion (str_number s)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -2344,7 +2448,7 @@ void confusion (str_number s)
     ;
 #ifdef TEXMF_DEBUG
     if (interaction > 0)
-      debughelp ();
+      debug_help ();
 #endif /* TEXMF_DEBUG */
     history = 3;
     jump_out ();
@@ -2508,7 +2612,7 @@ void pause_for_instructions (void)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -2541,7 +2645,7 @@ void missing_err (str_number s)
   {
     if (interaction == 3)
       ;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -2565,7 +2669,7 @@ void clear_arith (void)
   {
     if (interaction == 3)
       ;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -3039,7 +3143,7 @@ scaled square_rt (scaled x)
       {
         if (interaction == 3)
           ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -3179,7 +3283,7 @@ integer pyth_sub (integer a, integer b)
       {
         if (interaction == 3)
           ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -3245,7 +3349,7 @@ scaled m_log (scaled x)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -3376,7 +3480,7 @@ angle n_arg (integer x, integer y)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -6089,7 +6193,7 @@ void val_too_big (scaled x)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -7382,7 +7486,7 @@ void make_choices (halfword knots)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -7832,7 +7936,7 @@ void y_scale_edges (integer s)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -7913,7 +8017,7 @@ void x_scale_edges (integer s)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -9235,7 +9339,7 @@ void print_strange (str_number s)
   {
     if (interaction == 3)
       ;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -10371,7 +10475,7 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -10848,7 +10952,7 @@ halfword make_pen (halfword h)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -10874,7 +10978,7 @@ halfword make_pen (halfword h)
     {
       if (interaction == 3)
         ;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -11312,8 +11416,8 @@ void offset_prep (halfword c, halfword h)
 void skew_line_edges (halfword p, halfword w, halfword ww)
 {
   scaled x0, y0, x1, y1;
-  if ((mem[w + 1].cint != mem[ww + 1].cint) || (mem[w + 2]
-  .cint != mem[ww + 2].cint))
+
+  if ((mem[w + 1].cint != mem[ww + 1].cint) || (mem[w + 2].cint != mem[ww + 2].cint))
   {
     x0 = mem[p + 1].cint + mem[w + 1].cint;
     y0 = mem[p + 2].cint + mem[w + 2].cint;
@@ -11323,7 +11427,7 @@ void skew_line_edges (halfword p, halfword w, halfword ww)
     x0 = cur_x;
     y0 = cur_y;
     unskew (x1, y1, octant);
-        ;
+    ;
 #ifdef STAT
     if (internal[10] > 65536L)
     {
@@ -11347,28 +11451,31 @@ void dual_moves (halfword h, halfword p, halfword q)
   halfword w, ww;
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
+
   k = mem[h].hh.lh + 1;
   ww = mem[h].hh.v.RH;
   w = mem[ww].hh.lh;
-  mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[
-  octant]);
-  mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[
-  octant]);
-  {integer for_end; n = 1;for_end = n1 - n0 + 1; if (n <=
-  for_end) do
-    env_move[n] = mm1;
-  while (n++ < for_end);}
+  mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[octant]);
+  mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[octant]);
+  {
+    integer for_end; n = 1;for_end = n1 - n0 + 1; if (n <= for_end)
+      do
+        env_move[n] = mm1;
+      while (n++ < for_end);
+  }
   env_move[0] = mm0;
   move_ptr = 0;
   m = mm0;
   r = p;
-  while (true) {
+  while (true)
+  {
     if (r == q)
-    smoothtop = move_ptr;
-    while (mem[r].hh.b1 != k) {
+      smoothtop = move_ptr;
+    while (mem[r].hh.b1 != k)
+    {
       xx = mem[r + 1].cint + mem[w + 1].cint;
       yy = mem[r + 2].cint + mem[w + 2].cint + 32768L;
-        ;
+      ;
 #ifdef STAT
       if (internal[10] > 65536L)
       {
@@ -11395,31 +11502,33 @@ void dual_moves (halfword h, halfword p, halfword q)
           {
             delx = xp - xx;
             yy = 65536L - yy;
-            while (true) {
+            while (true)
+            {
               if (m < env_move[move_ptr])
-              env_move[move_ptr] = m;
+                env_move[move_ptr] = m;
               tx = take_fraction (delx, make_fraction (yy, dely));
               if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] > 0)
-              decr (tx);
+                decr (tx);
               m = floorunscaled (xx + tx);
               ty = ty - 65536L;
               incr (move_ptr);
               if (ty < 65536L)
-              goto done1;
+                goto done1;
               yy = yy + 65536L;
             }
             done1: if (m < env_move[move_ptr])
-            env_move[move_ptr] = m;
+              env_move[move_ptr] = m;
           }
         }
       }
-      else {
+      else
+      {
         incr (k);
         w = mem[w].hh.v.RH;
         xp = mem[r + 1].cint + mem[w + 1].cint;
         yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
       }
-        ;
+      ;
 #ifdef STAT
       if (internal[10] > 65536L)
       {
@@ -11432,43 +11541,40 @@ void dual_moves (halfword h, halfword p, halfword q)
       m = floorunscaled (xp - xy_corr[octant]);
       move_ptr = floorunscaled (yp - y_corr[octant]) - n0;
       if (m < env_move[move_ptr])
-      env_move[move_ptr] = m;
+        env_move[move_ptr] = m;
     }
     if (r == p)
-    smoothbot = move_ptr;
+      smoothbot = move_ptr;
     if (r == q)
-    goto done;
+      goto done;
     move[move_ptr] = 1;
     n = move_ptr;
     s = mem[r].hh.v.RH;
-    make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5]
-    .cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint ,
-    mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w
-    + 2].cint + 32768L, mem[r + 6].cint + mem[w + 2].cint + 32768L
-   , mem[s + 4].cint + mem[w + 2].cint + 32768L, mem[s + 2].cint
-    + mem[w + 2].cint + 32768L, xy_corr[octant], y_corr[octant]);
+    make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint ,
+    mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + 32768L, mem[r + 6].cint + mem[w + 2].cint + 32768L, mem[s + 4].cint + mem[w + 2].cint + 32768L, mem[s + 2].cint + mem[w + 2].cint + 32768L, xy_corr[octant], y_corr[octant]);
     do {
-        if (m < env_move[n])
-      env_move[n] = m;
+      if (m < env_move[n])
+        env_move[n] = m;
       m = m + move[n] - 1;
       incr (n);
     } while (!(n > move_ptr));
     r = s;
   }
   done:
-        ;
+  ;
 #ifdef TEXMF_DEBUG
   if ((m != mm1) || (move_ptr != n1 - n0))
-  confusion(50);
+    confusion(50);
 #endif /* TEXMF_DEBUG */
   move[0] = d0 + env_move[1] - mm0;
   {integer for_end; n = 1;for_end = move_ptr; if (n <= for_end)
-  do
-    move[n] = env_move[n + 1] - env_move[n]+ 1;
-  while (n++ < for_end);}
+    do
+      move[n] = env_move[n + 1] - env_move[n]+ 1;
+    while (n++ < for_end);
+  }
   move[move_ptr] = move[move_ptr] - d1;
   if (internal[35] > 0)
-  smooth_moves (smoothbot, smoothtop);
+    smooth_moves (smoothbot, smoothtop);
   move_to_edges (m0, n0, m1, n1);
   if (mem[q + 6].cint == 1)
   {
@@ -11488,18 +11594,20 @@ void fill_envelope (halfword spechead)
   halfword w, ww;
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
+
   if (internal[10] > 0)
-  begin_edge_tracing ();
+    begin_edge_tracing ();
   p = spechead;
   do {
-      octant = mem[p + 3].cint;
+    octant = mem[p + 3].cint;
     h = cur_pen + octant;
     q = p;
-    while (mem[q].hh.b1 != 0) q = mem[q].hh.v.RH;
+    while (mem[q].hh.b1 != 0)
+      q = mem[q].hh.v.RH;
     w = mem[h].hh.v.RH;
     if (mem[p + 4].cint == 1)
-    w = mem[w].hh.lh;
-        ;
+      w = mem[w].hh.lh;
+    ;
 #ifdef STAT
     if (internal[10] > 65536L)
     {
@@ -11508,65 +11616,67 @@ void fill_envelope (halfword spechead)
       print(558);
       print_int (mem[h].hh.lh);
       if (mem[h].hh.lh != 1)
-      print(581);
-      else print(582);
+        print(581);
+      else
+        print(582);
       print(583);
-      unskew (mem[p + 1].cint + mem[w + 1].cint, mem[p + 2].cint
-      + mem[w + 2].cint, octant);
+      unskew (mem[p + 1].cint + mem[w + 1].cint, mem[p + 2].cint + mem[w + 2].cint, octant);
       print_two (cur_x, cur_y);
       ww = mem[h].hh.v.RH;
       if (mem[q + 6].cint == 1)
-      ww = mem[ww].hh.lh;
+        ww = mem[ww].hh.lh;
       print(584);
-      unskew (mem[q + 1].cint + mem[ww + 1].cint, mem[q + 2]
-      .cint + mem[ww + 2].cint, octant);
+      unskew (mem[q + 1].cint + mem[ww + 1].cint, mem[q + 2].cint + mem[ww + 2].cint, octant);
       print_two (cur_x, cur_y);
     }
 #endif /* STAT */
     ww = mem[h].hh.v.RH;
     www = ww;
     if (odd (octant_number[octant]))
-    www = mem[www].hh.lh;
-    else ww = mem[ww].hh.lh;
+      www = mem[www].hh.lh;
+    else
+      ww = mem[ww].hh.lh;
     if (w != ww)
-    skew_line_edges (p, w, ww);
-    end_round (mem[p + 1].cint + mem[ww + 1].cint, mem[p + 2]
-    .cint + mem[ww + 2].cint);
+      skew_line_edges (p, w, ww);
+    end_round (mem[p + 1].cint + mem[ww + 1].cint, mem[p + 2].cint + mem[ww + 2].cint);
     m0 = m1;
     n0 = n1;
     d0 = d1;
-    end_round (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2]
-    .cint + mem[www + 2].cint);
+    end_round (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2].cint + mem[www + 2].cint);
     if (n1 - n0 >= move_size)
-    overflow (540, move_size);
+      overflow (540, move_size);
     offset_prep (p, h);
     q = p;
-    while (mem[q].hh.b1 != 0) q = mem[q].hh.v.RH;
+    while (mem[q].hh.b1 != 0)
+      q = mem[q].hh.v.RH;
     if (odd (octant_number[octant]))
     {
       k = 0;
       w = mem[h].hh.v.RH;
       ww = mem[w].hh.lh;
-      mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr
-    [octant]);
-      mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint -
-      xy_corr[octant]);
-      {integer for_end; n = 0;for_end = n1 - n0; if (n <=
-      for_end) do
-        env_move[n] = mm0;
-      while (n++ < for_end);}
+      mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[octant]);
+      mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[octant]);
+      {
+        integer for_end; n = 0;for_end = n1 - n0;
+        if (n <= for_end)
+          do
+            env_move[n] = mm0;
+          while (n++ < for_end);
+      }
       env_move[n1 - n0] = mm1;
       move_ptr = 0;
       m = mm0;
       r = p;
       mem[q].hh.b1 = mem[h].hh.lh + 1;
-      while (true) {
+      while (true)
+      {
         if (r == q)
-        smoothtop = move_ptr;
-        while (mem[r].hh.b1 != k) {
+          smoothtop = move_ptr;
+        while (mem[r].hh.b1 != k)
+        {
           xx = mem[r + 1].cint + mem[w + 1].cint;
           yy = mem[r + 2].cint + mem[w + 2].cint + 32768L;
-        ;
+          ;
 #ifdef STAT
           if (internal[10] > 65536L)
           {
@@ -11593,17 +11703,17 @@ void fill_envelope (halfword spechead)
               {
                 delx = xp - xx;
                 yy = 65536L - yy;
-                while (true) {
+                while (true)
+                {
                   tx = take_fraction (delx, make_fraction (yy, dely));
-                  if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] >
-                  0)
-                  decr (tx);
+                  if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] > 0)
+                    decr (tx);
                   m = floorunscaled (xx + tx);
                   if (m > env_move[move_ptr])
-                  env_move[move_ptr] = m;
+                    env_move[move_ptr] = m;
                   ty = ty - 65536L;
                   if (ty < 65536L)
-                  goto done1;
+                    goto done1;
                   yy = yy + 65536L;
                   incr (move_ptr);
                 }
@@ -11611,13 +11721,14 @@ void fill_envelope (halfword spechead)
               }
             }
           }
-          else {
+          else
+          {
             decr (k);
             w = mem[w].hh.lh;
             xp = mem[r + 1].cint + mem[w + 1].cint;
             yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
           }
-        ;
+          ;
 #ifdef STAT
           if (internal[10] > 65536L)
           {
@@ -11630,44 +11741,41 @@ void fill_envelope (halfword spechead)
           m = floorunscaled (xp - xy_corr[octant]);
           move_ptr = floorunscaled (yp - y_corr[octant]) - n0;
           if (m > env_move[move_ptr])
-          env_move[move_ptr] = m;
+            env_move[move_ptr] = m;
         }
         if (r == p)
-        smoothbot = move_ptr;
+          smoothbot = move_ptr;
         if (r == q)
-        goto done;
+          goto done;
         move[move_ptr] = 1;
         n = move_ptr;
         s = mem[r].hh.v.RH;
-        make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5]
-        .cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1]
-        .cint, mem[s + 1].cint + mem[w + 1].cint, mem[r + 2]
-        .cint + mem[w + 2].cint + 32768L, mem[r + 6].cint + mem[w +
-        2].cint + 32768L, mem[s + 4].cint + mem[w + 2].cint +
-        32768L, mem[s + 2].cint + mem[w + 2].cint + 32768L, xy_corr[
-        octant], y_corr[octant]);
+        make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint, mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + 32768L, mem[r + 6].cint + mem[w + 2].cint + 32768L, mem[s + 4].cint + mem[w + 2].cint + 32768L, mem[s + 2].cint + mem[w + 2].cint + 32768L, xy_corr[octant], y_corr[octant]);
         do {
-            m = m + move[n] - 1;
+          m = m + move[n] - 1;
           if (m > env_move[n])
-          env_move[n] = m;
+            env_move[n] = m;
           incr (n);
         } while (!(n > move_ptr));
         r = s;
       }
       done:
-        ;
+      ;
 #ifdef TEXMF_DEBUG
       if ((m != mm1) || (move_ptr != n1 - n0))
-      confusion(49);
+        confusion(49);
 #endif /* TEXMF_DEBUG */
       move[0] = d0 + env_move[0] - mm0;
-      {integer for_end; n = 1;for_end = move_ptr; if (n <=
-      for_end) do
-        move[n] = env_move[n] - env_move[n - 1]+ 1;
-      while (n++ < for_end);}
+      {
+        integer for_end; n = 1;for_end = move_ptr;
+        if (n <= for_end)
+          do
+            move[n] = env_move[n] - env_move[n - 1]+ 1;
+          while (n++ < for_end);
+      }
       move[move_ptr] = move[move_ptr] - d1;
       if (internal[35] > 0)
-      smooth_moves (smoothbot, smoothtop);
+        smooth_moves (smoothbot, smoothtop);
       move_to_edges (m0, n0, m1, n1);
       if (mem[q + 6].cint == 0)
       {
@@ -11675,52 +11783,57 @@ void fill_envelope (halfword spechead)
         skew_line_edges (q, mem[w].hh.lh, w);
       }
     }
-    else dual_moves (h, p, q);
+    else
+      dual_moves (h, p, q);
     mem[q].hh.b1 = 0;
     p = mem[q].hh.v.RH;
   } while (!(p == spechead));
   if (internal[10] > 0)
-  end_edge_tracing ();
+    end_edge_tracing ();
   toss_knot_list (spechead);
 }
 
-halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
+halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
 {
-  halfword Result; halfword p, q, r, s;
+  halfword Result;
+  halfword p, q, r, s;
   halfword h;
   integer alpha, beta, gamma, delta;
   integer c, d;
   integer u, v;
   boolean symmetric;
-  if ((majoraxis == minoraxis) || (theta % 94371840L == 0))
+
+  if ((major_axis == minor_axis) || (theta % 94371840L == 0))
   {
     symmetric = true;
     alpha = 0;
     if (odd (theta / 94371840L))
     {
-      beta = majoraxis;
-      gamma = minoraxis;
+      beta = major_axis;
+      gamma = minor_axis;
       n_sin = 268435456L;
       n_cos = 0;
     }
-    else {
-      beta = minoraxis;
-      gamma = majoraxis;
+    else
+    {
+      beta = minor_axis;
+      gamma = major_axis;
       theta = 0;
     }
   }
-  else {
+  else
+  {
     symmetric = false;
     n_sin_cos(theta);
-    gamma = take_fraction (majoraxis, n_sin);
-    delta = take_fraction (minoraxis, n_cos);
+    gamma = take_fraction (major_axis, n_sin);
+    delta = take_fraction (minor_axis, n_cos);
     beta = pyth_add (gamma, delta);
     alpha = make_fraction (gamma, beta);
-    alpha = take_fraction (majoraxis, alpha);
+    alpha = take_fraction (major_axis, alpha);
     alpha = take_fraction (alpha, n_cos);
     alpha = (alpha + 32768L) / 65536L;
-    gamma = take_fraction (minoraxis, n_sin);
-    gamma = pyth_add (take_fraction (majoraxis, n_cos), gamma);
+    gamma = take_fraction (minor_axis, n_sin);
+    gamma = pyth_add (take_fraction (major_axis, n_cos), gamma);
   }
   beta = (beta + 32768L) / 65536L;
   gamma = (gamma + 32768L) / 65536L;
@@ -11728,20 +11841,23 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
   q = get_node (7);
   r = get_node (7);
   if (symmetric)
-  s = 0;
-  else s = get_node (7);
+    s = 0;
+  else
+    s = get_node (7);
   h = p;
   mem[p].hh.v.RH = q;
   mem[q].hh.v.RH = r;
   mem[r].hh.v.RH = s;
   if (beta == 0)
-  beta = 1;
+    beta = 1;
   if (gamma == 0)
-  gamma = 1;
-  if (gamma <= abs (alpha)) {
+    gamma = 1;
+  if (gamma <= abs (alpha))
+  {
     if (alpha > 0)
-    alpha = gamma - 1;
-    else alpha = 1 - gamma;
+      alpha = gamma - 1;
+    else
+      alpha = 1 - gamma;
   }
   mem[p + 1].cint = - (integer) alpha * 32768L;
   mem[p + 2].cint = - (integer) beta * 32768L;
@@ -11762,7 +11878,8 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
     mem[r + 2].cint = 0;
     mem[r + 4].cint = beta;
   }
-  else {
+  else
+  {
     mem[r + 2].cint = - (integer) mem[p + 2].cint;
     mem[r + 4].cint = beta + beta;
     mem[s + 1].cint = - (integer) mem[p + 1].cint;
@@ -11770,27 +11887,29 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
     mem[s + 3].cint = 32768L;
     mem[s + 4].cint = gamma - alpha;
   }
-  while (true) {
+  while (true)
+  {
     u = mem[p + 5].cint + mem[q + 5].cint;
     v = mem[q + 3].cint + mem[r + 3].cint;
     c = mem[p + 6].cint + mem[q + 6].cint;
     delta = pyth_add (u, v);
-    if (majoraxis == minoraxis)
-    d = majoraxis;
-    else {
+    if (major_axis == minor_axis)
+      d = major_axis;
+    else
+    {
       if (theta == 0)
       {
         alpha = u;
         beta = v;
       }
-      else {
+      else
+      {
         alpha = take_fraction (u, n_cos) + take_fraction (v, n_sin);
         beta = take_fraction (v, n_cos) - take_fraction (u, n_sin);
       }
       alpha = make_fraction (alpha, delta);
       beta = make_fraction (beta, delta);
-      d = pyth_add (take_fraction (majoraxis, alpha), take_fraction (
-      minoraxis, beta));
+      d = pyth_add (take_fraction (major_axis, alpha), take_fraction (minor_axis, beta));
     }
     alpha = abs (u);
     beta = abs (v);
@@ -11799,42 +11918,36 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
       alpha = abs (v);
       beta = abs (u);
     }
-    if (internal[38]!= 0)
-    d = d - take_fraction (internal[38], make_fraction (beta + beta ,
-    delta));
+    if (internal[38] != 0)
+      d = d - take_fraction (internal[38], make_fraction (beta + beta, delta));
     d = take_fraction ((d + 4) / 8, delta);
     alpha = alpha / 32768L;
     if (d < alpha)
-    d = alpha;
+      d = alpha;
     delta = c - d;
     if (delta > 0)
     {
       if (delta > mem[r + 4].cint)
-      delta = mem[r + 4].cint;
+        delta = mem[r + 4].cint;
       if (delta >= mem[q + 4].cint)
       {
         delta = mem[q + 4].cint;
         mem[p + 6].cint = c - delta;
         mem[p + 5].cint = u;
         mem[q + 3].cint = v;
-        mem[q + 1].cint = mem[q + 1].cint - delta * mem[r + 3]
-        .cint;
-        mem[q + 2].cint = mem[q + 2].cint + delta * mem[q + 5]
-        .cint;
+        mem[q + 1].cint = mem[q + 1].cint - delta * mem[r + 3].cint;
+        mem[q + 2].cint = mem[q + 2].cint + delta * mem[q + 5].cint;
         mem[r + 4].cint = mem[r + 4].cint - delta;
       }
-      else {
+      else
+      {
         s = get_node (7);
         mem[p].hh.v.RH = s;
         mem[s].hh.v.RH = q;
-        mem[s + 1].cint = mem[q + 1].cint + delta * mem[q + 3]
-        .cint;
-        mem[s + 2].cint = mem[q + 2].cint - delta * mem[p + 5]
-        .cint;
-        mem[q + 1].cint = mem[q + 1].cint - delta * mem[r + 3]
-        .cint;
-        mem[q + 2].cint = mem[q + 2].cint + delta * mem[q + 5]
-        .cint;
+        mem[s + 1].cint = mem[q + 1].cint + delta * mem[q + 3].cint;
+        mem[s + 2].cint = mem[q + 2].cint - delta * mem[p + 5].cint;
+        mem[q + 1].cint = mem[q + 1].cint - delta * mem[r + 3].cint;
+        mem[q + 2].cint = mem[q + 2].cint + delta * mem[q + 5].cint;
         mem[s + 3].cint = mem[q + 3].cint;
         mem[s + 5].cint = u;
         mem[q + 3].cint = v;
@@ -11844,11 +11957,13 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
         mem[r + 4].cint = mem[r + 4].cint - delta;
       }
     }
-    else p = q;
-    while (true) {
+    else
+      p = q;
+    while (true)
+    {
       q = mem[p].hh.v.RH;
       if (q == 0)
-      goto done;
+        goto done;
       if (mem[q + 4].cint == 0)
       {
         mem[p].hh.v.RH = mem[q].hh.v.RH;
@@ -11856,17 +11971,19 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
         mem[p + 5].cint = mem[q + 5].cint;
         free_node (q, 7);
       }
-      else {
+      else
+      {
         r = mem[q].hh.v.RH;
         if (r == 0)
-        goto done;
+          goto done;
         if (mem[r + 4].cint == 0)
         {
           mem[p].hh.v.RH = r;
           free_node (q, 7);
           p = r;
         }
-        else goto found;
+        else
+          goto found;
       }
     }
     found:;
@@ -11876,23 +11993,26 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
   {
     s = 0;
     q = h;
-    while (true) {
+    while (true)
+    {
       r = get_node (7);
       mem[r].hh.v.RH = s;
       s = r;
       mem[s + 1].cint = mem[q + 1].cint;
       mem[s + 2].cint = - (integer) mem[q + 2].cint;
       if (q == p)
-      goto done1;
+        goto done1;
       q = mem[q].hh.v.RH;
       if (mem[q + 2].cint == 0)
-      goto done1;
+        goto done1;
     }
-    done1: if ((mem[p].hh.v.RH != 0))
-    free_node (mem[p].hh.v.RH, 7);
+  done1:
+    if ((mem[p].hh.v.RH != 0))
+      free_node (mem[p].hh.v.RH, 7);
     mem[p].hh.v.RH = s;
     beta = - (integer) mem[h + 2].cint;
-    while (mem[p + 2].cint != beta) p = mem[p].hh.v.RH;
+    while (mem[p + 2].cint != beta)
+      p = mem[p].hh.v.RH;
     q = mem[p].hh.v.RH;
   }
   if (q != 0)
@@ -11906,10 +12026,11 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
     }
     p = q;
   }
-  else q = p;
+  else
+    q = p;
   r = mem[h].hh.v.RH;
   do {
-      s = get_node (7);
+    s = get_node (7);
     mem[p].hh.v.RH = s;
     p = s;
     mem[p + 1].cint = - (integer) mem[r + 1].cint;
@@ -11923,36 +12044,42 @@ halfword make_ellipse (scaled majoraxis, scaled minoraxis, angle theta)
 
 scaled find_direction_time (scaled x, scaled y, halfword h)
 {
-  scaled Result; scaled max;
+  scaled Result;
+  scaled max;
   halfword p, q;
   scaled n;
   scaled tt;
   scaled x1, x2, x3, y1, y2, y3;
   angle theta, phi;
   fraction t;
+
   if (abs (x) < abs (y))
   {
     x = make_fraction (x, abs (y));
     if (y > 0)
-    y = 268435456L;
-    else y = -268435456L;
+      y = 268435456L;
+    else
+      y = -268435456L;
   }
   else if (x == 0)
   {
     Result = 0;
     goto lab_exit;
   }
-  else {
+  else
+  {
     y = make_fraction (y, abs (x));
     if (x > 0)
-    x = 268435456L;
-    else x = -268435456L;
+      x = 268435456L;
+    else
+      x = -268435456L;
   }
   n = 0;
   p = h;
-  while (true) {
+  while (true)
+  {
     if (mem[p].hh.b1 == 0)
-    goto not_found;
+      goto not_found;
     q = mem[p].hh.v.RH;
     tt = 0;
     x1 = mem[p + 5].cint - mem[p + 1].cint;
@@ -11963,18 +12090,19 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
     y3 = mem[q + 2].cint - mem[q + 4].cint;
     max = abs (x1);
     if (abs (x2) > max)
-    max = abs (x2);
+      max = abs (x2);
     if (abs (x3) > max)
-    max = abs (x3);
+      max = abs (x3);
     if (abs (y1) > max)
-    max = abs (y1);
+      max = abs (y1);
     if (abs (y2) > max)
-    max = abs (y2);
+      max = abs (y2);
     if (abs (y3) > max)
-    max = abs (y3);
+      max = abs (y3);
     if (max == 0)
-    goto found;
-    while (max < 134217728L) {
+      goto found;
+    while (max < 134217728L)
+    {
       max = max + max;
       x1 = x1 + x1;
       x2 = x2 + x2;
@@ -11992,34 +12120,41 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
     t = x3;
     x3 = take_fraction (x3, x) + take_fraction (y3, y);
     y3 = take_fraction (y3, x) - take_fraction (t, y);
-    if (y1 == 0) {
+    if (y1 == 0)
+    {
       if (x1 >= 0)
-      goto found;
+        goto found;
     }
     if (n > 0)
     {
       theta = n_arg (x1, y1);
-      if (theta >= 0) {
-        if (phi <= 0) {
+      if (theta >= 0)
+      {
+        if (phi <= 0)
+        {
           if (phi >= theta - 188743680L)
           goto found;
         }
       }
-      if (theta <= 0) {
-        if (phi >= 0) {
+      if (theta <= 0)
+      {
+        if (phi >= 0)
+        {
           if (phi <= theta + 188743680L)
-          goto found;
+            goto found;
         }
       }
       if (p == h)
-      goto not_found;
+        goto not_found;
     }
     if ((x3 != 0) || (y3 != 0))
-    phi = n_arg (x3, y3);
-    if (x1 < 0) {
-      if (x2 < 0) {
+      phi = n_arg (x3, y3);
+    if (x1 < 0)
+    {
+      if (x2 < 0)
+      {
         if (x3 < 0)
-        goto done;
+          goto done;
       }
     }
     if (ab_vs_cd (y1, y3, y2, y2) == 0)
@@ -12035,11 +12170,11 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
           goto found;
         }
       }
-      else if (y3 == 0) {
+      else if (y3 == 0)
+      {
         if (y1 == 0)
         {
-          t = crossing_point (- (integer) x1, - (integer) x2, - (integer) x3
-        );
+          t = crossing_point (- (integer) x1, - (integer) x2, - (integer) x3);
           if (t <= 268435456L)
           {
             tt = (t + 2048) / 4096;
@@ -12062,7 +12197,8 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       }
       goto done;
     }
-    if (y1 <= 0) {
+    if (y1 <= 0)
+    {
       if (y1 < 0)
       {
         y1 = - (integer) y1;
@@ -12077,7 +12213,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
     }
     t = crossing_point (y1, y2, y3);
     if (t > 268435456L)
-    goto done;
+      goto done;
     y2 = y2 - take_fraction (y2 - y3, t);
     x1 = x1 - take_fraction (x1 - x2, t);
     x2 = x2 - take_fraction (x2 - x3, t);
@@ -12088,11 +12224,11 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       goto found;
     }
     if (y2 > 0)
-    y2 = 0;
+      y2 = 0;
     tt = t;
     t = crossing_point (0, - (integer) y2, - (integer) y3);
     if (t > 268435456L)
-    goto done;
+      goto done;
     x1 = x1 - take_fraction (x1 - x2, t);
     x2 = x2 - take_fraction (x2 - x3, t);
     if (x1 - take_fraction (x1 - x2, t) >= 0)
@@ -12117,6 +12253,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
 void cubic_intersection (halfword p, halfword pp)
 {
   halfword q, qq;
+
   time_to_go = 5000;
   max_t = 2;
   q = mem[p].hh.v.RH;
@@ -12125,196 +12262,178 @@ void cubic_intersection (halfword p, halfword pp)
   bisect_stack[bisect_ptr - 5] = mem[p + 5].cint - mem[p + 1].cint;
   bisect_stack[bisect_ptr - 4] = mem[q + 3].cint - mem[p + 5].cint;
   bisect_stack[bisect_ptr - 3] = mem[q + 1].cint - mem[q + 3].cint;
-  if (bisect_stack[bisect_ptr - 5]< 0) {
+  if (bisect_stack[bisect_ptr - 5]< 0)
+  {
     if (bisect_stack[bisect_ptr - 3] >= 0)
     {
       if (bisect_stack[bisect_ptr - 4]< 0)
-      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+
-      bisect_stack[bisect_ptr - 4];
-      else bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+
-      bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-      if (bisect_stack[bisect_ptr - 1]< 0)
-      bisect_stack[bisect_ptr - 1] = 0;
+        bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ bisect_stack[bisect_ptr - 4];
+      else
+        bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+      if (bisect_stack[bisect_ptr - 1] < 0)
+        bisect_stack[bisect_ptr - 1] = 0;
     }
-    else {
-      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+
-      bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+    else
+    {
+      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
       if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr - 5])
-      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+
-      bisect_stack[bisect_ptr - 4];
+        bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
       if (bisect_stack[bisect_ptr - 1]< 0)
-      bisect_stack[bisect_ptr - 1] = 0;
+        bisect_stack[bisect_ptr - 1] = 0;
     }
   }
   else if (bisect_stack[bisect_ptr - 3]<= 0)
   {
     if (bisect_stack[bisect_ptr - 4] > 0)
-    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+
-    bisect_stack[bisect_ptr - 4];
-    else bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+
-    bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
+    else
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
     if (bisect_stack[bisect_ptr - 2] > 0)
-    bisect_stack[bisect_ptr - 2] = 0;
+      bisect_stack[bisect_ptr - 2] = 0;
   }
-  else {
-    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+
-    bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+  else
+  {
+    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
     if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5])
-    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+
-    bisect_stack[bisect_ptr - 4];
+      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
     if (bisect_stack[bisect_ptr - 2] > 0)
-    bisect_stack[bisect_ptr - 2] = 0;
+      bisect_stack[bisect_ptr - 2] = 0;
   }
   bisect_stack[bisect_ptr - 10] = mem[p + 6].cint - mem[p + 2].cint;
   bisect_stack[bisect_ptr - 9] = mem[q + 4].cint - mem[p + 6].cint;
   bisect_stack[bisect_ptr - 8] = mem[q + 2].cint - mem[q + 4].cint;
-  if (bisect_stack[bisect_ptr - 10]< 0) {
+  if (bisect_stack[bisect_ptr - 10]< 0)
+  {
     if (bisect_stack[bisect_ptr - 8] >= 0)
     {
-      if (bisect_stack[bisect_ptr - 9]< 0)
-      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+
-      bisect_stack[bisect_ptr - 9];
-      else bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+
-      bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-      if (bisect_stack[bisect_ptr - 6]< 0)
-      bisect_stack[bisect_ptr - 6] = 0;
+      if (bisect_stack[bisect_ptr - 9] < 0)
+        bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
+      else
+        bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+      if (bisect_stack[bisect_ptr - 6] < 0)
+        bisect_stack[bisect_ptr - 6] = 0;
     }
-    else {
-      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+
-      bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+    else
+    {
+      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
       if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr - 10])
-      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+
-      bisect_stack[bisect_ptr - 9];
+        bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
       if (bisect_stack[bisect_ptr - 6]< 0)
-      bisect_stack[bisect_ptr - 6] = 0;
+        bisect_stack[bisect_ptr - 6] = 0;
     }
   }
   else if (bisect_stack[bisect_ptr - 8]<= 0)
   {
     if (bisect_stack[bisect_ptr - 9] > 0)
-    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+
-    bisect_stack[bisect_ptr - 9];
-    else bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+
-    bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
+    else
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
     if (bisect_stack[bisect_ptr - 7] > 0)
-    bisect_stack[bisect_ptr - 7] = 0;
+      bisect_stack[bisect_ptr - 7] = 0;
   }
-  else {
-    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+
-    bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+  else
+  {
+    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
     if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr - 10])
-    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+
-    bisect_stack[bisect_ptr - 9];
+      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
     if (bisect_stack[bisect_ptr - 7] > 0)
-    bisect_stack[bisect_ptr - 7] = 0;
+      bisect_stack[bisect_ptr - 7] = 0;
   }
-  bisect_stack[bisect_ptr - 15] = mem[pp + 5].cint - mem[pp + 1].cint
-;
-  bisect_stack[bisect_ptr - 14] = mem[qq + 3].cint - mem[pp + 5].cint
-;
-  bisect_stack[bisect_ptr - 13] = mem[qq + 1].cint - mem[qq + 3].cint
-;
-  if (bisect_stack[bisect_ptr - 15]< 0) {
+  bisect_stack[bisect_ptr - 15] = mem[pp + 5].cint - mem[pp + 1].cint;
+  bisect_stack[bisect_ptr - 14] = mem[qq + 3].cint - mem[pp + 5].cint;
+  bisect_stack[bisect_ptr - 13] = mem[qq + 1].cint - mem[qq + 3].cint;
+  if (bisect_stack[bisect_ptr - 15]< 0)
+  {
     if (bisect_stack[bisect_ptr - 13] >= 0)
     {
       if (bisect_stack[bisect_ptr - 14]< 0)
-      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+
-      bisect_stack[bisect_ptr - 14];
-      else bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+
-      bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-      if (bisect_stack[bisect_ptr - 11]< 0)
-      bisect_stack[bisect_ptr - 11] = 0;
+        bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
+      else
+        bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+      if (bisect_stack[bisect_ptr - 11] < 0)
+        bisect_stack[bisect_ptr - 11] = 0;
     }
-    else {
-      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+
-      bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+    else
+    {
+      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
       if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr - 15])
-      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+
-      bisect_stack[bisect_ptr - 14];
-      if (bisect_stack[bisect_ptr - 11]< 0)
-      bisect_stack[bisect_ptr - 11] = 0;
+        bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
+      if (bisect_stack[bisect_ptr - 11] < 0)
+        bisect_stack[bisect_ptr - 11] = 0;
     }
   }
   else if (bisect_stack[bisect_ptr - 13]<= 0)
   {
     if (bisect_stack[bisect_ptr - 14] > 0)
-    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+
-    bisect_stack[bisect_ptr - 14];
-    else bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
-    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+
-    bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
+    else
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
+    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
     if (bisect_stack[bisect_ptr - 12] > 0)
-    bisect_stack[bisect_ptr - 12] = 0;
+      bisect_stack[bisect_ptr - 12] = 0;
   }
-  else {
-    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+
-    bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-    if (bisect_stack[bisect_ptr - 11]< bisect_stack[bisect_ptr - 15])
-    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
-    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+
-    bisect_stack[bisect_ptr - 14];
+  else
+  {
+    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14] + bisect_stack[bisect_ptr - 13];
+    if (bisect_stack[bisect_ptr - 11] < bisect_stack[bisect_ptr - 15])
+      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
+    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
     if (bisect_stack[bisect_ptr - 12] > 0)
-    bisect_stack[bisect_ptr - 12] = 0;
+      bisect_stack[bisect_ptr - 12] = 0;
   }
-  bisect_stack[bisect_ptr - 20] = mem[pp + 6].cint - mem[pp + 2].cint
-;
-  bisect_stack[bisect_ptr - 19] = mem[qq + 4].cint - mem[pp + 6].cint
-;
-  bisect_stack[bisect_ptr - 18] = mem[qq + 2].cint - mem[qq + 4].cint
-;
-  if (bisect_stack[bisect_ptr - 20]< 0) {
+  bisect_stack[bisect_ptr - 20] = mem[pp + 6].cint - mem[pp + 2].cint;
+  bisect_stack[bisect_ptr - 19] = mem[qq + 4].cint - mem[pp + 6].cint;
+  bisect_stack[bisect_ptr - 18] = mem[qq + 2].cint - mem[qq + 4].cint;
+  if (bisect_stack[bisect_ptr - 20]< 0)
+  {
     if (bisect_stack[bisect_ptr - 18] >= 0)
     {
       if (bisect_stack[bisect_ptr - 19]< 0)
-      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+
-      bisect_stack[bisect_ptr - 19];
-      else bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+
-      bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-      if (bisect_stack[bisect_ptr - 16]< 0)
-      bisect_stack[bisect_ptr - 16] = 0;
+        bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
+      else
+        bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+      if (bisect_stack[bisect_ptr - 16] < 0)
+        bisect_stack[bisect_ptr - 16] = 0;
     }
-    else {
-      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+
-      bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+    else
+    {
+      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
       if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr - 20])
-      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+
-      bisect_stack[bisect_ptr - 19];
-      if (bisect_stack[bisect_ptr - 16]< 0)
-      bisect_stack[bisect_ptr - 16] = 0;
+        bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
+      if (bisect_stack[bisect_ptr - 16] < 0)
+        bisect_stack[bisect_ptr - 16] = 0;
     }
   }
   else if (bisect_stack[bisect_ptr - 18]<= 0)
   {
     if (bisect_stack[bisect_ptr - 19] > 0)
-    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+
-    bisect_stack[bisect_ptr - 19];
-    else bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
-    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+
-    bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
+    else
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
+    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
     if (bisect_stack[bisect_ptr - 17] > 0)
-    bisect_stack[bisect_ptr - 17] = 0;
+      bisect_stack[bisect_ptr - 17] = 0;
   }
-  else {
-    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]+
-    bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+  else
+  {
+    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
     if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr - 20])
-    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
-    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]+
-    bisect_stack[bisect_ptr - 19];
+      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
+    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
     if (bisect_stack[bisect_ptr - 17] > 0)
-    bisect_stack[bisect_ptr - 17] = 0;
+      bisect_stack[bisect_ptr - 17] = 0;
   }
   delx = mem[p + 1].cint - mem[pp + 1].cint;
   dely = mem[p + 2].cint - mem[pp + 2].cint;
@@ -12324,14 +12443,16 @@ void cubic_intersection (halfword p, halfword pp)
   three_l = 0;
   cur_t = 1;
   cur_tt = 1;
-  while (true) {
-    lab_continue: if (delx - tol <= bisect_stack[xy - 11] - bisect_stack[uv - 2]
- ) {
-      if (delx + tol >= bisect_stack[xy - 12] - bisect_stack[uv - 1]) {
+  while (true)
+  {
+  lab_continue:
+    if (delx - tol <= bisect_stack[xy - 11] - bisect_stack[uv - 2])
+    {
+      if (delx + tol >= bisect_stack[xy - 12] - bisect_stack[uv - 1])
+      {
         if (dely - tol <= bisect_stack[xy - 16] - bisect_stack[uv - 7])
         {
-          if (dely + tol >= bisect_stack[xy - 17] - bisect_stack[uv - 6]
-        )
+          if (dely + tol >= bisect_stack[xy - 17] - bisect_stack[uv - 6])
           {
             if (cur_t >= max_t)
             {
@@ -12355,465 +12476,355 @@ void cubic_intersection (halfword p, halfword pp)
             cur_tt = cur_tt + cur_tt;
             bisect_stack[bisect_ptr - 25] = bisect_stack[uv - 5];
             bisect_stack[bisect_ptr - 3] = bisect_stack[uv - 3];
-            bisect_stack[bisect_ptr - 24] = half (bisect_stack[bisect_ptr -
-            25]+ bisect_stack[uv - 4]);
-            bisect_stack[bisect_ptr - 4] = half (bisect_stack[bisect_ptr - 3
-          ]+ bisect_stack[uv - 4]);
-            bisect_stack[bisect_ptr - 23] = half (bisect_stack[bisect_ptr -
-            24]+ bisect_stack[bisect_ptr - 4]);
+            bisect_stack[bisect_ptr - 24] = half (bisect_stack[bisect_ptr - 25]+ bisect_stack[uv - 4]);
+            bisect_stack[bisect_ptr - 4] = half (bisect_stack[bisect_ptr - 3]+ bisect_stack[uv - 4]);
+            bisect_stack[bisect_ptr - 23] = half (bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 4]);
             bisect_stack[bisect_ptr - 5] = bisect_stack[bisect_ptr - 23];
-            if (bisect_stack[bisect_ptr - 25]< 0) {
+            if (bisect_stack[bisect_ptr - 25]< 0)
+            {
               if (bisect_stack[bisect_ptr - 23] >= 0)
               {
-                if (bisect_stack[bisect_ptr - 24]< 0)
-                bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25
-                ]+ bisect_stack[bisect_ptr - 24];
-                else bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr
-                - 25];
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25
-                ]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr -
-                23];
+                if (bisect_stack[bisect_ptr - 24] < 0)
+                  bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
+                else
+                  bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25];
+                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
                 if (bisect_stack[bisect_ptr - 21]< 0)
-                bisect_stack[bisect_ptr - 21] = 0;
+                  bisect_stack[bisect_ptr - 21] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25
-                ]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr -
-                23];
-                if (bisect_stack[bisect_ptr - 22] > bisect_stack[bisect_ptr
-                - 25])
-                bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25
-                ];
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25
-                ]+ bisect_stack[bisect_ptr - 24];
-                if (bisect_stack[bisect_ptr - 21]< 0)
-                bisect_stack[bisect_ptr - 21] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
+                if (bisect_stack[bisect_ptr - 22] > bisect_stack[bisect_ptr - 25])
+                  bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25];
+                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
+                if (bisect_stack[bisect_ptr - 21] < 0)
+                  bisect_stack[bisect_ptr - 21] = 0;
               }
             }
             else if (bisect_stack[bisect_ptr - 23]<= 0)
             {
               if (bisect_stack[bisect_ptr - 24] > 0)
-              bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]
-              + bisect_stack[bisect_ptr - 24];
-              else bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr -
-              25];
-              bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25]
-              + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23
-            ];
+                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
+              else
+                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25];
+              bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
               if (bisect_stack[bisect_ptr - 22] > 0)
-              bisect_stack[bisect_ptr - 22] = 0;
+                bisect_stack[bisect_ptr - 22] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]
-              + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23
-            ];
-              if (bisect_stack[bisect_ptr - 21]< bisect_stack[bisect_ptr -
-              25])
-              bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]
-        ;
-              bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25]
-              + bisect_stack[bisect_ptr - 24];
+            else
+            {
+              bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
+              if (bisect_stack[bisect_ptr - 21]< bisect_stack[bisect_ptr - 25])
+                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25];
+              bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
               if (bisect_stack[bisect_ptr - 22] > 0)
-              bisect_stack[bisect_ptr - 22] = 0;
+                bisect_stack[bisect_ptr - 22] = 0;
             }
-            if (bisect_stack[bisect_ptr - 5]< 0) {
+            if (bisect_stack[bisect_ptr - 5]< 0)
+            {
               if (bisect_stack[bisect_ptr - 3] >= 0)
               {
                 if (bisect_stack[bisect_ptr - 4]< 0)
-                bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]
-                + bisect_stack[bisect_ptr - 4];
-                else bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr -
-                5];
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]
-                + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3
-                ];
-                if (bisect_stack[bisect_ptr - 1]< 0)
-                bisect_stack[bisect_ptr - 1] = 0;
+                  bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
+                else
+                  bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
+                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+                if (bisect_stack[bisect_ptr - 1] < 0)
+                  bisect_stack[bisect_ptr - 1] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]
-                + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3
-                ];
-                if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr -
-                5])
-                bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]
-                ;
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]
-                + bisect_stack[bisect_ptr - 4];
-                if (bisect_stack[bisect_ptr - 1]< 0)
-                bisect_stack[bisect_ptr - 1] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+                if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr - 5])
+                  bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
+                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
+                if (bisect_stack[bisect_ptr - 1] < 0)
+                  bisect_stack[bisect_ptr - 1] = 0;
               }
             }
             else if (bisect_stack[bisect_ptr - 3]<= 0)
             {
               if (bisect_stack[bisect_ptr - 4] > 0)
-              bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+
-              bisect_stack[bisect_ptr - 4];
-              else bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5
-            ];
-              bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+
-              bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
+              else
+                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+              bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
               if (bisect_stack[bisect_ptr - 2] > 0)
-              bisect_stack[bisect_ptr - 2] = 0;
+                bisect_stack[bisect_ptr - 2] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5]+
-              bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-              if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5
-            ])
-              bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-              bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+
-              bisect_stack[bisect_ptr - 4];
+            else
+            {
+              bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
+              if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5])
+                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
+              bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
               if (bisect_stack[bisect_ptr - 2] > 0)
-              bisect_stack[bisect_ptr - 2] = 0;
+                bisect_stack[bisect_ptr - 2] = 0;
             }
             bisect_stack[bisect_ptr - 30] = bisect_stack[uv - 10];
             bisect_stack[bisect_ptr - 8] = bisect_stack[uv - 8];
-            bisect_stack[bisect_ptr - 29] = half (bisect_stack[bisect_ptr -
-            30]+ bisect_stack[uv - 9]);
-            bisect_stack[bisect_ptr - 9] = half (bisect_stack[bisect_ptr - 8
-          ]+ bisect_stack[uv - 9]);
-            bisect_stack[bisect_ptr - 28] = half (bisect_stack[bisect_ptr -
-            29]+ bisect_stack[bisect_ptr - 9]);
+            bisect_stack[bisect_ptr - 29] = half (bisect_stack[bisect_ptr - 30]+ bisect_stack[uv - 9]);
+            bisect_stack[bisect_ptr - 9] = half (bisect_stack[bisect_ptr - 8] + bisect_stack[uv - 9]);
+            bisect_stack[bisect_ptr - 28] = half (bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 9]);
             bisect_stack[bisect_ptr - 10] = bisect_stack[bisect_ptr - 28];
-            if (bisect_stack[bisect_ptr - 30]< 0) {
+            if (bisect_stack[bisect_ptr - 30] < 0)
+            {
               if (bisect_stack[bisect_ptr - 28] >= 0)
               {
                 if (bisect_stack[bisect_ptr - 29]< 0)
-                bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30
-                ]+ bisect_stack[bisect_ptr - 29];
-                else bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr
-                - 30];
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30
-                ]+ bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr -
-                28];
-                if (bisect_stack[bisect_ptr - 26]< 0)
-                bisect_stack[bisect_ptr - 26] = 0;
+                  bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30]+ bisect_stack[bisect_ptr - 29];
+                else
+                  bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30];
+                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
+                if (bisect_stack[bisect_ptr - 26] < 0)
+                  bisect_stack[bisect_ptr - 26] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30
-                ]+ bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr -
-                28];
-                if (bisect_stack[bisect_ptr - 27] > bisect_stack[bisect_ptr
-                - 30])
-                bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30
-                ];
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30
-                ]+ bisect_stack[bisect_ptr - 29];
-                if (bisect_stack[bisect_ptr - 26]< 0)
-                bisect_stack[bisect_ptr - 26] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
+                if (bisect_stack[bisect_ptr - 27] > bisect_stack[bisect_ptr - 30])
+                  bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30];
+                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]+ bisect_stack[bisect_ptr - 29];
+                if (bisect_stack[bisect_ptr - 26] < 0)
+                  bisect_stack[bisect_ptr - 26] = 0;
               }
             }
-            else if (bisect_stack[bisect_ptr - 28]<= 0)
+            else if (bisect_stack[bisect_ptr - 28] <= 0)
             {
               if (bisect_stack[bisect_ptr - 29] > 0)
-              bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]
-              + bisect_stack[bisect_ptr - 29];
-              else bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr -
-              30];
-              bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30]
-              + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28
-            ];
+                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29];
+              else
+                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30];
+              bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
               if (bisect_stack[bisect_ptr - 27] > 0)
-              bisect_stack[bisect_ptr - 27] = 0;
+                bisect_stack[bisect_ptr - 27] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]
-              + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28
-            ];
-              if (bisect_stack[bisect_ptr - 26]< bisect_stack[bisect_ptr -
-              30])
-              bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]
-        ;
-              bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30]
-              + bisect_stack[bisect_ptr - 29];
+            else
+            {
+              bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
+              if (bisect_stack[bisect_ptr - 26]< bisect_stack[bisect_ptr - 30])
+                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30];
+              bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29];
               if (bisect_stack[bisect_ptr - 27] > 0)
-              bisect_stack[bisect_ptr - 27] = 0;
+                bisect_stack[bisect_ptr - 27] = 0;
             }
-            if (bisect_stack[bisect_ptr - 10]< 0) {
+            if (bisect_stack[bisect_ptr - 10] < 0)
+            {
               if (bisect_stack[bisect_ptr - 8] >= 0)
               {
-                if (bisect_stack[bisect_ptr - 9]< 0)
-                bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]
-                + bisect_stack[bisect_ptr - 9];
-                else bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr -
-                10];
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]
-                + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8
-                ];
-                if (bisect_stack[bisect_ptr - 6]< 0)
-                bisect_stack[bisect_ptr - 6] = 0;
+                if (bisect_stack[bisect_ptr - 9] < 0)
+                 bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
+                else
+                  bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
+                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+                if (bisect_stack[bisect_ptr - 6] < 0)
+                  bisect_stack[bisect_ptr - 6] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]
-                + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8
-                ];
-                if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr -
-                10])
-                bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]
-                ;
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]
-                + bisect_stack[bisect_ptr - 9];
-                if (bisect_stack[bisect_ptr - 6]< 0)
-                bisect_stack[bisect_ptr - 6] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+                if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr - 10])
+                  bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
+                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
+                if (bisect_stack[bisect_ptr - 6] < 0)
+                  bisect_stack[bisect_ptr - 6] = 0;
               }
             }
-            else if (bisect_stack[bisect_ptr - 8]<= 0)
+            else if (bisect_stack[bisect_ptr - 8] <= 0)
             {
               if (bisect_stack[bisect_ptr - 9] > 0)
-              bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+
-              bisect_stack[bisect_ptr - 9];
-              else bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr -
-              10];
-              bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+
-              bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
+              else
+                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+              bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
               if (bisect_stack[bisect_ptr - 7] > 0)
-              bisect_stack[bisect_ptr - 7] = 0;
+                bisect_stack[bisect_ptr - 7] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10]+
-              bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-              if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr -
-              10])
-              bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-              bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10]+
-              bisect_stack[bisect_ptr - 9];
+            else
+            {
+              bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
+              if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr - 10])
+                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
+              bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
               if (bisect_stack[bisect_ptr - 7] > 0)
-              bisect_stack[bisect_ptr - 7] = 0;
+                bisect_stack[bisect_ptr - 7] = 0;
             }
             bisect_stack[bisect_ptr - 35] = bisect_stack[xy - 15];
             bisect_stack[bisect_ptr - 13] = bisect_stack[xy - 13];
-            bisect_stack[bisect_ptr - 34] = half (bisect_stack[bisect_ptr -
-            35]+ bisect_stack[xy - 14]);
-            bisect_stack[bisect_ptr - 14] = half (bisect_stack[bisect_ptr -
-            13]+ bisect_stack[xy - 14]);
-            bisect_stack[bisect_ptr - 33] = half (bisect_stack[bisect_ptr -
-            34]+ bisect_stack[bisect_ptr - 14]);
+            bisect_stack[bisect_ptr - 34] = half (bisect_stack[bisect_ptr - 35]+ bisect_stack[xy - 14]);
+            bisect_stack[bisect_ptr - 14] = half (bisect_stack[bisect_ptr - 13]+ bisect_stack[xy - 14]);
+            bisect_stack[bisect_ptr - 33] = half (bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 14]);
             bisect_stack[bisect_ptr - 15] = bisect_stack[bisect_ptr - 33];
-            if (bisect_stack[bisect_ptr - 35]< 0) {
+            if (bisect_stack[bisect_ptr - 35] < 0)
+            {
               if (bisect_stack[bisect_ptr - 33] >= 0)
               {
-                if (bisect_stack[bisect_ptr - 34]< 0)
-                bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35
-                ]+ bisect_stack[bisect_ptr - 34];
-                else bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr
-                - 35];
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35
-                ]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr -
-                33];
-                if (bisect_stack[bisect_ptr - 31]< 0)
-                bisect_stack[bisect_ptr - 31] = 0;
+                if (bisect_stack[bisect_ptr - 34] < 0)
+                  bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]+ bisect_stack[bisect_ptr - 34];
+                else
+                  bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35];
+                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
+                if (bisect_stack[bisect_ptr - 31] < 0)
+                  bisect_stack[bisect_ptr - 31] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35
-                ]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr -
-                33];
-                if (bisect_stack[bisect_ptr - 32] > bisect_stack[bisect_ptr
-                - 35])
-                bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35
-                ];
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35
-                ]+ bisect_stack[bisect_ptr - 34];
-                if (bisect_stack[bisect_ptr - 31]< 0)
-                bisect_stack[bisect_ptr - 31] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
+                if (bisect_stack[bisect_ptr - 32] > bisect_stack[bisect_ptr - 35])
+                  bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35];
+                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34];
+                if (bisect_stack[bisect_ptr - 31] < 0)
+                  bisect_stack[bisect_ptr - 31] = 0;
               }
             }
-            else if (bisect_stack[bisect_ptr - 33]<= 0)
+            else if (bisect_stack[bisect_ptr - 33] <= 0)
             {
               if (bisect_stack[bisect_ptr - 34] > 0)
-              bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]
-              + bisect_stack[bisect_ptr - 34];
-              else bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr -
-              35];
-              bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]
-              + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33
-            ];
+                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34];
+              else
+                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35];
+              bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
               if (bisect_stack[bisect_ptr - 32] > 0)
-              bisect_stack[bisect_ptr - 32] = 0;
+                bisect_stack[bisect_ptr - 32] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]
-              + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33
-            ];
-              if (bisect_stack[bisect_ptr - 31]< bisect_stack[bisect_ptr -
-              35])
-              bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]
-        ;
-              bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]
-              + bisect_stack[bisect_ptr - 34];
+            else
+            {
+              bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
+              if (bisect_stack[bisect_ptr - 31]< bisect_stack[bisect_ptr - 35])
+                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35];
+              bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34];
               if (bisect_stack[bisect_ptr - 32] > 0)
-              bisect_stack[bisect_ptr - 32] = 0;
+                bisect_stack[bisect_ptr - 32] = 0;
             }
-            if (bisect_stack[bisect_ptr - 15]< 0) {
+            if (bisect_stack[bisect_ptr - 15] < 0)
+            {
               if (bisect_stack[bisect_ptr - 13] >= 0)
               {
-                if (bisect_stack[bisect_ptr - 14]< 0)
-                bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15
-                ]+ bisect_stack[bisect_ptr - 14];
-                else bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr
-                - 15];
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15
-                ]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr -
-                13];
-                if (bisect_stack[bisect_ptr - 11]< 0)
-                bisect_stack[bisect_ptr - 11] = 0;
+                if (bisect_stack[bisect_ptr - 14] < 0)
+                  bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
+                else
+                  bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
+                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+                if (bisect_stack[bisect_ptr - 11] < 0)
+                  bisect_stack[bisect_ptr - 11] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15
-                ]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr -
-                13];
-                if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr
-                - 15])
-                bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15
-                ];
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15
-                ]+ bisect_stack[bisect_ptr - 14];
-                if (bisect_stack[bisect_ptr - 11]< 0)
-                bisect_stack[bisect_ptr - 11] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+                if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr - 15])
+                  bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
+                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
+                if (bisect_stack[bisect_ptr - 11] < 0)
+                  bisect_stack[bisect_ptr - 11] = 0;
               }
             }
             else if (bisect_stack[bisect_ptr - 13]<= 0)
             {
               if (bisect_stack[bisect_ptr - 14] > 0)
-              bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]
-              + bisect_stack[bisect_ptr - 14];
-              else bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr -
-              15];
-              bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]
-              + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13
-            ];
+                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
+              else
+                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
+              bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
               if (bisect_stack[bisect_ptr - 12] > 0)
-              bisect_stack[bisect_ptr - 12] = 0;
+                bisect_stack[bisect_ptr - 12] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]
-              + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13
-            ];
-              if (bisect_stack[bisect_ptr - 11]< bisect_stack[bisect_ptr -
-              15])
-              bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]
-        ;
-              bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]
-              + bisect_stack[bisect_ptr - 14];
+            else
+            {
+              bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
+              if (bisect_stack[bisect_ptr - 11]< bisect_stack[bisect_ptr - 15])
+                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
+              bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
               if (bisect_stack[bisect_ptr - 12] > 0)
-              bisect_stack[bisect_ptr - 12] = 0;
+                bisect_stack[bisect_ptr - 12] = 0;
             }
             bisect_stack[bisect_ptr - 40] = bisect_stack[xy - 20];
             bisect_stack[bisect_ptr - 18] = bisect_stack[xy - 18];
-            bisect_stack[bisect_ptr - 39] = half (bisect_stack[bisect_ptr -
-            40]+ bisect_stack[xy - 19]);
-            bisect_stack[bisect_ptr - 19] = half (bisect_stack[bisect_ptr -
-            18]+ bisect_stack[xy - 19]);
-            bisect_stack[bisect_ptr - 38] = half (bisect_stack[bisect_ptr -
-            39]+ bisect_stack[bisect_ptr - 19]);
+            bisect_stack[bisect_ptr - 39] = half (bisect_stack[bisect_ptr - 40] + bisect_stack[xy - 19]);
+            bisect_stack[bisect_ptr - 19] = half (bisect_stack[bisect_ptr - 18] + bisect_stack[xy - 19]);
+            bisect_stack[bisect_ptr - 38] = half (bisect_stack[bisect_ptr - 39] + bisect_stack[bisect_ptr - 19]);
             bisect_stack[bisect_ptr - 20] = bisect_stack[bisect_ptr - 38];
-            if (bisect_stack[bisect_ptr - 40]< 0) {
+            if (bisect_stack[bisect_ptr - 40] < 0)
+            {
               if (bisect_stack[bisect_ptr - 38] >= 0)
               {
-                if (bisect_stack[bisect_ptr - 39]< 0)
-                bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40
-                ]+ bisect_stack[bisect_ptr - 39];
-                else bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr
-                - 40];
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40
-                ]+ bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr -
-                38];
-                if (bisect_stack[bisect_ptr - 36]< 0)
-                bisect_stack[bisect_ptr - 36] = 0;
+                if (bisect_stack[bisect_ptr - 39] < 0)
+                  bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39];
+                else
+                  bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40];
+                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
+                if (bisect_stack[bisect_ptr - 36] < 0)
+                  bisect_stack[bisect_ptr - 36] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40
-                ]+ bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr -
-                38];
-                if (bisect_stack[bisect_ptr - 37] > bisect_stack[bisect_ptr
-                - 40])
-                bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40
-                ];
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40
-                ]+ bisect_stack[bisect_ptr - 39];
-                if (bisect_stack[bisect_ptr - 36]< 0)
-                bisect_stack[bisect_ptr - 36] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40]+ bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
+                if (bisect_stack[bisect_ptr - 37] > bisect_stack[bisect_ptr - 40])
+                  bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40];
+                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]+ bisect_stack[bisect_ptr - 39];
+                if (bisect_stack[bisect_ptr - 36] < 0)
+                  bisect_stack[bisect_ptr - 36] = 0;
               }
             }
             else if (bisect_stack[bisect_ptr - 38]<= 0)
             {
               if (bisect_stack[bisect_ptr - 39] > 0)
-              bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]
-              + bisect_stack[bisect_ptr - 39];
-              else bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr -
-              40];
-              bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40]
-              + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38
-            ];
+                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39];
+              else
+                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40];
+              bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
               if (bisect_stack[bisect_ptr - 37] > 0)
-              bisect_stack[bisect_ptr - 37] = 0;
+                bisect_stack[bisect_ptr - 37] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]
-              + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38
-            ];
-              if (bisect_stack[bisect_ptr - 36]< bisect_stack[bisect_ptr -
-              40])
-              bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]
-        ;
-              bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40]
-              + bisect_stack[bisect_ptr - 39];
+            else
+            {
+              bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
+              if (bisect_stack[bisect_ptr - 36]< bisect_stack[bisect_ptr - 40])
+                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40];
+              bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39];
               if (bisect_stack[bisect_ptr - 37] > 0)
-              bisect_stack[bisect_ptr - 37] = 0;
+                bisect_stack[bisect_ptr - 37] = 0;
             }
-            if (bisect_stack[bisect_ptr - 20]< 0) {
+            if (bisect_stack[bisect_ptr - 20] < 0)
+            {
               if (bisect_stack[bisect_ptr - 18] >= 0)
               {
-                if (bisect_stack[bisect_ptr - 19]< 0)
-                bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20
-                ]+ bisect_stack[bisect_ptr - 19];
-                else bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr
-                - 20];
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20
-                ]+ bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr -
-                18];
-                if (bisect_stack[bisect_ptr - 16]< 0)
-                bisect_stack[bisect_ptr - 16] = 0;
+                if (bisect_stack[bisect_ptr - 19] < 0)
+                  bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
+                else
+                  bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
+                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+                if (bisect_stack[bisect_ptr - 16] < 0)
+                  bisect_stack[bisect_ptr - 16] = 0;
               }
-              else {
-                bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20
-                ]+ bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr -
-                18];
-                if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr
-                - 20])
-                bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20
-                ];
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20
-                ]+ bisect_stack[bisect_ptr - 19];
-                if (bisect_stack[bisect_ptr - 16]< 0)
-                bisect_stack[bisect_ptr - 16] = 0;
+              else
+              {
+                bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+                if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr - 20])
+                  bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
+                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
+                if (bisect_stack[bisect_ptr - 16] < 0)
+                  bisect_stack[bisect_ptr - 16] = 0;
               }
             }
             else if (bisect_stack[bisect_ptr - 18]<= 0)
             {
               if (bisect_stack[bisect_ptr - 19] > 0)
-              bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]
-              + bisect_stack[bisect_ptr - 19];
-              else bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr -
-              20];
-              bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]
-              + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18
-            ];
+                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
+              else
+                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
+              bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19] + bisect_stack[bisect_ptr - 18];
               if (bisect_stack[bisect_ptr - 17] > 0)
-              bisect_stack[bisect_ptr - 17] = 0;
+                bisect_stack[bisect_ptr - 17] = 0;
             }
-            else {
-              bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]
-              + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18
-            ];
-              if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr -
-              20])
-              bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20]
-        ;
-              bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20]
-              + bisect_stack[bisect_ptr - 19];
+            else
+            {
+              bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
+              if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr - 20])
+                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
+              bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
               if (bisect_stack[bisect_ptr - 17] > 0)
-              bisect_stack[bisect_ptr - 17] = 0;
+                bisect_stack[bisect_ptr - 17] = 0;
             }
             uv = bisect_ptr - 20;
             xy = bisect_ptr - 20;
@@ -12828,9 +12839,11 @@ void cubic_intersection (halfword p, halfword pp)
       }
     }
     if (time_to_go > 0)
-    decr (time_to_go);
-    else {
-      while (appr_t < 65536L) {
+      decr (time_to_go);
+    else
+    {
+      while (appr_t < 65536L)
+      {
         appr_t = appr_t + appr_t;
         appr_tt = appr_tt + appr_tt;
       }
@@ -12838,13 +12851,15 @@ void cubic_intersection (halfword p, halfword pp)
       cur_tt = appr_tt;
       goto lab_exit;
     }
-    not_found: if (odd (cur_tt)) {
+  not_found:
+    if (odd (cur_tt))
+    {
       if (odd (cur_t))
       {
         cur_t = halfp (cur_t);
         cur_tt = halfp (cur_tt);
         if (cur_t == 0)
-        goto lab_exit;
+          goto lab_exit;
         bisect_ptr = bisect_ptr - 45;
         three_l = three_l - tol_step;
         delx = bisect_stack[bisect_ptr];
@@ -12854,7 +12869,8 @@ void cubic_intersection (halfword p, halfword pp)
         xy = bisect_stack[bisect_ptr + 4];
         goto not_found;
       }
-      else {
+      else
+      {
         incr (cur_t);
         delx = delx + bisect_stack[uv - 5]+ bisect_stack[uv - 4]+
         bisect_stack[uv - 3];
@@ -12869,7 +12885,8 @@ void cubic_intersection (halfword p, halfword pp)
         bisect_stack[xy - 18];
       }
     }
-    else {
+    else
+    {
       incr (cur_tt);
       tol = tol + three_l;
       delx = delx - bisect_stack[xy - 15] - bisect_stack[xy - 14] -
@@ -12886,6 +12903,7 @@ void path_intersection (halfword h, halfword hh)
 {
   halfword p, pp;
   integer n, nn;
+
   if (mem[h].hh.b1 == 0)
   {
     mem[h + 5].cint = mem[h + 1].cint;
@@ -12904,15 +12922,15 @@ void path_intersection (halfword h, halfword hh)
   }
   tol_step = 0;
   do {
-      n = -65536L;
+    n = -65536L;
     p = h;
     do {
-        if (mem[p].hh.b1 != 0)
+      if (mem[p].hh.b1 != 0)
       {
         nn = -65536L;
         pp = hh;
         do {
-            if (mem[pp].hh.b1 != 0)
+          if (mem[pp].hh.b1 != 0)
           {
             cubic_intersection (p, pp);
             if (cur_t > 0)
@@ -12936,31 +12954,37 @@ void path_intersection (halfword h, halfword hh)
   lab_exit:;
 }
 
-void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1
-, scaled x, scaled y)
+void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y)
 {
   integer m, n;
+
   if (r0 < 0)
-  r0 = 0;
-  else r0 = roundunscaled (r0);
+    r0 = 0;
+  else
+    r0 = roundunscaled (r0);
   r1 = roundunscaled (r1);
   if (r1 > screendepth)
-  r1 = screendepth;
-  if (r1 < r0) {
+    r1 = screendepth;
+  if (r1 < r0)
+  {
     if (r0 > screendepth)
-    r0 = r1;
-    else r1 = r0;
+      r0 = r1;
+    else
+      r1 = r0;
   }
   if (c0 < 0)
-  c0 = 0;
-  else c0 = roundunscaled (c0);
+    c0 = 0;
+  else
+    c0 = roundunscaled (c0);
   c1 = roundunscaled (c1);
   if (c1 > screenwidth)
-  c1 = screenwidth;
-  if (c1 < c0) {
+    c1 = screenwidth;
+  if (c1 < c0)
+  {
     if (c0 > screenwidth)
-    c0 = c1;
-    else c1 = c0;
+      c0 = c1;
+    else
+      c1 = c0;
   }
   window_open[k] = true;
   incr (window_time[k]);
@@ -12999,32 +13023,37 @@ void disp_edges (window_number k)
   integer madjustment;
   integer rightedge;
   screen_col mincol;
-  if (screen_OK) {
-    if (left_col[k]< right_col[k]) {
-      if (top_row[k]< bot_row[k])
+
+  if (screen_OK)
+  {
+    if (left_col[k] < right_col[k])
+    {
+      if (top_row[k] < bot_row[k])
       {
         alreadythere = false;
-        if (mem[cur_edges + 3].hh.v.RH == k) {
+        if (mem[cur_edges + 3].hh.v.RH == k)
+        {
           if (mem[cur_edges + 4].cint == window_time[k])
-          alreadythere = true;
+            alreadythere = true;
         }
         if (!alreadythere)
-        blankrectangle (left_col[k], right_col[k], top_row[k],
+          blankrectangle (left_col[k], right_col[k], top_row[k],
         bot_row[k]);
         madjustment = m_window[k] - mem[cur_edges + 3].hh.lh;
         rightedge = 8 * (right_col[k] - madjustment);
         mincol = left_col[k];
         p = mem[cur_edges].hh.v.RH;
-        r = n_window[k] - (mem[cur_edges + 1].hh.lh - 4096)
-        ;
-        while ((p != cur_edges) && (r >= top_row[k])) {
+        r = n_window[k] - (mem[cur_edges + 1].hh.lh - 4096);
+        while ((p != cur_edges) && (r >= top_row[k]))
+        {
           if (r < bot_row[k])
           {
             if (mem[p + 1].hh.lh > 1)
-            sort_edges (p);
-            else if (mem[p + 1].hh.lh == 1) {
+              sort_edges (p);
+            else if (mem[p + 1].hh.lh == 1)
+            {
               if (alreadythere)
-              goto done;
+                goto done;
             }
             mem[p + 1].hh.lh = 1;
             n = 0;
@@ -13033,36 +13062,43 @@ void disp_edges (window_number k)
             w = 0;
             q = mem[p + 1].hh.v.RH;
             row_transition[0] = mincol;
-            while (true) {
+            while (true)
+            {
               if (q == memtop)
-              d = rightedge;
-              else d = mem[q].hh.lh;
+                d = rightedge;
+              else
+                d = mem[q].hh.lh;
               mm = (d / 8) + madjustment;
               if (mm != m)
               {
                 if (w <= 0)
                 {
-                  if (ww > 0) {
+                  if (ww > 0)
+                  {
                     if (m > mincol)
                     {
-                      if (n == 0) {
+                      if (n == 0)
+                      {
                         if (alreadythere)
                         {
                           b = 0;
                           incr (n);
                         }
-                        else b = 1;
+                        else
+                          b = 1;
                       }
-                      else incr (n);
+                      else
+                        incr (n);
                       row_transition[n] = m;
                     }
                   }
                 }
-                else if (ww <= 0) {
+                else if (ww <= 0)
+                {
                   if (m > mincol)
                   {
                     if (n == 0)
-                    b = 1;
+                      b = 1;
                     incr (n);
                     row_transition[n] = m;
                   }
@@ -13071,22 +13107,24 @@ void disp_edges (window_number k)
                 w = ww;
               }
               if (d >= rightedge)
-              goto found;
+                goto found;
               ww = ww + (d % 8) - 4;
               q = mem[q].hh.v.RH;
             }
             found: if (alreadythere || (ww > 0))
             {
-              if (n == 0) {
+              if (n == 0)
+              {
                 if (ww > 0)
-                b = 1;
-                else b = 0;
+                  b = 1;
+                else
+                  b = 0;
               }
               incr (n);
               row_transition[n] = right_col[k];
             }
             else if (n == 0)
-            goto done;
+              goto done;
             paintrow (r, b, row_transition, n);
             done:;
           }
@@ -13104,11 +13142,14 @@ void disp_edges (window_number k)
 
 fraction max_coef (halfword p)
 {
-  fraction Result; fraction x;
+  fraction Result;
+  fraction x;
+
   x = 0;
-  while (mem[p].hh.lh != 0) {
+  while (mem[p].hh.lh != 0)
+  {
     if (abs (mem[p + 1].cint) > x)
-    x = abs (mem[p + 1].cint);
+      x = abs (mem[p + 1].cint);
     p = mem[p].hh.v.RH;
   }
   Result = x;
@@ -13117,29 +13158,36 @@ fraction max_coef (halfword p)
 
 halfword p_plus_q (halfword p, halfword q, small_number t)
 {
-  halfword Result; halfword pp, qq;
+  halfword Result;
+  halfword pp, qq;
   halfword r, s;
   integer threshold;
   integer v;
+
   if (t == 17)
-  threshold = 2685;
-  else threshold = 8;
+    threshold = 2685;
+  else
+    threshold = 8;
   r = memtop - 1;
   pp = mem[p].hh.lh;
   qq = mem[q].hh.lh;
-  while (true) if (pp == qq) {
+  while (true) if (pp == qq)
+  {
     if (pp == 0)
-    goto done;
-    else {
+      goto done;
+    else
+    {
       v = mem[p + 1].cint + mem[q + 1].cint;
       mem[p + 1].cint = v;
       s = p;
       p = mem[p].hh.v.RH;
       pp = mem[p].hh.lh;
       if (abs (v) < threshold)
-      free_node (s, 2);
-      else {
-        if (abs (v) >= 626349397L) {
+        free_node (s, 2);
+      else
+      {
+        if (abs (v) >= 626349397L)
+        {
           if (watch_coefs)
           {
             mem[qq].hh.b0 = 0;
@@ -13163,44 +13211,51 @@ halfword p_plus_q (halfword p, halfword q, small_number t)
     mem[r].hh.v.RH = s;
     r = s;
   }
-  else {
+  else
+  {
     mem[r].hh.v.RH = p;
     r = p;
     p = mem[p].hh.v.RH;
     pp = mem[p].hh.lh;
   }
-  done: mem[p + 1].cint = slow_add (mem[p + 1].cint, mem[q + 1]
-  .cint);
+  done: mem[p + 1].cint = slow_add (mem[p + 1].cint, mem[q + 1].cint);
   mem[r].hh.v.RH = p;
   dep_final = p;
   Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
-halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boolean visscaled)
+halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boolean v_is_scaled)
 {
-  halfword Result; halfword r, s;
+  halfword Result;
+  halfword r, s;
   integer w;
   integer threshold;
   boolean scalingdown;
+
   if (t0 != t1)
-  scalingdown = true;
-  else scalingdown = !visscaled;
+    scalingdown = true;
+  else
+    scalingdown = !v_is_scaled;
   if (t1 == 17)
-  threshold = 1342;
-  else threshold = 4;
+    threshold = 1342;
+  else
+    threshold = 4;
   r = memtop - 1;
-  while (mem[p].hh.lh != 0) {
+  while (mem[p].hh.lh != 0)
+  {
     if (scalingdown)
-    w = take_fraction (v, mem[p + 1].cint);
-    else w = take_scaled (v, mem[p + 1].cint);
+      w = take_fraction (v, mem[p + 1].cint);
+    else
+      w = take_scaled (v, mem[p + 1].cint);
     if (abs (w) <= threshold)
     {
       s = mem[p].hh.v.RH;
       free_node (p, 2);
       p = s;
     }
-    else {
+    else
+    {
       if (abs (w) >= 626349397L)
       {
         fix_needed = true;
@@ -13213,28 +13268,33 @@ halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boo
     }
   }
   mem[r].hh.v.RH = p;
-  if (visscaled)
-  mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
-  else mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
+  if (v_is_scaled)
+    mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
+  else
+    mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
   Result = mem[memtop - 1].hh.v.RH;
   return Result;
 }
 
 halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t)
 {
-  halfword Result; halfword r, s;
+  halfword Result;
+  halfword r, s;
   integer v;
   integer sx;
+
   s = p;
   r = memtop - 1;
   sx = mem[x + 1].cint;
-  while (mem[mem[s].hh.lh + 1].cint > sx) {
+  while (mem[mem[s].hh.lh + 1].cint > sx)
+  {
     r = s;
     s = mem[s].hh.v.RH;
   }
   if (mem[s].hh.lh != x)
-  Result = p;
-  else {
+    Result = p;
+  else
+  {
     mem[memtop - 1].hh.v.RH = p;
     mem[r].hh.v.RH = mem[s].hh.v.RH;
     v = mem[s + 1].cint;
@@ -13247,6 +13307,7 @@ halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t
 void new_dep (halfword q, halfword p)
 {
   halfword r;
+
   mem[q + 1].hh.v.RH = p;
   mem[q + 1].hh.lh = 13;
   r = mem[13].hh.v.RH;
@@ -13257,7 +13318,9 @@ void new_dep (halfword q, halfword p)
 
 halfword const_dependency (scaled v)
 {
-  halfword Result; dep_final = get_node (2);
+  halfword Result;
+
+  dep_final = get_node (2);
   mem[dep_final + 1].cint = v;
   mem[dep_final].hh.lh = 0;
   Result = dep_final;
@@ -13266,12 +13329,15 @@ halfword const_dependency (scaled v)
 
 halfword single_dependency (halfword p)
 {
-  halfword Result; halfword q;
+  halfword Result;
+  halfword q;
   integer m;
+
   m = mem[p + 1].cint % 64;
   if (m > 28)
-  Result = const_dependency (0);
-  else {
+    Result = const_dependency (0);
+  else
+  {
     q = get_node (2);
     mem[q + 1].cint = two_to_the[28 - m];
     mem[q].hh.lh = p;
@@ -13283,14 +13349,17 @@ halfword single_dependency (halfword p)
 
 halfword copy_dep_list (halfword p)
 {
-  halfword Result; halfword q;
+  halfword Result;
+  halfword q;
+
   q = get_node (2);
   dep_final = q;
-  while (true) {
+  while (true)
+  {
     mem[dep_final].hh.lh = mem[p].hh.lh;
     mem[dep_final + 1].cint = mem[p + 1].cint;
     if (mem[dep_final].hh.lh == 0)
-    goto done;
+      goto done;
     mem[dep_final].hh.v.RH = get_node (2);
     dep_final = mem[dep_final].hh.v.RH;
     p = mem[p].hh.v.RH;
@@ -13308,10 +13377,12 @@ void linear_eq (halfword p, small_number t)
   halfword prevr;
   halfword finalnode;
   integer w;
+
   q = p;
   r = mem[p].hh.v.RH;
   v = mem[q + 1].cint;
-  while (mem[r].hh.lh != 0) {
+  while (mem[r].hh.lh != 0)
+  {
     if (abs (mem[r + 1].cint) > abs (v))
     {
       q = r;
@@ -13325,19 +13396,21 @@ void linear_eq (halfword p, small_number t)
   mem[s].hh.v.RH = p;
   r = p;
   do {
-      if (r == q)
+    if (r == q)
     {
       mem[s].hh.v.RH = mem[r].hh.v.RH;
       free_node (r, 2);
     }
-    else {
+    else
+    {
       w = make_fraction (mem[r + 1].cint, v);
       if (abs (w) <= 1342)
       {
         mem[s].hh.v.RH = mem[r].hh.v.RH;
         free_node (r, 2);
       }
-      else {
+      else
+      {
         mem[r + 1].cint = - (integer) w;
         s = r;
       }
@@ -13345,19 +13418,21 @@ void linear_eq (halfword p, small_number t)
     r = mem[s].hh.v.RH;
   } while (!(mem[r].hh.lh == 0));
   if (t == 18)
-  mem[r + 1].cint = - (integer) make_scaled (mem[r + 1].cint, v);
+    mem[r + 1].cint = - (integer) make_scaled (mem[r + 1].cint, v);
   else if (v != -268435456L)
-  mem[r + 1].cint = - (integer) make_fraction (mem[r + 1].cint, v);
+    mem[r + 1].cint = - (integer) make_fraction (mem[r + 1].cint, v);
   finalnode = r;
   p = mem[memtop - 1].hh.v.RH;
-  if (internal[2] > 0) {
+  if (internal[2] > 0)
+  {
     if (interesting (x))
     {
       begin_diagnostic ();
       print_nl(597);
       print_variable_name(x);
       w = n;
-      while (w > 0) {
+      while (w > 0)
+      {
         print(590);
         w = w - 2;
       }
@@ -13368,15 +13443,17 @@ void linear_eq (halfword p, small_number t)
   }
   prevr = 13;
   r = mem[13].hh.v.RH;
-  while (r != 13) {
+  while (r != 13)
+  {
     s = mem[r + 1].hh.v.RH;
     q = p_with_x_becoming_q (s, x, p, mem[r].hh.b0);
     if (mem[q].hh.lh == 0)
-    make_known (r, q);
-    else {
+      make_known (r, q);
+    else
+    {
       mem[r + 1].hh.v.RH = q;
       do {
-          q = mem[q].hh.v.RH;
+        q = mem[q].hh.v.RH;
       } while (!(mem[q].hh.lh == 0));
       prevr = q;
     }
@@ -13388,15 +13465,17 @@ void linear_eq (halfword p, small_number t)
     mem[memtop - 1].hh.v.RH = p;
     r = p;
     do {
-        if (n > 30)
-      w = 0;
-      else w = mem[r + 1].cint / two_to_the[n];
+      if (n > 30)
+        w = 0;
+      else
+        w = mem[r + 1].cint / two_to_the[n];
       if ((abs (w) <= 1342) && (mem[r].hh.lh != 0))
       {
         mem[s].hh.v.RH = mem[r].hh.v.RH;
         free_node (r, 2);
       }
-      else {
+      else
+      {
         mem[r + 1].cint = w;
         s = r;
       }
@@ -13409,9 +13488,10 @@ void linear_eq (halfword p, small_number t)
     mem[x].hh.b0 = 16;
     mem[x + 1].cint = mem[p + 1].cint;
     if (abs (mem[x + 1].cint) >= 268435456L)
-    val_too_big (mem[x + 1].cint);
+      val_too_big (mem[x + 1].cint);
     free_node (p, 2);
-    if (cur_exp == x) {
+    if (cur_exp == x)
+    {
       if (cur_type == 19)
       {
         cur_exp = mem[x + 1].cint;
@@ -13420,28 +13500,33 @@ void linear_eq (halfword p, small_number t)
       }
     }
   }
-  else {
+  else
+  {
     mem[x].hh.b0 = 17;
     dep_final = finalnode;
     new_dep (x, p);
-    if (cur_exp == x) {
+    if (cur_exp == x)
+    {
       if (cur_type == 19)
-      cur_type = 17;
+        cur_type = 17;
     }
   }
   if (fix_needed)
-  fix_dependencies ();
+    fix_dependencies ();
 }
 
 halfword new_ring_entry (halfword p)
 {
-  halfword Result; halfword q;
+  halfword Result;
+  halfword q;
+
   q = get_node (2);
   mem[q].hh.b1 = 11;
   mem[q].hh.b0 = mem[p].hh.b0;
   if (mem[p + 1].cint == 0)
-  mem[q + 1].cint = p;
-  else mem[q + 1].cint = mem[p + 1].cint;
+    mem[q + 1].cint = p;
+  else
+    mem[q + 1].cint = mem[p + 1].cint;
   mem[p + 1].cint = q;
   Result = q;
   return Result;
@@ -13451,39 +13536,42 @@ void non_linear_eq (integer v, halfword p, boolean flushp)
 {
   small_number t;
   halfword q, r;
+
   t = mem[p].hh.b0 - 1;
   q = mem[p + 1].cint;
   if (flushp)
-  mem[p].hh.b0 = 1;
-  else p = q;
+    mem[p].hh.b0 = 1;
+  else
+    p = q;
   do {
-      r = mem[q + 1].cint;
+    r = mem[q + 1].cint;
     mem[q].hh.b0 = t;
     switch (t)
-    {case 2 :
-      mem[q + 1].cint = v;
-      break;
-    case 4 :
-      {
+    {
+      case 2:
         mem[q + 1].cint = v;
+        break;
+      case 4:
         {
-          if (str_ref[v]< 127)
-          incr (str_ref[v]);
+          mem[q + 1].cint = v;
+          {
+            if (str_ref[v]< 127)
+            incr (str_ref[v]);
+          }
         }
-      }
-      break;
-    case 6 :
-      {
-        mem[q + 1].cint = v;
-        incr (mem[v].hh.lh);
-      }
-      break;
-    case 9 :
-      mem[q + 1].cint = copy_path (v);
-      break;
-    case 11 :
-      mem[q + 1].cint = copy_edges (v);
-      break;
+        break;
+      case 6:
+        {
+          mem[q + 1].cint = v;
+          incr (mem[v].hh.lh);
+        }
+        break;
+      case 9:
+        mem[q + 1].cint = copy_path (v);
+        break;
+      case 11:
+        mem[q + 1].cint = copy_edges (v);
+        break;
     }
     q = r;
   } while (!(q == p));
@@ -13492,15 +13580,17 @@ void non_linear_eq (integer v, halfword p, boolean flushp)
 void ring_merge (halfword p, halfword q)
 {
   halfword r;
+
   r = mem[p + 1].cint;
-  while (r != p) {
+  while (r != p)
+  {
     if (r == q)
     {
       {
         {
           if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
           {
             print_nl(261);
             print(fullsourcefilenamestack[in_open]);
@@ -13509,7 +13599,8 @@ void ring_merge (halfword p, halfword q)
             print(262);
             print(600);
           }
-          else {
+          else
+          {
             print_nl(263);
             print(600);
           }
@@ -13549,25 +13640,29 @@ void show_context (void)
   integer n;
   integer p;
   integer q;
+
   file_ptr = input_ptr;
   input_stack[file_ptr] = cur_input;
-  while (true) {
+  while (true)
+  {
     cur_input = input_stack[file_ptr];
-    if ((file_ptr == input_ptr) || (cur_input.index_field <= 15) || (
-    cur_input.index_field != 19) || (cur_input.loc_field != 0))
+    if ((file_ptr == input_ptr) || (cur_input.index_field <= 15) || (cur_input.index_field != 19) || (cur_input.loc_field != 0))
     {
       tally = 0;
       old_setting = selector;
       if ((cur_input.index_field <= 15))
       {
-        if (cur_input .name_field <= 1) {
-          if ((cur_input .name_field == 0) && (file_ptr == 0))
-          print_nl(604);
-          else print_nl(605);
+        if (cur_input.name_field <= 1)
+        {
+          if ((cur_input.name_field == 0) && (file_ptr == 0))
+            print_nl(604);
+          else
+            print_nl(605);
         }
-        else if (cur_input .name_field == 2)
-        print_nl(606);
-        else {
+        else if (cur_input.name_field == 2)
+          print_nl(606);
+        else
+        {
           print_nl(607);
           print_int (line);
         }
@@ -13578,77 +13673,81 @@ void show_context (void)
           selector = 4;
           trick_count = 1000000L;
         }
-        if (cur_input .limit_field > 0)
-        {integer for_end; i = cur_input .start_field;for_end =
-        cur_input .limit_field - 1; if (i <= for_end) do
-          {
-            if (i == cur_input.loc_field)
-            {
-              first_count = tally;
-              trick_count = tally + 1 + errorline - halferrorline;
-              if (trick_count < errorline)
-              trick_count = errorline;
-            }
-            print(buffer[i]);
-          }
-        while (i++ < for_end);}
-      }
-      else {
-        switch (cur_input.index_field)
-        {case 16 :
-          print_nl(608);
-          break;
-        case 17 :
-          {
-            print_nl(613);
-            p = param_stack[cur_input .limit_field];
-            if (p != 0) {
-
-              if (mem[p].hh.v.RH == 1)
-              print_exp (p, 0);
-              else show_token_list (p, 0, 20, tally);
-            }
-            print(614);
-          }
-          break;
-        case 18 :
-          print_nl(609);
-          break;
-        case 19 :
-          if (cur_input.loc_field == 0)
-          print_nl(610);
-          else print_nl(611);
-          break;
-        case 20 :
-          print_nl(612);
-          break;
-        case 21 :
-          {
-            print_ln ();
-            if (cur_input .name_field != 0)
-            slow_print(hash[cur_input .name_field].v.RH);
-            else {
-
-              p = param_stack[cur_input .limit_field];
-              if (p == 0)
-              show_token_list (param_stack[cur_input .limit_field + 1], 0, 20
-             , tally);
-              else {
-                q = p;
-                while (mem[q].hh.v.RH != 0) q = mem[q].hh
-                .v.RH;
-                mem[q].hh.v.RH = param_stack[cur_input .limit_field +
-                1];
-                show_token_list (p, 0, 20, tally);
-                mem[q].hh.v.RH = 0;
+        if (cur_input.limit_field > 0)
+        {
+          integer for_end; i = cur_input.start_field;for_end = cur_input.limit_field - 1;
+          if (i <= for_end)
+            do {
+              if (i == cur_input.loc_field)
+              {
+                first_count = tally;
+                trick_count = tally + 1 + errorline - halferrorline;
+                if (trick_count < errorline)
+                  trick_count = errorline;
               }
+              print(buffer[i]);
+          } while (i++ < for_end);
+        }
+      }
+      else
+      {
+        switch (cur_input.index_field)
+        {
+          case 16:
+            print_nl(608);
+            break;
+          case 17:
+            {
+              print_nl(613);
+              p = param_stack[cur_input.limit_field];
+              if (p != 0)
+              {
+                if (mem[p].hh.v.RH == 1)
+                  print_exp (p, 0);
+                else
+                  show_token_list (p, 0, 20, tally);
+              }
+              print(614);
             }
-            print(501);
-          }
-          break;
+            break;
+          case 18:
+            print_nl(609);
+            break;
+          case 19:
+            if (cur_input.loc_field == 0)
+              print_nl(610);
+            else
+              print_nl(611);
+            break;
+          case 20:
+            print_nl(612);
+            break;
+          case 21:
+            {
+              print_ln ();
+              if (cur_input.name_field != 0)
+                slow_print(hash[cur_input.name_field].v.RH);
+              else
+              {
+                p = param_stack[cur_input.limit_field];
+                if (p == 0)
+                  show_token_list (param_stack[cur_input.limit_field + 1], 0, 20, tally);
+                else
+                {
+                  q = p;
+                  while (mem[q].hh.v.RH != 0)
+                    q = mem[q].hh.v.RH;
+                  mem[q].hh.v.RH = param_stack[cur_input.limit_field + 1];
+                  show_token_list (p, 0, 20, tally);
+                  mem[q].hh.v.RH = 0;
+                }
+              }
+              print(501);
+            }
+            break;
           default:
-          print_nl(63);
-          break;
+            print_nl(63);
+            break;
         }
         {
           l = tally;
@@ -13657,10 +13756,9 @@ void show_context (void)
           trick_count = 1000000L;
         }
         if (cur_input.index_field != 21)
-        show_token_list (cur_input .start_field, cur_input.loc_field, 100000L ,
-        0);
-        else show_macro (cur_input .start_field, cur_input.loc_field, 100000L)
-        ;
+          show_token_list (cur_input.start_field, cur_input.loc_field, 100000L, 0);
+        else
+          show_macro (cur_input.start_field, cur_input.loc_field, 100000L);
       }
       selector = old_setting;
       if (trick_count == 1000000L)
@@ -13668,42 +13766,53 @@ void show_context (void)
         first_count = tally;
         trick_count = tally + 1 + errorline - halferrorline;
         if (trick_count < errorline)
-        trick_count = errorline;
+          trick_count = errorline;
       }
       if (tally < trick_count)
-      m = tally - first_count;
-      else m = trick_count - first_count;
+        m = tally - first_count;
+      else
+        m = trick_count - first_count;
       if (l + first_count <= halferrorline)
       {
         p = 0;
         n = l + first_count;
       }
-      else {
+      else
+      {
         print(276);
         p = l + first_count - halferrorline + 3;
         n = halferrorline;
       }
-      {integer for_end; q = p;for_end = first_count - 1; if (q <=
-      for_end) do
-        print_char(trick_buf[q % errorline]);
-      while (q++ < for_end);}
+      {
+        integer for_end; q = p;for_end = first_count - 1;
+        if (q <= for_end) do
+          print_char(trick_buf[q % errorline]);
+          while (q++ < for_end);
+      }
       print_ln ();
-      {integer for_end; q = 1;for_end = n; if (q <= for_end) do
-        print_char(32);
-      while (q++ < for_end);}
+      {
+        integer for_end; q = 1;for_end = n;
+        if (q <= for_end) do
+          print_char(32);
+          while (q++ < for_end);
+      }
       if (m + n <= errorline)
-      p = first_count + m;
-      else p = first_count + (errorline - n - 3);
-      {integer for_end; q = first_count;for_end = p - 1; if (q <=
-      for_end) do
-        print_char(trick_buf[q % errorline]);
-      while (q++ < for_end);}
+        p = first_count + m;
+      else
+        p = first_count + (errorline - n - 3);
+      {
+        integer for_end; q = first_count;for_end = p - 1;
+        if (q <= for_end) do
+          print_char(trick_buf[q % errorline]);
+          while (q++ < for_end);
+      }
       if (m + n > errorline)
-      print(276);
+        print(276);
     }
-    if ((cur_input.index_field <= 15)) {
-      if ((cur_input .name_field > 2) || (file_ptr == 0))
-      goto done;
+    if ((cur_input.index_field <= 15))
+    {
+      if ((cur_input.name_field > 2) || (file_ptr == 0))
+        goto done;
     }
     decr (file_ptr);
   }
@@ -13717,47 +13826,54 @@ void begin_token_list (halfword p, quarterword t)
     {
       max_in_stack = input_ptr;
       if (input_ptr == stack_size)
-      overflow (615, stack_size);
+        overflow (615, stack_size);
     }
     input_stack[input_ptr] = cur_input;
     incr (input_ptr);
   }
-  cur_input .start_field = p;
+  cur_input.start_field = p;
   cur_input.index_field = t;
-  cur_input .limit_field = param_ptr;
+  cur_input.limit_field = param_ptr;
   cur_input.loc_field = p;
 }
 
 void end_token_list (void)
 {
   halfword p;
-  if (cur_input.index_field >= 19) {
+
+  if (cur_input.index_field >= 19)
+  {
     if (cur_input.index_field <= 20)
     {
-      flush_token_list (cur_input .start_field);
+      flush_token_list (cur_input.start_field);
       goto done;
     }
-    else delete_mac_ref (cur_input .start_field);
+    else
+      delete_mac_ref (cur_input.start_field);
   }
-  while (param_ptr > cur_input .limit_field) {
+  while (param_ptr > cur_input.limit_field)
+  {
     decr (param_ptr);
     p = param_stack[param_ptr];
-    if (p != 0) {
+    if (p != 0)
+    {
       if (mem[p].hh.v.RH == 1)
       {
         recycle_value (p);
         free_node (p, 2);
       }
-      else flush_token_list (p);
+      else
+        flush_token_list (p);
     }
   }
-  done: {
+done:
+  {
     decr (input_ptr);
     cur_input = input_stack[input_ptr];
   }
   {
     if (interrupt != 0)
-    pause_for_instructions ();
+      pause_for_instructions ();
   }
 }
 
@@ -13772,6 +13888,7 @@ void encapsulate (halfword p)
 void install (halfword r, halfword q)
 {
   halfword p;
+
   if (mem[q].hh.b0 == 16)
   {
     mem[r + 1].cint = mem[q + 1].cint;
@@ -13786,12 +13903,14 @@ void install (halfword r, halfword q)
       mem[r + 1].cint = 0;
       free_node (p, 2);
     }
-    else {
+    else
+    {
       mem[r].hh.b0 = 17;
       new_dep (r, p);
     }
   }
-  else {
+  else
+  {
     mem[r].hh.b0 = mem[q].hh.b0;
     new_dep (r, copy_dep_list (mem[q + 1].hh.v.RH));
   }
@@ -13800,129 +13919,140 @@ void install (halfword r, halfword q)
 void make_exp_copy (halfword p)
 {
   halfword q, r, t;
-  lab_restart: cur_type = mem[p].hh.b0;
+
+lab_restart:
+  cur_type = mem[p].hh.b0;
   switch (cur_type)
-  {case 1 :
-  case 2 :
-  case 16 :
-    cur_exp = mem[p + 1].cint;
-    break;
-  case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-    cur_exp = new_ring_entry (p);
-    break;
-  case 4 :
-    {
+  {
+    case 1:
+    case 2:
+    case 16:
       cur_exp = mem[p + 1].cint;
+      break;
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+      cur_exp = new_ring_entry (p);
+      break;
+    case 4:
       {
-        if (str_ref[cur_exp]< 127)
-        incr (str_ref[cur_exp]);
+        cur_exp = mem[p + 1].cint;
+        {
+          if (str_ref[cur_exp] < 127)
+            incr (str_ref[cur_exp]);
+        }
       }
-    }
-    break;
-  case 6 :
-    {
-      cur_exp = mem[p + 1].cint;
-      incr (mem[cur_exp].hh.lh);
-    }
-    break;
-  case 11 :
-    cur_exp = copy_edges (mem[p + 1].cint);
-    break;
-  case 9 :
-  case 8 :
-    cur_exp = copy_path (mem[p + 1].cint);
-    break;
-  case 13 :
-  case 14 :
-    {
-      if (mem[p + 1].cint == 0)
-      init_big_node (p);
-      t = get_node (2);
-      mem[t].hh.b1 = 11;
-      mem[t].hh.b0 = cur_type;
-      init_big_node (t);
-      q = mem[p + 1].cint + big_node_size[cur_type];
-      r = mem[t + 1].cint + big_node_size[cur_type];
-      do {
+      break;
+    case 6:
+      {
+        cur_exp = mem[p + 1].cint;
+        incr (mem[cur_exp].hh.lh);
+      }
+      break;
+    case 11:
+      cur_exp = copy_edges (mem[p + 1].cint);
+      break;
+    case 9:
+    case 8:
+      cur_exp = copy_path (mem[p + 1].cint);
+      break;
+    case 13:
+    case 14:
+      {
+        if (mem[p + 1].cint == 0)
+          init_big_node (p);
+        t = get_node (2);
+        mem[t].hh.b1 = 11;
+        mem[t].hh.b0 = cur_type;
+        init_big_node (t);
+        q = mem[p + 1].cint + big_node_size[cur_type];
+        r = mem[t + 1].cint + big_node_size[cur_type];
+        do {
           q = q - 2;
-        r = r - 2;
-        install (r, q);
-      } while (!(q == mem[p + 1].cint));
-      cur_exp = t;
-    }
-    break;
-  case 17 :
-  case 18 :
-    encapsulate (copy_dep_list (mem[p + 1].hh.v.RH));
-    break;
-  case 15 :
-    {
+          r = r - 2;
+          install (r, q);
+        } while (!(q == mem[p + 1].cint));
+        cur_exp = t;
+      }
+      break;
+    case 17:
+    case 18:
+      encapsulate (copy_dep_list (mem[p + 1].hh.v.RH));
+      break;
+    case 15:
       {
-        if (serial_no > 2147483583L)
-        overflow (588, serial_no / 64);
-        mem[p].hh.b0 = 19;
-        serial_no = serial_no + 64;
-        mem[p + 1].cint = serial_no;
+        {
+          if (serial_no > 2147483583L)
+            overflow (588, serial_no / 64);
+          mem[p].hh.b0 = 19;
+          serial_no = serial_no + 64;
+          mem[p + 1].cint = serial_no;
+        }
+        goto lab_restart;
       }
-      goto lab_restart;
-    }
-    break;
-  case 19 :
-    {
-      q = single_dependency (p);
-      if (q == dep_final)
+      break;
+    case 19:
       {
-        cur_type = 16;
-        cur_exp = 0;
-        free_node (q, 2);
+        q = single_dependency (p);
+        if (q == dep_final)
+        {
+          cur_type = 16;
+          cur_exp = 0;
+          free_node (q, 2);
+        }
+        else
+        {
+          cur_type = 17;
+          encapsulate (q);
+        }
       }
-      else {
-        cur_type = 17;
-        encapsulate (q);
-      }
-    }
-    break;
+      break;
     default:
-    confusion(800);
-    break;
+      confusion(800);
+      break;
   }
 }
 
 halfword cur_tok (void)
 {
-  halfword Result; halfword p;
-  small_number savetype;
-  integer saveexp;
-  if (cur_sym == 0) {
+  halfword Result;
+  halfword p;
+  small_number save_type;
+  integer save_exp;
+
+  if (cur_sym == 0)
+  {
     if (cur_cmd == 38)
     {
-      savetype = cur_type;
-      saveexp = cur_exp;
+      save_type = cur_type;
+      save_exp = cur_exp;
       make_exp_copy (cur_mod);
       p = stash_cur_exp ();
       mem[p].hh.v.RH = 0;
-      cur_type = savetype;
-      cur_exp = saveexp;
+      cur_type = save_type;
+      cur_exp = save_exp;
     }
-    else {
+    else
+    {
       p = get_node (2);
       mem[p + 1].cint = cur_mod;
       mem[p].hh.b1 = 12;
       if (cur_cmd == 42)
-      mem[p].hh.b0 = 16;
-      else mem[p].hh.b0 = 4;
+        mem[p].hh.b0 = 16;
+      else
+        mem[p].hh.b0 = 4;
     }
   }
-  else {
+  else
+  {
     {
       p = avail;
       if (p == 0)
-      p = get_avail ();
-      else {
+        p = get_avail ();
+      else
+      {
         avail = mem[p].hh.v.RH;
         mem[p].hh.v.RH = 0;
         ;
@@ -13940,9 +14070,10 @@ halfword cur_tok (void)
 void back_input (void)
 {
   halfword p;
+
   p = cur_tok ();
   while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
-  end_token_list ();
+    end_token_list ();
   begin_token_list (p, 19);
 }
 
@@ -13966,34 +14097,34 @@ void ins_error (void)
 void begin_file_reading (void)
 {
   if (in_open == 15)
-  overflow (616, 15);
+    overflow (616, 15);
   if (first == bufsize)
-  overflow (256, bufsize);
+    overflow (256, bufsize);
   incr (in_open);
   {
     if (input_ptr > max_in_stack)
     {
       max_in_stack = input_ptr;
       if (input_ptr == stack_size)
-      overflow (615, stack_size);
+        overflow (615, stack_size);
     }
     input_stack[input_ptr] = cur_input;
     incr (input_ptr);
   }
   cur_input.index_field = in_open;
   line_stack[cur_input.index_field] = line;
-  cur_input .start_field = first;
-  cur_input .name_field = 0;
+  cur_input.start_field = first;
+  cur_input.name_field = 0;
 }
 
 void end_file_reading (void)
 {
-  first = cur_input .start_field;
+  first = cur_input.start_field;
   line = line_stack[cur_input.index_field];
   if (cur_input.index_field != in_open)
-  confusion(617);
-  if (cur_input .name_field > 2)
-  aclose (input_file[cur_input.index_field]);
+    confusion(617);
+  if (cur_input.name_field > 2)
+    aclose (input_file[cur_input.index_field]);
   {
     decr (input_ptr);
     cur_input = input_stack[input_ptr];
@@ -14003,18 +14134,20 @@ void end_file_reading (void)
 
 void clear_for_error_prompt (void)
 {
-  while ((cur_input.index_field <= 15) && (cur_input .name_field == 0) &&
-  (input_ptr > 0) && (cur_input.loc_field == cur_input .limit_field))
-  end_file_reading ();
+  while ((cur_input.index_field <= 15) && (cur_input.name_field == 0) && (input_ptr > 0) && (cur_input.loc_field == cur_input.limit_field))
+    end_file_reading ();
   print_ln ();
 }
 
 boolean check_outer_validity (void)
 {
-  boolean Result; halfword p;
+  boolean Result;
+  halfword p;
+
   if (scanner_status == 0)
-  Result = true;
-  else {
+    Result = true;
+  else
+  {
     deletions_allowed = false;
     if (cur_sym != 0)
     {
@@ -14028,8 +14161,8 @@ boolean check_outer_validity (void)
       if (cur_sym == 0)
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -14038,16 +14171,18 @@ boolean check_outer_validity (void)
           print(262);
           print(623);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(623);
         }
       }
-      else {
+      else
+      {
         {
           if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
           {
             print_nl(261);
             print(fullsourcefilenamestack[in_open]);
@@ -14056,7 +14191,8 @@ boolean check_outer_validity (void)
             print(262);
             print(624);
           }
-          else {
+          else
+          {
             print_nl(263);
             print(624);
           }
@@ -14071,53 +14207,56 @@ boolean check_outer_validity (void)
         help_line[0] = 629;
       }
       switch (scanner_status)
-      {case 2 :
-        {
-          print(630);
-          help_line[3] = 631;
-          cur_sym = 9763;
-        }
-        break;
-      case 3 :
-        {
-          print(632);
-          help_line[3] = 633;
-          if (warning_info == 0)
-          cur_sym = 9767;
-          else {
-
-            cur_sym = 9759;
-            eqtb[9759].v.RH = warning_info;
+      {
+        case 2:
+          {
+            print(630);
+            help_line[3] = 631;
+            cur_sym = 9763;
           }
-        }
-        break;
-      case 4 :
-      case 5 :
-        {
-          print(634);
-          if (scanner_status == 5)
-          slow_print(hash[warning_info].v.RH);
-          else print_variable_name(warning_info);
-          cur_sym = 9765;
-        }
-        break;
-      case 6 :
-        {
-          print(635);
-          slow_print(hash[warning_info].v.RH);
-          print(636);
-          help_line[3] = 637;
-          cur_sym = 9764;
-        }
-        break;
+          break;
+        case 3:
+          {
+            print(632);
+            help_line[3] = 633;
+            if (warning_info == 0)
+              cur_sym = 9767;
+            else
+            {
+              cur_sym = 9759;
+              eqtb[9759].v.RH = warning_info;
+            }
+          }
+          break;
+        case 4:
+        case 5:
+          {
+            print(634);
+            if (scanner_status == 5)
+              slow_print(hash[warning_info].v.RH);
+            else
+              print_variable_name(warning_info);
+            cur_sym = 9765;
+          }
+          break;
+        case 6:
+          {
+            print(635);
+            slow_print(hash[warning_info].v.RH);
+            print(636);
+            help_line[3] = 637;
+            cur_sym = 9764;
+          }
+          break;
       }
       ins_error ();
     }
-    else {
+    else
+    {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -14126,7 +14265,8 @@ boolean check_outer_validity (void)
           print(262);
           print(618);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(618);
         }
@@ -14139,7 +14279,7 @@ boolean check_outer_validity (void)
         help_line[0] = 621;
       }
       if (cur_sym == 0)
-      help_line[2] = 622;
+        help_line[2] = 622;
       cur_sym = 9766;
       ins_error ();
     }
@@ -14155,222 +14295,238 @@ void get_next (void)
   ASCII_code c;
   ASCII_code cclass;
   integer n, f;
-  lab_restart: cur_sym = 0;
+
+lab_restart:
+  cur_sym = 0;
   if ((cur_input.index_field <= 15))
   {
-    lab25: c = buffer[cur_input.loc_field];
+lab25:
+    c = buffer[cur_input.loc_field];
     incr (cur_input.loc_field);
     cclass = char_class[c];
     switch (cclass)
-    {case 0 :
-      goto lab85;
-      break;
-    case 1 :
-      {
-        cclass = char_class[buffer[cur_input.loc_field]];
-        if (cclass > 1)
+    {
+      case 0:
+        goto lab85;
+        break;
+      case 1:
+        {
+          cclass = char_class[buffer[cur_input.loc_field]];
+          if (cclass > 1)
+            goto lab25;
+          else if (cclass < 1)
+          {
+            n = 0;
+            goto lab86;
+          }
+        }
+        break;
+      case 2:
         goto lab25;
-        else if (cclass < 1)
+        break;
+      case 3:
         {
-          n = 0;
-          goto lab86;
-        }
-      }
-      break;
-    case 2 :
-      goto lab25;
-      break;
-    case 3 :
-      {
-        if (cur_input .name_field > 2)
-        {
-          incr (line);
-          first = cur_input .start_field;
-          if (!force_eof)
+          if (cur_input.name_field > 2)
           {
-            if (inputln (input_file[cur_input.index_field], true))
-            firmup_the_line ();
-            else force_eof = true;
-          }
-          if (force_eof)
-          {
-            print_char(41);
-            decr (open_parens);
-            fflush (stdout);
-            force_eof = false;
-            end_file_reading ();
-            if (check_outer_validity ())
-            goto lab_restart;
-            else goto lab_restart;
-          }
-          buffer[cur_input .limit_field] = 37;
-          first = cur_input .limit_field + 1;
-          cur_input.loc_field = cur_input .start_field;
-        }
-        else {
-          if (input_ptr > 0)
-          {
-            end_file_reading ();
-            goto lab_restart;
-          }
-          if (selector < 2)
-          open_log_file ();
-          if (interaction > 1)
-          {
-            if (cur_input .limit_field == cur_input .start_field)
-            print_nl(652);
-            print_ln ();
-            first = cur_input .start_field;
+            incr (line);
+            first = cur_input.start_field;
+            if (!force_eof)
             {
-        ;
-              print(42);
-              term_input ();
+              if (inputln (input_file[cur_input.index_field], true))
+                firmup_the_line ();
+              else
+                force_eof = true;
             }
-            cur_input .limit_field = last;
-            buffer[cur_input .limit_field] = 37;
-            first = cur_input .limit_field + 1;
-            cur_input.loc_field = cur_input .start_field;
-          }
-          else fatal_error (653);
-        }
-        {
-          if (interrupt != 0)
-          pause_for_instructions ();
-        }
-        goto lab25;
-      }
-      break;
-    case 4 :
-      {
-        if (buffer[cur_input.loc_field] == 34)
-        cur_mod = 261;
-        else {
-          k = cur_input.loc_field;
-          buffer[cur_input .limit_field + 1] = 34;
-          do {
-              incr (cur_input.loc_field);
-          } while (!(buffer[cur_input.loc_field] == 34));
-          if (cur_input.loc_field > cur_input .limit_field)
-          {
-            cur_input.loc_field = cur_input .limit_field;
+            if (force_eof)
             {
-              if (interaction == 3)
-        ;
-              if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+              print_char(41);
+              decr (open_parens);
+              fflush (stdout);
+              force_eof = false;
+              end_file_reading ();
+              if (check_outer_validity ())
+                goto lab_restart;
+              else
+                goto lab_restart;
+            }
+            buffer[cur_input.limit_field] = 37;
+            first = cur_input.limit_field + 1;
+            cur_input.loc_field = cur_input.start_field;
+          }
+          else
+          {
+            if (input_ptr > 0)
+            {
+              end_file_reading ();
+              goto lab_restart;
+            }
+            if (selector < 2)
+              open_log_file ();
+            if (interaction > 1)
+            {
+              if (cur_input.limit_field == cur_input.start_field)
+                print_nl(652);
+              print_ln ();
+              first = cur_input.start_field;
               {
-                print_nl(261);
-                print(fullsourcefilenamestack[in_open]);
-                print(58);
-                print_int (line);
-                print(262);
-                print(645);
+                ;
+                print(42);
+                term_input ();
               }
-              else {
-                print_nl(263);
-                print(645);
-              }
+              cur_input.limit_field = last;
+              buffer[cur_input.limit_field] = 37;
+              first = cur_input.limit_field + 1;
+              cur_input.loc_field = cur_input.start_field;
             }
-            {
-              help_ptr = 3;
-              help_line[2] = 646;
-              help_line[1] = 647;
-              help_line[0] = 648;
-            }
-            deletions_allowed = false;
-            error ();
-            deletions_allowed = true;
-            goto lab_restart;
+            else
+              fatal_error (653);
           }
-          if ((cur_input.loc_field == k + 1) && ((str_start[buffer[k]
-          + 1] - str_start[buffer[k]]) == 1))
-          cur_mod = buffer[k];
-          else {
-            {
-              if (pool_ptr + cur_input.loc_field - k > max_pool_ptr)
-              {
-                if (pool_ptr + cur_input.loc_field - k > pool_size)
-                overflow (257, pool_size - init_pool_ptr);
-                max_pool_ptr = pool_ptr + cur_input.loc_field - k;
-              }
-            }
+          {
+            if (interrupt != 0)
+              pause_for_instructions ();
+          }
+          goto lab25;
+        }
+        break;
+      case 4:
+        {
+          if (buffer[cur_input.loc_field] == 34)
+            cur_mod = 261;
+          else
+          {
+            k = cur_input.loc_field;
+            buffer[cur_input.limit_field + 1] = 34;
             do {
+              incr (cur_input.loc_field);
+            } while (!(buffer[cur_input.loc_field] == 34));
+            if (cur_input.loc_field > cur_input.limit_field)
+            {
+              cur_input.loc_field = cur_input.limit_field;
+              {
+                if (interaction == 3)
+                  ;
+                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
                 {
-                str_pool[pool_ptr] = buffer[k];
-                incr (pool_ptr);
+                  print_nl(261);
+                  print(fullsourcefilenamestack[in_open]);
+                  print(58);
+                  print_int (line);
+                  print(262);
+                  print(645);
+                }
+                else
+                {
+                  print_nl(263);
+                  print(645);
+                }
               }
-              incr (k);
-            } while (!(k == cur_input.loc_field));
-            cur_mod = make_string ();
+              {
+                help_ptr = 3;
+                help_line[2] = 646;
+                help_line[1] = 647;
+                help_line[0] = 648;
+              }
+              deletions_allowed = false;
+              error ();
+              deletions_allowed = true;
+              goto lab_restart;
+            }
+            if ((cur_input.loc_field == k + 1) && ((str_start[buffer[k] + 1] - str_start[buffer[k]]) == 1))
+              cur_mod = buffer[k];
+            else
+            {
+              {
+                if (pool_ptr + cur_input.loc_field - k > max_pool_ptr)
+                {
+                  if (pool_ptr + cur_input.loc_field - k > pool_size)
+                    overflow (257, pool_size - init_pool_ptr);
+                  max_pool_ptr = pool_ptr + cur_input.loc_field - k;
+                }
+              }
+              do {
+                {
+                  str_pool[pool_ptr] = buffer[k];
+                  incr (pool_ptr);
+                }
+                incr (k);
+              } while (!(k == cur_input.loc_field));
+              cur_mod = make_string ();
+            }
           }
+          incr (cur_input.loc_field);
+          cur_cmd = 39;
+          goto lab_exit;
         }
-        incr (cur_input.loc_field);
-        cur_cmd = 39;
-        goto lab_exit;
-      }
-      break;
-    case 5 :
-    case 6 :
-    case 7 :
-    case 8 :
-      {
-        k = cur_input.loc_field - 1;
-        goto found;
-      }
-      break;
-    case 20 :
-      {
+        break;
+      case 5:
+      case 6:
+      case 7:
+      case 8:
         {
-          if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          k = cur_input.loc_field - 1;
+          goto found;
+        }
+        break;
+      case 20:
+        {
           {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(642);
+            if (interaction == 3)
+              ;
+            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+            {
+              print_nl(261);
+              print(fullsourcefilenamestack[in_open]);
+              print(58);
+              print_int (line);
+              print(262);
+              print(642);
+            }
+            else
+            {
+              print_nl(263);
+              print(642);
+            }
           }
-          else {
-            print_nl(263);
-            print(642);
+          {
+            help_ptr = 2;
+            help_line[1] = 643;
+            help_line[0] = 644;
           }
+          deletions_allowed = false;
+          error ();
+          deletions_allowed = true;
+          goto lab_restart;
         }
-        {
-          help_ptr = 2;
-          help_line[1] = 643;
-          help_line[0] = 644;
-        }
-        deletions_allowed = false;
-        error ();
-        deletions_allowed = true;
-        goto lab_restart;
-      }
-      break;
+        break;
       default:
-;
-      break;
+        ;
+        break;
     }
     k = cur_input.loc_field - 1;
-    while (char_class[buffer[cur_input.loc_field]] == cclass) incr (
-    cur_input.loc_field);
+    while (char_class[buffer[cur_input.loc_field]] == cclass)
+      incr (cur_input.loc_field);
     goto found;
-    lab85: n = c - 48;
-    while (char_class[buffer[cur_input.loc_field]] == 0) {
+  lab85:
+    n = c - 48;
+    while (char_class[buffer[cur_input.loc_field]] == 0)
+    {
       if (n < 4096)
-      n = 10 * n + buffer[cur_input.loc_field] - 48;
+        n = 10 * n + buffer[cur_input.loc_field] - 48;
       incr (cur_input.loc_field);
     }
-    if (buffer[cur_input.loc_field] == 46) {
+    if (buffer[cur_input.loc_field] == 46)
+    {
       if (char_class[buffer[cur_input.loc_field + 1]] == 0)
-      goto done;
+        goto done;
     }
     f = 0;
     goto lab87;
-    done: incr (cur_input.loc_field);
-    lab86: k = 0;
+  done:
+    incr (cur_input.loc_field);
+  lab86:
+    k = 0;
     do {
-        if (k < 17)
+      if (k < 17)
       {
         dig[k] = buffer[cur_input.loc_field] - 48;
         incr (k);
@@ -14383,13 +14539,15 @@ void get_next (void)
       incr (n);
       f = 0;
     }
-    lab87: if (n < 4096)
-    cur_mod = n * 65536L + f;
-    else {
+  lab87:
+    if (n < 4096)
+      cur_mod = n * 65536L + f;
+    else
+    {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -14398,7 +14556,8 @@ void get_next (void)
           print(262);
           print(649);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(649);
         }
@@ -14415,24 +14574,26 @@ void get_next (void)
     }
     cur_cmd = 42;
     goto lab_exit;
-    found: cur_sym = id_lookup (k, cur_input.loc_field - k);
+  found:
+    cur_sym = id_lookup (k, cur_input.loc_field - k);
   }
   else if (cur_input.loc_field >= hi_mem_min)
   {
     cur_sym = mem[cur_input.loc_field].hh.lh;
     cur_input.loc_field = mem[cur_input.loc_field].hh.v.RH;
-    if (cur_sym >= 9770) {
+    if (cur_sym >= 9770)
+    {
       if (cur_sym >= 9920)
       {
         if (cur_sym >= 10070)
         cur_sym = cur_sym - 150;
-        begin_token_list (param_stack[cur_input .limit_field + cur_sym - (9920)
-        ], 18);
+        begin_token_list (param_stack[cur_input.limit_field + cur_sym - (9920)], 18);
         goto lab_restart;
       }
-      else {
+      else
+      {
         cur_cmd = 38;
-        cur_mod = param_stack[cur_input .limit_field + cur_sym - (9770)];
+        cur_mod = param_stack[cur_input.limit_field + cur_sym - (9770)];
         cur_sym = 0;
         goto lab_exit;
       }
@@ -14444,32 +14605,37 @@ void get_next (void)
     {
       cur_mod = mem[cur_input.loc_field + 1].cint;
       if (mem[cur_input.loc_field].hh.b0 == 16)
-      cur_cmd = 42;
-      else {
+        cur_cmd = 42;
+      else
+      {
         cur_cmd = 39;
         {
           if (str_ref[cur_mod]< 127)
-          incr (str_ref[cur_mod]);
+            incr (str_ref[cur_mod]);
         }
       }
     }
-    else {
+    else
+    {
       cur_mod = cur_input.loc_field;
       cur_cmd = 38;
     }
     cur_input.loc_field = mem[cur_input.loc_field].hh.v.RH;
     goto lab_exit;
   }
-  else {
+  else
+  {
     end_token_list ();
     goto lab_restart;
   }
   cur_cmd = eqtb[cur_sym].lh;
   cur_mod = eqtb[cur_sym].v.RH;
-  if (cur_cmd >= 86) {
+  if (cur_cmd >= 86)
+  {
     if (check_outer_validity ())
-    cur_cmd = cur_cmd - 86;
-    else goto lab_restart;
+      cur_cmd = cur_cmd - 86;
+    else
+      goto lab_restart;
   }
   lab_exit:;
 }
@@ -14477,18 +14643,22 @@ void get_next (void)
 void firmup_the_line (void)
 {
   integer k;
-  cur_input .limit_field = last;
-  if (internal[31] > 0) {
+
+  cur_input.limit_field = last;
+  if (internal[31] > 0)
+  {
     if (interaction > 1)
     {
-;
+      ;
       print_ln ();
-      if (cur_input .start_field < cur_input .limit_field)
-      {integer for_end; k = cur_input .start_field;for_end =
-      cur_input .limit_field - 1; if (k <= for_end) do
-        print(buffer[k]);
-      while (k++ < for_end);}
-      first = cur_input .limit_field;
+      if (cur_input.start_field < cur_input.limit_field)
+      {
+        integer for_end; k = cur_input.start_field; for_end = cur_input.limit_field - 1;
+        if (k <= for_end) do
+          print(buffer[k]);
+          while (k++ < for_end);
+      }
+      first = cur_input.limit_field;
       {
         ;
         print(654);
@@ -14496,11 +14666,13 @@ void firmup_the_line (void)
       }
       if (last > first)
       {
-        {integer for_end; k = first;for_end = last - 1; if (k <=
-        for_end) do
-          buffer[k + cur_input .start_field - first] = buffer[k];
-        while (k++ < for_end);}
-        cur_input .limit_field = cur_input .start_field + last - first;
+        {
+          integer for_end; k = first;for_end = last - 1;
+          if (k <= for_end) do
+            buffer[k + cur_input.start_field - first] = buffer[k];
+            while (k++ < for_end);
+        }
+        cur_input.limit_field = cur_input.start_field + last - first;
       }
     }
   }
@@ -14508,19 +14680,23 @@ void firmup_the_line (void)
 
 halfword scan_toks (commandcode terminator, halfword substlist, halfword tailend, small_number suffixcount)
 {
-  halfword Result; halfword p;
+  halfword Result;
+  halfword p;
   halfword q;
   integer balance;
+
   p = memtop - 2;
   balance = 1;
   mem[memtop - 2].hh.v.RH = 0;
-  while (true) {
+  while (true)
+  {
     get_next ();
     if (cur_sym > 0)
     {
       {
         q = substlist;
-        while (q != 0) {
+        while (q != 0)
+        {
           if (mem[q].hh.lh == cur_sym)
           {
             cur_sym = mem[q + 1].cint;
@@ -14531,27 +14707,30 @@ halfword scan_toks (commandcode terminator, halfword substlist, halfword tailend
         }
         found:;
       }
-      if (cur_cmd == terminator) {
+      if (cur_cmd == terminator)
+      {
         if (cur_mod > 0)
-        incr (balance);
-        else {
+          incr (balance);
+        else
+        {
           decr (balance);
           if (balance == 0)
-          goto done;
+            goto done;
         }
       }
       else if (cur_cmd == 61)
       {
         if (cur_mod == 0)
-        get_next ();
+          get_next ();
         else if (cur_mod <= suffixcount)
-        cur_sym = 9919 + cur_mod;
+          cur_sym = 9919 + cur_mod;
       }
     }
     mem[p].hh.v.RH = cur_tok ();
     p = mem[p].hh.v.RH;
   }
-  done: mem[p].hh.v.RH = tailend;
+done:
+  mem[p].hh.v.RH = tailend;
   flush_node_list (substlist);
   Result = mem[memtop - 2].hh.v.RH;
   return Result;
@@ -14559,13 +14738,14 @@ halfword scan_toks (commandcode terminator, halfword substlist, halfword tailend
 
 void get_symbol (void)
 {
-  lab_restart: get_next ();
+lab_restart:
+  get_next ();
   if ((cur_sym == 0) || (cur_sym > 9757))
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -14574,7 +14754,8 @@ void get_symbol (void)
         print(262);
         print(666);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(666);
       }
@@ -14586,13 +14767,15 @@ void get_symbol (void)
       help_line[0] = 669;
     }
     if (cur_sym > 0)
-    help_line[2] = 670;
+      help_line[2] = 670;
     else if (cur_cmd == 39)
     {
-      if (str_ref[cur_mod]< 127) {
+      if (str_ref[cur_mod] < 127)
+      {
         if (str_ref[cur_mod] > 1)
-        decr (str_ref[cur_mod]);
-        else flush_string (cur_mod);
+          decr (str_ref[cur_mod]);
+        else
+          flush_string (cur_mod);
       }
     }
     cur_sym = 9757;
@@ -14609,7 +14792,8 @@ void get_clear_symbol (void)
 
 void check_equals (void)
 {
-  if (cur_cmd != 51) {
+  if (cur_cmd != 51)
+  {
     if (cur_cmd != 77)
     {
       missing_err (61);
@@ -14630,6 +14814,7 @@ void make_op_def (void)
 {
   commandcode m;
   halfword p, q, r;
+
   m = cur_mod;
   get_symbol ();
   q = get_node (2);
@@ -14659,9 +14844,10 @@ void make_op_def (void)
 
 void check_delimiter (halfword ldelim, halfword rdelim)
 {
-  if (cur_cmd == 62) {
+  if (cur_cmd == 62)
+  {
     if (cur_mod == ldelim)
-    goto lab_exit;
+      goto lab_exit;
   }
   if (cur_sym != rdelim)
   {
@@ -14673,11 +14859,12 @@ void check_delimiter (halfword ldelim, halfword rdelim)
     }
     back_error ();
   }
-  else {
+  else
+  {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -14686,7 +14873,8 @@ void check_delimiter (halfword ldelim, halfword rdelim)
         print(262);
         print(924);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(924);
       }
@@ -14706,22 +14894,27 @@ void check_delimiter (halfword ldelim, halfword rdelim)
 
 halfword scan_declared_variable (void)
 {
-  halfword Result; halfword x;
+  halfword Result;
+  halfword x;
   halfword h, t;
   halfword l;
+
   get_symbol ();
   x = cur_sym;
   if (cur_cmd != 41)
-  clear_symbol (x, false);
+    clear_symbol (x, false);
   h = get_avail ();
   mem[h].hh.lh = x;
   t = h;
-  while (true) {
+  while (true)
+  {
     get_x_next ();
     if (cur_sym == 0)
-    goto done;
-    if (cur_cmd != 41) {
-      if (cur_cmd != 40) {
+      goto done;
+    if (cur_cmd != 41)
+    {
+      if (cur_cmd != 40)
+      {
         if (cur_cmd == 63)
         {
           l = cur_sym;
@@ -14733,19 +14926,22 @@ halfword scan_declared_variable (void)
             cur_cmd = 63;
             goto done;
           }
-          else cur_sym = 0;
+          else
+            cur_sym = 0;
         }
-        else goto done;
+        else
+          goto done;
       }
     }
     mem[t].hh.v.RH = get_avail ();
     t = mem[t].hh.v.RH;
     mem[t].hh.lh = cur_sym;
   }
-  done: if (eqtb[x].lh % 86 != 41)
-  clear_symbol (x, false);
+done:
+  if (eqtb[x].lh % 86 != 41)
+    clear_symbol (x, false);
   if (eqtb[x].v.RH == 0)
-  new_root (x);
+    new_root (x);
   Result = h;
   return Result;
 }
@@ -14761,6 +14957,7 @@ void scan_def (void)
   halfword p;
   halfword base;
   halfword ldelim, rdelim;
+
   m = cur_mod;
   c = 0;
   mem[memtop - 2].hh.v.RH = 0;
@@ -14777,18 +14974,18 @@ void scan_def (void)
     eqtb[warning_info].lh = 10;
     eqtb[warning_info].v.RH = q;
   }
-  else {
+  else
+  {
     p = scan_declared_variable ();
-    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p]
-    .hh.v.RH, true);
+    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p].hh.v.RH, true);
     warning_info = find_variable (p);
     flush_list (p);
     if (warning_info == 0)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -14797,7 +14994,8 @@ void scan_def (void)
           print(262);
           print(682);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(682);
         }
@@ -14812,7 +15010,8 @@ void scan_def (void)
     }
     scanner_status = 4;
     n = 2;
-    if (cur_cmd == 61) {
+    if (cur_cmd == 61)
+    {
       if (cur_mod == 3)
       {
         n = 3;
@@ -14824,55 +15023,57 @@ void scan_def (void)
   }
   k = n;
   if (cur_cmd == 31)
-  do {
-      ldelim = cur_sym;
-    rdelim = cur_mod;
-    get_next ();
-    if ((cur_cmd == 56) && (cur_mod >= 9770))
-    base = cur_mod;
-    else {
-      {
-        if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(685);
-        }
-        else {
-          print_nl(263);
-          print(685);
-        }
-      }
-      {
-        help_ptr = 1;
-        help_line[0] = 686;
-      }
-      back_error ();
-      base = 9770;
-    }
     do {
-        mem[q].hh.v.RH = get_avail ();
-      q = mem[q].hh.v.RH;
-      mem[q].hh.lh = base + k;
-      get_symbol ();
-      p = get_node (2);
-      mem[p + 1].cint = base + k;
-      mem[p].hh.lh = cur_sym;
-      if (k == 150)
-      overflow (687, 150);
-      incr (k);
-      mem[p].hh.v.RH = r;
-      r = p;
+      ldelim = cur_sym;
+      rdelim = cur_mod;
       get_next ();
-    } while (!(cur_cmd != 82));
-    check_delimiter (ldelim, rdelim);
-    get_next ();
-  } while (!(cur_cmd != 31));
+      if ((cur_cmd == 56) && (cur_mod >= 9770))
+        base = cur_mod;
+      else
+      {
+        {
+          if (interaction == 3)
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+          {
+            print_nl(261);
+            print(fullsourcefilenamestack[in_open]);
+            print(58);
+            print_int (line);
+            print(262);
+            print(685);
+          }
+          else
+          {
+            print_nl(263);
+            print(685);
+          }
+        }
+        {
+          help_ptr = 1;
+          help_line[0] = 686;
+        }
+        back_error ();
+        base = 9770;
+      }
+      do {
+        mem[q].hh.v.RH = get_avail ();
+        q = mem[q].hh.v.RH;
+        mem[q].hh.lh = base + k;
+        get_symbol ();
+        p = get_node (2);
+        mem[p + 1].cint = base + k;
+        mem[p].hh.lh = cur_sym;
+        if (k == 150)
+          overflow (687, 150);
+        incr (k);
+        mem[p].hh.v.RH = r;
+        r = p;
+        get_next ();
+      } while (!(cur_cmd != 82));
+      check_delimiter (ldelim, rdelim);
+      get_next ();
+    } while (!(cur_cmd != 31));
   if (cur_cmd == 56)
   {
     p = get_node (2);
@@ -14881,29 +15082,32 @@ void scan_def (void)
       c = cur_mod;
       mem[p + 1].cint = 9770 + k;
     }
-    else {
+    else
+    {
       mem[p + 1].cint = cur_mod + k;
       if (cur_mod == 9770)
-      c = 4;
+        c = 4;
       else if (cur_mod == 9920)
-      c = 6;
-      else c = 7;
+        c = 6;
+      else
+        c = 7;
     }
     if (k == 150)
-    overflow (687, 150);
+      overflow (687, 150);
     incr (k);
     get_symbol ();
     mem[p].hh.lh = cur_sym;
     mem[p].hh.v.RH = r;
     r = p;
     get_next ();
-    if (c == 4) {
+    if (c == 4)
+    {
       if (cur_cmd == 69)
       {
         c = 5;
         p = get_node (2);
         if (k == 150)
-        overflow (687, 150);
+          overflow (687, 150);
         mem[p + 1].cint = 9770 + k;
         get_symbol ();
         mem[p].hh.lh = cur_sym;
@@ -14918,8 +15122,9 @@ void scan_def (void)
   mem[p].hh.lh = c;
   mem[q].hh.v.RH = p;
   if (m == 1)
-  mem[p].hh.v.RH = scan_toks (16, r, 0, n);
-  else {
+    mem[p].hh.v.RH = scan_toks (16, r, 0, n);
+  else
+  {
     q = get_avail ();
     mem[q].hh.lh = bg_loc;
     mem[p].hh.v.RH = q;
@@ -14928,7 +15133,7 @@ void scan_def (void)
     mem[q].hh.v.RH = scan_toks (16, r, p, n);
   }
   if (warning_info == 21)
-  flush_token_list (mem[22].cint);
+    flush_token_list (mem[22].cint);
   scanner_status = 0;
   get_x_next ();
 }
@@ -14936,18 +15141,20 @@ void scan_def (void)
 void print_macro_name (halfword a, halfword n)
 {
   halfword p, q;
+
   if (n != 0)
-  slow_print(hash[n].v.RH);
-  else {
+    slow_print(hash[n].v.RH);
+  else
+  {
     p = mem[a].hh.lh;
     if (p == 0)
-    slow_print(hash[mem[mem[mem[a].hh.v.RH].hh
-  .lh].hh.lh].v.RH);
-    else {
+      slow_print(hash[mem[mem[mem[a].hh.v.RH].hh.lh].hh.lh].v.RH);
+    else
+    {
       q = p;
-      while (mem[q].hh.v.RH != 0) q = mem[q].hh.v.RH;
-      mem[q].hh.v.RH = mem[mem[a].hh.v.RH].hh
-    .lh;
+      while (mem[q].hh.v.RH != 0)
+        q = mem[q].hh.v.RH;
+      mem[q].hh.v.RH = mem[mem[a].hh.v.RH].hh.lh;
       show_token_list (p, 0, 1000, 0);
       mem[q].hh.v.RH = 0;
     }
@@ -14957,78 +15164,88 @@ void print_macro_name (halfword a, halfword n)
 void print_arg (halfword q, integer n, halfword b)
 {
   if (mem[q].hh.v.RH == 1)
-  print_nl(498);
+    print_nl(498);
   else if ((b < 10070) && (b != 7))
-  print_nl(499);
-  else print_nl(500);
+    print_nl(499);
+  else
+    print_nl(500);
   print_int (n);
   print(703);
   if (mem[q].hh.v.RH == 1)
-  print_exp (q, 1);
-  else show_token_list (q, 0, 1000, 0);
+    print_exp (q, 1);
+  else
+    show_token_list (q, 0, 1000, 0);
 }
 
 void scan_text_arg (halfword ldelim, halfword rdelim)
 {
   integer balance;
   halfword p;
+
   warning_info = ldelim;
   scanner_status = 3;
   p = memtop - 2;
   balance = 1;
   mem[memtop - 2].hh.v.RH = 0;
-  while (true) {
+  while (true)
+  {
     get_next ();
     if (ldelim == 0)
     {
       if (cur_cmd > 82)
       {
         if (balance == 1)
-        goto done;
+          goto done;
         else if (cur_cmd == 84)
-        decr (balance);
+          decr (balance);
       }
       else if (cur_cmd == 32)
-      incr (balance);
+        incr (balance);
     }
-    else {
+    else
+    {
       if (cur_cmd == 62)
       {
         if (cur_mod == ldelim)
         {
           decr (balance);
           if (balance == 0)
-          goto done;
+            goto done;
         }
       }
-      else if (cur_cmd == 31) {
+      else if (cur_cmd == 31)
+      {
         if (cur_mod == rdelim)
-        incr (balance);
+          incr (balance);
       }
     }
     mem[p].hh.v.RH = cur_tok ();
     p = mem[p].hh.v.RH;
   }
-  done: cur_exp = mem[memtop - 2].hh.v.RH;
+done:
+  cur_exp = mem[memtop - 2].hh.v.RH;
   cur_type = 20;
   scanner_status = 0;
 }
 
-void macro_call (halfword defref, halfword arglist, halfword macroname)
+void macro_call (halfword defref, halfword arg_list, halfword macro_name)
 {
   halfword r;
   halfword p, q;
   integer n;
   halfword ldelim, rdelim;
   halfword tail;
+
   r = mem[defref].hh.v.RH;
   incr (mem[defref].hh.lh);
-  if (arglist == 0)
-  n = 0;
-  else {
+  if (arg_list == 0)
+    n = 0;
+  else
+  {
     n = 1;
-    tail = arglist;
-    while (mem[tail].hh.v.RH != 0) {
+    tail = arg_list;
+    while (mem[tail].hh.v.RH != 0)
+    {
       incr (n);
       tail = mem[tail].hh.v.RH;
     }
@@ -15037,16 +15254,16 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
   {
     begin_diagnostic ();
     print_ln ();
-    print_macro_name (arglist, macroname);
+    print_macro_name (arg_list, macro_name);
     if (n == 3)
-    print(665);
+      print(665);
     show_macro (defref, 0, 100000L);
-    if (arglist != 0)
+    if (arg_list != 0)
     {
       n = 0;
-      p = arglist;
+      p = arg_list;
       do {
-          q = mem[p].hh.lh;
+        q = mem[p].hh.lh;
         print_arg (q, n, 0);
         incr (n);
         p = mem[p].hh.v.RH;
@@ -15055,7 +15272,8 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
     end_diagnostic (false);
   }
   cur_cmd = 83;
-  while (mem[r].hh.lh >= 9770) {
+  while (mem[r].hh.lh >= 9770)
+  {
     if (cur_cmd != 82)
     {
       get_x_next ();
@@ -15063,8 +15281,8 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
       {
         {
           if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
           {
             print_nl(261);
             print(fullsourcefilenamestack[in_open]);
@@ -15073,12 +15291,13 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
             print(262);
             print(709);
           }
-          else {
+          else
+          {
             print_nl(263);
             print(709);
           }
         }
-        print_macro_name (arglist, macroname);
+        print_macro_name (arg_list, macro_name);
         {
           help_ptr = 3;
           help_line[2] = 710;
@@ -15090,7 +15309,8 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
           cur_exp = 0;
           cur_type = 20;
         }
-        else {
+        else
+        {
           cur_exp = 0;
           cur_type = 16;
         }
@@ -15102,15 +15322,19 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
       rdelim = cur_mod;
     }
     if (mem[r].hh.lh >= 10070)
-    scan_text_arg (ldelim, rdelim);
-    else {
+      scan_text_arg (ldelim, rdelim);
+    else
+    {
       get_x_next ();
       if (mem[r].hh.lh >= 9920)
-      scan_suffix ();
-      else scan_expression ();
+        scan_suffix ();
+      else
+        scan_expression ();
     }
-    if (cur_cmd != 82) {
-      if ((cur_cmd != 62) || (cur_mod != ldelim)) {
+    if (cur_cmd != 82)
+    {
+      if ((cur_cmd != 62) || (cur_mod != ldelim))
+      {
         if (mem[mem[r].hh.v.RH].hh.lh >= 9770)
         {
           missing_err (44);
@@ -15123,7 +15347,8 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
           back_error ();
           cur_cmd = 82;
         }
-        else {
+        else
+        {
           missing_err (hash[rdelim].v.RH);
           {
             help_ptr = 2;
@@ -15134,21 +15359,23 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
         }
       }
     }
-    found: {
+  found:
+    {
       p = get_avail ();
       if (cur_type == 20)
-      mem[p].hh.lh = cur_exp;
-      else mem[p].hh.lh = stash_cur_exp ();
+        mem[p].hh.lh = cur_exp;
+      else
+        mem[p].hh.lh = stash_cur_exp ();
       if (internal[9] > 0)
       {
         begin_diagnostic ();
-        print_arg (mem[p].hh.lh, n, mem[r].hh
-        .lh);
+        print_arg (mem[p].hh.lh, n, mem[r].hh.lh);
         end_diagnostic (false);
       }
-      if (arglist == 0)
-      arglist = p;
-      else mem[tail].hh.v.RH = p;
+      if (arg_list == 0)
+        arg_list = p;
+      else
+        mem[tail].hh.v.RH = p;
       tail = p;
       incr (n);
     }
@@ -15158,8 +15385,8 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -15168,12 +15395,13 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
         print(262);
         print(704);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(704);
       }
     }
-    print_macro_name (arglist, macroname);
+    print_macro_name (arg_list, macro_name);
     print_char(59);
     print_nl(705);
     slow_print(hash[rdelim].v.RH);
@@ -15191,126 +15419,131 @@ void macro_call (halfword defref, halfword arglist, halfword macroname)
     if (mem[r].hh.lh < 7)
     {
       get_x_next ();
-      if (mem[r].hh.lh != 6) {
+      if (mem[r].hh.lh != 6)
+      {
         if ((cur_cmd == 51) || (cur_cmd == 77))
-        get_x_next ();
+          get_x_next ();
       }
     }
     switch (mem[r].hh.lh)
-    {case 1 :
-      scan_primary ();
-      break;
-    case 2 :
-      scan_secondary ();
-      break;
-    case 3 :
-      scan_tertiary ();
-      break;
-    case 4 :
-      scan_expression ();
-      break;
-    case 5 :
-      {
-        scan_expression ();
-        p = get_avail ();
-        mem[p].hh.lh = stash_cur_exp ();
-        if (internal[9] > 0)
-        {
-          begin_diagnostic ();
-          print_arg (mem[p].hh.lh, n, 0);
-          end_diagnostic (false);
-        }
-        if (arglist == 0)
-        arglist = p;
-        else mem[tail].hh.v.RH = p;
-        tail = p;
-        incr (n);
-        if (cur_cmd != 69)
-        {
-          missing_err (479);
-          print(716);
-          print_macro_name (arglist, macroname);
-          {
-            help_ptr = 1;
-            help_line[0] = 717;
-          }
-          back_error ();
-        }
-        get_x_next ();
+    {
+      case 1:
         scan_primary ();
-      }
-      break;
-    case 6 :
-      {
-        if (cur_cmd != 31)
-        ldelim = 0;
-        else {
-          ldelim = cur_sym;
-          rdelim = cur_mod;
-          get_x_next ();
-        }
-        scan_suffix ();
-        if (ldelim != 0)
+        break;
+      case 2:
+        scan_secondary ();
+        break;
+      case 3:
+        scan_tertiary ();
+        break;
+      case 4:
+        scan_expression ();
+        break;
+      case 5:
         {
-          if ((cur_cmd != 62) || (cur_mod != ldelim))
+          scan_expression ();
+          p = get_avail ();
+          mem[p].hh.lh = stash_cur_exp ();
+          if (internal[9] > 0)
           {
-            missing_err (hash[rdelim].v.RH);
+            begin_diagnostic ();
+            print_arg (mem[p].hh.lh, n, 0);
+            end_diagnostic (false);
+          }
+          if (arg_list == 0)
+            arg_list = p;
+          else
+            mem[tail].hh.v.RH = p;
+          tail = p;
+          incr (n);
+          if (cur_cmd != 69)
+          {
+            missing_err (479);
+            print(716);
+            print_macro_name (arg_list, macro_name);
             {
-              help_ptr = 2;
-              help_line[1] = 715;
-              help_line[0] = 708;
+              help_ptr = 1;
+              help_line[0] = 717;
             }
             back_error ();
           }
           get_x_next ();
+          scan_primary ();
         }
-      }
-      break;
-    case 7 :
-      scan_text_arg (0, 0);
-      break;
+        break;
+      case 6:
+        {
+          if (cur_cmd != 31)
+            ldelim = 0;
+          else
+          {
+            ldelim = cur_sym;
+            rdelim = cur_mod;
+            get_x_next ();
+          }
+          scan_suffix ();
+          if (ldelim != 0)
+          {
+            if ((cur_cmd != 62) || (cur_mod != ldelim))
+            {
+              missing_err (hash[rdelim].v.RH);
+              {
+                help_ptr = 2;
+                help_line[1] = 715;
+                help_line[0] = 708;
+              }
+              back_error ();
+            }
+            get_x_next ();
+          }
+        }
+        break;
+      case 7:
+        scan_text_arg (0, 0);
+        break;
     }
     back_input ();
     {
       p = get_avail ();
       if (cur_type == 20)
-      mem[p].hh.lh = cur_exp;
-      else mem[p].hh.lh = stash_cur_exp ();
+        mem[p].hh.lh = cur_exp;
+      else
+        mem[p].hh.lh = stash_cur_exp ();
       if (internal[9] > 0)
       {
         begin_diagnostic ();
-        print_arg (mem[p].hh.lh, n, mem[r].hh
-        .lh);
+        print_arg (mem[p].hh.lh, n, mem[r].hh.lh);
         end_diagnostic (false);
       }
-      if (arglist == 0)
-      arglist = p;
-      else mem[tail].hh.v.RH = p;
+      if (arg_list == 0)
+        arg_list = p;
+      else
+        mem[tail].hh.v.RH = p;
       tail = p;
       incr (n);
     }
   }
   r = mem[r].hh.v.RH;
   while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
-  end_token_list ();
+    end_token_list ();
   if (param_ptr + n > max_param_stack)
   {
     max_param_stack = param_ptr + n;
     if (max_param_stack > 150)
-    overflow (687, 150);
+      overflow (687, 150);
   }
   begin_token_list (defref, 21);
-  cur_input .name_field = macroname;
+  cur_input.name_field = macro_name;
   cur_input.loc_field = r;
   if (n > 0)
   {
-    p = arglist;
+    p = arg_list;
     do {
-        param_stack[param_ptr] = mem[p].hh.lh;
+      param_stack[param_ptr] = mem[p].hh.lh;
       incr (param_ptr);
       p = mem[p].hh.v.RH;
     } while (!(p == 0));
-    flush_list (arglist);
+    flush_list (arg_list);
   }
 }
 
@@ -15319,28 +15552,33 @@ void expand (void)
   halfword p;
   integer k;
   pool_pointer j;
-  if (internal[7] > 65536L) {
+
+  if (internal[7] > 65536L)
+  {
     if (cur_cmd != 10)
-    show_cmd_mod (cur_cmd, cur_mod);
+      show_cmd_mod (cur_cmd, cur_mod);
   }
   switch (cur_cmd)
-  {case 1 :
-    conditional ();
-    break;
-  case 2 :
-    if (cur_mod > if_limit) {
-      if (if_limit == 1)
+  {
+    case 1:
+      conditional ();
+      break;
+    case 2:
+      if (cur_mod > if_limit)
       {
-        missing_err (58);
-        back_input ();
-        cur_sym = 9762;
-        ins_error ();
-      }
-      else {
+        if (if_limit == 1)
+        {
+          missing_err (58);
+          back_input ();
+          cur_sym = 9762;
+          ins_error ();
+        }
+      else
+      {
         {
           if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
           {
             print_nl(261);
             print(fullsourcefilenamestack[in_open]);
@@ -15349,7 +15587,8 @@ void expand (void)
             print(262);
             print(724);
           }
-          else {
+          else
+          {
             print_nl(263);
             print(724);
           }
@@ -15362,225 +15601,241 @@ void expand (void)
         error ();
       }
     }
-    else {
-      while (cur_mod != 2) pass_text ();
+      else
       {
-        p = cond_ptr;
-        if_line = mem[p + 1].cint;
-        cur_if = mem[p].hh.b1;
-        if_limit = mem[p].hh.b0;
-        cond_ptr = mem[p].hh.v.RH;
-        free_node (p, 2);
-      }
-    }
-    break;
-  case 3 :
-    if (cur_mod > 0)
-    force_eof = true;
-    else start_input ();
-    break;
-  case 4 :
-    if (cur_mod == 0)
-    {
-      {
-        if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        while (cur_mod != 2) pass_text ();
         {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(688);
-        }
-        else {
-          print_nl(263);
-          print(688);
+          p = cond_ptr;
+          if_line = mem[p + 1].cint;
+          cur_if = mem[p].hh.b1;
+          if_limit = mem[p].hh.b0;
+          cond_ptr = mem[p].hh.v.RH;
+          free_node (p, 2);
         }
       }
-      {
-        help_ptr = 2;
-        help_line[1] = 689;
-        help_line[0] = 690;
-      }
-      error ();
-    }
-    else begin_iteration ();
-    break;
-  case 5 :
-    {
-      while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
-      end_token_list ();
-      if (loop_ptr == 0)
+      break;
+    case 3:
+      if (cur_mod > 0)
+        force_eof = true;
+      else
+        start_input ();
+      break;
+    case 4:
+      if (cur_mod == 0)
       {
         {
           if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
           {
             print_nl(261);
             print(fullsourcefilenamestack[in_open]);
             print(58);
             print_int (line);
             print(262);
-            print(692);
+            print(688);
           }
-          else {
+          else
+          {
             print_nl(263);
-            print(692);
+            print(688);
           }
         }
         {
           help_ptr = 2;
-          help_line[1] = 693;
-          help_line[0] = 694;
+          help_line[1] = 689;
+          help_line[0] = 690;
         }
         error ();
       }
-      else resume_iteration ();
-    }
-    break;
-  case 6 :
-    {
-      get_boolean ();
-      if (internal[7] > 65536L)
-      show_cmd_mod (33, cur_exp);
-      if (cur_exp == 30) {
+      else
+        begin_iteration ();
+      break;
+    case 5:
+      {
+        while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
+          end_token_list ();
         if (loop_ptr == 0)
         {
           {
             if (interaction == 3)
-        ;
-            if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+              ;
+            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
             {
               print_nl(261);
               print(fullsourcefilenamestack[in_open]);
               print(58);
               print_int (line);
               print(262);
-              print(695);
+              print(692);
             }
-            else {
-              print_nl(263);
-              print(695);
-            }
-          }
-          {
-            help_ptr = 1;
-            help_line[0] = 696;
-          }
-          if (cur_cmd == 83)
-          error ();
-          else back_error ();
-        }
-        else {
-          p = 0;
-          do {
-              if ((cur_input.index_field <= 15))
-            end_file_reading ();
-            else {
-              if (cur_input.index_field <= 17)
-              p = cur_input .start_field;
-              end_token_list ();
-            }
-          } while (!(p != 0));
-          if (p != mem[loop_ptr].hh.lh)
-          fatal_error (699);
-          stop_iteration ();
-        }
-      }
-      else if (cur_cmd != 83)
-      {
-        missing_err (59);
-        {
-          help_ptr = 2;
-          help_line[1] = 697;
-          help_line[0] = 698;
-        }
-        back_error ();
-      }
-    }
-    break;
-  case 7 :
-;
-    break;
-  case 9 :
-    {
-      get_next ();
-      p = cur_tok ();
-      get_next ();
-      if (cur_cmd < 11)
-      expand ();
-      else back_input ();
-      begin_token_list (p, 19);
-    }
-    break;
-  case 8 :
-    {
-      get_x_next ();
-      scan_primary ();
-      if (cur_type != 4)
-      {
-        disp_err (0, 700);
-        {
-          help_ptr = 2;
-          help_line[1] = 701;
-          help_line[0] = 702;
-        }
-        put_get_flush_error (0);
-      }
-      else {
-        back_input ();
-        if ((str_start[cur_exp + 1] - str_start[cur_exp]) > 0)
-        {
-          begin_file_reading ();
-          cur_input .name_field = 2;
-          k = first + (str_start[cur_exp + 1] - str_start[cur_exp]);
-          if (k >= max_buf_stack)
-          {
-            if (k >= bufsize)
+            else
             {
-              max_buf_stack = bufsize;
-              overflow (256, bufsize);
+              print_nl(263);
+              print(692);
             }
-            max_buf_stack = k + 1;
           }
-          j = str_start[cur_exp];
-          cur_input .limit_field = k;
-          while (first < cur_input .limit_field) {
-            buffer[first] = str_pool[j];
-            incr (j);
-            incr (first);
+          {
+            help_ptr = 2;
+            help_line[1] = 693;
+            help_line[0] = 694;
           }
-          buffer[cur_input .limit_field] = 37;
-          first = cur_input .limit_field + 1;
-          cur_input.loc_field = cur_input .start_field;
-          flush_cur_exp (0);
+          error ();
+        }
+        else
+          resume_iteration ();
+      }
+      break;
+    case 6:
+      {
+        get_boolean ();
+        if (internal[7] > 65536L)
+          show_cmd_mod (33, cur_exp);
+        if (cur_exp == 30)
+        {
+          if (loop_ptr == 0)
+          {
+            {
+              if (interaction == 3)
+                ;
+              if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+              {
+                print_nl(261);
+                print(fullsourcefilenamestack[in_open]);
+                print(58);
+                print_int (line);
+                print(262);
+                print(695);
+              }
+              else
+              {
+                print_nl(263);
+                print(695);
+              }
+            }
+            {
+              help_ptr = 1;
+              help_line[0] = 696;
+            }
+            if (cur_cmd == 83)
+              error ();
+            else
+              back_error ();
+          }
+          else
+          {
+            p = 0;
+            do {
+              if ((cur_input.index_field <= 15))
+                end_file_reading ();
+              else
+              {
+                if (cur_input.index_field <= 17)
+                  p = cur_input.start_field;
+                end_token_list ();
+              }
+            } while (!(p != 0));
+            if (p != mem[loop_ptr].hh.lh)
+              fatal_error (699);
+            stop_iteration ();
+          }
+        }
+        else if (cur_cmd != 83)
+        {
+          missing_err (59);
+          {
+            help_ptr = 2;
+            help_line[1] = 697;
+            help_line[0] = 698;
+          }
+          back_error ();
         }
       }
-    }
-    break;
-  case 10 :
-    macro_call (cur_mod, 0, cur_sym);
-    break;
+      break;
+    case 7:
+      ;
+      break;
+    case 9:
+      {
+        get_next ();
+        p = cur_tok ();
+        get_next ();
+        if (cur_cmd < 11)
+          expand ();
+        else
+          back_input ();
+        begin_token_list (p, 19);
+      }
+      break;
+    case 8:
+      {
+        get_x_next ();
+        scan_primary ();
+        if (cur_type != 4)
+        {
+          disp_err (0, 700);
+          {
+            help_ptr = 2;
+            help_line[1] = 701;
+            help_line[0] = 702;
+          }
+          put_get_flush_error (0);
+        }
+        else
+        {
+          back_input ();
+          if ((str_start[cur_exp + 1] - str_start[cur_exp]) > 0)
+          {
+            begin_file_reading ();
+            cur_input.name_field = 2;
+            k = first + (str_start[cur_exp + 1] - str_start[cur_exp]);
+            if (k >= max_buf_stack)
+            {
+              if (k >= bufsize)
+              {
+                max_buf_stack = bufsize;
+                overflow (256, bufsize);
+              }
+              max_buf_stack = k + 1;
+            }
+            j = str_start[cur_exp];
+            cur_input.limit_field = k;
+            while (first < cur_input.limit_field)
+            {
+              buffer[first] = str_pool[j];
+              incr (j);
+              incr (first);
+            }
+            buffer[cur_input.limit_field] = 37;
+            first = cur_input.limit_field + 1;
+            cur_input.loc_field = cur_input.start_field;
+            flush_cur_exp (0);
+          }
+        }
+      }
+      break;
+    case 10:
+      macro_call (cur_mod, 0, cur_sym);
+      break;
   }
 }
 
 void get_x_next (void)
 {
-  halfword saveexp;
+  halfword save_exp;
+
   get_next ();
   if (cur_cmd < 11)
   {
-    saveexp = stash_cur_exp ();
+    save_exp = stash_cur_exp ();
     do {
-        if (cur_cmd == 10)
-      macro_call (cur_mod, 0, cur_sym);
-      else expand ();
+      if (cur_cmd == 10)
+        macro_call (cur_mod, 0, cur_sym);
+      else
+        expand ();
       get_next ();
     } while (!(cur_cmd >= 11));
-    unstash_cur_exp (saveexp);
+    unstash_cur_exp (save_exp);
   }
 }
 
@@ -15590,7 +15845,7 @@ void stack_argument (halfword p)
   {
     incr (max_param_stack);
     if (max_param_stack > 150)
-    overflow (687, 150);
+      overflow (687, 150);
   }
   param_stack[param_ptr] = p;
   incr (param_ptr);
@@ -15599,43 +15854,53 @@ void stack_argument (halfword p)
 void pass_text (void)
 {
   integer l;
+
   scanner_status = 1;
   l = 0;
   warning_info = line;
-  while (true) {
+  while (true)
+  {
     get_next ();
-    if (cur_cmd <= 2) {
+    if (cur_cmd <= 2)
+    {
       if (cur_cmd < 2)
-      incr (l);
-      else {
+        incr (l);
+      else
+      {
         if (l == 0)
-        goto done;
+          goto done;
         if (cur_mod == 2)
-        decr (l);
+          decr (l);
       }
     }
     else if (cur_cmd == 39)
     {
-      if (str_ref[cur_mod]< 127) {
+      if (str_ref[cur_mod] < 127)
+      {
         if (str_ref[cur_mod] > 1)
-        decr (str_ref[cur_mod]);
-        else flush_string (cur_mod);
+          decr (str_ref[cur_mod]);
+        else
+          flush_string (cur_mod);
       }
     }
   }
-  done: scanner_status = 0;
+done:
+  scanner_status = 0;
 }
 
 void change_if_limit (small_number l, halfword p)
 {
   halfword q;
+
   if (p == cond_ptr)
-  if_limit = l;
-  else {
+    if_limit = l;
+  else
+  {
     q = cond_ptr;
-    while (true) {
+    while (true)
+    {
       if (q == 0)
-      confusion(718);
+        confusion(718);
       if (mem[q].hh.v.RH == p)
       {
         mem[q].hh.b0 = l;
@@ -15664,8 +15929,9 @@ void check_colon (void)
 void conditional (void)
 {
   halfword savecond_ptr;
-  unsigned char newif_limit;
+  unsigned char new_if_limit;
   halfword p;
+
   {
     p = get_node (2);
     mem[p].hh.v.RH = cond_ptr;
@@ -15679,25 +15945,28 @@ void conditional (void)
   }
   savecond_ptr = cond_ptr;
   lab_reswitch: get_boolean ();
-  newif_limit = 4;
+  new_if_limit = 4;
   if (internal[7] > 65536L)
   {
     begin_diagnostic ();
     if (cur_exp == 30)
-    print(722);
-    else print(723);
+      print(722);
+    else
+      print(723);
     end_diagnostic (false);
   }
-  found: check_colon ();
+found:
+  check_colon ();
   if (cur_exp == 30)
   {
-    change_if_limit (newif_limit, savecond_ptr);
+    change_if_limit (new_if_limit, savecond_ptr);
     goto lab_exit;
   }
-  while (true) {
+  while (true)
+  {
     pass_text ();
     if (cond_ptr == savecond_ptr)
-    goto done;
+      goto done;
     else if (cur_mod == 2)
     {
       p = cond_ptr;
@@ -15708,7 +15977,8 @@ void conditional (void)
       free_node (p, 2);
     }
   }
-  done: cur_if = cur_mod;
+done:
+  cur_if = cur_mod;
   if_line = line;
   if (cur_mod == 2)
   {
@@ -15720,10 +15990,11 @@ void conditional (void)
     free_node (p, 2);
   }
   else if (cur_mod == 4)
-  goto lab_reswitch;
-  else {
+    goto lab_reswitch;
+  else
+  {
     cur_exp = 30;
-    newif_limit = 2;
+    new_if_limit = 2;
     get_x_next ();
     goto found;
   }
@@ -15750,6 +16021,7 @@ void begin_iteration (void)
   halfword m;
   halfword n;
   halfword p, q, s, pp;
+
   m = cur_mod;
   n = cur_sym;
   s = get_node (2);
@@ -15780,26 +16052,29 @@ void begin_iteration (void)
   q = s + 1;
   mem[q].hh.v.RH = 0;
   do {
-      get_x_next ();
+    get_x_next ();
     if (m != 9770)
-    scan_suffix ();
-    else {
-      if (cur_cmd >= 81) {
+      scan_suffix ();
+    else
+    {
+      if (cur_cmd >= 81)
+      {
         if (cur_cmd <= 82)
-        goto lab_continue;
+          goto lab_continue;
       }
       scan_expression ();
-      if (cur_cmd == 74) {
+      if (cur_cmd == 74)
+      {
         if (q == s + 1)
         {
           if (cur_type != 16)
-          bad_for (737);
+            bad_for (737);
           pp = get_node (4);
           mem[pp + 1].cint = cur_exp;
           get_x_next ();
           scan_expression ();
           if (cur_type != 16)
-          bad_for (738);
+            bad_for (738);
           mem[pp + 2].cint = cur_exp;
           if (cur_cmd != 75)
           {
@@ -15814,7 +16089,7 @@ void begin_iteration (void)
           get_x_next ();
           scan_expression ();
           if (cur_type != 16)
-          bad_for (741);
+            bad_for (741);
           mem[pp + 3].cint = cur_exp;
           mem[s + 1].hh.lh = pp;
           goto done;
@@ -15828,8 +16103,9 @@ void begin_iteration (void)
     cur_type = 1;
     lab_continue:;
   } while (!(cur_cmd != 82));
-  done:;
-  found: if (cur_cmd != 81)
+done:;
+found:
+  if (cur_cmd != 81)
   {
     missing_err (58);
     {
@@ -15854,13 +16130,13 @@ void begin_iteration (void)
 void resume_iteration (void)
 {
   halfword p, q;
+
   p = mem[loop_ptr + 1].hh.lh;
   if (p > 1)
   {
     cur_exp = mem[p + 1].cint;
-    if (((mem[p + 2].cint > 0) && (cur_exp > mem[p + 3].cint))
-    || ((mem[p + 2].cint < 0) && (cur_exp < mem[p + 3].cint)))
-    goto not_found;
+    if (((mem[p + 2].cint > 0) && (cur_exp > mem[p + 3].cint)) || ((mem[p + 2].cint < 0) && (cur_exp < mem[p + 3].cint)))
+      goto not_found;
     cur_type = 16;
     q = stash_cur_exp ();
     mem[p + 1].cint = cur_exp + mem[p + 2].cint;
@@ -15869,19 +16145,20 @@ void resume_iteration (void)
   {
     p = mem[loop_ptr + 1].hh.v.RH;
     if (p == 0)
-    goto not_found;
+      goto not_found;
     mem[loop_ptr + 1].hh.v.RH = mem[p].hh.v.RH;
     q = mem[p].hh.lh;
     {
       mem[p].hh.v.RH = avail;
       avail = p;
-        ;
+      ;
 #ifdef STAT
       decr (dyn_used);
 #endif /* STAT */
     }
   }
-  else {
+  else
+  {
     begin_token_list (mem[loop_ptr].hh.lh, 16);
     goto lab_exit;
   }
@@ -15892,34 +16169,40 @@ void resume_iteration (void)
     begin_diagnostic ();
     print_nl(736);
     if ((q != 0) && (mem[q].hh.v.RH == 1))
-    print_exp (q, 1);
-    else show_token_list (q, 0, 50, 0);
+      print_exp (q, 1);
+    else
+      show_token_list (q, 0, 50, 0);
     print_char(125);
     end_diagnostic (false);
   }
   goto lab_exit;
-  not_found: stop_iteration ();
-  lab_exit:;
+not_found:
+  stop_iteration ();
+lab_exit:;
 }
 
 void stop_iteration (void)
 {
   halfword p, q;
+
   p = mem[loop_ptr + 1].hh.lh;
   if (p > 1)
-  free_node (p, 4);
+    free_node (p, 4);
   else if (p < 1)
   {
     q = mem[loop_ptr + 1].hh.v.RH;
-    while (q != 0) {
+    while (q != 0)
+    {
       p = mem[q].hh.lh;
-      if (p != 0) {
+      if (p != 0)
+      {
         if (mem[p].hh.v.RH == 1)
         {
           recycle_value (p);
           free_node (p, 2);
         }
-        else flush_token_list (p);
+        else
+          flush_token_list (p);
       }
       p = q;
       q = mem[q].hh.v.RH;
@@ -15948,27 +16231,29 @@ void begin_name (void)
 
 boolean more_name (ASCII_code c)
 {
-  boolean Result; if (c == 34)
+  boolean Result;
+
+  if (c == 34)
   {
     quotedfilename = !quotedfilename;
     Result = true;
   }
-  else if (((c == 32) || (c == 9)) && stopatspace && (!quotedfilename
-))
-  Result = false;
-  else {
+  else if (((c == 32) || (c == 9)) && stopatspace && (!quotedfilename))
+    Result = false;
+  else
+  {
     if (ISDIRSEP (c))
     {
       area_delimiter = pool_ptr;
       ext_delimiter = 0;
     }
     else if (c == 46)
-    ext_delimiter = pool_ptr;
+      ext_delimiter = pool_ptr;
     {
       if (pool_ptr + 1 > max_pool_ptr)
       {
         if (pool_ptr + 1 > pool_size)
-        overflow (257, pool_size - init_pool_ptr);
+          overflow (257, pool_size - init_pool_ptr);
         max_pool_ptr = pool_ptr + 1;
       }
     }
@@ -15985,74 +16270,87 @@ void end_name (void)
 {
   boolean mustquote;
   pool_pointer j, s, t;
+
   if (str_ptr + 3 > max_str_ptr)
   {
     if (str_ptr + 3 > max_strings)
-    overflow (258, max_strings - init_str_ptr);
+      overflow (258, max_strings - init_str_ptr);
     max_str_ptr = str_ptr + 3;
   }
   {
     if (pool_ptr + 6 > max_pool_ptr)
     {
       if (pool_ptr + 6 > pool_size)
-      overflow (257, pool_size - init_pool_ptr);
+        overflow (257, pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + 6;
     }
   }
   if (area_delimiter == 0)
-  cur_area = 261;
-  else {
+    cur_area = 261;
+  else
+  {
     mustquote = false;
     s = str_start[str_ptr];
     t = area_delimiter + 1;
     j = s;
-    while ((!mustquote) && (j < t)) {
+    while ((!mustquote) && (j < t))
+    {
       mustquote = str_pool[j] == 32;
       incr (j);
     }
     if (mustquote)
     {
-      {integer for_end; j = pool_ptr - 1;for_end = t; if (j >=
-      for_end) do
-        str_pool[j + 2] = str_pool[j];
-      while (j-- > for_end);}
+      {
+        integer for_end; j = pool_ptr - 1;for_end = t;
+        if (j >= for_end) do
+          str_pool[j + 2] = str_pool[j];
+          while (j-- > for_end);
+      }
       str_pool[t + 1] = 34;
-      {integer for_end; j = t - 1;for_end = s; if (j >= for_end)
-      do
-        str_pool[j + 1] = str_pool[j];
-      while (j-- > for_end);}
+      {
+        integer for_end; j = t - 1;for_end = s;
+        if (j >= for_end) do
+          str_pool[j + 1] = str_pool[j];
+          while (j-- > for_end);
+      }
       str_pool[s] = 34;
       pool_ptr = pool_ptr + 2;
       area_delimiter = area_delimiter + 2;
       if (ext_delimiter != 0)
-      ext_delimiter = ext_delimiter + 2;
+        ext_delimiter = ext_delimiter + 2;
     }
     cur_area = str_ptr;
     incr (str_ptr);
     str_start[str_ptr] = area_delimiter + 1;
   }
   if (ext_delimiter == 0)
-  cur_ext = 261;
-  else {
+    cur_ext = 261;
+  else
+  {
     mustquote = false;
     s = str_start[str_ptr];
     t = ext_delimiter;
     j = s;
-    while ((!mustquote) && (j < t)) {
+    while ((!mustquote) && (j < t))
+    {
       mustquote = str_pool[j] == 32;
       incr (j);
     }
     if (mustquote)
     {
-      {integer for_end; j = pool_ptr - 1;for_end = t; if (j >=
-      for_end) do
-        str_pool[j + 2] = str_pool[j];
-      while (j-- > for_end);}
+      {
+        integer for_end; j = pool_ptr - 1;for_end = t;
+        if (j >= for_end) do
+          str_pool[j + 2] = str_pool[j];
+          while (j-- > for_end);
+      }
       str_pool[t + 1] = 34;
-      {integer for_end; j = t - 1;for_end = s; if (j >= for_end)
-      do
-        str_pool[j + 1] = str_pool[j];
-      while (j-- > for_end);}
+      {
+        integer for_end; j = t - 1;for_end = s;
+        if (j >= for_end) do
+          str_pool[j + 1] = str_pool[j];
+          while (j-- > for_end);
+      }
       str_pool[s] = 34;
       pool_ptr = pool_ptr + 2;
       ext_delimiter = ext_delimiter + 2;
@@ -16065,23 +16363,27 @@ void end_name (void)
   s = str_start[str_ptr];
   t = pool_ptr;
   j = s;
-  while ((!mustquote) && (j < t)) {
+  while ((!mustquote) && (j < t))
+  {
     mustquote = str_pool[j] == 32;
     incr (j);
   }
   if (mustquote)
   {
     str_pool[t + 1] = 34;
-    {integer for_end; j = t - 1;for_end = s; if (j >= for_end)
-    do
-      str_pool[j + 1] = str_pool[j];
-    while (j-- > for_end);}
+    {
+      integer for_end; j = t - 1;for_end = s;
+      if (j >= for_end) do
+        str_pool[j + 1] = str_pool[j];
+        while (j-- > for_end);
+    }
     str_pool[s] = 34;
     pool_ptr = pool_ptr + 2;
   }
   if (ext_delimiter == 0)
-  cur_name = make_string ();
-  else cur_ext = make_string ();
+    cur_name = make_string ();
+  else
+    cur_ext = make_string ();
 }
 
 void pack_file_name (str_number n, str_number a, str_number e)
@@ -16089,51 +16391,54 @@ void pack_file_name (str_number n, str_number a, str_number e)
   integer k;
   ASCII_code c;
   pool_pointer j;
+
   k = 0;
   if (name_of_file)
-  libcfree (name_of_file);
-  name_of_file = xmallocarray (ASCII_code, (str_start[a + 1] - str_start[a
-]) + (str_start[n + 1] - str_start[n]) + (str_start[e + 1] -
-  str_start[e]) + 1);
-  {integer for_end; j = str_start[a];for_end = str_start[a + 1
-] - 1; if (j <= for_end) do
+    libcfree (name_of_file);
+  name_of_file = xmallocarray (ASCII_code, (str_start[a + 1] - str_start[a]) + (str_start[n + 1] - str_start[n]) + (str_start[e + 1] - str_start[e]) + 1);
+  {
+    integer for_end; j = str_start[a];for_end = str_start[a + 1] - 1;
+    if (j <= for_end) do
     {
       c = str_pool[j];
       if (!(c == 34))
       {
         incr (k);
         if (k <= maxint)
-        name_of_file[k] = xchr[c];
+          name_of_file[k] = xchr[c];
       }
-    }
-  while (j++ < for_end);}
-  {integer for_end; j = str_start[n];for_end = str_start[n + 1
-] - 1; if (j <= for_end) do
+    } while (j++ < for_end);
+  }
+  {
+    integer for_end; j = str_start[n];for_end = str_start[n + 1] - 1;
+    if (j <= for_end) do
     {
       c = str_pool[j];
       if (!(c == 34))
       {
         incr (k);
         if (k <= maxint)
-        name_of_file[k] = xchr[c];
+          name_of_file[k] = xchr[c];
       }
-    }
-  while (j++ < for_end);}
-  {integer for_end; j = str_start[e];for_end = str_start[e + 1
-] - 1; if (j <= for_end) do
+    } while (j++ < for_end);
+  }
+  {
+    integer for_end; j = str_start[e];for_end = str_start[e + 1] - 1;
+    if (j <= for_end) do
     {
       c = str_pool[j];
       if (!(c == 34))
       {
         incr (k);
         if (k <= maxint)
-        name_of_file[k] = xchr[c];
+          name_of_file[k] = xchr[c];
       }
-    }
-  while (j++ < for_end);}
+    } while (j++ < for_end);
+  }
   if (k <= maxint)
-  name_length = k;
-  else name_length = maxint;
+    name_length = k;
+  else
+    name_length = maxint;
   name_of_file[name_length + 1] = 0;
 }
 
@@ -16142,72 +16447,83 @@ void pack_buffered_name (small_number n, integer a, integer b)
   integer k;
   ASCII_code c;
   integer j;
+
   if (n + b - a + 6 > maxint)
-  b = a + maxint - n - 6;
+    b = a + maxint - n - 6;
   k = 0;
   if (name_of_file)
-  libcfree (name_of_file);
+    libcfree (name_of_file);
   name_of_file = xmallocarray (ASCII_code, n + (b - a + 1) + 6);
-  {integer for_end; j = 1;for_end = n; if (j <= for_end) do
+  {
+    integer for_end; j = 1;for_end = n; 
+    if (j <= for_end) do
     {
       c = xord[ucharcast (MF_base_default[j])];
       if (!(c == 34))
       {
         incr (k);
         if (k <= maxint)
-        name_of_file[k] = xchr[c];
+          name_of_file[k] = xchr[c];
       }
-    }
-  while (j++ < for_end);}
-  {integer for_end; j = a;for_end = b; if (j <= for_end) do
+    } while (j++ < for_end);
+  }
+  {
+    integer for_end; j = a;for_end = b;
+    if (j <= for_end) do
     {
       c = buffer[j];
       if (!(c == 34))
       {
         incr (k);
         if (k <= maxint)
-        name_of_file[k] = xchr[c];
+          name_of_file[k] = xchr[c];
       }
-    }
-  while (j++ < for_end);}
-  {integer for_end; j = basedefaultlength - 4;for_end =
-  basedefaultlength; if (j <= for_end) do
+    } while (j++ < for_end);
+  }
+  {
+    integer for_end; j = basedefaultlength - 4;for_end = basedefaultlength;
+    if (j <= for_end) do
     {
       c = xord[ucharcast (MF_base_default[j])];
       if (!(c == 34))
       {
         incr (k);
         if (k <= maxint)
-        name_of_file[k] = xchr[c];
+          name_of_file[k] = xchr[c];
       }
-    }
-  while (j++ < for_end);}
+    } while (j++ < for_end);
+  }
   if (k <= maxint)
-  name_length = k;
-  else name_length = maxint;
+    name_length = k;
+  else
+    name_length = maxint;
   name_of_file[name_length + 1] = 0;
 }
 
 str_number make_name_string (void)
 {
-  str_number Result; integer k;
+  str_number Result;
+  integer k;
+
   if ((pool_ptr + name_length > pool_size) || (str_ptr == max_strings))
-  Result = 63;
-  else {
-    {integer for_end; k = 1;for_end = name_length; if (k <=
-    for_end) do
+    Result = 63;
+  else
+  {
+    {
+      integer for_end; k = 1;for_end = name_length;
+      if (k <= for_end) do
       {
         str_pool[pool_ptr] = xord[name_of_file[k]];
         incr (pool_ptr);
-      }
-    while (k++ < for_end);}
+      } while (k++ < for_end);
+    }
     Result = make_string ();
   }
   k = 1;
   begin_name ();
   stopatspace = false;
-  while ((k <= name_length) && (more_name (name_of_file[k]))) incr (k
-);
+  while ((k <= name_length) && (more_name (name_of_file[k])))
+    incr (k);
   stopatspace = true;
   end_name ();
   return Result;
@@ -16215,36 +16531,43 @@ str_number make_name_string (void)
 
 str_number a_make_name_string (alpha_file f)
 {
-  str_number Result; Result = make_name_string ();
+  str_number Result;
+  
+  Result = make_name_string ();
   return Result;
 }
 
 str_number b_make_name_string (byte_file f)
 {
-  str_number Result; Result = make_name_string ();
+  str_number Result;
+  
+  Result = make_name_string ();
   return Result;
 }
 
 str_number w_make_name_string (word_file f)
 {
-  str_number Result; Result = make_name_string ();
+  str_number Result;
+  
+  Result = make_name_string ();
   return Result;
 }
 
 void scan_file_name (void)
 {
   begin_name ();
-  while ((buffer[cur_input.loc_field] == 32) || (buffer[cur_input
- .loc_field] == 9)) incr (cur_input.loc_field);
-  while (true) {
-    if ((buffer[cur_input.loc_field] == 59) || (buffer[cur_input
-   .loc_field] == 37))
-    goto done;
+  while ((buffer[cur_input.loc_field] == 32) || (buffer[cur_input.loc_field] == 9))
+    incr (cur_input.loc_field);
+  while (true)
+  {
+    if ((buffer[cur_input.loc_field] == 59) || (buffer[cur_input.loc_field] == 37))
+      goto done;
     if (!more_name (buffer[cur_input.loc_field]))
-    goto done;
+      goto done;
     incr (cur_input.loc_field);
   }
-  done: end_name ();
+done:
+  end_name ();
 }
 
 void pack_job_name (str_number s)
@@ -16258,14 +16581,15 @@ void pack_job_name (str_number s)
 void prompt_file_name (str_number s, str_number e)
 {
   integer k;
-  str_number savedcur_name;
+  str_number saved_cur_name;
+
   if (interaction == 2)
-;
+    ;
   if (s == 743)
   {
     if (interaction == 3)
-;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      ;
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -16274,15 +16598,17 @@ void prompt_file_name (str_number s, str_number e)
       print(262);
       print(744);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(744);
     }
   }
-  else {
+  else
+  {
     if (interaction == 3)
-;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      ;
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -16291,7 +16617,8 @@ void prompt_file_name (str_number s, str_number e)
       print(262);
       print(745);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(745);
     }
@@ -16299,35 +16626,37 @@ void prompt_file_name (str_number s, str_number e)
   print_file_name (cur_name, cur_area, cur_ext);
   print(746);
   if (e == 747)
-  show_context ();
+    show_context ();
   print_nl(748);
   print(s);
   if (interaction < 2)
-  fatal_error (749);
-  savedcur_name = cur_name;
+    fatal_error (749);
+  saved_cur_name = cur_name;
   {
-;
+    ;
     print(262);
     term_input ();
   }
   {
     begin_name ();
     k = first;
-    while (((buffer[k] == 32) || (buffer[k] == 9)) && (k < last
- )) incr (k);
-    while (true) {
+    while (((buffer[k] == 32) || (buffer[k] == 9)) && (k < last))
+      incr (k);
+    while (true)
+    {
       if (k == last)
-      goto done;
+        goto done;
       if (!more_name (buffer[k]))
-      goto done;
+        goto done;
       incr (k);
     }
-    done: end_name ();
+  done:
+    end_name ();
   }
   if (cur_ext == 261)
-  cur_ext = e;
+    cur_ext = e;
   if ((str_start[cur_name + 1] - str_start[cur_name]) == 0)
-  cur_name = savedcur_name;
+    cur_name = saved_cur_name;
   pack_file_name (cur_name, cur_area, cur_ext);
 }
 
@@ -16338,13 +16667,15 @@ void open_log_file (void)
   integer l;
   integer m;
   constcstring months;
+
   old_setting = selector;
   if (job_name == 0)
-  job_name = getjob_name (750);
+    job_name = getjob_name (750);
   pack_job_name (751);
   recorderchangefilename (stringcast (name_of_file + 1));
   pack_job_name (752);
-  while (!aopenout (log_file)) {
+  while (!aopenout (log_file))
+  {
     selector = 1;
     prompt_file_name (754, 752);
   }
@@ -16360,10 +16691,12 @@ void open_log_file (void)
     print_char(32);
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
     m = roundunscaled (internal[15]);
-    {integer for_end; k = 3 * m - 2;for_end = 3 * m; if (k <=
-    for_end) do
-      putc (months[k],  log_file);
-    while (k++ < for_end);}
+    {
+      integer for_end; k = 3 * m - 2;for_end = 3 * m;
+      if (k <= for_end) do
+        putc (months[k],  log_file);
+        while (k++ < for_end);
+    }
     print_char(32);
     print_int (roundunscaled (internal[14]));
     print_char(32);
@@ -16373,32 +16706,35 @@ void open_log_file (void)
     print_dd (m % 60);
     if (translatefilename)
     {
-      putc ('\n',  log_file);
-      putc ('(',  log_file);
+      putc ('\n', log_file);
+      putc ('(', log_file);
       fputs (translatefilename, log_file);
-      putc (')',  log_file);
+      putc (')', log_file);
     }
   }
   input_stack[input_ptr] = cur_input;
   print_nl(753);
   l = input_stack[0].limit_field - 1;
-  {integer for_end; k = 1;for_end = l; if (k <= for_end) do
-    print(buffer[k]);
-  while (k++ < for_end);}
+  {
+    integer for_end; k = 1;for_end = l;
+    if (k <= for_end) do
+      print(buffer[k]);
+      while (k++ < for_end);
+  }
   print_ln ();
   selector = old_setting + 2;
 }
 
 void start_input (void)
 {
-  while ((cur_input.index_field > 15) && (cur_input.loc_field ==
-  0)) end_token_list ();
+  while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
+    end_token_list ();
   if ((cur_input.index_field > 15))
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -16407,7 +16743,8 @@ void start_input (void)
         print(262);
         print(757);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(757);
       }
@@ -16421,61 +16758,62 @@ void start_input (void)
     error ();
   }
   if ((cur_input.index_field <= 15))
-  scan_file_name ();
-  else {
+    scan_file_name ();
+  else
+  {
     cur_name = 261;
     cur_ext = 261;
     cur_area = 261;
   }
   pack_file_name (cur_name, cur_area, cur_ext);
-  while (true) {
+  while (true)
+  {
     begin_file_reading ();
     if (cur_ext == 747)
     {
       cur_ext = 261;
       pack_file_name (cur_name, cur_area, cur_ext);
     }
-    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file
-  [cur_input.index_field], kpsemfformat))
-    goto done;
+    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file[cur_input.index_field], kpsemfformat))
+      goto done;
     end_file_reading ();
     prompt_file_name (743, 747);
   }
-  done: cur_input .name_field = a_make_name_string (input_file[cur_input
- .index_field]);
+done:
+  cur_input.name_field = a_make_name_string (input_file[cur_input.index_field]);
   str_ref[cur_name] = 127;
   if (job_name == 0)
   {
     job_name = getjob_name (cur_name);
     open_log_file ();
   }
-  if (term_offset + (str_start[cur_input .name_field + 1] - str_start[
-  cur_input .name_field]) > maxprintline - 2)
-  print_ln ();
+  if (term_offset + (str_start[cur_input.name_field + 1] - str_start[cur_input.name_field]) > maxprintline - 2)
+    print_ln ();
   else if ((term_offset > 0) || (file_offset > 0))
-  print_char(32);
+    print_char(32);
   print_char(40);
   incr (open_parens);
-  slow_print(cur_input .name_field);
+  slow_print(cur_input.name_field);
   fflush (stdout);
   {
     line = 1;
     if (inputln (input_file[cur_input.index_field], false))
-;
+      ;
     firmup_the_line ();
-    buffer[cur_input .limit_field] = 37;
-    first = cur_input .limit_field + 1;
-    cur_input.loc_field = cur_input .start_field;
+    buffer[cur_input.limit_field] = 37;
+    first = cur_input.limit_field + 1;
+    cur_input.loc_field = cur_input.start_field;
   }
 }
 
 void bad_exp (str_number s)
 {
   unsigned char saveflag;
+
   {
     if (interaction == 3)
-;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      ;
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -16484,7 +16822,8 @@ void bad_exp (str_number s)
       print(262);
       print(s);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(s);
     }
@@ -16513,10 +16852,12 @@ void bad_exp (str_number s)
 void stash_in (halfword p)
 {
   halfword q;
+
   mem[p].hh.b0 = cur_type;
   if (cur_type == 16)
-  mem[p + 1].cint = cur_exp;
-  else {
+    mem[p + 1].cint = cur_exp;
+  else
+  {
     if (cur_type == 19)
     {
       q = single_dependency (cur_exp);
@@ -16526,13 +16867,15 @@ void stash_in (halfword p)
         mem[p + 1].cint = 0;
         free_node (q, 2);
       }
-      else {
+      else
+      {
         mem[p].hh.b0 = 17;
         new_dep (p, q);
       }
       recycle_value (cur_exp);
     }
-    else {
+    else
+    {
       mem[p + 1] = mem[cur_exp + 1];
       mem[mem[p + 1].hh.lh].hh.v.RH = p;
     }
@@ -16544,6 +16887,7 @@ void stash_in (halfword p)
 void back_expr (void)
 {
   halfword p;
+
   p = stash_cur_exp ();
   mem[p].hh.v.RH = 0;
   begin_token_list (p, 19);
@@ -16565,8 +16909,8 @@ void obliterated (halfword q)
 {
   {
     if (interaction == 3)
-;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      ;
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -16575,7 +16919,8 @@ void obliterated (halfword q)
       print(262);
       print(790);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(790);
     }
@@ -16595,6 +16940,7 @@ void obliterated (halfword q)
 void binary_mac (halfword p, halfword c, halfword n)
 {
   halfword q, r;
+
   q = get_avail ();
   r = get_avail ();
   mem[q].hh.v.RH = r;
@@ -16605,17 +16951,18 @@ void binary_mac (halfword p, halfword c, halfword n)
 
 void materialize_pen (void)
 {
-  scaled aminusb, aplusb, majoraxis, minoraxis;
+  scaled aminusb, aplusb, major_axis, minor_axis;
   angle theta;
   halfword p;
   halfword q;
+
   q = cur_exp;
   if (mem[q].hh.b0 == 0)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -16624,7 +16971,8 @@ void materialize_pen (void)
         print(262);
         print(806);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(806);
       }
@@ -16648,19 +16996,19 @@ void materialize_pen (void)
     tyy = mem[q + 6].cint - ty;
     aminusb = pyth_add (txx - tyy, tyx + txy);
     aplusb = pyth_add (txx + tyy, tyx - txy);
-    majoraxis = halfp (aminusb + aplusb);
-    minoraxis = halfp (abs (aplusb - aminusb));
-    if (majoraxis == minoraxis)
-    theta = 0;
-    else theta = half (n_arg (txx - tyy, tyx + txy) + n_arg (txx + tyy ,
-    tyx - txy));
+    major_axis = halfp (aminusb + aplusb);
+    minor_axis = halfp (abs (aplusb - aminusb));
+    if (major_axis == minor_axis)
+      theta = 0;
+    else
+      theta = half (n_arg (txx - tyy, tyx + txy) + n_arg (txx + tyy, tyx - txy));
     free_node (q, 7);
-    q = make_ellipse (majoraxis, minoraxis, theta);
+    q = make_ellipse (major_axis, minor_axis, theta);
     if ((tx != 0) || (ty != 0))
     {
       p = q;
       do {
-          mem[p + 1].cint = mem[p + 1].cint + tx;
+        mem[p + 1].cint = mem[p + 1].cint + tx;
         mem[p + 2].cint = mem[p + 2].cint + ty;
         p = mem[p].hh.v.RH;
       } while (!(p == q));
@@ -16674,6 +17022,7 @@ void materialize_pen (void)
 void known_pair (void)
 {
   halfword p;
+
   if (cur_type != 14)
   {
     disp_err (0, 809);
@@ -16689,11 +17038,13 @@ void known_pair (void)
     cur_x = 0;
     cur_y = 0;
   }
-  else {
+  else
+  {
     p = mem[cur_exp + 1].cint;
     if (mem[p].hh.b0 == 16)
-    cur_x = mem[p + 1].cint;
-    else {
+      cur_x = mem[p + 1].cint;
+    else
+    {
       disp_err (p, 815);
       {
         help_ptr = 5;
@@ -16708,8 +17059,9 @@ void known_pair (void)
       cur_x = 0;
     }
     if (mem[p + 2].hh.b0 == 16)
-    cur_y = mem[p + 3].cint;
-    else {
+      cur_y = mem[p + 3].cint;
+    else
+    {
       disp_err (p + 2, 817);
       {
         help_ptr = 5;
@@ -16729,7 +17081,9 @@ void known_pair (void)
 
 halfword new_knot (void)
 {
-  halfword Result; halfword q;
+  halfword Result;
+  halfword q;
+
   q = get_node (7);
   mem[q].hh.b0 = 0;
   mem[q].hh.b1 = 0;
@@ -16743,8 +17097,10 @@ halfword new_knot (void)
 
 small_number scan_direction (void)
 {
-  small_number Result; unsigned char t;
+  small_number Result;
+  unsigned char t;
   scaled x;
+
   get_x_next ();
   if (cur_cmd == 60)
   {
@@ -16761,7 +17117,8 @@ small_number scan_direction (void)
     }
     t = 3;
   }
-  else {
+  else
+  {
     scan_expression ();
     if (cur_type > 14)
     {
@@ -16807,10 +17164,12 @@ small_number scan_direction (void)
       cur_y = cur_exp;
       cur_x = x;
     }
-    else known_pair ();
+    else
+      known_pair ();
     if ((cur_x == 0) && (cur_y == 0))
-    t = 4;
-    else {
+      t = 4;
+    else
+    {
       t = 2;
       cur_exp = n_arg (cur_x, cur_y);
     }
@@ -16834,93 +17193,96 @@ small_number scan_direction (void)
 void do_nullary (quarterword c)
 {
   integer k;
+
   {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
   if (internal[7] > 131072L)
-  show_cmd_mod (33, c);
+    show_cmd_mod (33, c);
   switch (c)
-  {case 30 :
-  case 31 :
-    {
-      cur_type = 2;
-      cur_exp = c;
-    }
-    break;
-  case 32 :
-    {
-      cur_type = 11;
-      cur_exp = get_node (6);
-      init_edges (cur_exp);
-    }
-    break;
-  case 33 :
-    {
-      cur_type = 6;
-      cur_exp = 3;
-    }
-    break;
-  case 37 :
-    {
-      cur_type = 16;
-      cur_exp = norm_rand ();
-    }
-    break;
-  case 36 :
-    {
-      cur_type = 8;
-      cur_exp = get_node (7);
-      mem[cur_exp].hh.b0 = 4;
-      mem[cur_exp].hh.b1 = 4;
-      mem[cur_exp].hh.v.RH = cur_exp;
-      mem[cur_exp + 1].cint = 0;
-      mem[cur_exp + 2].cint = 0;
-      mem[cur_exp + 3].cint = 65536L;
-      mem[cur_exp + 4].cint = 0;
-      mem[cur_exp + 5].cint = 0;
-      mem[cur_exp + 6].cint = 65536L;
-    }
-    break;
-  case 34 :
-    {
-      if (job_name == 0)
-      open_log_file ();
-      cur_type = 4;
-      cur_exp = job_name;
-    }
-    break;
-  case 35 :
-    {
-      if (interaction <= 1)
-      fatal_error (835);
-      begin_file_reading ();
-      cur_input .name_field = 1;
+  {
+    case 30:
+    case 31:
       {
-        ;
-        print(261);
-        term_input ();
+        cur_type = 2;
+        cur_exp = c;
       }
+      break;
+    case 32:
       {
-        if (pool_ptr + last - cur_input .start_field > max_pool_ptr)
-        {
-          if (pool_ptr + last - cur_input .start_field > pool_size)
-          overflow (257, pool_size - init_pool_ptr);
-          max_pool_ptr = pool_ptr + last - cur_input .start_field;
-        }
+        cur_type = 11;
+        cur_exp = get_node (6);
+        init_edges (cur_exp);
       }
-      {integer for_end; k = cur_input .start_field;for_end = last -
-      1; if (k <= for_end) do
+      break;
+    case 33:
+      {
+        cur_type = 6;
+        cur_exp = 3;
+      }
+      break;
+    case 37:
+      {
+        cur_type = 16;
+        cur_exp = norm_rand ();
+      }
+      break;
+    case 36:
+      {
+        cur_type = 8;
+        cur_exp = get_node (7);
+        mem[cur_exp].hh.b0 = 4;
+        mem[cur_exp].hh.b1 = 4;
+        mem[cur_exp].hh.v.RH = cur_exp;
+        mem[cur_exp + 1].cint = 0;
+        mem[cur_exp + 2].cint = 0;
+        mem[cur_exp + 3].cint = 65536L;
+        mem[cur_exp + 4].cint = 0;
+        mem[cur_exp + 5].cint = 0;
+        mem[cur_exp + 6].cint = 65536L;
+      }
+      break;
+    case 34:
+      {
+        if (job_name == 0)
+          open_log_file ();
+        cur_type = 4;
+        cur_exp = job_name;
+      }
+      break;
+    case 35:
+      {
+        if (interaction <= 1)
+          fatal_error (835);
+        begin_file_reading ();
+        cur_input.name_field = 1;
         {
-          str_pool[pool_ptr] = buffer[k];
-          incr (pool_ptr);
+          ;
+          print(261);
+          term_input ();
         }
-      while (k++ < for_end);}
-      end_file_reading ();
-      cur_type = 4;
-      cur_exp = make_string ();
-    }
-    break;
+        {
+          if (pool_ptr + last - cur_input.start_field > max_pool_ptr)
+          {
+            if (pool_ptr + last - cur_input.start_field > pool_size)
+              overflow (257, pool_size - init_pool_ptr);
+            max_pool_ptr = pool_ptr + last - cur_input.start_field;
+          }
+        }
+        {
+          integer for_end; k = cur_input.start_field;for_end = last - 1;
+          if (k <= for_end) do
+          {
+            str_pool[pool_ptr] = buffer[k];
+            incr (pool_ptr);
+          } while (k++ < for_end);
+        }
+        end_file_reading ();
+        cur_type = 4;
+        cur_exp = make_string ();
+      }
+      break;
   }
   {
     if (arith_error)
@@ -16930,10 +17292,13 @@ void do_nullary (quarterword c)
 
 boolean nice_pair (integer p, quarterword t)
 {
-  boolean Result; if (t == 14)
+  boolean Result;
+
+  if (t == 14)
   {
     p = mem[p + 1].cint;
-    if (mem[p].hh.b0 == 16) {
+    if (mem[p].hh.b0 == 16)
+    {
       if (mem[p + 2].hh.b0 == 16)
       {
         Result = true;
@@ -16949,14 +17314,17 @@ boolean nice_pair (integer p, quarterword t)
 void print_known_or_unknown_type (small_number t, integer v)
 {
   print_char(40);
-  if (t < 17) {
+  if (t < 17)
+  {
     if (t != 14)
-    print_type (t);
+      print_type (t);
     else if (nice_pair (v, 14))
-    print(336);
-    else print(836);
+      print(336);
+    else
+      print(836);
   }
-  else print(837);
+  else
+    print(837);
   print_char(41);
 }
 
@@ -16976,10 +17344,11 @@ void bad_unary (quarterword c)
 
 void negate_dep_list (halfword p)
 {
-  while (true) {
+  while (true)
+  {
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
     if (mem[p].hh.lh == 0)
-    goto lab_exit;
+      goto lab_exit;
     p = mem[p].hh.v.RH;
   }
   lab_exit:;
@@ -16994,6 +17363,7 @@ void pair_to_path (void)
 void take_part (quarterword c)
 {
   halfword p;
+
   p = mem[cur_exp + 1].cint;
   mem[18].cint = p;
   mem[17].hh.b0 = cur_type;
@@ -17010,28 +17380,35 @@ void str_to_num (quarterword c)
   pool_pointer k;
   unsigned char b;
   boolean badchar;
-  if (c == 49) {
+
+  if (c == 49)
+  {
     if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
-    n = -1;
-    else n = str_pool[str_start[cur_exp]];
+      n = -1;
+    else
+      n = str_pool[str_start[cur_exp]];
   }
-  else {
+  else
+  {
     if (c == 47)
-    b = 8;
-    else b = 16;
+      b = 8;
+    else
+      b = 16;
     n = 0;
     badchar = false;
-    {integer for_end; k = str_start[cur_exp];for_end = str_start[
-    cur_exp + 1] - 1; if (k <= for_end) do
+    {
+      integer for_end; k = str_start[cur_exp];for_end = str_start[cur_exp + 1] - 1;
+      if (k <= for_end) do
       {
         m = str_pool[k];
         if ((m >= 48) && (m <= 57))
-        m = m - 48;
+          m = m - 48;
         else if ((m >= 65) && (m <= 70))
-        m = m - 55;
+          m = m - 55;
         else if ((m >= 97) && (m <= 102))
-        m = m - 87;
-        else {
+          m = m - 87;
+        else
+        {
           badchar = true;
           m = 0;
         }
@@ -17041,10 +17418,11 @@ void str_to_num (quarterword c)
           m = 0;
         }
         if (n < 32768L / b)
-        n = n * b + m;
-        else n = 32767;
-      }
-    while (k++ < for_end);}
+          n = n * b + m;
+        else
+          n = 32767;
+      } while (k++ < for_end);
+    }
     if (badchar)
     {
       disp_err (0, 843);
@@ -17053,7 +17431,8 @@ void str_to_num (quarterword c)
         help_ptr = 1;
         help_line[0] = 844;
       }
-      else {
+      else
+      {
         help_ptr = 1;
         help_line[0] = 845;
       }
@@ -17063,8 +17442,8 @@ void str_to_num (quarterword c)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -17073,7 +17452,8 @@ void str_to_num (quarterword c)
           print(262);
           print(846);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(846);
         }
@@ -17092,14 +17472,17 @@ void str_to_num (quarterword c)
 
 scaled path_length (void)
 {
-  scaled Result; scaled n;
+  scaled Result;
+  scaled n;
   halfword p;
+
   p = cur_exp;
   if (mem[p].hh.b0 == 0)
-  n = -65536L;
-  else n = 0;
+    n = -65536L;
+  else
+    n = 0;
   do {
-      p = mem[p].hh.v.RH;
+    p = mem[p].hh.v.RH;
     n = n + 65536L;
   } while (!(p == cur_exp));
   Result = n;
@@ -17110,39 +17493,42 @@ void test_known (quarterword c)
 {
   unsigned char b;
   halfword p, q;
+
   b = 31;
   switch (cur_type)
-  {case 1 :
-  case 2 :
-  case 4 :
-  case 6 :
-  case 8 :
-  case 9 :
-  case 11 :
-  case 16 :
-    b = 30;
-    break;
-  case 13 :
-  case 14 :
-    {
-      p = mem[cur_exp + 1].cint;
-      q = p + big_node_size[cur_type];
-      do {
-          q = q - 2;
-        if (mem[q].hh.b0 != 16)
-        goto done;
-      } while (!(q == p));
+  {
+    case 1:
+    case 2:
+    case 4:
+    case 6:
+    case 8:
+    case 9:
+    case 11:
+    case 16:
       b = 30;
-      done:;
-    }
-    break;
+      break;
+    case 13:
+    case 14:
+      {
+        p = mem[cur_exp + 1].cint;
+        q = p + big_node_size[cur_type];
+        do {
+          q = q - 2;
+          if (mem[q].hh.b0 != 16)
+            goto done;
+        } while (!(q == p));
+        b = 30;
+done:;
+      }
+      break;
     default:
-;
-    break;
+      ;
+      break;
   }
   if (c == 39)
-  flush_cur_exp (b);
-  else flush_cur_exp (61 - b);
+    flush_cur_exp (b);
+  else
+    flush_cur_exp (61 - b);
   cur_type = 2;
 }
 
@@ -17150,9 +17536,10 @@ void do_unary (quarterword c)
 {
   halfword p, q;
   integer x;
+
   {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
   if (internal[7] > 131072L)
   {
@@ -17165,324 +17552,352 @@ void do_unary (quarterword c)
     end_diagnostic (false);
   }
   switch (c)
-  {case 69 :
-    if (cur_type < 14) {
-
-      if (cur_type != 11)
-      bad_unary (69);
-    }
-    break;
-  case 70 :
-    switch (cur_type)
-    {case 14 :
-    case 19 :
+  {
+    case 69:
+      if (cur_type < 14)
       {
-        q = cur_exp;
-        make_exp_copy (q);
-        if (cur_type == 17)
-        negate_dep_list (mem[cur_exp + 1].hh.v.RH);
-        else if (cur_type == 14)
-        {
-          p = mem[cur_exp + 1].cint;
-          if (mem[p].hh.b0 == 16)
-          mem[p + 1].cint = - (integer) mem[p + 1].cint;
-          else negate_dep_list (mem[p + 1].hh.v.RH);
-          if (mem[p + 2].hh.b0 == 16)
-          mem[p + 3].cint = - (integer) mem[p + 3].cint;
-          else negate_dep_list (mem[p + 3].hh.v.RH);
-        }
-        recycle_value (q);
-        free_node (q, 2);
+        if (cur_type != 11)
+          bad_unary (69);
       }
       break;
-    case 17 :
-    case 18 :
-      negate_dep_list (mem[cur_exp + 1].hh.v.RH);
-      break;
-    case 16 :
-      cur_exp = - (integer) cur_exp;
-      break;
-    case 11 :
-      negate_edges (cur_exp);
-      break;
-      default:
-      bad_unary (70);
-      break;
-    }
-    break;
-  case 41 :
-    if (cur_type != 2)
-    bad_unary (41);
-    else cur_exp = 61 - cur_exp;
-    break;
-  case 59 :
-  case 60 :
-  case 61 :
-  case 62 :
-  case 63 :
-  case 64 :
-  case 65 :
-  case 38 :
-  case 66 :
-    if (cur_type != 16)
-    bad_unary (c);
-    else switch (c)
-    {case 59 :
-      cur_exp = square_rt (cur_exp);
-      break;
-    case 60 :
-      cur_exp = m_exp (cur_exp);
-      break;
-    case 61 :
-      cur_exp = m_log (cur_exp);
-      break;
-    case 62 :
-    case 63 :
+    case 70:
+      switch (cur_type)
       {
-        n_sin_cos((cur_exp % 23592960L) * 16);
-        if (c == 62)
-        cur_exp = roundfraction (n_sin);
-        else cur_exp = roundfraction (n_cos);
+        case 14:
+        case 19:
+          {
+            q = cur_exp;
+            make_exp_copy (q);
+            if (cur_type == 17)
+              negate_dep_list (mem[cur_exp + 1].hh.v.RH);
+            else if (cur_type == 14)
+            {
+              p = mem[cur_exp + 1].cint;
+              if (mem[p].hh.b0 == 16)
+                mem[p + 1].cint = - (integer) mem[p + 1].cint;
+              else
+                negate_dep_list (mem[p + 1].hh.v.RH);
+              if (mem[p + 2].hh.b0 == 16)
+                mem[p + 3].cint = - (integer) mem[p + 3].cint;
+              else
+                negate_dep_list (mem[p + 3].hh.v.RH);
+            }
+            recycle_value (q);
+            free_node (q, 2);
+          }
+          break;
+        case 17:
+        case 18:
+          negate_dep_list (mem[cur_exp + 1].hh.v.RH);
+          break;
+        case 16:
+          cur_exp = - (integer) cur_exp;
+          break;
+        case 11:
+          negate_edges (cur_exp);
+          break;
+        default:
+          bad_unary (70);
+          break;
       }
       break;
-    case 64 :
-      cur_exp = floorscaled (cur_exp);
+    case 41:
+      if (cur_type != 2)
+        bad_unary (41);
+      else
+        cur_exp = 61 - cur_exp;
       break;
-    case 65 :
-      cur_exp = unif_rand (cur_exp);
-      break;
-    case 38 :
+    case 59:
+    case 60:
+    case 61:
+    case 62:
+    case 63:
+    case 64:
+    case 65:
+    case 38:
+    case 66:
+      if (cur_type != 16)
+        bad_unary (c);
+      else switch (c)
       {
-        if (odd (roundunscaled (cur_exp)))
-        cur_exp = 30;
-        else cur_exp = 31;
-        cur_type = 2;
+        case 59:
+          cur_exp = square_rt (cur_exp);
+          break;
+        case 60:
+          cur_exp = m_exp (cur_exp);
+          break;
+        case 61:
+          cur_exp = m_log (cur_exp);
+          break;
+        case 62:
+        case 63:
+          {
+            n_sin_cos((cur_exp % 23592960L) * 16);
+            if (c == 62)
+              cur_exp = roundfraction (n_sin);
+            else
+              cur_exp = roundfraction (n_cos);
+          }
+          break;
+        case 64:
+          cur_exp = floorscaled (cur_exp);
+          break;
+        case 65:
+          cur_exp = unif_rand (cur_exp);
+          break;
+        case 38:
+          {
+            if (odd (roundunscaled (cur_exp)))
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            cur_type = 2;
+          }
+          break;
+        case 66:
+          {
+            cur_exp = roundunscaled (cur_exp) % 256;
+            if (cur_exp < 0)
+              cur_exp = cur_exp + 256;
+            if (char_exists[cur_exp])
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            cur_type = 2;
+          }
+          break;
       }
       break;
-    case 66 :
+    case 67:
+      if (nice_pair (cur_exp, cur_type))
+      {
+        p = mem[cur_exp + 1].cint;
+        x = n_arg (mem[p + 1].cint, mem[p + 3].cint);
+        if (x >= 0)
+          flush_cur_exp ((x + 8) / 16);
+        else
+          flush_cur_exp (- (integer) ((- (integer) x + 8) / 16));
+      }
+      else
+        bad_unary (67);
+      break;
+    case 53:
+    case 54:
+      if ((cur_type <= 14) && (cur_type >= 13))
+        take_part (c);
+      else
+        bad_unary (c);
+      break;
+    case 55:
+    case 56:
+    case 57:
+    case 58:
+      if (cur_type == 13)
+        take_part (c);
+      else
+        bad_unary (c);
+      break;
+    case 50:
+      if (cur_type != 16)
+        bad_unary (50);
+      else
       {
         cur_exp = roundunscaled (cur_exp) % 256;
+        cur_type = 4;
         if (cur_exp < 0)
-        cur_exp = cur_exp + 256;
-        if (char_exists[cur_exp])
-        cur_exp = 30;
-        else cur_exp = 31;
+          cur_exp = cur_exp + 256;
+        if ((str_start[cur_exp + 1] - str_start[cur_exp]) != 1)
+        {
+          {
+            if (pool_ptr + 1 > max_pool_ptr)
+            {
+              if (pool_ptr + 1 > pool_size)
+                overflow (257, pool_size - init_pool_ptr);
+              max_pool_ptr = pool_ptr + 1;
+            }
+          }
+          {
+            str_pool[pool_ptr] = cur_exp;
+            incr (pool_ptr);
+          }
+          cur_exp = make_string ();
+        }
+      }
+      break;
+    case 42:
+      if (cur_type != 16)
+        bad_unary (42);
+      else
+      {
+        old_setting = selector;
+        selector = 5;
+        print_scaled(cur_exp);
+        cur_exp = make_string ();
+        selector = old_setting;
+        cur_type = 4;
+      }
+      break;
+    case 47:
+    case 48:
+    case 49:
+      if (cur_type != 4)
+        bad_unary (c);
+      else
+        str_to_num (c);
+      break;
+    case 51:
+      if (cur_type == 4)
+        flush_cur_exp ((str_start[cur_exp + 1] - str_start[cur_exp]) * 65536L);
+      else if (cur_type == 9)
+        flush_cur_exp (path_length ());
+      else if (cur_type == 16)
+        cur_exp = abs (cur_exp);
+      else if (nice_pair (cur_exp, cur_type))
+        flush_cur_exp (pyth_add (mem[mem[cur_exp + 1].cint + 1].cint, mem[mem[cur_exp + 1].cint + 3].cint));
+      else
+        bad_unary (c);
+      break;
+    case 52:
+      if (cur_type == 14)
+        flush_cur_exp (0);
+      else if (cur_type != 9)
+        bad_unary (52);
+      else if (mem[cur_exp].hh.b0 == 0)
+        flush_cur_exp (0);
+      else
+      {
+        cur_pen = 3;
+        cur_path_type = 1;
+        cur_exp = make_spec (cur_exp, -1879080960L, 0);
+        flush_cur_exp (turning_number * 65536L);
+      }
+      break;
+    case 2:
+      {
+        if ((cur_type >= 2) && (cur_type <= 3))
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
         cur_type = 2;
       }
       break;
-    }
-    break;
-  case 67 :
-    if (nice_pair (cur_exp, cur_type))
-    {
-      p = mem[cur_exp + 1].cint;
-      x = n_arg (mem[p + 1].cint, mem[p + 3].cint);
-      if (x >= 0)
-      flush_cur_exp ((x + 8) / 16);
-      else flush_cur_exp (- (integer) ((- (integer) x + 8) / 16));
-    }
-    else bad_unary (67);
-    break;
-  case 53 :
-  case 54 :
-    if ((cur_type <= 14) && (cur_type >= 13))
-    take_part (c);
-    else bad_unary (c);
-    break;
-  case 55 :
-  case 56 :
-  case 57 :
-  case 58 :
-    if (cur_type == 13)
-    take_part (c);
-    else bad_unary (c);
-    break;
-  case 50 :
-    if (cur_type != 16)
-    bad_unary (50);
-    else {
-      cur_exp = roundunscaled (cur_exp) % 256;
-      cur_type = 4;
-      if (cur_exp < 0)
-      cur_exp = cur_exp + 256;
-      if ((str_start[cur_exp + 1] - str_start[cur_exp]) != 1)
+    case 4:
       {
-        {
-          if (pool_ptr + 1 > max_pool_ptr)
-          {
-            if (pool_ptr + 1 > pool_size)
-            overflow (257, pool_size - init_pool_ptr);
-            max_pool_ptr = pool_ptr + 1;
-          }
-        }
-        {
-          str_pool[pool_ptr] = cur_exp;
-          incr (pool_ptr);
-        }
-        cur_exp = make_string ();
+        if ((cur_type >= 4) && (cur_type <= 5))
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
       }
-    }
-    break;
-  case 42 :
-    if (cur_type != 16)
-    bad_unary (42);
-    else {
-      old_setting = selector;
-      selector = 5;
-      print_scaled(cur_exp);
-      cur_exp = make_string ();
-      selector = old_setting;
-      cur_type = 4;
-    }
-    break;
-  case 47 :
-  case 48 :
-  case 49 :
-    if (cur_type != 4)
-    bad_unary (c);
-    else str_to_num (c);
-    break;
-  case 51 :
-    if (cur_type == 4)
-    flush_cur_exp ((str_start[cur_exp + 1] - str_start[cur_exp]) * 65536L)
-;
-    else if (cur_type == 9)
-    flush_cur_exp (path_length ());
-    else if (cur_type == 16)
-    cur_exp = abs (cur_exp);
-    else if (nice_pair (cur_exp, cur_type))
-    flush_cur_exp (pyth_add (mem[mem[cur_exp + 1].cint + 1].cint, mem[
-    mem[cur_exp + 1].cint + 3].cint));
-    else bad_unary (c);
-    break;
-  case 52 :
-    if (cur_type == 14)
-    flush_cur_exp (0);
-    else if (cur_type != 9)
-    bad_unary (52);
-    else if (mem[cur_exp].hh.b0 == 0)
-    flush_cur_exp (0);
-    else {
-      cur_pen = 3;
-      cur_path_type = 1;
-      cur_exp = make_spec (cur_exp, -1879080960L, 0);
-      flush_cur_exp (turning_number * 65536L);
-    }
-    break;
-  case 2 :
-    {
-      if ((cur_type >= 2) && (cur_type <= 3))
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 4 :
-    {
-      if ((cur_type >= 4) && (cur_type <= 5))
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 6 :
-    {
-      if ((cur_type >= 6) && (cur_type <= 8))
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 9 :
-    {
-      if ((cur_type >= 9) && (cur_type <= 10))
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 11 :
-    {
-      if ((cur_type >= 11) && (cur_type <= 12))
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 13 :
-  case 14 :
-    {
-      if (cur_type == c)
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 15 :
-    {
-      if ((cur_type >= 16) && (cur_type <= 19))
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 39 :
-  case 40 :
-    test_known (c);
-    break;
-  case 68 :
-    {
-      if (cur_type != 9)
-      flush_cur_exp (31);
-      else if (mem[cur_exp].hh.b0 != 0)
-      flush_cur_exp (30);
-      else flush_cur_exp (31);
-      cur_type = 2;
-    }
-    break;
-  case 45 :
-    {
-      if (cur_type == 14)
-      pair_to_path ();
+      break;
+    case 6:
+      {
+        if ((cur_type >= 6) && (cur_type <= 8))
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
+      }
+      break;
+    case 9:
+      {
+        if ((cur_type >= 9) && (cur_type <= 10))
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
+      }
+      break;
+    case 11:
+      {
+        if ((cur_type >= 11) && (cur_type <= 12))
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
+      }
+      break;
+    case 13:
+    case 14:
+      {
+        if (cur_type == c)
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
+      }
+      break;
+    case 15:
+      {
+        if ((cur_type >= 16) && (cur_type <= 19))
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
+      }
+      break;
+    case 39:
+    case 40:
+      test_known (c);
+      break;
+    case 68:
+      {
+        if (cur_type != 9)
+          flush_cur_exp (31);
+        else if (mem[cur_exp].hh.b0 != 0)
+          flush_cur_exp (30);
+        else
+          flush_cur_exp (31);
+        cur_type = 2;
+      }
+      break;
+    case 45:
+      {
+        if (cur_type == 14)
+          pair_to_path ();
+        if (cur_type == 9)
+          cur_type = 8;
+        else
+          bad_unary (45);
+      }
+      break;
+    case 44 :
+      {
+        if (cur_type == 8)
+          materialize_pen ();
+        if (cur_type != 6)
+          bad_unary (44);
+        else
+        {
+          flush_cur_exp (make_path (cur_exp));
+          cur_type = 9;
+        }
+      }
+      break;
+    case 46:
+      if (cur_type != 11)
+        bad_unary (46);
+      else
+        flush_cur_exp (total_weight (cur_exp));
+      break;
+    case 43:
       if (cur_type == 9)
-      cur_type = 8;
-      else bad_unary (45);
-    }
-    break;
-  case 44 :
-    {
-      if (cur_type == 8)
-      materialize_pen ();
-      if (cur_type != 6)
-      bad_unary (44);
-      else {
-        flush_cur_exp (make_path (cur_exp));
-        cur_type = 9;
+      {
+        p = htap_ypoc (cur_exp);
+        if (mem[p].hh.b1 == 0)
+          p = mem[p].hh.v.RH;
+        toss_knot_list (cur_exp);
+        cur_exp = p;
       }
-    }
-    break;
-  case 46 :
-    if (cur_type != 11)
-    bad_unary (46);
-    else flush_cur_exp (total_weight (cur_exp));
-    break;
-  case 43 :
-    if (cur_type == 9)
-    {
-      p = htap_ypoc (cur_exp);
-      if (mem[p].hh.b1 == 0)
-      p = mem[p].hh.v.RH;
-      toss_knot_list (cur_exp);
-      cur_exp = p;
-    }
-    else if (cur_type == 14)
-    pair_to_path ();
-    else bad_unary (43);
-    break;
+      else if (cur_type == 14)
+        pair_to_path ();
+      else
+        bad_unary (43);
+      break;
   }
   {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
 }
 
@@ -17491,11 +17906,12 @@ void bad_binary (halfword p, quarterword c)
   disp_err (p, 261);
   disp_err (0, 838);
   if (c >= 94)
-  print_op (c);
+    print_op (c);
   print_known_or_unknown_type (mem[p].hh.b0, p);
   if (c >= 94)
-  print(479);
-  else print_op (c);
+    print(479);
+  else
+    print_op (c);
   print_known_or_unknown_type (cur_type, cur_exp);
   {
     help_ptr = 3;
@@ -17508,12 +17924,14 @@ void bad_binary (halfword p, quarterword c)
 
 halfword tarnished (halfword p)
 {
-  halfword Result; halfword q;
+  halfword Result;
+  halfword q;
   halfword r;
+
   q = mem[p + 1].cint;
   r = q + big_node_size[mem[p].hh.b0];
   do {
-      r = r - 2;
+    r = r - 2;
     if (mem[r].hh.b0 == 19)
     {
       Result = 1;
@@ -17529,26 +17947,29 @@ void dep_finish (halfword v, halfword q, small_number t)
 {
   halfword p;
   scaled vv;
+
   if (q == 0)
-  p = cur_exp;
-  else p = q;
+    p = cur_exp;
+  else
+    p = q;
   mem[p + 1].hh.v.RH = v;
   mem[p].hh.b0 = t;
   if (mem[v].hh.lh == 0)
   {
     vv = mem[v + 1].cint;
     if (q == 0)
-    flush_cur_exp (vv);
-    else {
+      flush_cur_exp (vv);
+    else
+    {
       recycle_value (p);
       mem[q].hh.b0 = 16;
       mem[q + 1].cint = vv;
     }
   }
   else if (q == 0)
-  cur_type = t;
+    cur_type = t;
   if (fix_needed)
-  fix_dependencies ();
+    fix_dependencies ();
 }
 
 void add_or_sub_tract (halfword p, halfword q, quarterword c)
@@ -17556,33 +17977,39 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
   small_number s, t;
   halfword r;
   integer v;
+
   if (q == 0)
   {
     t = cur_type;
     if (t < 17)
-    v = cur_exp;
-    else v = mem[cur_exp + 1].hh.v.RH;
+      v = cur_exp;
+    else
+      v = mem[cur_exp + 1].hh.v.RH;
   }
-  else {
+  else
+  {
     t = mem[q].hh.b0;
     if (t < 17)
-    v = mem[q + 1].cint;
-    else v = mem[q + 1].hh.v.RH;
+      v = mem[q + 1].cint;
+    else
+      v = mem[q + 1].hh.v.RH;
   }
   if (t == 16)
   {
     if (c == 70)
-    v = - (integer) v;
+      v = - (integer) v;
     if (mem[p].hh.b0 == 16)
     {
       v = slow_add (mem[p + 1].cint, v);
       if (q == 0)
-      cur_exp = v;
-      else mem[q + 1].cint = v;
+        cur_exp = v;
+      else
+        mem[q + 1].cint = v;
       goto lab_exit;
     }
     r = mem[p + 1].hh.v.RH;
-    while (mem[r].hh.lh != 0) r = mem[r].hh.v.RH;
+    while (mem[r].hh.lh != 0)
+      r = mem[r].hh.v.RH;
     mem[r + 1].cint = slow_add (mem[r + 1].cint, v);
     if (q == 0)
     {
@@ -17597,22 +18024,24 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
     mem[mem[p + 1].hh.lh].hh.v.RH = q;
     mem[p].hh.b0 = 16;
   }
-  else {
+  else
+  {
     if (c == 70)
-    negate_dep_list (v);
+      negate_dep_list (v);
     if (mem[p].hh.b0 == 16)
     {
-      while (mem[v].hh.lh != 0) v = mem[v].hh.v.RH
-;
-      mem[v + 1].cint = slow_add (mem[p + 1].cint, mem[v + 1]
-      .cint);
+      while (mem[v].hh.lh != 0)
+        v = mem[v].hh.v.RH;
+      mem[v + 1].cint = slow_add (mem[p + 1].cint, mem[v + 1].cint);
     }
-    else {
+    else
+    {
       s = mem[p].hh.b0;
       r = mem[p + 1].hh.v.RH;
       if (t == 17)
       {
-        if (s == 17) {
+        if (s == 17)
+        {
           if (max_coef (r) + max_coef (v) < 626349397L)
           {
             v = p_plus_q (v, r, 17);
@@ -17623,11 +18052,14 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
         v = p_over_v (v, 65536L, 17, 18);
       }
       if (s == 18)
-      v = p_plus_q (v, r, 18);
-      else v = p_plus_fq (v, 65536L, r, 18, 17);
-      done: if (q != 0)
-      dep_finish (v, q, t);
-      else {
+        v = p_plus_q (v, r, 18);
+      else
+        v = p_plus_fq (v, 65536L, r, 18, 17);
+    done:
+      if (q != 0)
+        dep_finish (v, q, t);
+      else
+      {
         cur_type = t;
         dep_finish (v, 0, t);
       }
@@ -17636,30 +18068,35 @@ void add_or_sub_tract (halfword p, halfword q, quarterword c)
   lab_exit:;
 }
 
-void dep_mult (halfword p, integer v, boolean visscaled)
+void dep_mult (halfword p, integer v, boolean v_is_scaled)
 {
   halfword q;
   small_number s, t;
+
   if (p == 0)
-  q = cur_exp;
+    q = cur_exp;
   else if (mem[p].hh.b0 != 16)
-  q = p;
-  else {
-    if (visscaled)
-    mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
-    else mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
+    q = p;
+  else
+  {
+    if (v_is_scaled)
+      mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
+    else
+      mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
     goto lab_exit;
   }
   t = mem[q].hh.b0;
   q = mem[q + 1].hh.v.RH;
   s = t;
-  if (t == 17) {
-    if (visscaled) {
+  if (t == 17)
+  {
+    if (v_is_scaled)
+    {
       if (ab_vs_cd (max_coef (q), abs (v), 626349396L, 65536L) >= 0)
-      t = 18;
+        t = 18;
     }
   }
-  q = p_times_v (q, v, s, t, visscaled);
+  q = p_times_v (q, v, s, t, v_is_scaled);
   dep_finish (q, p, t);
   lab_exit:;
 }
@@ -17669,6 +18106,7 @@ void hard_times (halfword p)
   halfword q;
   halfword r;
   scaled u, v;
+
   if (mem[p].hh.b0 == 14)
   {
     q = stash_cur_exp ();
@@ -17692,20 +18130,23 @@ void dep_div (halfword p, scaled v)
 {
   halfword q;
   small_number s, t;
+
   if (p == 0)
-  q = cur_exp;
+    q = cur_exp;
   else if (mem[p].hh.b0 != 16)
-  q = p;
-  else {
+    q = p;
+  else
+  {
     mem[p + 1].cint = make_scaled (mem[p + 1].cint, v);
     goto lab_exit;
   }
   t = mem[q].hh.b0;
   q = mem[q + 1].hh.v.RH;
   s = t;
-  if (t == 17) {
+  if (t == 17)
+  {
     if (ab_vs_cd (max_coef (q), 65536L, 626349396L, abs (v)) >= 0)
-    t = 18;
+      t = 18;
   }
   q = p_over_v (q, v, s, t);
   dep_finish (q, p, t);
@@ -17715,6 +18156,7 @@ void dep_div (halfword p, scaled v)
 void setup_trans (quarterword c)
 {
   halfword p, q, r;
+
   if ((c != 88) || (cur_type != 13))
   {
     p = stash_cur_exp ();
@@ -17722,72 +18164,74 @@ void setup_trans (quarterword c)
     cur_type = 13;
     q = mem[cur_exp + 1].cint;
     switch (c)
-    {case 84 :
-      if (mem[p].hh.b0 == 16)
-      {
-        n_sin_cos((mem[p + 1].cint % 23592960L) * 16);
-        mem[q + 5].cint = roundfraction (n_cos);
-        mem[q + 9].cint = roundfraction (n_sin);
-        mem[q + 7].cint = - (integer) mem[q + 9].cint;
-        mem[q + 11].cint = mem[q + 5].cint;
-        goto done;
-      }
-      break;
-    case 85 :
-      if (mem[p].hh.b0 > 14)
-      {
-        install (q + 6, p);
-        goto done;
-      }
-      break;
-    case 86 :
-      if (mem[p].hh.b0 > 14)
-      {
-        install (q + 4, p);
-        install (q + 10, p);
-        goto done;
-      }
-      break;
-    case 87 :
-      if (mem[p].hh.b0 == 14)
-      {
-        r = mem[p + 1].cint;
-        install (q, r);
-        install (q + 2, r + 2);
-        goto done;
-      }
-      break;
-    case 89 :
-      if (mem[p].hh.b0 > 14)
-      {
-        install (q + 4, p);
-        goto done;
-      }
-      break;
-    case 90 :
-      if (mem[p].hh.b0 > 14)
-      {
-        install (q + 10, p);
-        goto done;
-      }
-      break;
-    case 91 :
-      if (mem[p].hh.b0 == 14)
-      {
-        r = mem[p + 1].cint;
-        install (q + 4, r);
-        install (q + 10, r);
-        install (q + 8, r + 2);
-        if (mem[r + 2].hh.b0 == 16)
-        mem[r + 3].cint = - (integer) mem[r + 3].cint;
-        else negate_dep_list (mem[r + 3].hh.v.RH);
-        install (q + 6, r + 2);
-        goto done;
-      }
-      break;
-    case 88 :
-;
-      break;
+    {
+      case 84:
+        if (mem[p].hh.b0 == 16)
+        {
+          n_sin_cos((mem[p + 1].cint % 23592960L) * 16);
+          mem[q + 5].cint = roundfraction (n_cos);
+          mem[q + 9].cint = roundfraction (n_sin);
+          mem[q + 7].cint = - (integer) mem[q + 9].cint;
+          mem[q + 11].cint = mem[q + 5].cint;
+          goto done;
+        }
+        break;
+      case 85:
+        if (mem[p].hh.b0 > 14)
+        {
+          install (q + 6, p);
+          goto done;
+        }
+        break;
+      case 86 :
+        if (mem[p].hh.b0 > 14)
+        {
+          install (q + 4, p);
+          install (q + 10, p);
+          goto done;
+        }
+        break;
+      case 87:
+        if (mem[p].hh.b0 == 14)
+        {
+          r = mem[p + 1].cint;
+          install (q, r);
+          install (q + 2, r + 2);
+          goto done;
+        }
+        break;
+      case 89:
+        if (mem[p].hh.b0 > 14)
+        {
+          install (q + 4, p);
+          goto done;
+        }
+        break;
+      case 90:
+        if (mem[p].hh.b0 > 14)
+        {
+          install (q + 10, p);
+          goto done;
+        }
+        break;
+      case 91:
+        if (mem[p].hh.b0 == 14)
+        {
+          r = mem[p + 1].cint;
+          install (q + 4, r);
+          install (q + 10, r);
+          install (q + 8, r + 2);
+          if (mem[r + 2].hh.b0 == 16)
+            mem[r + 3].cint = - (integer) mem[r + 3].cint;
+          else
+            negate_dep_list (mem[r + 3].hh.v.RH);
+          install (q + 6, r + 2);
+          goto done;
+        }
+        break;
+      case 88:
+        ;
+        break;
     }
     disp_err (p, 858);
     {
@@ -17797,15 +18241,16 @@ void setup_trans (quarterword c)
       help_line[0] = 538;
     }
     put_get_error ();
-    done: recycle_value (p);
+  done:
+    recycle_value (p);
     free_node (p, 2);
   }
   q = mem[cur_exp + 1].cint;
   r = q + 12;
   do {
-      r = r - 2;
+    r = r - 2;
     if (mem[r].hh.b0 != 16)
-    goto lab_exit;
+      goto lab_exit;
   } while (!(r == q));
   txx = mem[q + 5].cint;
   txy = mem[q + 7].cint;
@@ -17842,24 +18287,26 @@ void setup_known_trans (quarterword c)
 void trans (halfword p, halfword q)
 {
   scaled v;
-  v = take_scaled (mem[p].cint, txx) + take_scaled (mem[q].cint ,
-  txy) + tx;
-  mem[q].cint = take_scaled (mem[p].cint, tyx) + take_scaled (mem[
-  q].cint, tyy) + ty;
+
+  v = take_scaled (mem[p].cint, txx) + take_scaled (mem[q].cint, txy) + tx;
+  mem[q].cint = take_scaled (mem[p].cint, tyx) + take_scaled (mem[q].cint, tyy) + ty;
   mem[p].cint = v;
 }
 
 void path_trans (halfword p, quarterword c)
 {
   halfword q;
+
   setup_known_trans (c);
   unstash_cur_exp (p);
   if (cur_type == 6)
   {
-    if (mem[cur_exp + 9].cint == 0) {
-      if (tx == 0) {
+    if (mem[cur_exp + 9].cint == 0)
+    {
+      if (tx == 0)
+      {
         if (ty == 0)
-        goto lab_exit;
+          goto lab_exit;
       }
     }
     flush_cur_exp (make_path (cur_exp));
@@ -17867,11 +18314,11 @@ void path_trans (halfword p, quarterword c)
   }
   q = cur_exp;
   do {
-      if (mem[q].hh.b0 != 0)
-    trans (q + 3, q + 4);
+    if (mem[q].hh.b0 != 0)
+      trans (q + 3, q + 4);
     trans (q + 1, q + 2);
     if (mem[q].hh.b1 != 0)
-    trans (q + 5, q + 6);
+      trans (q + 5, q + 6);
     q = mem[q].hh.v.RH;
   } while (!(q == cur_exp));
   lab_exit:;
@@ -17883,10 +18330,13 @@ void edges_trans (halfword p, quarterword c)
   unstash_cur_exp (p);
   cur_edges = cur_exp;
   if (mem[cur_edges].hh.v.RH == cur_edges)
-  goto lab_exit;
-  if (txx == 0) {
-    if (tyy == 0) {
-      if (txy % 65536L == 0) {
+    goto lab_exit;
+  if (txx == 0)
+  {
+    if (tyy == 0)
+    {
+      if (txy % 65536L == 0)
+      {
         if (tyx % 65536L == 0)
         {
           xy_swap_edges ();
@@ -17895,14 +18345,17 @@ void edges_trans (halfword p, quarterword c)
           txy = 0;
           tyx = 0;
           if (mem[cur_edges].hh.v.RH == cur_edges)
-          goto lab_exit;
+            goto lab_exit;
         }
       }
     }
   }
-  if (txy == 0) {
-    if (tyx == 0) {
-      if (txx % 65536L == 0) {
+  if (txy == 0)
+  {
+    if (tyx == 0)
+    {
+      if (txx % 65536L == 0)
+      {
         if (tyy % 65536L == 0)
         {
           if ((txx == 0) || (tyy == 0))
@@ -17911,7 +18364,8 @@ void edges_trans (halfword p, quarterword c)
             cur_exp = get_node (6);
             init_edges (cur_exp);
           }
-          else {
+          else
+          {
             if (txx < 0)
             {
               x_reflect_edges ();
@@ -17923,22 +18377,17 @@ void edges_trans (halfword p, quarterword c)
               tyy = - (integer) tyy;
             }
             if (txx != 65536L)
-            x_scale_edges (txx / 65536L);
+              x_scale_edges (txx / 65536L);
             if (tyy != 65536L)
-            y_scale_edges (tyy / 65536L);
+              y_scale_edges (tyy / 65536L);
             tx = roundunscaled (tx);
             ty = roundunscaled (ty);
-            if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem
-          [cur_edges + 2].hh.v.RH + tx >= 8192) || (mem[cur_edges
-            + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1]
-            .hh.v.RH + ty >= 8191) || (abs (tx) >= 4096) || (abs (
-            ty) >= 4096))
+            if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.v.RH + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.v.RH + ty >= 8191) || (abs (tx) >= 4096) || (abs (ty) >= 4096))
             {
               {
                 if (interaction == 3)
-                ;
-                if ((filelineerrorstylep && !(cur_input .name_field == 0))
-                )
+                  ;
+                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
                 {
                   print_nl(261);
                   print(fullsourcefilenamestack[in_open]);
@@ -17947,7 +18396,8 @@ void edges_trans (halfword p, quarterword c)
                   print(262);
                   print(867);
                 }
-                else {
+                else
+                {
                   print_nl(263);
                   print(867);
                 }
@@ -17960,28 +18410,22 @@ void edges_trans (halfword p, quarterword c)
               }
               put_get_error ();
             }
-            else {
+            else
+            {
               if (tx != 0)
               {
-                if (!(abs (mem[cur_edges + 3].hh.lh - tx -
-                4096) < 4096))
-                fix_offset ();
-                mem[cur_edges + 2].hh.lh = mem[cur_edges + 2]
-                .hh.lh + tx;
-                mem[cur_edges + 2].hh.v.RH = mem[cur_edges + 2]
-                .hh.v.RH + tx;
-                mem[cur_edges + 3].hh.lh = mem[cur_edges + 3]
-                .hh.lh - tx;
+                if (!(abs (mem[cur_edges + 3].hh.lh - tx - 4096) < 4096))
+                  fix_offset ();
+                mem[cur_edges + 2].hh.lh = mem[cur_edges + 2].hh.lh + tx;
+                mem[cur_edges + 2].hh.v.RH = mem[cur_edges + 2].hh.v.RH + tx;
+                mem[cur_edges + 3].hh.lh = mem[cur_edges + 3].hh.lh - tx;
                 mem[cur_edges + 4].cint = 0;
               }
               if (ty != 0)
               {
-                mem[cur_edges + 1].hh.lh = mem[cur_edges + 1]
-                .hh.lh + ty;
-                mem[cur_edges + 1].hh.v.RH = mem[cur_edges + 1]
-                .hh.v.RH + ty;
-                mem[cur_edges + 5].hh.lh = mem[cur_edges + 5]
-                .hh.lh + ty;
+                mem[cur_edges + 1].hh.lh = mem[cur_edges + 1].hh.lh + ty;
+                mem[cur_edges + 1].hh.v.RH = mem[cur_edges + 1].hh.v.RH + ty;
+                mem[cur_edges + 5].hh.lh = mem[cur_edges + 5].hh.lh + ty;
                 mem[cur_edges + 4].cint = 0;
               }
             }
@@ -17993,8 +18437,8 @@ void edges_trans (halfword p, quarterword c)
   }
   {
     if (interaction == 3)
-;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      ;
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -18003,7 +18447,8 @@ void edges_trans (halfword p, quarterword c)
       print(262);
       print(864);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(864);
     }
@@ -18021,67 +18466,72 @@ void edges_trans (halfword p, quarterword c)
 void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
 {
   halfword r;
+
   if (t != 65536L)
-  dep_mult (p, t, true);
-  if (u != 0) {
+    dep_mult (p, t, true);
+  if (u != 0)
+  {
     if (mem[q].hh.b0 == 16)
-    delta = delta + take_scaled (mem[q + 1].cint, u);
-    else {
+      delta = delta + take_scaled (mem[q + 1].cint, u);
+    else
+    {
       if (mem[p].hh.b0 != 18)
       {
         if (mem[p].hh.b0 == 16)
-        new_dep (p, const_dependency (mem[p + 1].cint));
-        else mem[p + 1].hh.v.RH = p_times_v (mem[p + 1].hh
-        .v.RH, 65536L, 17, 18, true);
+          new_dep (p, const_dependency (mem[p + 1].cint));
+        else
+          mem[p + 1].hh.v.RH = p_times_v (mem[p + 1].hh.v.RH, 65536L, 17, 18, true);
         mem[p].hh.b0 = 18;
       }
-      mem[p + 1].hh.v.RH = p_plus_fq (mem[p + 1].hh.v.RH ,
-      u, mem[q + 1].hh.v.RH, 18, mem[q].hh.b0);
+      mem[p + 1].hh.v.RH = p_plus_fq (mem[p + 1].hh.v.RH, u, mem[q + 1].hh.v.RH, 18, mem[q].hh.b0);
     }
   }
   if (mem[p].hh.b0 == 16)
-  mem[p + 1].cint = mem[p + 1].cint + delta;
-  else {
+    mem[p + 1].cint = mem[p + 1].cint + delta;
+  else
+  {
     r = mem[p + 1].hh.v.RH;
-    while (mem[r].hh.lh != 0) r = mem[r].hh.v.RH;
+    while (mem[r].hh.lh != 0)
+      r = mem[r].hh.v.RH;
     delta = mem[r + 1].cint + delta;
     if (r != mem[p + 1].hh.v.RH)
-    mem[r + 1].cint = delta;
-    else {
+      mem[r + 1].cint = delta;
+    else
+    {
       recycle_value (p);
       mem[p].hh.b0 = 16;
       mem[p + 1].cint = delta;
     }
   }
   if (fix_needed)
-  fix_dependencies ();
+    fix_dependencies ();
 }
 
 void add_mult_dep (halfword p, scaled v, halfword r)
 {
   if (mem[r].hh.b0 == 16)
-  mem[dep_final + 1].cint = mem[dep_final + 1].cint + take_scaled (mem[
-  r + 1].cint, v);
-  else {
-    mem[p + 1].hh.v.RH = p_plus_fq (mem[p + 1].hh.v.RH, v
-   , mem[r + 1].hh.v.RH, 18, mem[r].hh.b0);
+    mem[dep_final + 1].cint = mem[dep_final + 1].cint + take_scaled (mem[r + 1].cint, v);
+  else
+  {
+    mem[p + 1].hh.v.RH = p_plus_fq (mem[p + 1].hh.v.RH, v, mem[r + 1].hh.v.RH, 18, mem[r].hh.b0);
     if (fix_needed)
-    fix_dependencies ();
+      fix_dependencies ();
   }
 }
 
 void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 {
   scaled vv;
+
   vv = mem[p + 1].cint;
   mem[p].hh.b0 = 18;
   new_dep (p, const_dependency (0));
   if (vv != 0)
-  add_mult_dep (p, vv, t);
+    add_mult_dep (p, vv, t);
   if (v != 0)
-  add_mult_dep (p, v, u);
+    add_mult_dep (p, v, u);
   if (q != 0)
-  add_mult_dep (p, 65536L, q);
+    add_mult_dep (p, 65536L, q);
   if (mem[p + 1].hh.v.RH == dep_final)
   {
     vv = mem[dep_final + 1].cint;
@@ -18094,22 +18544,25 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 void bilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
 {
   if (t != 65536L)
-  delta = delta + take_scaled (mem[p + 1].cint, t);
-  else delta = delta + mem[p + 1].cint;
+    delta = delta + take_scaled (mem[p + 1].cint, t);
+  else
+    delta = delta + mem[p + 1].cint;
   if (u != 0)
-  mem[p + 1].cint = delta + take_scaled (v, u);
-  else mem[p + 1].cint = delta;
+    mem[p + 1].cint = delta + take_scaled (v, u);
+  else
+    mem[p + 1].cint = delta;
 }
 
 void big_trans (halfword p, quarterword c)
 {
   halfword q, r, pp, qq;
   small_number s;
+
   s = big_node_size[mem[p].hh.b0];
   q = mem[p + 1].cint;
   r = q + s;
   do {
-      r = r - 2;
+    r = r - 2;
     if (mem[r].hh.b0 != 16)
     {
       setup_known_trans (c);
@@ -18142,7 +18595,8 @@ void big_trans (halfword p, quarterword c)
     bilin3 (r + 2, tyy, mem[q + 1].cint, tyx, ty);
     bilin3 (r, txx, mem[q + 3].cint, txy, tx);
   }
-  else {
+  else
+  {
     pp = stash_cur_exp ();
     qq = mem[pp + 1].cint;
     make_exp_copy (p);
@@ -18166,39 +18620,41 @@ void cat (halfword p)
 {
   str_number a, b;
   pool_pointer k;
+
   a = mem[p + 1].cint;
   b = cur_exp;
   {
-    if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b +
-    1] - str_start[b]) > max_pool_ptr)
+    if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]) > max_pool_ptr)
     {
-      if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b
-      + 1] - str_start[b]) > pool_size)
-      overflow (257, pool_size - init_pool_ptr);
-      max_pool_ptr = pool_ptr + (str_start[a + 1] - str_start[a]) + (
-      str_start[b + 1] - str_start[b]);
+      if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]) > pool_size)
+        overflow (257, pool_size - init_pool_ptr);
+      max_pool_ptr = pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]);
     }
   }
-  {integer for_end; k = str_start[a];for_end = str_start[a + 1
-] - 1; if (k <= for_end) do
+  {
+    integer for_end; k = str_start[a];for_end = str_start[a + 1] - 1;
+    if (k <= for_end) do
     {
       str_pool[pool_ptr] = str_pool[k];
       incr (pool_ptr);
-    }
-  while (k++ < for_end);}
-  {integer for_end; k = str_start[b];for_end = str_start[b + 1
-] - 1; if (k <= for_end) do
+    } while (k++ < for_end);
+  }
+  {
+    integer for_end; k = str_start[b];for_end = str_start[b + 1] - 1;
+    if (k <= for_end) do
     {
       str_pool[pool_ptr] = str_pool[k];
       incr (pool_ptr);
-    }
-  while (k++ < for_end);}
+    } while (k++ < for_end);
+  }
   cur_exp = make_string ();
   {
-    if (str_ref[b]< 127) {
+    if (str_ref[b]< 127)
+    {
       if (str_ref[b] > 1)
-      decr (str_ref[b]);
-      else flush_string (b);
+        decr (str_ref[b]);
+      else
+        flush_string (b);
     }
   }
 }
@@ -18210,11 +18666,13 @@ void chop_string (halfword p)
   integer k;
   str_number s;
   boolean reversed;
+
   a = roundunscaled (mem[p + 1].cint);
   b = roundunscaled (mem[p + 3].cint);
   if (a <= b)
-  reversed = false;
-  else {
+    reversed = false;
+  else
+  {
     reversed = true;
     k = a;
     a = b;
@@ -18226,44 +18684,48 @@ void chop_string (halfword p)
   {
     a = 0;
     if (b < 0)
-    b = 0;
+      b = 0;
   }
   if (b > l)
   {
     b = l;
     if (a > l)
-    a = l;
+      a = l;
   }
   {
     if (pool_ptr + b - a > max_pool_ptr)
     {
       if (pool_ptr + b - a > pool_size)
-      overflow (257, pool_size - init_pool_ptr);
+        overflow (257, pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + b - a;
     }
   }
   if (reversed)
-  {integer for_end; k = str_start[s]+ b - 1;for_end = str_start
-[s]+ a; if (k >= for_end) do
+  {
+    integer for_end; k = str_start[s]+ b - 1;for_end = str_start[s]+ a;
+    if (k >= for_end) do
     {
       str_pool[pool_ptr] = str_pool[k];
       incr (pool_ptr);
-    }
-  while (k-- > for_end);}
-  else {
-      integer for_end; k = str_start[s]+ a;for_end = str_start
-[s]+ b - 1; if (k <= for_end) do
+    } while (k-- > for_end);
+  }
+  else
+  {
+    integer for_end; k = str_start[s]+ a;for_end = str_start[s]+ b - 1;
+    if (k <= for_end) do
     {
       str_pool[pool_ptr] = str_pool[k];
       incr (pool_ptr);
-    }
-  while (k++ < for_end);}
+    } while (k++ < for_end);
+  }
   cur_exp = make_string ();
   {
-    if (str_ref[s]< 127) {
+    if (str_ref[s]< 127)
+    {
       if (str_ref[s] > 1)
-      decr (str_ref[s]);
-      else flush_string (s);
+        decr (str_ref[s]);
+      else
+        flush_string (s);
     }
   }
 }
@@ -18274,43 +18736,51 @@ void chop_path (halfword p)
   halfword pp, qq, rr, ss;
   scaled a, b, k, l;
   boolean reversed;
+
   l = path_length ();
   a = mem[p + 1].cint;
   b = mem[p + 3].cint;
   if (a <= b)
-  reversed = false;
-  else {
+    reversed = false;
+  else
+  {
     reversed = true;
     k = a;
     a = b;
     b = k;
   }
-  if (a < 0) {
+  if (a < 0)
+  {
     if (mem[cur_exp].hh.b0 == 0)
     {
       a = 0;
       if (b < 0)
-      b = 0;
+        b = 0;
     }
-    else do {
+    else
+      do {
         a = a + l;
-      b = b + l;
-    } while (!(a >= 0));
+        b = b + l;
+      } while (!(a >= 0));
   }
-  if (b > l) {
+  if (b > l)
+  {
     if (mem[cur_exp].hh.b0 == 0)
     {
       b = l;
       if (a > l)
-      a = l;
+        a = l;
     }
-    else while (a >= l) {
-      a = a - l;
-      b = b - l;
-    }
+    else
+      while (a >= l)
+      {
+        a = a - l;
+        b = b - l;
+      }
   }
   q = cur_exp;
-  while (a >= 65536L) {
+  while (a >= 65536L)
+  {
     q = mem[q].hh.v.RH;
     a = a - 65536L;
     b = b - 65536L;
@@ -18320,18 +18790,18 @@ void chop_path (halfword p)
     if (a > 0)
     {
       qq = mem[q].hh.v.RH;
-      split_cubic (q, a * 4096, mem[qq + 1].cint, mem[qq + 2].cint
-   );
+      split_cubic (q, a * 4096, mem[qq + 1].cint, mem[qq + 2].cint);
       q = mem[q].hh.v.RH;
     }
     pp = copy_knot (q);
     qq = pp;
   }
-  else {
+  else
+  {
     pp = copy_knot (q);
     qq = pp;
     do {
-        q = mem[q].hh.v.RH;
+      q = mem[q].hh.v.RH;
       rr = qq;
       qq = copy_knot (q);
       mem[rr].hh.v.RH = qq;
@@ -18341,8 +18811,7 @@ void chop_path (halfword p)
     {
       ss = pp;
       pp = mem[pp].hh.v.RH;
-      split_cubic (ss, a * 4096, mem[pp + 1].cint, mem[pp + 2].cint
-   );
+      split_cubic (ss, a * 4096, mem[pp + 1].cint, mem[pp + 2].cint);
       pp = mem[ss].hh.v.RH;
       free_node (ss, 7);
       if (rr == ss)
@@ -18353,8 +18822,7 @@ void chop_path (halfword p)
     }
     if (b < 0)
     {
-      split_cubic (rr, (b + 65536L) * 4096, mem[qq + 1].cint, mem[
-      qq + 2].cint);
+      split_cubic (rr, (b + 65536L) * 4096, mem[qq + 1].cint, mem[qq + 2].cint);
       free_node (qq, 7);
       qq = mem[rr].hh.v.RH;
     }
@@ -18368,12 +18836,14 @@ void chop_path (halfword p)
     cur_exp = mem[htap_ypoc (pp)].hh.v.RH;
     toss_knot_list (pp);
   }
-  else cur_exp = pp;
+  else
+    cur_exp = pp;
 }
 
 void pair_value (scaled x, scaled y)
 {
   halfword p;
+
   p = get_node (2);
   flush_cur_exp (p);
   cur_type = 14;
@@ -18395,8 +18865,7 @@ void setup_offset (halfword p)
 
 void setup_direction_time (halfword p)
 {
-  flush_cur_exp (find_direction_time (mem[p + 1].cint, mem[p + 3]
-  .cint, cur_exp));
+  flush_cur_exp (find_direction_time (mem[p + 1].cint, mem[p + 3].cint, cur_exp));
 }
 
 void find_point (scaled v, quarterword c)
@@ -18404,28 +18873,35 @@ void find_point (scaled v, quarterword c)
   halfword p;
   scaled n;
   halfword q;
+
   p = cur_exp;
   if (mem[p].hh.b0 == 0)
-  n = -65536L;
-  else n = 0;
+    n = -65536L;
+  else
+    n = 0;
   do {
-      p = mem[p].hh.v.RH;
+    p = mem[p].hh.v.RH;
     n = n + 65536L;
   } while (!(p == cur_exp));
   if (n == 0)
-  v = 0;
-  else if (v < 0) {
-    if (mem[p].hh.b0 == 0)
     v = 0;
-    else v = n - 1 - ((- (integer) v - 1) % n);
-  }
-  else if (v > n) {
+  else if (v < 0)
+  {
     if (mem[p].hh.b0 == 0)
-    v = n;
-    else v = v % n;
+      v = 0;
+    else
+      v = n - 1 - ((- (integer) v - 1) % n);
+  }
+  else if (v > n)
+  {
+    if (mem[p].hh.b0 == 0)
+      v = n;
+    else
+      v = v % n;
   }
   p = cur_exp;
-  while (v >= 65536L) {
+  while (v >= 65536L)
+  {
     p = mem[p].hh.v.RH;
     v = v - 65536L;
   }
@@ -18436,19 +18912,22 @@ void find_point (scaled v, quarterword c)
     p = mem[p].hh.v.RH;
   }
   switch (c)
-  {case 97 :
-    pair_value (mem[p + 1].cint, mem[p + 2].cint);
-    break;
-  case 98 :
-    if (mem[p].hh.b0 == 0)
-    pair_value (mem[p + 1].cint, mem[p + 2].cint);
-    else pair_value (mem[p + 3].cint, mem[p + 4].cint);
-    break;
-  case 99 :
-    if (mem[p].hh.b1 == 0)
-    pair_value (mem[p + 1].cint, mem[p + 2].cint);
-    else pair_value (mem[p + 5].cint, mem[p + 6].cint);
-    break;
+  {
+    case 97:
+      pair_value (mem[p + 1].cint, mem[p + 2].cint);
+      break;
+    case 98:
+      if (mem[p].hh.b0 == 0)
+        pair_value (mem[p + 1].cint, mem[p + 2].cint);
+      else
+        pair_value (mem[p + 3].cint, mem[p + 4].cint);
+      break;
+    case 99:
+      if (mem[p].hh.b1 == 0)
+        pair_value (mem[p + 1].cint, mem[p + 2].cint);
+      else
+        pair_value (mem[p + 5].cint, mem[p + 6].cint);
+      break;
   }
 }
 
@@ -18457,9 +18936,10 @@ void do_binary (halfword p, quarterword c)
   halfword q, r, rr;
   halfword oldp, oldexp;
   integer v;
+ 
   {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
   if (internal[7] > 131072L)
   {
@@ -18474,16 +18954,17 @@ void do_binary (halfword p, quarterword c)
     end_diagnostic (false);
   }
   switch (mem[p].hh.b0)
-  {case 13 :
-  case 14 :
-    oldp = tarnished (p);
-    break;
-  case 19 :
-    oldp = 1;
-    break;
+  {
+    case 13:
+    case 14:
+      oldp = tarnished (p);
+      break;
+    case 19:
+      oldp = 1;
+      break;
     default:
-    oldp = 0;
-    break;
+      oldp = 0;
+      break;
   }
   if (oldp != 0)
   {
@@ -18494,16 +18975,17 @@ void do_binary (halfword p, quarterword c)
     unstash_cur_exp (q);
   }
   switch (cur_type)
-  {case 13 :
-  case 14 :
-    oldexp = tarnished (cur_exp);
-    break;
-  case 19 :
-    oldexp = 1;
-    break;
+  {
+    case 13:
+    case 14:
+      oldexp = tarnished (cur_exp);
+      break;
+    case 19:
+      oldexp = 1;
+      break;
     default:
-    oldexp = 0;
-    break;
+      oldexp = 0;
+      break;
   }
   if (oldexp != 0)
   {
@@ -18511,310 +18993,342 @@ void do_binary (halfword p, quarterword c)
     make_exp_copy (oldexp);
   }
   switch (c)
-  {case 69 :
-  case 70 :
-    if ((cur_type < 14) || (mem[p].hh.b0 < 14)) {
-      if ((cur_type == 11) && (mem[p].hh.b0 == 11))
+  {
+    case 69:
+    case 70:
+      if ((cur_type < 14) || (mem[p].hh.b0 < 14))
       {
-        if (c == 70)
-        negate_edges (cur_exp);
-        cur_edges = cur_exp;
-        merge_edges (mem[p + 1].cint);
-      }
-      else bad_binary (p, c);
-    }
-    else if (cur_type == 14) {
-      if (mem[p].hh.b0 != 14)
-      bad_binary (p, c);
-      else {
-        q = mem[p + 1].cint;
-        r = mem[cur_exp + 1].cint;
-        add_or_sub_tract (q, r, c);
-        add_or_sub_tract (q + 2, r + 2, c);
-      }
-    }
-    else if (mem[p].hh.b0 == 14)
-    bad_binary (p, c);
-    else add_or_sub_tract (p, 0, c);
-    break;
-  case 77 :
-  case 78 :
-  case 79 :
-  case 80 :
-  case 81 :
-  case 82 :
-    {
-      if ((cur_type > 14) && (mem[p].hh.b0 > 14))
-      add_or_sub_tract (p, 0, 70);
-      else if (cur_type != mem[p].hh.b0)
-      {
-        bad_binary (p, c);
-        goto done;
-      }
-      else if (cur_type == 4)
-      flush_cur_exp (str_vs_str (mem[p + 1].cint, cur_exp));
-      else if ((cur_type == 5) || (cur_type == 3))
-      {
-        q = mem[cur_exp + 1].cint;
-        while ((q != cur_exp) && (q != p)) q = mem[q + 1].cint;
-        if (q == p)
-        flush_cur_exp (0);
-      }
-      else if ((cur_type == 14) || (cur_type == 13))
-      {
-        q = mem[p + 1].cint;
-        r = mem[cur_exp + 1].cint;
-        rr = r + big_node_size[cur_type] - 2;
-        while (true) {
-          add_or_sub_tract (q, r, 70);
-          if (mem[r].hh.b0 != 16)
-          goto done1;
-          if (mem[r + 1].cint != 0)
-          goto done1;
-          if (r == rr)
-          goto done1;
-          q = q + 2;
-          r = r + 2;
-        }
-        done1: take_part (53 + half (r - mem[cur_exp + 1].cint));
-      }
-      else if (cur_type == 2)
-      flush_cur_exp (cur_exp - mem[p + 1].cint);
-      else {
-        bad_binary (p, c);
-        goto done;
-      }
-      if (cur_type != 16)
-      {
-        if (cur_type < 16)
+        if ((cur_type == 11) && (mem[p].hh.b0 == 11))
         {
-          disp_err (p, 261);
-          {
-            help_ptr = 1;
-            help_line[0] = 851;
-          }
+          if (c == 70)
+            negate_edges (cur_exp);
+          cur_edges = cur_exp;
+          merge_edges (mem[p + 1].cint);
         }
-        else {
-          help_ptr = 2;
-          help_line[1] = 852;
-          help_line[0] = 853;
-        }
-        disp_err (0, 854);
-        put_get_flush_error (31);
+        else
+          bad_binary (p, c);
       }
-      else switch (c)
-      {case 77 :
-        if (cur_exp < 0)
-        cur_exp = 30;
-        else cur_exp = 31;
-        break;
-      case 78 :
-        if (cur_exp <= 0)
-        cur_exp = 30;
-        else cur_exp = 31;
-        break;
-      case 79 :
-        if (cur_exp > 0)
-        cur_exp = 30;
-        else cur_exp = 31;
-        break;
-      case 80 :
-        if (cur_exp >= 0)
-        cur_exp = 30;
-        else cur_exp = 31;
-        break;
-      case 81 :
-        if (cur_exp == 0)
-        cur_exp = 30;
-        else cur_exp = 31;
-        break;
-      case 82 :
-        if (cur_exp != 0)
-        cur_exp = 30;
-        else cur_exp = 31;
-        break;
-      }
-      cur_type = 2;
-      done:;
-    }
-    break;
-  case 76 :
-  case 75 :
-    if ((mem[p].hh.b0 != 2) || (cur_type != 2))
-    bad_binary (p, c);
-    else if (mem[p + 1].cint == c - 45)
-    cur_exp = mem[p + 1].cint;
-    break;
-  case 71 :
-    if ((cur_type < 14) || (mem[p].hh.b0 < 14))
-    bad_binary (p, 71);
-    else if ((cur_type == 16) || (mem[p].hh.b0 == 16))
-    {
-      if (mem[p].hh.b0 == 16)
-      {
-        v = mem[p + 1].cint;
-        free_node (p, 2);
-      }
-      else {
-        v = cur_exp;
-        unstash_cur_exp (p);
-      }
-      if (cur_type == 16)
-      cur_exp = take_scaled (cur_exp, v);
       else if (cur_type == 14)
       {
-        p = mem[cur_exp + 1].cint;
-        dep_mult (p, v, true);
-        dep_mult (p + 2, v, true);
-      }
-      else dep_mult (0, v, true);
-      goto lab_exit;
-    }
-    else if ((nice_pair (p, mem[p].hh.b0) && (cur_type > 14))
-    || (nice_pair (cur_exp, cur_type) && (mem[p].hh.b0 > 14)))
-    {
-      hard_times (p);
-      goto lab_exit;
-    }
-    else bad_binary (p, 71);
-    break;
-  case 72 :
-    if ((cur_type != 16) || (mem[p].hh.b0 < 14))
-    bad_binary (p, 72);
-    else {
-      v = cur_exp;
-      unstash_cur_exp (p);
-      if (v == 0)
-      {
-        disp_err (0, 784);
+        if (mem[p].hh.b0 != 14)
+          bad_binary (p, c);
+        else
         {
-          help_ptr = 2;
-          help_line[1] = 856;
-          help_line[0] = 857;
+          q = mem[p + 1].cint;
+          r = mem[cur_exp + 1].cint;
+          add_or_sub_tract (q, r, c);
+          add_or_sub_tract (q + 2, r + 2, c);
         }
-        put_get_error ();
       }
-      else {
+      else if (mem[p].hh.b0 == 14)
+        bad_binary (p, c);
+      else
+        add_or_sub_tract (p, 0, c);
+      break;
+    case 77:
+    case 78:
+    case 79:
+    case 80:
+    case 81:
+    case 82:
+      {
+        if ((cur_type > 14) && (mem[p].hh.b0 > 14))
+          add_or_sub_tract (p, 0, 70);
+        else if (cur_type != mem[p].hh.b0)
+        {
+          bad_binary (p, c);
+          goto done;
+        }
+        else if (cur_type == 4)
+          flush_cur_exp (str_vs_str (mem[p + 1].cint, cur_exp));
+        else if ((cur_type == 5) || (cur_type == 3))
+        {
+          q = mem[cur_exp + 1].cint;
+          while ((q != cur_exp) && (q != p))
+            q = mem[q + 1].cint;
+          if (q == p)
+            flush_cur_exp (0);
+        }
+        else if ((cur_type == 14) || (cur_type == 13))
+        {
+          q = mem[p + 1].cint;
+          r = mem[cur_exp + 1].cint;
+          rr = r + big_node_size[cur_type] - 2;
+          while (true)
+          {
+            add_or_sub_tract (q, r, 70);
+            if (mem[r].hh.b0 != 16)
+              goto done1;
+            if (mem[r + 1].cint != 0)
+              goto done1;
+            if (r == rr)
+              goto done1;
+            q = q + 2;
+            r = r + 2;
+          }
+          done1: take_part (53 + half (r - mem[cur_exp + 1].cint));
+        }
+        else if (cur_type == 2)
+          flush_cur_exp (cur_exp - mem[p + 1].cint);
+        else
+        {
+          bad_binary (p, c);
+          goto done;
+        }
+        if (cur_type != 16)
+        {
+          if (cur_type < 16)
+          {
+            disp_err (p, 261);
+            {
+              help_ptr = 1;
+              help_line[0] = 851;
+            }
+          }
+          else
+          {
+            help_ptr = 2;
+            help_line[1] = 852;
+            help_line[0] = 853;
+          }
+          disp_err (0, 854);
+          put_get_flush_error (31);
+        }
+        else switch (c)
+        {
+          case 77:
+            if (cur_exp < 0)
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            break;
+          case 78:
+            if (cur_exp <= 0)
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            break;
+          case 79:
+            if (cur_exp > 0)
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            break;
+          case 80 :
+            if (cur_exp >= 0)
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            break;
+          case 81 :
+            if (cur_exp == 0)
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            break;
+          case 82 :
+            if (cur_exp != 0)
+              cur_exp = 30;
+            else
+              cur_exp = 31;
+            break;
+        }
+        cur_type = 2;
+        done:;
+      }
+      break;
+    case 76:
+    case 75:
+      if ((mem[p].hh.b0 != 2) || (cur_type != 2))
+        bad_binary (p, c);
+      else if (mem[p + 1].cint == c - 45)
+        cur_exp = mem[p + 1].cint;
+      break;
+    case 71:
+      if ((cur_type < 14) || (mem[p].hh.b0 < 14))
+        bad_binary (p, 71);
+      else if ((cur_type == 16) || (mem[p].hh.b0 == 16))
+      {
+        if (mem[p].hh.b0 == 16)
+        {
+          v = mem[p + 1].cint;
+          free_node (p, 2);
+        }
+        else
+        {
+          v = cur_exp;
+          unstash_cur_exp (p);
+        }
         if (cur_type == 16)
-        cur_exp = make_scaled (cur_exp, v);
+          cur_exp = take_scaled (cur_exp, v);
         else if (cur_type == 14)
         {
           p = mem[cur_exp + 1].cint;
-          dep_div (p, v);
-          dep_div (p + 2, v);
+          dep_mult (p, v, true);
+          dep_mult (p + 2, v, true);
         }
-        else dep_div (0, v);
+        else
+          dep_mult (0, v, true);
+        goto lab_exit;
       }
-      goto lab_exit;
-    }
-    break;
-  case 73 :
-  case 74 :
-    if ((cur_type == 16) && (mem[p].hh.b0 == 16)) {
-      if (c == 73)
-      cur_exp = pyth_add (mem[p + 1].cint, cur_exp);
-      else cur_exp = pyth_sub (mem[p + 1].cint, cur_exp);
-    }
-    else bad_binary (p, c);
-    break;
-  case 84 :
-  case 85 :
-  case 86 :
-  case 87 :
-  case 88 :
-  case 89 :
-  case 90 :
-  case 91 :
-    if ((mem[p].hh.b0 == 9) || (mem[p].hh.b0 == 8) ||
-    (mem[p].hh.b0 == 6))
-    {
-      path_trans (p, c);
-      goto lab_exit;
-    }
-    else if ((mem[p].hh.b0 == 14) || (mem[p].hh.b0 ==
-    13))
-    big_trans (p, c);
-    else if (mem[p].hh.b0 == 11)
-    {
-      edges_trans (p, c);
-      goto lab_exit;
-    }
-    else bad_binary (p, c);
-    break;
-  case 83 :
-    if ((cur_type == 4) && (mem[p].hh.b0 == 4))
-    cat (p);
-    else bad_binary (p, 83);
-    break;
-  case 94 :
-    if (nice_pair (p, mem[p].hh.b0) && (cur_type == 4))
-    chop_string (mem[p + 1].cint);
-    else bad_binary (p, 94);
-    break;
-  case 95 :
-    {
-      if (cur_type == 14)
-      pair_to_path ();
-      if (nice_pair (p, mem[p].hh.b0) && (cur_type == 9))
-      chop_path (mem[p + 1].cint);
-      else bad_binary (p, 95);
-    }
-    break;
-  case 97 :
-  case 98 :
-  case 99 :
-    {
-      if (cur_type == 14)
-      pair_to_path ();
-      if ((cur_type == 9) && (mem[p].hh.b0 == 16))
-      find_point (mem[p + 1].cint, c);
-      else bad_binary (p, c);
-    }
-    break;
-  case 100 :
-    {
-      if (cur_type == 8)
-      materialize_pen ();
-      if ((cur_type == 6) && nice_pair (p, mem[p].hh.b0))
-      setup_offset (mem[p + 1].cint);
-      else bad_binary (p, 100);
-    }
-    break;
-  case 96 :
-    {
-      if (cur_type == 14)
-      pair_to_path ();
-      if ((cur_type == 9) && nice_pair (p, mem[p].hh.b0))
-      setup_direction_time (mem[p + 1].cint);
-      else bad_binary (p, 96);
-    }
-    break;
-  case 92 :
-    {
-      if (mem[p].hh.b0 == 14)
+      else if ((nice_pair (p, mem[p].hh.b0) && (cur_type > 14)) || (nice_pair (cur_exp, cur_type) && (mem[p].hh.b0 > 14)))
       {
-        q = stash_cur_exp ();
+        hard_times (p);
+        goto lab_exit;
+      }
+      else
+        bad_binary (p, 71);
+      break;
+    case 72:
+      if ((cur_type != 16) || (mem[p].hh.b0 < 14))
+        bad_binary (p, 72);
+      else
+      {
+        v = cur_exp;
         unstash_cur_exp (p);
-        pair_to_path ();
-        p = stash_cur_exp ();
-        unstash_cur_exp (q);
+        if (v == 0)
+        {
+          disp_err (0, 784);
+          {
+            help_ptr = 2;
+            help_line[1] = 856;
+            help_line[0] = 857;
+          }
+          put_get_error ();
+        }
+        else
+        {
+          if (cur_type == 16)
+            cur_exp = make_scaled (cur_exp, v);
+          else if (cur_type == 14)
+          {
+            p = mem[cur_exp + 1].cint;
+            dep_div (p, v);
+            dep_div (p + 2, v);
+          }
+          else
+            dep_div (0, v);
+        }
+        goto lab_exit;
       }
-      if (cur_type == 14)
-      pair_to_path ();
-      if ((cur_type == 9) && (mem[p].hh.b0 == 9))
+      break;
+    case 73:
+    case 74:
+      if ((cur_type == 16) && (mem[p].hh.b0 == 16))
       {
-        path_intersection (mem[p + 1].cint, cur_exp);
-        pair_value (cur_t, cur_tt);
+        if (c == 73)
+          cur_exp = pyth_add (mem[p + 1].cint, cur_exp);
+        else
+          cur_exp = pyth_sub (mem[p + 1].cint, cur_exp);
       }
-      else bad_binary (p, 92);
-    }
-    break;
+      else
+        bad_binary (p, c);
+      break;
+    case 84:
+    case 85:
+    case 86:
+    case 87:
+    case 88:
+    case 89:
+    case 90:
+    case 91:
+      if ((mem[p].hh.b0 == 9) || (mem[p].hh.b0 == 8) || (mem[p].hh.b0 == 6))
+      {
+        path_trans (p, c);
+        goto lab_exit;
+      }
+      else if ((mem[p].hh.b0 == 14) || (mem[p].hh.b0 == 13))
+        big_trans (p, c);
+      else if (mem[p].hh.b0 == 11)
+      {
+        edges_trans (p, c);
+        goto lab_exit;
+      }
+      else
+        bad_binary (p, c);
+      break;
+    case 83:
+      if ((cur_type == 4) && (mem[p].hh.b0 == 4))
+        cat (p);
+      else
+        bad_binary (p, 83);
+      break;
+    case 94:
+      if (nice_pair (p, mem[p].hh.b0) && (cur_type == 4))
+        chop_string (mem[p + 1].cint);
+      else
+        bad_binary (p, 94);
+      break;
+    case 95:
+      {
+        if (cur_type == 14)
+          pair_to_path ();
+        if (nice_pair (p, mem[p].hh.b0) && (cur_type == 9))
+          chop_path (mem[p + 1].cint);
+        else
+          bad_binary (p, 95);
+      }
+      break;
+    case 97:
+    case 98:
+    case 99:
+      {
+        if (cur_type == 14)
+          pair_to_path ();
+        if ((cur_type == 9) && (mem[p].hh.b0 == 16))
+          find_point (mem[p + 1].cint, c);
+        else
+          bad_binary (p, c);
+      }
+      break;
+    case 100:
+      {
+        if (cur_type == 8)
+          materialize_pen ();
+        if ((cur_type == 6) && nice_pair (p, mem[p].hh.b0))
+          setup_offset (mem[p + 1].cint);
+        else
+          bad_binary (p, 100);
+      }
+      break;
+    case 96:
+      {
+        if (cur_type == 14)
+          pair_to_path ();
+        if ((cur_type == 9) && nice_pair (p, mem[p].hh.b0))
+          setup_direction_time (mem[p + 1].cint);
+        else
+          bad_binary (p, 96);
+      }
+      break;
+    case 92:
+      {
+        if (mem[p].hh.b0 == 14)
+        {
+          q = stash_cur_exp ();
+          unstash_cur_exp (p);
+          pair_to_path ();
+          p = stash_cur_exp ();
+          unstash_cur_exp (q);
+        }
+        if (cur_type == 14)
+          pair_to_path ();
+        if ((cur_type == 9) && (mem[p].hh.b0 == 9))
+        {
+          path_intersection (mem[p + 1].cint, cur_exp);
+          pair_value (cur_t, cur_tt);
+        }
+        else
+          bad_binary (p, 92);
+      }
+      break;
   }
   recycle_value (p);
   free_node (p, 2);
-  lab_exit: {
+lab_exit:
+  {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
   if (oldp != 0)
   {
@@ -18833,6 +19347,7 @@ void frac_mult (scaled n, scaled d)
   halfword p;
   halfword oldexp;
   fraction v;
+
   if (internal[7] > 131072L)
   {
     begin_diagnostic ();
@@ -18846,16 +19361,17 @@ void frac_mult (scaled n, scaled d)
     end_diagnostic (false);
   }
   switch (cur_type)
-  {case 13 :
-  case 14 :
-    oldexp = tarnished (cur_exp);
-    break;
-  case 19 :
-    oldexp = 1;
-    break;
+  {
+    case 13:
+    case 14:
+      oldexp = tarnished (cur_exp);
+      break;
+    case 19:
+      oldexp = 1;
+      break;
     default:
-    oldexp = 0;
-    break;
+      oldexp = 0;
+      break;
   }
   if (oldexp != 0)
   {
@@ -18864,14 +19380,15 @@ void frac_mult (scaled n, scaled d)
   }
   v = make_fraction (n, d);
   if (cur_type == 16)
-  cur_exp = take_fraction (cur_exp, v);
+    cur_exp = take_fraction (cur_exp, v);
   else if (cur_type == 14)
   {
     p = mem[cur_exp + 1].cint;
     dep_mult (p, v, false);
     dep_mult (p + 2, v, false);
   }
-  else dep_mult (0, v, false);
+  else
+    dep_mult (0, v, false);
   if (oldexp != 0)
   {
     recycle_value (oldexp);
@@ -18893,7 +19410,8 @@ void gf_swap (void)
     gf_offset = gf_offset + gf_buf_size;
     gf_ptr = 0;
   }
-  else {
+  else
+  {
     write_gf (half_buf, gf_buf_size - 1);
     gf_limit = gf_buf_size;
   }
@@ -18906,16 +19424,17 @@ void gf_four (integer x)
     gf_buf[gf_ptr] = x / 16777216L;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
-  else {
+  else
+  {
     x = x + 1073741824L;
     x = x + 1073741824L;
     {
       gf_buf[gf_ptr] = (x / 16777216L) + 128;
       incr (gf_ptr);
       if (gf_ptr == gf_limit)
-      gf_swap ();
+        gf_swap ();
     }
   }
   x = x % 16777216L;
@@ -18923,20 +19442,20 @@ void gf_four (integer x)
     gf_buf[gf_ptr] = x / 65536L;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   x = x % 65536L;
   {
     gf_buf[gf_ptr] = x / 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   {
     gf_buf[gf_ptr] = x % 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
 }
 
@@ -18946,13 +19465,13 @@ void gf_two (integer x)
     gf_buf[gf_ptr] = x / 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   {
     gf_buf[gf_ptr] = x % 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
 }
 
@@ -18962,19 +19481,19 @@ void gf_three (integer x)
     gf_buf[gf_ptr] = x / 65536L;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   {
     gf_buf[gf_ptr] = (x % 65536L) / 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   {
     gf_buf[gf_ptr] = x % 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
 }
 
@@ -18985,7 +19504,7 @@ void gf_paint (integer d)
     gf_buf[gf_ptr] = 0 + d;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   else if (d < 256)
   {
@@ -18993,21 +19512,22 @@ void gf_paint (integer d)
       gf_buf[gf_ptr] = 64;
       incr (gf_ptr);
       if (gf_ptr == gf_limit)
-      gf_swap ();
+        gf_swap ();
     }
     {
       gf_buf[gf_ptr] = d;
       incr (gf_ptr);
       if (gf_ptr == gf_limit)
-      gf_swap ();
+        gf_swap ();
     }
   }
-  else {
+  else
+  {
     {
       gf_buf[gf_ptr] = 65;
       incr (gf_ptr);
       if (gf_ptr == gf_limit)
-      gf_swap ();
+        gf_swap ();
     }
     gf_two (d);
   }
@@ -19017,110 +19537,124 @@ void gf_string (str_number s, str_number t)
 {
   pool_pointer k;
   integer l;
+
   if (s != 0)
   {
     l = (str_start[s + 1] - str_start[s]);
     if (t != 0)
-    l = l + (str_start[t + 1] - str_start[t]);
+      l = l + (str_start[t + 1] - str_start[t]);
     if (l <= 255)
     {
       {
         gf_buf[gf_ptr] = 239;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       {
         gf_buf[gf_ptr] = l;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
     }
-    else {
+    else
+    {
       {
         gf_buf[gf_ptr] = 241;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       gf_three (l);
     }
-    {integer for_end; k = str_start[s];for_end = str_start[s +
-    1] - 1; if (k <= for_end) do
+    {
+      integer for_end; k = str_start[s];for_end = str_start[s + 1] - 1;
+      if (k <= for_end) do
       {
         gf_buf[gf_ptr] = str_pool[k];
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
-      }
-    while (k++ < for_end);}
+          gf_swap ();
+      } while (k++ < for_end);
+    }
   }
   if (t != 0)
-  {integer for_end; k = str_start[t];for_end = str_start[t + 1
-] - 1; if (k <= for_end) do
+  {
+    integer for_end; k = str_start[t];for_end = str_start[t + 1] - 1;
+    if (k <= for_end) do
     {
       gf_buf[gf_ptr] = str_pool[k];
       incr (gf_ptr);
       if (gf_ptr == gf_limit)
-      gf_swap ();
-    }
-  while (k++ < for_end);}
+        gf_swap ();
+    } while (k++ < for_end);
+  }
 }
 
 void gf_boc (integer minm, integer maxm, integer minn, integer maxn)
 {
   if (minm < gf_min_m)
-  gf_min_m = minm;
+    gf_min_m = minm;
   if (maxn > gf_max_n)
-  gf_max_n = maxn;
-  if (boc_p == -1) {
-    if (boc_c >= 0) {
-      if (boc_c < 256) {
-        if (maxm - minm >= 0) {
-          if (maxm - minm < 256) {
-            if (maxm >= 0) {
-              if (maxm < 256) {
-                if (maxn - minn >= 0) {
-                  if (maxn - minn < 256) {
-                    if (maxn >= 0) {
+    gf_max_n = maxn;
+  if (boc_p == -1)
+  {
+    if (boc_c >= 0)
+    {
+      if (boc_c < 256)
+      {
+        if (maxm - minm >= 0)
+        {
+          if (maxm - minm < 256)
+          {
+            if (maxm >= 0)
+            {
+              if (maxm < 256)
+              {
+                if (maxn - minn >= 0)
+                {
+                  if (maxn - minn < 256)
+                  {
+                    if (maxn >= 0)
+                    {
                       if (maxn < 256)
                       {
                         {
                           gf_buf[gf_ptr] = 68;
                           incr (gf_ptr);
                           if (gf_ptr == gf_limit)
-                          gf_swap ();
+                            gf_swap ();
                         }
                         {
                           gf_buf[gf_ptr] = boc_c;
                           incr (gf_ptr);
                           if (gf_ptr == gf_limit)
-                          gf_swap ();
+                            gf_swap ();
                         }
                         {
                           gf_buf[gf_ptr] = maxm - minm;
                           incr (gf_ptr);
                           if (gf_ptr == gf_limit)
-                          gf_swap ();
+                            gf_swap ();
                         }
                         {
                           gf_buf[gf_ptr] = maxm;
                           incr (gf_ptr);
                           if (gf_ptr == gf_limit)
-                          gf_swap ();
+                            gf_swap ();
                         }
                         {
                           gf_buf[gf_ptr] = maxn - minn;
                           incr (gf_ptr);
                           if (gf_ptr == gf_limit)
-                          gf_swap ();
+                            gf_swap ();
                         }
                         {
                           gf_buf[gf_ptr] = maxn;
                           incr (gf_ptr);
                           if (gf_ptr == gf_limit)
-                          gf_swap ();
+                            gf_swap ();
                         }
                         goto lab_exit;
                       }
@@ -19138,7 +19672,7 @@ void gf_boc (integer minm, integer maxm, integer minn, integer maxn)
     gf_buf[gf_ptr] = 67;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   gf_four (boc_c);
   gf_four (boc_p);
@@ -19153,16 +19687,21 @@ void init_gf (void)
 {
   short k;
   integer t;
+
   gf_min_m = 4096;
   gf_max_m = -4096;
   gf_min_n = 4096;
   gf_max_n = -4096;
-  {integer for_end; k = 0;for_end = 255; if (k <= for_end) do
-    char_ptr[k] = -1;
-  while (k++ < for_end);}
+  {
+    integer for_end; k = 0;for_end = 255;
+    if (k <= for_end) do
+      char_ptr[k] = -1;
+      while (k++ < for_end);
+  }
   if (internal[27]<= 0)
-  gf_ext = 1055;
-  else {
+    gf_ext = 1055;
+  else
+  {
     old_setting = selector;
     selector = 5;
     print_char(46);
@@ -19173,22 +19712,23 @@ void init_gf (void)
   }
   {
     if (job_name == 0)
-    open_log_file ();
+      open_log_file ();
     pack_job_name (gf_ext);
-    while (!bopenout (gf_file)) prompt_file_name (756, gf_ext);
+    while (!bopenout (gf_file))
+      prompt_file_name (756, gf_ext);
     output_file_name = b_make_name_string (gf_file);
   }
   {
     gf_buf[gf_ptr] = 247;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   {
     gf_buf[gf_ptr] = 131;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   old_setting = selector;
   selector = 5;
@@ -19207,7 +19747,7 @@ void init_gf (void)
     gf_buf[gf_ptr] = (pool_ptr - str_start[str_ptr]);
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   gf_string (0, make_string ());
   decr (str_ptr);
@@ -19226,15 +19766,16 @@ void shipout (eight_bits c)
   integer delta;
   integer curminm;
   integer xoff, yoff;
+
   if (output_file_name == 0)
-  init_gf ();
+    init_gf ();
   f = roundunscaled (internal[19]);
   xoff = roundunscaled (internal[29]);
   yoff = roundunscaled (internal[30]);
   if (term_offset > maxprintline - 9)
-  print_ln ();
+    print_ln ();
   else if ((term_offset > 0) || (file_offset > 0))
-  print_char(32);
+    print_char(32);
   print_char(91);
   print_int (c);
   if (f != 0)
@@ -19255,7 +19796,7 @@ void shipout (eight_bits c)
         gf_buf[gf_ptr] = 243;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       gf_four (xoff * 65536L);
     }
@@ -19266,7 +19807,7 @@ void shipout (eight_bits c)
         gf_buf[gf_ptr] = 243;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       gf_four (yoff * 65536L);
     }
@@ -19274,9 +19815,10 @@ void shipout (eight_bits c)
   prevn = 4096;
   p = mem[cur_edges].hh.lh;
   n = mem[cur_edges + 1].hh.v.RH - 4096;
-  while (p != cur_edges) {
+  while (p != cur_edges)
+  {
     if (mem[p + 1].hh.lh > 1)
-    sort_edges (p);
+      sort_edges (p);
     q = mem[p + 1].hh.v.RH;
     w = 0;
     prevm = -268435456L;
@@ -19284,9 +19826,10 @@ void shipout (eight_bits c)
     prevw = 0;
     m = prevm;
     do {
-        if (q == memtop)
-      mm = 268435456L;
-      else {
+      if (q == memtop)
+        mm = 268435456L;
+      else
+      {
         d = mem[q].hh.lh;
         mm = d / 8;
         ww = ww + (d % 8) - 4;
@@ -19301,11 +19844,8 @@ void shipout (eight_bits c)
             {
               if (prevn == 4096)
               {
-                gf_boc (mem[cur_edges + 2].hh.lh + xoff - 4096 ,
-                mem[cur_edges + 2].hh.v.RH + xoff - 4096, mem[
-                cur_edges + 1].hh.lh + yoff - 4096, n + yoff);
-                curminm = mem[cur_edges + 2].hh.lh - 4096 + mem
-                [cur_edges + 3].hh.lh;
+                gf_boc (mem[cur_edges + 2].hh.lh + xoff - 4096, mem[cur_edges + 2].hh.v.RH + xoff - 4096, mem[cur_edges + 1].hh.lh + yoff - 4096, n + yoff);
+                curminm = mem[cur_edges + 2].hh.lh - 4096 + mem[cur_edges + 3].hh.lh;
               }
               else if (prevn > n + 1)
               {
@@ -19316,40 +19856,43 @@ void shipout (eight_bits c)
                     gf_buf[gf_ptr] = 71;
                     incr (gf_ptr);
                     if (gf_ptr == gf_limit)
-                    gf_swap ();
+                      gf_swap ();
                   }
                   {
                     gf_buf[gf_ptr] = delta;
                     incr (gf_ptr);
                     if (gf_ptr == gf_limit)
-                    gf_swap ();
+                      gf_swap ();
                   }
                 }
-                else {
+                else
+                {
                   {
                     gf_buf[gf_ptr] = 72;
                     incr (gf_ptr);
                     if (gf_ptr == gf_limit)
-                    gf_swap ();
+                      gf_swap ();
                   }
                   gf_two (delta);
                 }
               }
-              else {
+              else
+              {
                 delta = m - curminm;
                 if (delta > 164)
                 {
                   gf_buf[gf_ptr] = 70;
                   incr (gf_ptr);
                   if (gf_ptr == gf_limit)
-                  gf_swap ();
+                    gf_swap ();
                 }
-                else {
+                else
+                {
                   {
                     gf_buf[gf_ptr] = 74 + delta;
                     incr (gf_ptr);
                     if (gf_ptr == gf_limit)
-                    gf_swap ();
+                      gf_swap ();
                   }
                   goto done;
                 }
@@ -19357,7 +19900,8 @@ void shipout (eight_bits c)
               gf_paint (m - curminm);
               done: prevn = n;
             }
-            else gf_paint (m - prevm);
+            else
+              gf_paint (m - prevm);
             prevm = m;
             prevw = w;
           }
@@ -19374,9 +19918,9 @@ void shipout (eight_bits c)
       q = mem[q].hh.v.RH;
     } while (!(mm == 268435456L));
     if (w != 0)
-    print_nl(1058);
+      print_nl(1058);
     if (prevm - mem[cur_edges + 3].hh.lh + xoff > gf_max_m)
-    gf_max_m = prevm - mem[cur_edges + 3].hh.lh + xoff;
+      gf_max_m = prevm - mem[cur_edges + 3].hh.lh + xoff;
     p = mem[p].hh.lh;
     decr (n);
   }
@@ -19384,24 +19928,24 @@ void shipout (eight_bits c)
   {
     gf_boc (0, 0, 0, 0);
     if (gf_max_m < 0)
-    gf_max_m = 0;
+      gf_max_m = 0;
     if (gf_min_n > 0)
-    gf_min_n = 0;
+      gf_min_n = 0;
   }
   else if (prevn + yoff < gf_min_n)
-  gf_min_n = prevn + yoff;
+    gf_min_n = prevn + yoff;
   {
     gf_buf[gf_ptr] = 69;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
-    gf_swap ();
+      gf_swap ();
   }
   gf_prev_ptr = gf_offset + gf_ptr;
   incr (total_chars);
   print_char(93);
   fflush (stdout);
   if (internal[11] > 0)
-  print_edges (1057, true, xoff, yoff);
+    print_edges (1057, true, xoff, yoff);
 }
 
 void try_eq (halfword l, halfword r)
@@ -19412,6 +19956,7 @@ void try_eq (halfword l, halfword r)
   halfword pp;
   unsigned char tt;
   boolean copied;
+
   t = mem[l].hh.b0;
   if (t == 16)
   {
@@ -19426,32 +19971,35 @@ void try_eq (halfword l, halfword r)
     mem[p + 1].cint = - (integer) mem[p + 1].cint;
     q = dep_final;
   }
-  else {
+  else
+  {
     p = mem[l + 1].hh.v.RH;
     q = p;
-    while (true) {
+    while (true)
+    {
       mem[q + 1].cint = - (integer) mem[q + 1].cint;
       if (mem[q].hh.lh == 0)
-      goto done;
+        goto done;
       q = mem[q].hh.v.RH;
     }
-    done: mem[mem[l + 1].hh.lh].hh.v.RH = mem[q]
-    .hh.v.RH;
-    mem[mem[q].hh.v.RH + 1].hh.lh = mem[l + 1]
-    .hh.lh;
+    done: mem[mem[l + 1].hh.lh].hh.v.RH = mem[q].hh.v.RH;
+    mem[mem[q].hh.v.RH + 1].hh.lh = mem[l + 1].hh.lh;
     mem[l].hh.b0 = 16;
   }
-  if (r == 0) {
+  if (r == 0)
+  {
     if (cur_type == 16)
     {
       mem[q + 1].cint = mem[q + 1].cint + cur_exp;
       goto done1;
     }
-    else {
+    else
+    {
       tt = cur_type;
       if (tt == 19)
-      pp = single_dependency (cur_exp);
-      else pp = mem[cur_exp + 1].hh.v.RH;
+        pp = single_dependency (cur_exp);
+      else
+        pp = mem[cur_exp + 1].hh.v.RH;
     }
   }
   else if (mem[r].hh.b0 == 16)
@@ -19459,26 +20007,31 @@ void try_eq (halfword l, halfword r)
     mem[q + 1].cint = mem[q + 1].cint + mem[r + 1].cint;
     goto done1;
   }
-  else {
+  else
+  {
     tt = mem[r].hh.b0;
     if (tt == 19)
-    pp = single_dependency (r);
-    else pp = mem[r + 1].hh.v.RH;
+      pp = single_dependency (r);
+    else
+      pp = mem[r + 1].hh.v.RH;
   }
   if (tt != 19)
-  copied = false;
-  else {
+    copied = false;
+  else
+  {
     copied = true;
     tt = 17;
   }
   watch_coefs = false;
   if (t == tt)
-  p = p_plus_q (p, pp, t);
+    p = p_plus_q (p, pp, t);
   else if (t == 18)
-  p = p_plus_fq (p, 65536L, pp, 18, 17);
-  else {
+    p = p_plus_fq (p, 65536L, pp, 18, 17);
+  else
+  {
     q = p;
-    while (mem[q].hh.lh != 0) {
+    while (mem[q].hh.lh != 0)
+    {
       mem[q + 1].cint = roundfraction (mem[q + 1].cint);
       q = mem[q].hh.v.RH;
     }
@@ -19487,7 +20040,7 @@ void try_eq (halfword l, halfword r)
   }
   watch_coefs = true;
   if (copied)
-  flush_node_list (pp);
+    flush_node_list (pp);
   done1:;
   if (mem[p].hh.lh == 0)
   {
@@ -19495,8 +20048,8 @@ void try_eq (halfword l, halfword r)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -19505,7 +20058,8 @@ void try_eq (halfword l, halfword r)
           print(262);
           print(897);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(897);
         }
@@ -19524,8 +20078,8 @@ void try_eq (halfword l, halfword r)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -19534,7 +20088,8 @@ void try_eq (halfword l, halfword r)
           print(262);
           print(600);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(600);
         }
@@ -19548,10 +20103,13 @@ void try_eq (halfword l, halfword r)
     }
     free_node (p, 2);
   }
-  else {
+  else
+  {
     linear_eq (p, t);
-    if (r == 0) {
-      if (cur_type != 16) {
+    if (r == 0)
+    {
+      if (cur_type != 16)
+      {
         if (mem[cur_exp].hh.b0 == 16)
         {
           pp = cur_exp;
@@ -19569,169 +20127,179 @@ void make_eq (halfword lhs)
   small_number t;
   integer v;
   halfword p, q;
-  lab_restart: t = mem[lhs].hh.b0;
+
+lab_restart:
+  t = mem[lhs].hh.b0;
   if (t <= 14)
-  v = mem[lhs + 1].cint;
+    v = mem[lhs + 1].cint;
   switch (t)
-  {case 2 :
-  case 4 :
-  case 6 :
-  case 9 :
-  case 11 :
-    if (cur_type == t + 1)
-    {
-      non_linear_eq (v, cur_exp, false);
-      unstash_cur_exp (cur_exp);
-      goto done;
-    }
-    else if (cur_type == t)
-    {
-      if (cur_type <= 4)
+  {
+    case 2:
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+      if (cur_type == t + 1)
       {
-        if (cur_type == 4)
-        {
-          if (str_vs_str (v, cur_exp) != 0)
-          goto not_found;
-        }
-        else if (v != cur_exp)
-        goto not_found;
-        {
-          {
-            if (interaction == 3)
-        ;
-            if ((filelineerrorstylep && !(cur_input .name_field == 0)))
-            {
-              print_nl(261);
-              print(fullsourcefilenamestack[in_open]);
-              print(58);
-              print_int (line);
-              print(262);
-              print(600);
-            }
-            else {
-              print_nl(263);
-              print(600);
-            }
-          }
-          {
-            help_ptr = 2;
-            help_line[1] = 601;
-            help_line[0] = 602;
-          }
-          put_get_error ();
-        }
+        non_linear_eq (v, cur_exp, false);
+        unstash_cur_exp (cur_exp);
         goto done;
       }
+      else if (cur_type == t)
       {
-        if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        if (cur_type <= 4)
         {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(894);
+          if (cur_type == 4)
+          {
+            if (str_vs_str (v, cur_exp) != 0)
+              goto not_found;
+          }
+          else if (v != cur_exp)
+            goto not_found;
+          {
+            {
+              if (interaction == 3)
+                ;
+              if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+              {
+                print_nl(261);
+                print(fullsourcefilenamestack[in_open]);
+                print(58);
+                print_int (line);
+                print(262);
+                print(600);
+              }
+              else
+              {
+                print_nl(263);
+                print(600);
+              }
+            }
+            {
+              help_ptr = 2;
+              help_line[1] = 601;
+              help_line[0] = 602;
+            }
+            put_get_error ();
+          }
+          goto done;
         }
-        else {
-          print_nl(263);
-          print(894);
-        }
-      }
-      {
-        help_ptr = 2;
-        help_line[1] = 895;
-        help_line[0] = 896;
-      }
-      put_get_error ();
-      goto done;
-      not_found: {
-        if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
         {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(897);
+          if (interaction == 3)
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+          {
+            print_nl(261);
+            print(fullsourcefilenamestack[in_open]);
+            print(58);
+            print_int (line);
+            print(262);
+            print(894);
+          }
+          else
+          {
+            print_nl(263);
+            print(894);
+          }
         }
-        else {
-          print_nl(263);
-          print(897);
+        {
+          help_ptr = 2;
+          help_line[1] = 895;
+          help_line[0] = 896;
+        }
+        put_get_error ();
+        goto done;
+      not_found:
+        {
+          if (interaction == 3)
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+          {
+            print_nl(261);
+            print(fullsourcefilenamestack[in_open]);
+            print(58);
+            print_int (line);
+            print(262);
+            print(897);
+          }
+          else
+          {
+            print_nl(263);
+            print(897);
+          }
+        }
+        {
+          help_ptr = 2;
+          help_line[1] = 898;
+          help_line[0] = 896;
+        }
+        put_get_error ();
+        goto done;
+      }
+      break;
+    case 3:
+    case 5:
+    case 7:
+    case 12:
+    case 10:
+      if (cur_type == t - 1)
+      {
+        non_linear_eq (cur_exp, lhs, true);
+        goto done;
+      }
+      else if (cur_type == t)
+      {
+        ring_merge (lhs, cur_exp);
+        goto done;
+      }
+      else if (cur_type == 14)
+      {
+        if (t == 10)
+        {
+          pair_to_path ();
+          goto lab_restart;
         }
       }
+      break;
+    case 13:
+    case 14:
+      if (cur_type == t)
       {
-        help_ptr = 2;
-        help_line[1] = 898;
-        help_line[0] = 896;
-      }
-      put_get_error ();
-      goto done;
-    }
-    break;
-  case 3 :
-  case 5 :
-  case 7 :
-  case 12 :
-  case 10 :
-    if (cur_type == t - 1)
-    {
-      non_linear_eq (cur_exp, lhs, true);
-      goto done;
-    }
-    else if (cur_type == t)
-    {
-      ring_merge (lhs, cur_exp);
-      goto done;
-    }
-    else if (cur_type == 14) {
-      if (t == 10)
-      {
-        pair_to_path ();
-        goto lab_restart;
-      }
-    }
-    break;
-  case 13 :
-  case 14 :
-    if (cur_type == t)
-    {
-      p = v + big_node_size[t];
-      q = mem[cur_exp + 1].cint + big_node_size[t];
-      do {
+        p = v + big_node_size[t];
+        q = mem[cur_exp + 1].cint + big_node_size[t];
+        do {
           p = p - 2;
-        q = q - 2;
-        try_eq (p, q);
-      } while (!(p == v));
-      goto done;
-    }
-    break;
-  case 16 :
-  case 17 :
-  case 18 :
-  case 19 :
-    if (cur_type >= 16)
-    {
-      try_eq (lhs, 0);
-      goto done;
-    }
-    break;
-  case 1 :
-;
-    break;
+          q = q - 2;
+          try_eq (p, q);
+        } while (!(p == v));
+        goto done;
+      }
+      break;
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+      if (cur_type >= 16)
+      {
+        try_eq (lhs, 0);
+        goto done;
+      }
+      break;
+    case 1:
+      ;
+      break;
   }
   disp_err (lhs, 261);
   disp_err (0, 891);
   if (mem[lhs].hh.b0 <= 14)
-  print_type (mem[lhs].hh.b0);
-  else print(340);
+    print_type (mem[lhs].hh.b0);
+  else
+    print(340);
   print_char(61);
   if (cur_type <= 14)
-  print_type (cur_type);
-  else print(340);
+    print_type (cur_type);
+  else
+    print(340);
   print_char(41);
   {
     help_ptr = 2;
@@ -19739,9 +20307,10 @@ void make_eq (halfword lhs)
     help_line[0] = 893;
   }
   put_get_error ();
-  done: {
+done:
+  {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
   recycle_value (lhs);
   free_node (lhs, 2);
@@ -19751,14 +20320,15 @@ void do_equation (void)
 {
   halfword lhs;
   halfword p;
+
   lhs = stash_cur_exp ();
   get_x_next ();
   var_flag = 77;
   scan_expression ();
   if (cur_cmd == 51)
-  do_equation ();
+    do_equation ();
   else if (cur_cmd == 77)
-  do_assignment ();
+    do_assignment ();
   if (internal[7] > 131072L)
   {
     begin_diagnostic ();
@@ -19769,7 +20339,8 @@ void do_equation (void)
     print(842);
     end_diagnostic (false);
   }
-  if (cur_type == 10) {
+  if (cur_type == 10)
+  {
     if (mem[lhs].hh.b0 == 14)
     {
       p = stash_cur_exp ();
@@ -19785,6 +20356,7 @@ void do_assignment (void)
   halfword lhs;
   halfword p;
   halfword q;
+
   if (cur_type != 20)
   {
     disp_err (0, 883);
@@ -19796,32 +20368,36 @@ void do_assignment (void)
     error ();
     do_equation ();
   }
-  else {
+  else
+  {
     lhs = cur_exp;
     cur_type = 1;
     get_x_next ();
     var_flag = 77;
     scan_expression ();
     if (cur_cmd == 51)
-    do_equation ();
+      do_equation ();
     else if (cur_cmd == 77)
-    do_assignment ();
+      do_assignment ();
     if (internal[7] > 131072L)
     {
       begin_diagnostic ();
       print_nl(123);
       if (mem[lhs].hh.lh > 9769)
-      slow_print(int_name[mem[lhs].hh.lh - (9769)]);
-      else show_token_list (lhs, 0, 1000, 0);
+        slow_print(int_name[mem[lhs].hh.lh - (9769)]);
+      else
+        show_token_list (lhs, 0, 1000, 0);
       print(461);
       print_exp (0, 0);
       print_char(125);
       end_diagnostic (false);
     }
-    if (mem[lhs].hh.lh > 9769) {
+    if (mem[lhs].hh.lh > 9769)
+    {
       if (cur_type == 16)
-      internal[mem[lhs].hh.lh - (9769)] = cur_exp;
-      else {
+        internal[mem[lhs].hh.lh - (9769)] = cur_exp;
+      else
+      {
         disp_err (0, 887);
         slow_print(int_name[mem[lhs].hh.lh - (9769)]);
         print(888);
@@ -19833,7 +20409,8 @@ void do_assignment (void)
         put_get_error ();
       }
     }
-    else {
+    else
+    {
       p = find_variable (lhs);
       if (p != 0)
       {
@@ -19847,7 +20424,8 @@ void do_assignment (void)
         unstash_cur_exp (q);
         make_eq (p);
       }
-      else {
+      else
+      {
         obliterated (lhs);
         put_get_error ();
       }
@@ -19861,24 +20439,26 @@ void do_type_declaration (void)
   small_number t;
   halfword p;
   halfword q;
+
   if (cur_mod >= 13)
-  t = cur_mod;
-  else t = cur_mod + 1;
+    t = cur_mod;
+  else
+    t = cur_mod + 1;
   do {
-      p = scan_declared_variable ();
-    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p]
-    .hh.v.RH, false);
+    p = scan_declared_variable ();
+    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p].hh.v.RH, false);
     q = find_variable (p);
     if (q != 0)
     {
       mem[q].hh.b0 = t;
       mem[q + 1].cint = 0;
     }
-    else {
+    else
+    {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -19887,7 +20467,8 @@ void do_type_declaration (void)
           print(262);
           print(900);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(900);
         }
@@ -19904,8 +20485,8 @@ void do_type_declaration (void)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -19914,7 +20495,8 @@ void do_type_declaration (void)
           print(262);
           print(903);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(903);
         }
@@ -19928,18 +20510,19 @@ void do_type_declaration (void)
         help_line[0] = 908;
       }
       if (cur_cmd == 42)
-      help_line[2] = 909;
+        help_line[2] = 909;
       put_get_error ();
       scanner_status = 2;
       do {
-          get_next ();
+        get_next ();
         if (cur_cmd == 39)
         {
-          if (str_ref[cur_mod]< 127) {
-
+          if (str_ref[cur_mod]< 127)
+          {
             if (str_ref[cur_mod] > 1)
-            decr (str_ref[cur_mod]);
-            else flush_string (cur_mod);
+              decr (str_ref[cur_mod]);
+            else
+              flush_string (cur_mod);
           }
         }
       } while (!(cur_cmd >= 82));
@@ -19972,7 +20555,8 @@ void do_random_seed (void)
     }
     put_get_flush_error (0);
   }
-  else {
+  else
+  {
     init_randoms (cur_exp);
     if (selector >= 2)
     {
@@ -19991,17 +20575,18 @@ void do_protection (void)
 {
   unsigned char m;
   halfword t;
+
   m = cur_mod;
   do {
-      get_symbol ();
+    get_symbol ();
     t = eqtb[cur_sym].lh;
     if (m == 0)
     {
       if (t >= 86)
-      eqtb[cur_sym].lh = t - 86;
+        eqtb[cur_sym].lh = t - 86;
     }
     else if (t < 86)
-    eqtb[cur_sym].lh = t + 86;
+      eqtb[cur_sym].lh = t + 86;
     get_x_next ();
   } while (!(cur_cmd != 82));
 }
@@ -20009,6 +20594,7 @@ void do_protection (void)
 void def_delims (void)
 {
   halfword ldelim, rdelim;
+
   get_clear_symbol ();
   ldelim = cur_sym;
   get_clear_symbol ();
@@ -20027,8 +20613,8 @@ void do_interim (void)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -20037,14 +20623,16 @@ void do_interim (void)
         print(262);
         print(924);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(924);
       }
     }
     if (cur_sym == 0)
-    print(929);
-    else slow_print(hash[cur_sym].v.RH);
+      print(929);
+    else
+      slow_print(hash[cur_sym].v.RH);
     print(930);
     {
       help_ptr = 1;
@@ -20052,7 +20640,8 @@ void do_interim (void)
     }
     back_error ();
   }
-  else {
+  else
+  {
     save_internal (cur_mod);
     back_input ();
   }
@@ -20062,10 +20651,12 @@ void do_interim (void)
 void do_let (void)
 {
   halfword l;
+
   get_symbol ();
   l = cur_sym;
   get_x_next ();
-  if (cur_cmd != 51) {
+  if (cur_cmd != 51)
+  {
     if (cur_cmd != 77)
     {
       missing_err (61);
@@ -20080,29 +20671,31 @@ void do_let (void)
   }
   get_symbol ();
   switch (cur_cmd)
-  {case 10 :
-  case 53 :
-  case 44 :
-  case 49 :
-    incr (mem[cur_mod].hh.lh);
-    break;
+  {
+    case 10:
+    case 53:
+    case 44:
+    case 49:
+      incr (mem[cur_mod].hh.lh);
+      break;
     default:
-;
-    break;
+      ;
+      break;
   }
   clear_symbol (l, false);
   eqtb[l].lh = cur_cmd;
   if (cur_cmd == 41)
-  eqtb[l].v.RH = 0;
-  else eqtb[l].v.RH = cur_mod;
+    eqtb[l].v.RH = 0;
+  else
+    eqtb[l].v.RH = cur_mod;
   get_x_next ();
 }
 
 void do_new_internal (void)
 {
   do {
-      if (int_ptr == max_internal)
-    overflow (934, max_internal);
+    if (int_ptr == max_internal)
+      overflow (934, max_internal);
     get_clear_symbol ();
     incr (int_ptr);
     eqtb[cur_sym].lh = 40;
@@ -20116,7 +20709,7 @@ void do_new_internal (void)
 void do_show (void)
 {
   do {
-      get_x_next ();
+    get_x_next ();
     scan_expression ();
     print_nl(765);
     print_exp (0, 2);
@@ -20130,30 +20723,34 @@ void disp_token (void)
   if (cur_sym == 0)
   {
     if (cur_cmd == 42)
-    print_scaled(cur_mod);
+      print_scaled(cur_mod);
     else if (cur_cmd == 38)
     {
       g_pointer = cur_mod;
       print_capsule ();
     }
-    else {
+    else
+    {
       print_char(34);
       slow_print(cur_mod);
       print_char(34);
       {
-        if (str_ref[cur_mod]< 127) {
+        if (str_ref[cur_mod] < 127)
+        {
           if (str_ref[cur_mod] > 1)
-          decr (str_ref[cur_mod]);
-          else flush_string (cur_mod);
+            decr (str_ref[cur_mod]);
+          else
+            flush_string (cur_mod);
         }
       }
     }
   }
-  else {
+  else
+  {
     slow_print(hash[cur_sym].v.RH);
     print_char(61);
     if (eqtb[cur_sym].lh >= 86)
-    print(941);
+      print(941);
     print_cmd_mod (cur_cmd, cur_mod);
     if (cur_cmd == 10)
     {
@@ -20166,7 +20763,7 @@ void disp_token (void)
 void do_show_token (void)
 {
   do {
-      get_next ();
+    get_next ();
     disp_token ();
     get_x_next ();
   } while (!(cur_cmd != 82));
@@ -20175,7 +20772,7 @@ void do_show_token (void)
 void do_show_stats (void)
 {
   print_nl(950);
-        ;
+  ;
 #ifdef STAT
   print_int (var_used);
   print_char(38);
@@ -20204,15 +20801,17 @@ void zdisp_var (halfword p)
 {
   halfword q;
   integer n;
+
   if (mem[p].hh.b0 == 21)
   {
     q = mem[p + 1].hh.lh;
     do {
-        disp_var (q);
+      disp_var (q);
       q = mem[q].hh.v.RH;
     } while (!(q == 17));
     q = mem[p + 1].hh.v.RH;
-    while (mem[q].hh.b1 == 3) {
+    while (mem[q].hh.b1 == 3)
+    {
       disp_var (q);
       q = mem[q].hh.v.RH;
     }
@@ -20222,11 +20821,12 @@ void zdisp_var (halfword p)
     print_nl(261);
     print_variable_name(p);
     if (mem[p].hh.b0 > 22)
-    print(665);
+      print(665);
     print(953);
     if (file_offset >= maxprintline - 20)
-    n = 5;
-    else n = maxprintline - file_offset - 15;
+      n = 5;
+    else
+      n = maxprintline - file_offset - 15;
     show_macro (mem[p + 1].cint, 0, n);
   }
   else if (mem[p].hh.b0 != 0)
@@ -20241,10 +20841,13 @@ void zdisp_var (halfword p)
 void do_show_var (void)
 {
   do {
-      get_next ();
-    if (cur_sym > 0) {
-      if (cur_sym <= 9769) {
-        if (cur_cmd == 41) {
+    get_next ();
+    if (cur_sym > 0)
+    {
+      if (cur_sym <= 9769)
+      {
+        if (cur_cmd == 41)
+        {
           if (cur_mod != 0)
           {
             disp_var (cur_mod);
@@ -20254,27 +20857,31 @@ void do_show_var (void)
       }
     }
     disp_token ();
-    done: get_x_next ();
+  done:
+    get_x_next ();
   } while (!(cur_cmd != 82));
 }
 
 void do_show_dependencies (void)
 {
   halfword p;
+
   p = mem[13].hh.v.RH;
-  while (p != 13) {
+  while (p != 13)
+  {
     if (interesting (p))
     {
       print_nl(261);
       print_variable_name(p);
       if (mem[p].hh.b0 == 17)
-      print_char(61);
-      else print(768);
-      print_dependency(mem[p + 1].hh.v.RH, mem[p].hh.b0
-   );
+        print_char(61);
+      else
+        print(768);
+      print_dependency(mem[p + 1].hh.v.RH, mem[p].hh.b0);
     }
     p = mem[p + 1].hh.v.RH;
-    while (mem[p].hh.lh != 0) p = mem[p].hh.v.RH;
+    while (mem[p].hh.lh != 0)
+      p = mem[p].hh.v.RH;
     p = mem[p].hh.v.RH;
   }
   get_x_next ();
@@ -20283,30 +20890,31 @@ void do_show_dependencies (void)
 void do_show_whatever (void)
 {
   if (interaction == 3)
-;
+    ;
   switch (cur_mod)
-  {case 0 :
-    do_show_token ();
-    break;
-  case 1 :
-    do_show_stats ();
-    break;
-  case 2 :
-    do_show ();
-    break;
-  case 3 :
-    do_show_var ();
-    break;
-  case 4 :
-    do_show_dependencies ();
-    break;
+  {
+    case 0:
+      do_show_token ();
+      break;
+    case 1:
+      do_show_stats ();
+      break;
+    case 2:
+      do_show ();
+      break;
+    case 3:
+      do_show_var ();
+      break;
+    case 4:
+      do_show_dependencies ();
+      break;
   }
   if (internal[32] > 0)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -20315,7 +20923,8 @@ void do_show_whatever (void)
         print(262);
         print(954);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(954);
       }
@@ -20325,20 +20934,24 @@ void do_show_whatever (void)
       help_ptr = 0;
       decr (error_count);
     }
-    else {
+    else
+    {
       help_ptr = 1;
       help_line[0] = 955;
     }
     if (cur_cmd == 83)
-    error ();
-    else put_get_error ();
+      error ();
+    else
+      put_get_error ();
   }
 }
 
 boolean scan_with (void)
 {
-  boolean Result; small_number t;
+  boolean Result;
+  small_number t;
   boolean result;
+
   t = cur_mod;
   cur_type = 1;
   get_x_next ();
@@ -20353,20 +20966,22 @@ boolean scan_with (void)
       help_line[0] = 965;
     }
     if (t == 6)
-    help_line[1] = 966;
+      help_line[1] = 966;
     put_get_flush_error (0);
   }
   else if (cur_type == 6)
-  result = true;
-  else {
+    result = true;
+  else
+  {
     cur_exp = roundunscaled (cur_exp);
     if ((abs (cur_exp) < 4) && (cur_exp != 0))
-    result = true;
-    else {
+      result = true;
+    else
+    {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -20375,7 +20990,8 @@ boolean scan_with (void)
           print(262);
           print(967);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(967);
         }
@@ -20394,6 +21010,7 @@ boolean scan_with (void)
 void find_edges_var (halfword t)
 {
   halfword p;
+
   p = find_variable (t);
   cur_edges = 0;
   if (p == 0)
@@ -20405,8 +21022,8 @@ void find_edges_var (halfword t)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -20415,7 +21032,8 @@ void find_edges_var (halfword t)
         print(262);
         print(790);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(790);
       }
@@ -20431,7 +21049,8 @@ void find_edges_var (halfword t)
     }
     put_get_error ();
   }
-  else cur_edges = mem[p + 1].cint;
+  else
+    cur_edges = mem[p + 1].cint;
   flush_node_list (t);
 }
 
@@ -20442,6 +21061,7 @@ void do_add_to (void)
   halfword p;
   halfword q;
   unsigned char addtotype;
+
   get_x_next ();
   var_flag = 68;
   scan_primary ();
@@ -20457,7 +21077,8 @@ void do_add_to (void)
     }
     put_get_flush_error (0);
   }
-  else {
+  else
+  {
     lhs = cur_exp;
     addtotype = cur_mod;
     cur_type = 1;
@@ -20467,7 +21088,7 @@ void do_add_to (void)
     {
       find_edges_var (lhs);
       if (cur_edges == 0)
-      flush_cur_exp (0);
+        flush_cur_exp (0);
       else if (cur_type != 11)
       {
         disp_err (0, 975);
@@ -20478,14 +21099,16 @@ void do_add_to (void)
         }
         put_get_flush_error (0);
       }
-      else {
+      else
+      {
         merge_edges (cur_exp);
         flush_cur_exp (0);
       }
     }
-    else {
+    else
+    {
       if (cur_type == 14)
-      pair_to_path ();
+        pair_to_path ();
       if (cur_type != 9)
       {
         disp_err (0, 975);
@@ -20497,28 +21120,36 @@ void do_add_to (void)
         put_get_flush_error (0);
         flush_token_list (lhs);
       }
-      else {
+      else
+      {
         rhs = cur_exp;
         w = 1;
         cur_pen = 3;
-        while (cur_cmd == 66) if (scan_with ()) {
-          if (cur_type == 16)
-          w = cur_exp;
-          else {
-            if (mem[cur_pen].hh.lh == 0)
-            toss_pen (cur_pen);
-            else decr (mem[cur_pen].hh.lh);
-            cur_pen = cur_exp;
+        while (cur_cmd == 66)
+          if (scan_with ())
+          {
+            if (cur_type == 16)
+              w = cur_exp;
+            else
+            {
+              if (mem[cur_pen].hh.lh == 0)
+                toss_pen (cur_pen);
+              else
+                decr (mem[cur_pen].hh.lh);
+              cur_pen = cur_exp;
+            }
           }
-        }
         find_edges_var (lhs);
         if (cur_edges == 0)
-        toss_knot_list (rhs);
-        else {
+          toss_knot_list (rhs);
+        else
+        {
           lhs = 0;
           cur_path_type = addtotype;
-          if (mem[rhs].hh.b0 == 0) {
-            if (cur_path_type == 0) {
+          if (mem[rhs].hh.b0 == 0)
+          {
+            if (cur_path_type == 0)
+            {
               if (mem[rhs].hh.v.RH == rhs)
               {
                 mem[rhs + 5].cint = mem[rhs + 1].cint;
@@ -20528,7 +21159,8 @@ void do_add_to (void)
                 mem[rhs].hh.b0 = 1;
                 mem[rhs].hh.b1 = 1;
               }
-              else {
+              else
+              {
                 p = htap_ypoc (rhs);
                 q = mem[p].hh.v.RH;
                 mem[path_tail + 5].cint = mem[q + 5].cint;
@@ -20544,12 +21176,12 @@ void do_add_to (void)
                 rhs = p;
               }
             }
-            else {
+            else
+            {
               {
                 if (interaction == 3)
-                ;
-                if ((filelineerrorstylep && !(cur_input .name_field == 0))
-                )
+                  ;
+                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
                 {
                   print_nl(261);
                   print(fullsourcefilenamestack[in_open]);
@@ -20558,7 +21190,8 @@ void do_add_to (void)
                   print(262);
                   print(978);
                 }
-                else {
+                else
+                {
                   print_nl(263);
                   print(978);
                 }
@@ -20574,23 +21207,28 @@ void do_add_to (void)
             }
           }
           else if (cur_path_type == 0)
-          lhs = htap_ypoc (rhs);
+            lhs = htap_ypoc (rhs);
           cur_wt = w;
           rhs = make_spec (rhs, mem[cur_pen + 9].cint, internal[5]);
-          if (turning_number <= 0) {
-            if (cur_path_type != 0) {
-              if (internal[39] > 0) {
-                if ((turning_number < 0) && (mem[cur_pen].hh.v.RH
-                == 0))
-                cur_wt = - (integer) cur_wt;
-                else {
-                  if (turning_number == 0) {
-                    if ((internal[39]<= 65536L) && (mem[cur_pen]
-                    .hh.v.RH == 0))
-                    goto done;
-                    else print_strange (980);
+          if (turning_number <= 0)
+          {
+            if (cur_path_type != 0)
+            {
+              if (internal[39] > 0)
+              {
+                if ((turning_number < 0) && (mem[cur_pen].hh.v.RH == 0))
+                  cur_wt = - (integer) cur_wt;
+                else
+                {
+                  if (turning_number == 0)
+                  {
+                    if ((internal[39]<= 65536L) && (mem[cur_pen].hh.v.RH == 0))
+                      goto done;
+                    else
+                      print_strange (980);
                   }
-                  else print_strange (981);
+                  else
+                    print_strange (981);
                   {
                     help_ptr = 3;
                     help_line[2] = 982;
@@ -20604,23 +21242,25 @@ void do_add_to (void)
           }
           done:;
           if (mem[cur_pen + 9].cint == 0)
-          fill_spec (rhs);
-          else fill_envelope (rhs);
+            fill_spec (rhs);
+          else
+            fill_envelope (rhs);
           if (lhs != 0)
           {
             rev_turns = true;
-            lhs = make_spec (lhs, mem[cur_pen + 9].cint, internal[5])
-        ;
+            lhs = make_spec (lhs, mem[cur_pen + 9].cint, internal[5]);
             rev_turns = false;
             if (mem[cur_pen + 9].cint == 0)
-            fill_spec (lhs);
-            else fill_envelope (lhs);
+              fill_spec (lhs);
+            else
+              fill_envelope (lhs);
           }
           not_found:;
         }
         if (mem[cur_pen].hh.lh == 0)
-        toss_pen (cur_pen);
-        else decr (mem[cur_pen].hh.lh);
+          toss_pen (cur_pen);
+        else
+          decr (mem[cur_pen].hh.lh);
       }
     }
   }
@@ -20628,12 +21268,13 @@ void do_add_to (void)
 
 scaled tfm_check (small_number m)
 {
-  scaled Result; if (abs (internal[m]) >= 134217728L)
+  scaled Result;
+  if (abs (internal[m]) >= 134217728L)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -20642,7 +21283,8 @@ scaled tfm_check (small_number m)
         print(262);
         print(1001);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(1001);
       }
@@ -20655,23 +21297,28 @@ scaled tfm_check (small_number m)
     }
     put_get_error ();
     if (internal[m] > 0)
-    Result = 134217727L;
-    else Result = -134217727L;
+      Result = 134217727L;
+    else
+      Result = -134217727L;
   }
-  else Result = internal[m];
+  else
+    Result = internal[m];
   return Result;
 }
 
 void do_shipout (void)
 {
   integer c;
+
   get_x_next ();
   var_flag = 83;
   scan_expression ();
-  if (cur_type != 20) {
+  if (cur_type != 20)
+  {
     if (cur_type == 11)
-    cur_edges = cur_exp;
-    else {
+      cur_edges = cur_exp;
+    else
+    {
       {
         disp_err (0, 971);
         {
@@ -20686,7 +21333,8 @@ void do_shipout (void)
       goto lab_exit;
     }
   }
-  else {
+  else
+  {
     find_edges_var (cur_exp);
     cur_type = 1;
   }
@@ -20694,11 +21342,11 @@ void do_shipout (void)
   {
     c = roundunscaled (internal[18]) % 256;
     if (c < 0)
-    c = c + 256;
+      c = c + 256;
     if (c < bc)
-    bc = c;
+      bc = c;
     if (c > ec)
-    ec = c;
+      ec = c;
     char_exists[c] = true;
     gf_dx[c] = internal[24];
     gf_dy[c] = internal[25];
@@ -20707,7 +21355,7 @@ void do_shipout (void)
     tfm_depth[c] = tfm_check (22);
     tfm_ital_corr[c] = tfm_check (23);
     if (internal[34] >= 0)
-    shipout (c);
+      shipout (c);
   }
   flush_cur_exp (0);
   lab_exit:;
@@ -20716,6 +21364,7 @@ void do_shipout (void)
 void do_display (void)
 {
   halfword e;
+
   get_x_next ();
   var_flag = 73;
   scan_primary ();
@@ -20731,26 +21380,29 @@ void do_display (void)
     }
     put_get_flush_error (0);
   }
-  else {
+  else
+  {
     e = cur_exp;
     cur_type = 1;
     get_x_next ();
     scan_expression ();
     if (cur_type != 16)
-    goto common_ending;
+      goto common_ending;
     cur_exp = roundunscaled (cur_exp);
     if (cur_exp < 0)
-    goto not_found;
+      goto not_found;
     if (cur_exp > 15)
-    goto not_found;
+      goto not_found;
     if (!window_open[cur_exp])
-    goto not_found;
+      goto not_found;
     find_edges_var (e);
     if (cur_edges != 0)
-    disp_edges (cur_exp);
+      disp_edges (cur_exp);
     goto lab_exit;
-    not_found: cur_exp = cur_exp * 65536L;
-    common_ending: disp_err (0, 985);
+  not_found:
+    cur_exp = cur_exp * 65536L;
+  common_ending:
+    disp_err (0, 985);
     {
       help_ptr = 1;
       help_line[0] = 986;
@@ -20763,11 +21415,14 @@ void do_display (void)
 
 boolean get_pair (commandcode c)
 {
-  boolean Result; halfword p;
+  boolean Result;
+  halfword p;
   boolean b;
+
   if (cur_cmd != c)
-  Result = false;
-  else {
+    Result = false;
+  else
+  {
     get_x_next ();
     scan_expression ();
     if (nice_pair (cur_exp, cur_type))
@@ -20777,7 +21432,8 @@ boolean get_pair (commandcode c)
       cur_y = mem[p + 3].cint;
       b = true;
     }
-    else b = false;
+    else
+      b = false;
     flush_cur_exp (0);
     Result = b;
   }
@@ -20788,31 +21444,33 @@ void doopen_window (void)
 {
   integer k;
   scaled r0, c0, r1, c1;
+
   get_x_next ();
   scan_expression ();
   if (cur_type != 16)
-  goto not_found;
+    goto not_found;
   k = roundunscaled (cur_exp);
   if (k < 0)
-  goto not_found;
+    goto not_found;
   if (k > 15)
-  goto not_found;
+    goto not_found;
   if (!get_pair (70))
-  goto not_found;
+    goto not_found;
   r0 = cur_x;
   c0 = cur_y;
   if (!get_pair (71))
-  goto not_found;
+    goto not_found;
   r1 = cur_x;
   c1 = cur_y;
   if (!get_pair (72))
-  goto not_found;
+    goto not_found;
   open_a_window (k, r0, c0, r1, c1, cur_x, cur_y);
   goto lab_exit;
-  not_found: {
+not_found:
+  {
     if (interaction == 3)
-;
-    if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      ;
+    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
     {
       print_nl(261);
       print(fullsourcefilenamestack[in_open]);
@@ -20821,7 +21479,8 @@ void doopen_window (void)
       print(262);
       print(987);
     }
-    else {
+    else
+    {
       print_nl(263);
       print(987);
     }
@@ -20840,6 +21499,7 @@ void do_cull (void)
   halfword e;
   unsigned char keeping;
   integer w, win, wout;
+
   w = 1;
   get_x_next ();
   var_flag = 67;
@@ -20856,38 +21516,40 @@ void do_cull (void)
     }
     put_get_flush_error (0);
   }
-  else {
+  else
+  {
     e = cur_exp;
     cur_type = 1;
     keeping = cur_mod;
     if (!get_pair (67))
-    goto not_found;
+      goto not_found;
     while ((cur_cmd == 66) && (cur_mod == 16)) if (scan_with ())
-    w = cur_exp;
+      w = cur_exp;
     if (cur_x > cur_y)
-    goto not_found;
+      goto not_found;
     if (keeping == 0)
     {
       if ((cur_x > 0) || (cur_y < 0))
-      goto not_found;
+        goto not_found;
       wout = w;
       win = 0;
     }
-    else {
+    else
+    {
       if ((cur_x <= 0) && (cur_y >= 0))
-      goto not_found;
+        goto not_found;
       wout = 0;
       win = w;
     }
     find_edges_var (e);
     if (cur_edges != 0)
-    cull_edges (floorunscaled (cur_x + 65535L), floorunscaled (cur_y) ,
-    wout, win);
+      cull_edges (floorunscaled (cur_x + 65535L), floorunscaled (cur_y), wout, win);
     goto lab_exit;
-    not_found: {
+  not_found:
+    {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -20896,7 +21558,8 @@ void do_cull (void)
         print(262);
         print(990);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(990);
       }
@@ -20914,6 +21577,7 @@ void do_cull (void)
 void do_message (void)
 {
   unsigned char m;
+
   m = cur_mod;
   get_x_next ();
   scan_expression ();
@@ -20926,94 +21590,105 @@ void do_message (void)
     }
     put_get_error ();
   }
-  else switch (m)
-  {case 0 :
+  else
+    switch (m)
     {
-      print_nl(261);
-      slow_print(cur_exp);
-    }
-    break;
-  case 1 :
-    {
-      {
-        if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+      case 0:
         {
           print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(261);
+          slow_print(cur_exp);
         }
-        else {
-          print_nl(263);
-          print(261);
-        }
-      }
-      slow_print(cur_exp);
-      if (err_help != 0)
-      use_err_help = true;
-      else if (long_help_seen)
+        break;
+    case 1:
       {
-        help_ptr = 1;
-        help_line[0] = 996;
-      }
-      else {
-        if (interaction < 3)
-        long_help_seen = true;
         {
-          help_ptr = 4;
-          help_line[3] = 997;
-          help_line[2] = 998;
-          help_line[1] = 999;
-          help_line[0] = 1000;
+          if (interaction == 3)
+            ;
+          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+          {
+            print_nl(261);
+            print(fullsourcefilenamestack[in_open]);
+            print(58);
+            print_int (line);
+            print(262);
+            print(261);
+          }
+          else
+          {
+            print_nl(263);
+            print(261);
+          }
         }
+        slow_print(cur_exp);
+        if (err_help != 0)
+          use_err_help = true;
+        else if (long_help_seen)
+        {
+          help_ptr = 1;
+          help_line[0] = 996;
+        }
+        else
+        {
+          if (interaction < 3)
+            long_help_seen = true;
+          {
+            help_ptr = 4;
+            help_line[3] = 997;
+            help_line[2] = 998;
+            help_line[1] = 999;
+            help_line[0] = 1000;
+          }
+        }
+        put_get_error ();
+        use_err_help = false;
       }
-      put_get_error ();
-      use_err_help = false;
-    }
-    break;
-  case 2 :
-    {
-      if (err_help != 0)
+      break;
+    case 2:
       {
-        if (str_ref[err_help]< 127) {
-          if (str_ref[err_help] > 1)
-          decr (str_ref[err_help]);
-          else flush_string (err_help);
-        }
-      }
-      if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
-      err_help = 0;
-      else {
-        err_help = cur_exp;
+        if (err_help != 0)
         {
           if (str_ref[err_help]< 127)
-          incr (str_ref[err_help]);
+          {
+            if (str_ref[err_help] > 1)
+              decr (str_ref[err_help]);
+            else
+              flush_string (err_help);
+          }
+        }
+        if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
+          err_help = 0;
+        else
+        {
+          err_help = cur_exp;
+          {
+            if (str_ref[err_help]< 127)
+              incr (str_ref[err_help]);
+          }
         }
       }
-    }
-    break;
+      break;
   }
   flush_cur_exp (0);
 }
 
 eight_bits get_code (void)
 {
-  eight_bits Result; integer c;
+  eight_bits Result;
+  integer c;
+
   get_x_next ();
   scan_expression ();
   if (cur_type == 16)
   {
     c = roundunscaled (cur_exp);
-    if (c >= 0) {
+    if (c >= 0)
+    {
       if (c < 256)
-      goto found;
+        goto found;
     }
   }
-  else if (cur_type == 4) {
+  else if (cur_type == 4)
+  {
     if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 1)
     {
       c = str_pool[str_start[cur_exp]];
@@ -21028,7 +21703,8 @@ eight_bits get_code (void)
   }
   put_get_flush_error (0);
   c = 0;
-  found: Result = c;
+found:
+  Result = c;
   return Result;
 }
 
@@ -21045,11 +21721,12 @@ void set_tag (halfword c, small_number t, halfword r)
       label_char[label_ptr] = c;
     }
   }
-  else {
+  else
+  {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -21058,30 +21735,33 @@ void set_tag (halfword c, small_number t, halfword r)
         print(262);
         print(1012);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(1012);
       }
     }
     if ((c > 32) && (c < 127))
-    print(c);
+      print(c);
     else if (c == 256)
-    print(1013);
-    else {
+      print(1013);
+    else
+    {
       print(1014);
       print_int (c);
     }
     print(1015);
     switch (char_tag[c])
-    {case 1 :
-      print(1016);
-      break;
-    case 2 :
-      print(1017);
-      break;
-    case 3 :
-      print(1006);
-      break;
+    {
+      case 1:
+        print(1016);
+        break;
+      case 2:
+        print(1017);
+        break;
+      case 3:
+        print(1006);
+        break;
     }
     {
       help_ptr = 2;
@@ -21097,318 +21777,336 @@ void do_tfm_command (void)
   short c, cc;
   integer k;
   integer j;
+
   switch (cur_mod)
-  {case 0 :
-    {
-      c = get_code ();
-      while (cur_cmd == 81) {
-        cc = get_code ();
-        set_tag (c, 2, cc);
-        c = cc;
-      }
-    }
-    break;
-  case 1 :
-    {
-      lk_started = false;
-      lab_continue: get_x_next ();
-      if ((cur_cmd == 78) && lk_started)
+  {
+    case 0:
       {
         c = get_code ();
-        if (nl - skip_table[c] > 128)
+        while (cur_cmd == 81)
         {
+          cc = get_code ();
+          set_tag (c, 2, cc);
+          c = cc;
+        }
+      }
+      break;
+    case 1:
+      {
+        lk_started = false;
+      lab_continue:
+        get_x_next ();
+        if ((cur_cmd == 78) && lk_started)
+        {
+          c = get_code ();
+          if (nl - skip_table[c] > 128)
           {
             {
-              if (interaction == 3)
-        ;
-              if ((filelineerrorstylep && !(cur_input .name_field == 0)))
               {
-                print_nl(261);
-                print(fullsourcefilenamestack[in_open]);
-                print(58);
-                print_int (line);
-                print(262);
-                print(1035);
+                if (interaction == 3)
+                  ;
+                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+                {
+                  print_nl(261);
+                  print(fullsourcefilenamestack[in_open]);
+                  print(58);
+                  print_int (line);
+                  print(262);
+                  print(1035);
+                }
+                else
+                {
+                  print_nl(263);
+                  print(1035);
+                }
               }
-              else {
-                print_nl(263);
-                print(1035);
+              {
+                help_ptr = 1;
+                help_line[0] = 1036;
               }
-            }
-            {
-              help_ptr = 1;
-              help_line[0] = 1036;
-            }
-            error ();
-            ll = skip_table[c];
-            do {
+              error ();
+              ll = skip_table[c];
+              do {
                 lll = lig_kern[ll].b0;
-              lig_kern[ll].b0 = 128;
+                lig_kern[ll].b0 = 128;
+                ll = ll - lll;
+              } while (!(lll == 0));
+            }
+            skip_table[c] = lig_table_size;
+          }
+          if (skip_table[c] == lig_table_size)
+            lig_kern[nl - 1].b0 = 0;
+          else
+            lig_kern[nl - 1].b0 = nl - skip_table[c] - 1;
+          skip_table[c] = nl - 1;
+          goto done;
+        }
+        if (cur_cmd == 79)
+        {
+          c = 256;
+          cur_cmd = 81;
+        }
+        else
+        {
+          back_input ();
+          c = get_code ();
+        }
+        if ((cur_cmd == 81) || (cur_cmd == 80))
+        {
+          if (cur_cmd == 81)
+          {
+            if (c == 256)
+              bch_label = nl;
+            else
+              set_tag (c, 1, nl);
+          }
+          else if (skip_table[c]< lig_table_size)
+          {
+            ll = skip_table[c];
+            skip_table[c] = lig_table_size;
+            do {
+              lll = lig_kern[ll].b0;
+              if (nl - ll > 128)
+              {
+                {
+                  {
+                    if (interaction == 3)
+                      ;
+                    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+                    {
+                      print_nl(261);
+                      print(fullsourcefilenamestack[in_open]);
+                      print(58);
+                      print_int (line);
+                      print(262);
+                      print(1035);
+                    }
+                    else
+                    {
+                      print_nl(263);
+                      print(1035);
+                    }
+                  }
+                  {
+                    help_ptr = 1;
+                    help_line[0] = 1036;
+                  }
+                  error ();
+                  ll = ll;
+                  do {
+                    lll = lig_kern[ll].b0;
+                    lig_kern[ll].b0 = 128;
+                    ll = ll - lll;
+                  } while (!(lll == 0));
+                }
+                goto lab_continue;
+              }
+              lig_kern[ll].b0 = nl - ll - 1;
               ll = ll - lll;
             } while (!(lll == 0));
           }
-          skip_table[c] = lig_table_size;
+          goto lab_continue;
         }
-        if (skip_table[c] == lig_table_size)
-        lig_kern[nl - 1].b0 = 0;
-        else lig_kern[nl - 1].b0 = nl - skip_table[c] - 1;
-        skip_table[c] = nl - 1;
-        goto done;
-      }
-      if (cur_cmd == 79)
-      {
-        c = 256;
-        cur_cmd = 81;
-      }
-      else {
-        back_input ();
-        c = get_code ();
-      }
-      if ((cur_cmd == 81) || (cur_cmd == 80))
-      {
-        if (cur_cmd == 81) {
-          if (c == 256)
-          bch_label = nl;
-          else set_tag (c, 1, nl);
-        }
-        else if (skip_table[c]< lig_table_size)
+        if (cur_cmd == 76)
         {
-          ll = skip_table[c];
-          skip_table[c] = lig_table_size;
-          do {
-              lll = lig_kern[ll].b0;
-            if (nl - ll > 128)
+          lig_kern[nl].b1 = c;
+          lig_kern[nl].b0 = 0;
+          if (cur_mod < 128)
+          {
+            lig_kern[nl].b2 = cur_mod;
+            lig_kern[nl].b3 = get_code ();
+          }
+          else
+          {
+            get_x_next ();
+            scan_expression ();
+            if (cur_type != 16)
             {
+              disp_err (0, 1037);
               {
-                {
-                  if (interaction == 3)
-                ;
-                  if ((filelineerrorstylep && !(cur_input .name_field == 0)
-                ))
-                  {
-                    print_nl(261);
-                    print(fullsourcefilenamestack[in_open]);
-                    print(58);
-                    print_int (line);
-                    print(262);
-                    print(1035);
-                  }
-                  else {
-                    print_nl(263);
-                    print(1035);
-                  }
-                }
-                {
-                  help_ptr = 1;
-                  help_line[0] = 1036;
-                }
-                error ();
-                ll = ll;
-                do {
-                    lll = lig_kern[ll].b0;
-                  lig_kern[ll].b0 = 128;
-                  ll = ll - lll;
-                } while (!(lll == 0));
+                help_ptr = 2;
+                help_line[1] = 1038;
+                help_line[0] = 308;
               }
-              goto lab_continue;
+              put_get_flush_error (0);
             }
-            lig_kern[ll].b0 = nl - ll - 1;
-            ll = ll - lll;
-          } while (!(lll == 0));
-        }
-        goto lab_continue;
-      }
-      if (cur_cmd == 76)
-      {
-        lig_kern[nl].b1 = c;
-        lig_kern[nl].b0 = 0;
-        if (cur_mod < 128)
-        {
-          lig_kern[nl].b2 = cur_mod;
-          lig_kern[nl].b3 = get_code ();
-        }
-        else {
-          get_x_next ();
-          scan_expression ();
-          if (cur_type != 16)
-          {
-            disp_err (0, 1037);
+            kern[nk] = cur_exp;
+            k = 0;
+            while (kern[k]!= cur_exp)
+              incr (k);
+            if (k == nk)
             {
-              help_ptr = 2;
-              help_line[1] = 1038;
-              help_line[0] = 308;
+              if (nk == max_kerns)
+                overflow (1034, max_kerns);
+              incr (nk);
             }
-            put_get_flush_error (0);
+            lig_kern[nl].b2 = 128 + (k / 256);
+            lig_kern[nl].b3 = (k % 256);
           }
-          kern[nk] = cur_exp;
-          k = 0;
-          while (kern[k]!= cur_exp) incr (k);
-          if (k == nk)
+          lk_started = true;
+        }
+        else
+        {
           {
-            if (nk == max_kerns)
-            overflow (1034, max_kerns);
-            incr (nk);
+            if (interaction == 3)
+              ;
+            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+            {
+              print_nl(261);
+              print(fullsourcefilenamestack[in_open]);
+              print(58);
+              print_int (line);
+              print(262);
+              print(1023);
+            }
+            else
+            {
+              print_nl(263);
+              print(1023);
+            }
           }
-          lig_kern[nl].b2 = 128 + (k / 256);
-          lig_kern[nl].b3 = (k % 256);
-        }
-        lk_started = true;
-      }
-      else {
-        {
-          if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
           {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(1023);
+            help_ptr = 1;
+            help_line[0] = 1024;
           }
-          else {
-            print_nl(263);
-            print(1023);
-          }
+          back_error ();
+          lig_kern[nl].b1 = 0;
+          lig_kern[nl].b2 = 0;
+          lig_kern[nl].b3 = 0;
+          lig_kern[nl].b0 = 129;
         }
-        {
-          help_ptr = 1;
-          help_line[0] = 1024;
-        }
-        back_error ();
-        lig_kern[nl].b1 = 0;
-        lig_kern[nl].b2 = 0;
-        lig_kern[nl].b3 = 0;
-        lig_kern[nl].b0 = 129;
+        if (nl == lig_table_size)
+          overflow (1025, lig_table_size);
+        incr (nl);
+        if (cur_cmd == 82)
+          goto lab_continue;
+        if (lig_kern[nl - 1].b0 < 128)
+          lig_kern[nl - 1].b0 = 128;
+        done:;
       }
-      if (nl == lig_table_size)
-      overflow (1025, lig_table_size);
-      incr (nl);
-      if (cur_cmd == 82)
-      goto lab_continue;
-      if (lig_kern[nl - 1].b0 < 128)
-      lig_kern[nl - 1].b0 = 128;
-      done:;
-    }
-    break;
-  case 2 :
-    {
-      if (ne == 256)
-      overflow (1006, 256);
-      c = get_code ();
-      set_tag (c, 3, ne);
-      if (cur_cmd != 81)
+      break;
+    case 2:
       {
-        missing_err (58);
-        {
-          help_ptr = 1;
-          help_line[0] = 1039;
-        }
-        back_error ();
-      }
-      exten[ne].b0 = get_code ();
-      if (cur_cmd != 82)
-      {
-        missing_err (44);
-        {
-          help_ptr = 1;
-          help_line[0] = 1039;
-        }
-        back_error ();
-      }
-      exten[ne].b1 = get_code ();
-      if (cur_cmd != 82)
-      {
-        missing_err (44);
-        {
-          help_ptr = 1;
-          help_line[0] = 1039;
-        }
-        back_error ();
-      }
-      exten[ne].b2 = get_code ();
-      if (cur_cmd != 82)
-      {
-        missing_err (44);
-        {
-          help_ptr = 1;
-          help_line[0] = 1039;
-        }
-        back_error ();
-      }
-      exten[ne].b3 = get_code ();
-      incr (ne);
-    }
-    break;
-  case 3 :
-  case 4 :
-    {
-      c = cur_mod;
-      get_x_next ();
-      scan_expression ();
-      if ((cur_type != 16) || (cur_exp < 32768L))
-      {
-        disp_err (0, 1019);
-        {
-          help_ptr = 2;
-          help_line[1] = 1020;
-          help_line[0] = 1021;
-        }
-        put_get_error ();
-      }
-      else {
-        j = roundunscaled (cur_exp);
+        if (ne == 256)
+          overflow (1006, 256);
+        c = get_code ();
+        set_tag (c, 3, ne);
         if (cur_cmd != 81)
         {
           missing_err (58);
           {
             help_ptr = 1;
-            help_line[0] = 1022;
+            help_line[0] = 1039;
           }
           back_error ();
         }
-        if (c == 3)
-        do {
-            if (j > header_size)
-          overflow (1007, header_size);
-          header_byte[j] = get_code ();
-          incr (j);
-        } while (!(cur_cmd != 82));
-        else do {
-            if (j > max_font_dimen)
-          overflow (1008, max_font_dimen);
-          while (j > np) {
-            incr (np);
-            param[np] = 0;
-          }
-          get_x_next ();
-          scan_expression ();
-          if (cur_type != 16)
+        exten[ne].b0 = get_code ();
+        if (cur_cmd != 82)
+        {
+          missing_err (44);
           {
-            disp_err (0, 1040);
+            help_ptr = 1;
+            help_line[0] = 1039;
+          }
+          back_error ();
+        }
+        exten[ne].b1 = get_code ();
+        if (cur_cmd != 82)
+        {
+          missing_err (44);
+          {
+            help_ptr = 1;
+            help_line[0] = 1039;
+          }
+          back_error ();
+        }
+        exten[ne].b2 = get_code ();
+        if (cur_cmd != 82)
+        {
+          missing_err (44);
+          {
+            help_ptr = 1;
+            help_line[0] = 1039;
+          }
+          back_error ();
+        }
+        exten[ne].b3 = get_code ();
+        incr (ne);
+      }
+      break;
+    case 3:
+    case 4:
+      {
+        c = cur_mod;
+        get_x_next ();
+        scan_expression ();
+        if ((cur_type != 16) || (cur_exp < 32768L))
+        {
+          disp_err (0, 1019);
+          {
+            help_ptr = 2;
+            help_line[1] = 1020;
+            help_line[0] = 1021;
+          }
+          put_get_error ();
+        }
+        else
+        {
+          j = roundunscaled (cur_exp);
+          if (cur_cmd != 81)
+          {
+            missing_err (58);
             {
               help_ptr = 1;
-              help_line[0] = 308;
+              help_line[0] = 1022;
             }
-            put_get_flush_error (0);
+            back_error ();
           }
-          param[j] = cur_exp;
-          incr (j);
-        } while (!(cur_cmd != 82));
+          if (c == 3)
+            do {
+              if (j > header_size)
+                overflow (1007, header_size);
+              header_byte[j] = get_code ();
+              incr (j);
+            } while (!(cur_cmd != 82));
+          else
+            do {
+              if (j > max_font_dimen)
+                overflow (1008, max_font_dimen);
+              while (j > np)
+              {
+                incr (np);
+                param[np] = 0;
+              }
+              get_x_next ();
+              scan_expression ();
+              if (cur_type != 16)
+              {
+                disp_err (0, 1040);
+                {
+                  help_ptr = 1;
+                  help_line[0] = 308;
+                }
+                put_get_flush_error (0);
+              }
+              param[j] = cur_exp;
+              incr (j);
+            } while (!(cur_cmd != 82));
       }
-    }
-    break;
+      }
+      break;
   }
 }
 
 void do_special (void)
 {
   small_number m;
+
   m = cur_mod;
   get_x_next ();
   scan_expression ();
-  if (internal[34] >= 0) {
+  if (internal[34] >= 0)
+  {
     if (cur_type != m)
     {
       disp_err (0, 1061);
@@ -21418,17 +22116,19 @@ void do_special (void)
       }
       put_get_error ();
     }
-    else {
+    else
+    {
       if (output_file_name == 0)
-      init_gf ();
+        init_gf ();
       if (m == 4)
-      gf_string (cur_exp, 0);
-      else {
+        gf_string (cur_exp, 0);
+      else
+      {
         {
           gf_buf[gf_ptr] = 243;
           incr (gf_ptr);
           if (gf_ptr == gf_limit)
-          gf_swap ();
+            gf_swap ();
         }
         gf_four (cur_exp);
       }
@@ -21447,8 +22147,8 @@ void do_statement (void)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -21457,7 +22157,8 @@ void do_statement (void)
           print(262);
           print(869);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(869);
         }
@@ -21483,9 +22184,9 @@ void do_statement (void)
     if (cur_cmd < 84)
     {
       if (cur_cmd == 51)
-      do_equation ();
+        do_equation ();
       else if (cur_cmd == 77)
-      do_assignment ();
+        do_assignment ();
       else if (cur_type == 4)
       {
         if (internal[1] > 0)
@@ -21497,7 +22198,7 @@ void do_statement (void)
         if (internal[34] > 0)
         {
           if (output_file_name == 0)
-          init_gf ();
+            init_gf ();
           gf_string (1063, cur_exp);
         }
       }
@@ -21516,93 +22217,97 @@ void do_statement (void)
       cur_type = 1;
     }
   }
-  else {
+  else
+  {
     if (internal[7] > 0)
-    show_cmd_mod (cur_cmd, cur_mod);
+      show_cmd_mod (cur_cmd, cur_mod);
     switch (cur_cmd)
-    {case 30 :
-      do_type_declaration ();
-      break;
-    case 16 :
-      if (cur_mod > 2)
-      make_op_def ();
-      else if (cur_mod > 0)
-      scan_def ();
-      break;
-    case 24 :
-      do_random_seed ();
-      break;
-    case 23 :
-      {
-        print_ln ();
-        interaction = cur_mod;
-        if (interaction == 0)
-        kpsemaketexdiscarderrors = 1;
-        else kpsemaketexdiscarderrors = 0;
-        if (interaction == 0)
-        selector = 0;
-        else selector = 1;
-        if (log_opened)
-        selector = selector + 2;
-        get_x_next ();
-      }
-      break;
-    case 21 :
-      do_protection ();
-      break;
-    case 27 :
-      def_delims ();
-      break;
-    case 12 :
-      do {
+    {
+      case 30:
+        do_type_declaration ();
+        break;
+      case 16:
+        if (cur_mod > 2)
+          make_op_def ();
+        else if (cur_mod > 0)
+          scan_def ();
+        break;
+      case 24 :
+        do_random_seed ();
+        break;
+      case 23 :
+        {
+          print_ln ();
+          interaction = cur_mod;
+          if (interaction == 0)
+            kpsemaketexdiscarderrors = 1;
+          else
+            kpsemaketexdiscarderrors = 0;
+          if (interaction == 0)
+            selector = 0;
+          else
+            selector = 1;
+          if (log_opened)
+            selector = selector + 2;
+          get_x_next ();
+        }
+        break;
+      case 21:
+        do_protection ();
+        break;
+      case 27:
+        def_delims ();
+        break;
+      case 12:
+        do {
           get_symbol ();
-        save_variable (cur_sym);
-        get_x_next ();
-      } while (!(cur_cmd != 82));
-      break;
-    case 13 :
-      do_interim ();
-      break;
-    case 14 :
-      do_let ();
-      break;
-    case 15 :
-      do_new_internal ();
-      break;
-    case 22 :
-      do_show_whatever ();
-      break;
-    case 18 :
-      do_add_to ();
-      break;
-    case 17 :
-      do_shipout ();
-      break;
-    case 11 :
-      do_display ();
-      break;
-    case 28 :
-      doopen_window ();
-      break;
-    case 19 :
-      do_cull ();
-      break;
-    case 26 :
-      {
-        get_symbol ();
-        start_sym = cur_sym;
-        get_x_next ();
-      }
-      break;
-    case 25 :
-      do_message ();
-      break;
-    case 20 :
-      do_tfm_command ();
-      break;
-    case 29 :
-      do_special ();
-      break;
+          save_variable (cur_sym);
+          get_x_next ();
+        } while (!(cur_cmd != 82));
+        break;
+      case 13:
+        do_interim ();
+        break;
+      case 14:
+        do_let ();
+        break;
+      case 15:
+        do_new_internal ();
+        break;
+      case 22:
+        do_show_whatever ();
+        break;
+      case 18:
+        do_add_to ();
+        break;
+      case 17:
+        do_shipout ();
+        break;
+      case 11:
+        do_display ();
+        break;
+      case 28:
+        doopen_window ();
+        break;
+      case 19:
+        do_cull ();
+        break;
+      case 26:
+        {
+          get_symbol ();
+          start_sym = cur_sym;
+          get_x_next ();
+        }
+        break;
+      case 25:
+        do_message ();
+        break;
+      case 20:
+        do_tfm_command ();
+        break;
+      case 29:
+        do_special ();
+        break;
     }
     cur_type = 1;
   }
@@ -21610,8 +22315,8 @@ void do_statement (void)
   {
     {
       if (interaction == 3)
-;
-      if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+        ;
+      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
       {
         print_nl(261);
         print(fullsourcefilenamestack[in_open]);
@@ -21620,7 +22325,8 @@ void do_statement (void)
         print(262);
         print(875);
       }
-      else {
+      else
+      {
         print_nl(263);
         print(875);
       }
@@ -21637,13 +22343,15 @@ void do_statement (void)
     back_error ();
     scanner_status = 2;
     do {
-        get_next ();
+      get_next ();
       if (cur_cmd == 39)
       {
-        if (str_ref[cur_mod]< 127) {
+        if (str_ref[cur_mod]< 127)
+        {
           if (str_ref[cur_mod] > 1)
-          decr (str_ref[cur_mod]);
-          else flush_string (cur_mod);
+            decr (str_ref[cur_mod]);
+          else
+            flush_string (cur_mod);
         }
       }
     } while (!(cur_cmd > 82));
@@ -21655,13 +22363,13 @@ void do_statement (void)
 void main_control (void)
 {
   do {
-      do_statement ();
+    do_statement ();
     if (cur_cmd == 84)
     {
       {
         if (interaction == 3)
-        ;
-        if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+          ;
+        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
         {
           print_nl(261);
           print(fullsourcefilenamestack[in_open]);
@@ -21670,7 +22378,8 @@ void main_control (void)
           print(262);
           print(910);
         }
-        else {
+        else
+        {
           print_nl(263);
           print(910);
         }
@@ -21687,15 +22396,19 @@ void main_control (void)
 
 halfword sort_in (scaled v)
 {
-  halfword Result; halfword p, q, r;
+  halfword Result;
+  halfword p, q, r;
+
   p = memtop - 1;
-  while (true) {
+  while (true)
+  {
     q = mem[p].hh.v.RH;
     if (v <= mem[q + 1].cint)
-    goto found;
+      goto found;
     p = q;
   }
-  found: if (v < mem[q + 1].cint)
+found:
+  if (v < mem[q + 1].cint)
   {
     r = get_node (2);
     mem[r + 1].cint = v;
@@ -21708,20 +22421,23 @@ halfword sort_in (scaled v)
 
 integer min_cover (scaled d)
 {
-  integer Result; halfword p;
+  integer Result;
+  halfword p;
   scaled l;
   integer m;
+
   m = 0;
   p = mem[memtop - 1].hh.v.RH;
   perturbation = 2147483647L;
-  while (p != 19) {
+  while (p != 19)
+  {
     incr (m);
     l = mem[p + 1].cint;
     do {
-        p = mem[p].hh.v.RH;
+      p = mem[p].hh.v.RH;
     } while (!(mem[p + 1].cint > l + d));
     if (mem[p + 1].cint - l < perturbation)
-    perturbation = mem[p + 1].cint - l;
+      perturbation = mem[p + 1].cint - l;
   }
   Result = m;
   return Result;
@@ -21729,15 +22445,19 @@ integer min_cover (scaled d)
 
 scaled threshold_fn (integer m)
 {
-  scaled Result; scaled d;
+  scaled Result;
+  scaled d;
+
   excess = min_cover (0) - m;
   if (excess <= 0)
-  Result = 0;
-  else {
+    Result = 0;
+  else
+  {
     do {
-        d = perturbation;
+      d = perturbation;
     } while (!(min_cover (d + d) <= m));
-    while (min_cover (d) > m) d = perturbation;
+    while (min_cover (d) > m)
+      d = perturbation;
     Result = d;
   }
   return Result;
@@ -21745,34 +22465,37 @@ scaled threshold_fn (integer m)
 
 integer skimp (integer m)
 {
-  integer Result; scaled d;
+  integer Result;
+  scaled d;
   halfword p, q, r;
   scaled l;
   scaled v;
+
   d = threshold_fn (m);
   perturbation = 0;
   q = memtop - 1;
   m = 0;
   p = mem[memtop - 1].hh.v.RH;
-  while (p != 19) {
+  while (p != 19)
+  {
     incr (m);
     l = mem[p + 1].cint;
     mem[p].hh.lh = m;
     if (mem[mem[p].hh.v.RH + 1].cint <= l + d)
     {
       do {
-          p = mem[p].hh.v.RH;
+        p = mem[p].hh.v.RH;
         mem[p].hh.lh = m;
         decr (excess);
         if (excess == 0)
-        d = 0;
+          d = 0;
       } while (!(mem[mem[p].hh.v.RH + 1].cint > l + d));
       v = l + halfp (mem[p + 1].cint - l);
       if (mem[p + 1].cint - v > perturbation)
-      perturbation = mem[p + 1].cint - v;
+        perturbation = mem[p + 1].cint - v;
       r = q;
       do {
-          r = mem[r].hh.v.RH;
+        r = mem[r].hh.v.RH;
         mem[r + 1].cint = v;
       } while (!(r == p));
       mem[q].hh.v.RH = p;
@@ -21784,7 +22507,7 @@ integer skimp (integer m)
   return Result;
 }
 
-void tfmwarning (small_number m)
+void tfm_warning (small_number m)
 {
   print_nl(1041);
   print(int_name[m]);
@@ -21793,21 +22516,25 @@ void tfmwarning (small_number m)
   print(1043);
 }
 
-void fixdesignsize (void)
+void fix_design_size (void)
 {
   scaled d;
+
   d = internal[26];
   if ((d < 65536L) || (d >= 134217728L))
   {
     if (d != 0)
-    print_nl(1044);
+      print_nl(1044);
     d = 8388608L;
     internal[26] = d;
   }
-  if (header_byte[5]< 0) {
-    if (header_byte[6]< 0) {
-      if (header_byte[7]< 0) {
-        if (header_byte[8]< 0)
+  if (header_byte[5] < 0)
+  {
+    if (header_byte[6] < 0)
+    {
+      if (header_byte[7] < 0)
+      {
+        if (header_byte[8] < 0)
         {
           header_byte[5] = d / 1048576L;
           header_byte[6] = (d / 4096) % 256;
@@ -21819,51 +22546,58 @@ void fixdesignsize (void)
   }
   max_tfm_dimen = 16 * internal[26] - 1 - internal[26]/ 2097152L;
   if (max_tfm_dimen >= 134217728L)
-  max_tfm_dimen = 134217727L;
+    max_tfm_dimen = 134217727L;
 }
 
-integer dimenout (scaled x)
+integer dimen_out (scaled x)
 {
   integer Result;
+
   if (abs (x) > max_tfm_dimen)
   {
     incr (tfm_changed);
     if (x > 0)
-    x = max_tfm_dimen;
-    else x = - (integer) max_tfm_dimen;
+      x = max_tfm_dimen;
+    else
+      x = - (integer) max_tfm_dimen;
   }
   x = make_scaled (x * 16, internal[26]);
   Result = x;
   return Result;
 }
 
-void fixchecksum (void)
+void fix_checksum (void)
 {
   eight_bits k;
   eight_bits lb1, lb2, lb3, b4;
   integer x;
-  if (header_byte[1]< 0) {
-    if (header_byte[2]< 0) {
-      if (header_byte[3]< 0) {
-        if (header_byte[4]< 0)
+
+  if (header_byte[1] < 0)
+  {
+    if (header_byte[2] < 0)
+    {
+      if (header_byte[3] < 0)
+      {
+        if (header_byte[4] < 0)
         {
           lb1 = bc;
           lb2 = ec;
           lb3 = bc;
           b4 = ec;
           tfm_changed = 0;
-          {integer for_end; k = bc;for_end = ec; if (k <=
-          for_end) do
-            if (char_exists[k])
-            {
-              x = dimenout (mem[tfm_width[k]+ 1].cint) + (k + 4) *
-              4194304L;
-              lb1 = (lb1 + lb1 + x) % 255;
-              lb2 = (lb2 + lb2 + x) % 253;
-              lb3 = (lb3 + lb3 + x) % 251;
-              b4 = (b4 + b4 + x) % 247;
-            }
-          while (k++ < for_end);}
+          {
+            integer for_end; k = bc;for_end = ec;
+            if (k <= for_end) do
+              if (char_exists[k])
+              {
+                x = dimen_out (mem[tfm_width[k]+ 1].cint) + (k + 4) * 4194304L;
+                lb1 = (lb1 + lb1 + x) % 255;
+                lb2 = (lb2 + lb2 + x) % 253;
+                lb3 = (lb3 + lb3 + x) % 251;
+                b4 = (b4 + b4 + x) % 247;
+              }
+            while (k++ < for_end);
+          }
           header_byte[1] = lb1;
           header_byte[2] = lb2;
           header_byte[3] = lb3;
@@ -21873,10 +22607,13 @@ void fixchecksum (void)
       }
     }
   }
-  {integer for_end; k = 1;for_end = 4; if (k <= for_end) do
-    if (header_byte[k]< 0)
-    header_byte[k] = 0;
-  while (k++ < for_end);}
+  {
+    integer for_end; k = 1;for_end = 4;
+    if (k <= for_end) do
+      if (header_byte[k]< 0)
+        header_byte[k] = 0;
+    while (k++ < for_end);
+  }
   lab_exit:;
 }
 
@@ -21884,23 +22621,26 @@ void tfm_qqqq (four_quarters x)
 {
   putbyte (x.b0, tfm_file);
   putbyte (x.b1, tfm_file);
-  putbyte (x .b2, tfm_file);
-  putbyte (x .b3, tfm_file);
+  putbyte (x.b2, tfm_file);
+  putbyte (x.b3, tfm_file);
 }
 
 boolean open_base_file (void)
 {
-  boolean Result; integer j;
+  boolean Result;
+  integer j;
+
   j = cur_input.loc_field;
   if (buffer[cur_input.loc_field] == 38)
   {
     incr (cur_input.loc_field);
     j = cur_input.loc_field;
     buffer[last] = 32;
-    while (buffer[j]!= 32) incr (j);
+    while (buffer[j]!= 32)
+      incr (j);
     pack_buffered_name (0, cur_input.loc_field, j - 1);
-    if (wopenin (base_file))
-    goto found;
+    if (w_open_in (base_file))
+      goto found;
     Fputs (stdout,  "Sorry, I can't find the base `");
     fputs (stringcast (name_of_file + 1), stdout);
     Fputs (stdout,  "'; will try `");
@@ -21909,16 +22649,17 @@ boolean open_base_file (void)
     fflush (stdout);
   }
   pack_buffered_name (basedefaultlength - 5, 1, 0);
-  if (!wopenin (base_file))
+  if (!w_open_in (base_file))
   {
-;
-    Fputs (stdout,  "I can't find the base file `");
+    ;
+    Fputs (stdout, "I can't find the base file `");
     fputs (MF_base_default + 1, stdout);
     fprintf (stdout, "%s\n",  "'!");
     Result = false;
     goto lab_exit;
   }
-  found: cur_input.loc_field = j;
+found:
+  cur_input.loc_field = j;
   Result = true;
   lab_exit:;
   return Result;
@@ -21936,424 +22677,440 @@ void scan_primary (void)
   small_number tt;
   halfword t;
   halfword macroref;
+
   myvar_flag = var_flag;
   var_flag = 0;
-  lab_restart: {
+lab_restart:
+  {
     if (arith_error)
-    clear_arith ();
+      clear_arith ();
   }
-        ;
+  ;
 #ifdef TEXMF_DEBUG
   if (panicking)
-  check_mem (false);
+    check_mem (false);
 #endif /* TEXMF_DEBUG */
-  if (interrupt != 0) {
+  if (interrupt != 0)
+  {
     if (OK_to_interrupt)
     {
       back_input ();
       {
         if (interrupt != 0)
-        pause_for_instructions ();
+          pause_for_instructions ();
       }
       get_x_next ();
     }
   }
   switch (cur_cmd)
-  {case 31 :
-    {
-      ldelim = cur_sym;
-      rdelim = cur_mod;
-      get_x_next ();
-      scan_expression ();
-      if ((cur_cmd == 82) && (cur_type >= 16))
+  {
+    case 31:
       {
-        p = get_node (2);
-        mem[p].hh.b0 = 14;
-        mem[p].hh.b1 = 11;
-        init_big_node (p);
-        q = mem[p + 1].cint;
-        stash_in (q);
+        ldelim = cur_sym;
+        rdelim = cur_mod;
         get_x_next ();
         scan_expression ();
-        if (cur_type < 16)
+        if ((cur_cmd == 82) && (cur_type >= 16))
         {
-          disp_err (0, 775);
+          p = get_node (2);
+          mem[p].hh.b0 = 14;
+          mem[p].hh.b1 = 11;
+          init_big_node (p);
+          q = mem[p + 1].cint;
+          stash_in (q);
+          get_x_next ();
+          scan_expression ();
+          if (cur_type < 16)
           {
-            help_ptr = 4;
-            help_line[3] = 776;
-            help_line[2] = 777;
-            help_line[1] = 778;
-            help_line[0] = 779;
+            disp_err (0, 775);
+            {
+              help_ptr = 4;
+              help_line[3] = 776;
+              help_line[2] = 777;
+              help_line[1] = 778;
+              help_line[0] = 779;
+            }
+            put_get_flush_error (0);
           }
-          put_get_flush_error (0);
+          stash_in (q + 2);
+          check_delimiter (ldelim, rdelim);
+          cur_type = 14;
+          cur_exp = p;
         }
-        stash_in (q + 2);
-        check_delimiter (ldelim, rdelim);
-        cur_type = 14;
-        cur_exp = p;
+        else
+          check_delimiter (ldelim, rdelim);
       }
-      else check_delimiter (ldelim, rdelim);
-    }
-    break;
-  case 32 :
-    {
-      groupline = line;
-      if (internal[7] > 0)
-      show_cmd_mod (cur_cmd, cur_mod);
+      break;
+    case 32:
       {
-        p = get_avail ();
-        mem[p].hh.lh = 0;
-        mem[p].hh.v.RH = save_ptr;
-        save_ptr = p;
-      }
-      do {
+        groupline = line;
+        if (internal[7] > 0)
+          show_cmd_mod (cur_cmd, cur_mod);
+        {
+          p = get_avail ();
+          mem[p].hh.lh = 0;
+          mem[p].hh.v.RH = save_ptr;
+          save_ptr = p;
+        }
+        do {
           do_statement ();
-      } while (!(cur_cmd != 83));
-      if (cur_cmd != 84)
-      {
-        {
-          if (interaction == 3)
-        ;
-          if ((filelineerrorstylep && !(cur_input .name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(780);
-          }
-          else {
-            print_nl(263);
-            print(780);
-          }
-        }
-        print_int (groupline);
-        print(781);
-        {
-          help_ptr = 2;
-          help_line[1] = 782;
-          help_line[0] = 783;
-        }
-        back_error ();
-        cur_cmd = 84;
-      }
-      unsave ();
-      if (internal[7] > 0)
-      show_cmd_mod (cur_cmd, cur_mod);
-    }
-    break;
-  case 39 :
-    {
-      cur_type = 4;
-      cur_exp = cur_mod;
-    }
-    break;
-  case 42 :
-    {
-      cur_exp = cur_mod;
-      cur_type = 16;
-      get_x_next ();
-      if (cur_cmd != 54)
-      {
-        num = 0;
-        denom = 0;
-      }
-      else {
-        get_x_next ();
-        if (cur_cmd != 42)
-        {
-          back_input ();
-          cur_cmd = 54;
-          cur_mod = 72;
-          cur_sym = 9761;
-          goto done;
-        }
-        num = cur_exp;
-        denom = cur_mod;
-        if (denom == 0)
+        } while (!(cur_cmd != 83));
+        if (cur_cmd != 84)
         {
           {
             if (interaction == 3)
-        ;
-            if ((filelineerrorstylep && !(cur_input .name_field == 0)))
+              ;
+            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
             {
               print_nl(261);
               print(fullsourcefilenamestack[in_open]);
               print(58);
               print_int (line);
               print(262);
-              print(784);
+              print(780);
             }
-            else {
+            else
+            {
               print_nl(263);
-              print(784);
+              print(780);
             }
           }
+          print_int (groupline);
+          print(781);
           {
-            help_ptr = 1;
-            help_line[0] = 785;
+            help_ptr = 2;
+            help_line[1] = 782;
+            help_line[0] = 783;
           }
-          error ();
+          back_error ();
+          cur_cmd = 84;
         }
-        else cur_exp = make_scaled (num, denom);
-        {
-          if (arith_error)
-          clear_arith ();
-        }
-        get_x_next ();
+        unsave ();
+        if (internal[7] > 0)
+          show_cmd_mod (cur_cmd, cur_mod);
       }
-      if (cur_cmd >= 30) {
-        if (cur_cmd < 42)
-        {
-          p = stash_cur_exp ();
-          scan_primary ();
-          if ((abs (num) >= abs (denom)) || (cur_type < 14))
-          do_binary (p, 71);
-          else {
-            frac_mult (num, denom);
-            free_node (p, 2);
-          }
-        }
-      }
-      goto done;
-    }
-    break;
-  case 33 :
-    do_nullary (cur_mod);
-    break;
-  case 34 :
-  case 30 :
-  case 36 :
-  case 43 :
-    {
-      c = cur_mod;
-      get_x_next ();
-      scan_primary ();
-      do_unary (c);
-      goto done;
-    }
-    break;
-  case 37 :
-    {
-      c = cur_mod;
-      get_x_next ();
-      scan_expression ();
-      if (cur_cmd != 69)
+      break;
+    case 39:
       {
-        missing_err (479);
-        print(716);
-        print_cmd_mod (37, c);
-        {
-          help_ptr = 1;
-          help_line[0] = 717;
-        }
-        back_error ();
+        cur_type = 4;
+        cur_exp = cur_mod;
       }
-      p = stash_cur_exp ();
-      get_x_next ();
-      scan_primary ();
-      do_binary (p, c);
-      goto done;
-    }
-    break;
-  case 35 :
-    {
-      get_x_next ();
-      scan_suffix ();
-      old_setting = selector;
-      selector = 5;
-      show_token_list (cur_exp, 0, 100000L, 0);
-      flush_token_list (cur_exp);
-      cur_exp = make_string ();
-      selector = old_setting;
-      cur_type = 4;
-      goto done;
-    }
-    break;
-  case 40 :
-    {
-      q = cur_mod;
-      if (myvar_flag == 77)
+      break;
+    case 42:
       {
+        cur_exp = cur_mod;
+        cur_type = 16;
         get_x_next ();
-        if (cur_cmd == 77)
+        if (cur_cmd != 54)
         {
-          cur_exp = get_avail ();
-          mem[cur_exp].hh.lh = q + 9769;
-          cur_type = 20;
-          goto done;
+          num = 0;
+          denom = 0;
         }
-        back_input ();
-      }
-      cur_type = 16;
-      cur_exp = internal[q];
-    }
-    break;
-  case 38 :
-    make_exp_copy (cur_mod);
-    break;
-  case 41 :
-    {
-      {
-        prehead = avail;
-        if (prehead == 0)
-        prehead = get_avail ();
-        else {
-          avail = mem[prehead].hh.v.RH;
-          mem[prehead].hh.v.RH = 0;
-        ;
-#ifdef STAT
-          incr (dyn_used);
-#endif /* STAT */
-        }
-      }
-      tail = prehead;
-      posthead = 0;
-      tt = 1;
-      while (true) {
-        t = cur_tok ();
-        mem[tail].hh.v.RH = t;
-        if (tt != 0)
-        {
-          {
-            p = mem[prehead].hh.v.RH;
-            q = mem[p].hh.lh;
-            tt = 0;
-            if (eqtb[q].lh % 86 == 41)
-            {
-              q = eqtb[q].v.RH;
-              if (q == 0)
-              goto done2;
-              while (true) {
-                p = mem[p].hh.v.RH;
-                if (p == 0)
-                {
-                  tt = mem[q].hh.b0;
-                  goto done2;
-                }
-                if (mem[q].hh.b0 != 21)
-                goto done2;
-                q = mem[mem[q + 1].hh.lh].hh.v.RH;
-                if (p >= hi_mem_min)
-                {
-                  do {
-                      q = mem[q].hh.v.RH;
-                  } while (!(mem[q + 2].hh.lh >= mem[p]
-                  .hh.lh));
-                  if (mem[q + 2].hh.lh > mem[p].hh
-                .lh)
-                  goto done2;
-                }
-              }
-            }
-            done2:;
-          }
-          if (tt >= 22)
-          {
-            mem[tail].hh.v.RH = 0;
-            if (tt > 22)
-            {
-              posthead = get_avail ();
-              tail = posthead;
-              mem[tail].hh.v.RH = t;
-              tt = 0;
-              macroref = mem[q + 1].cint;
-              incr (mem[macroref].hh.lh);
-            }
-            else {
-              p = get_avail ();
-              mem[prehead].hh.lh = mem[prehead].hh
-            .v.RH;
-              mem[prehead].hh.v.RH = p;
-              mem[p].hh.lh = t;
-              macro_call (mem[q + 1].cint, prehead, 0);
-              get_x_next ();
-              goto lab_restart;
-            }
-          }
-        }
-        get_x_next ();
-        tail = t;
-        if (cur_cmd == 63)
+        else
         {
           get_x_next ();
-          scan_expression ();
-          if (cur_cmd != 64)
+          if (cur_cmd != 42)
           {
             back_input ();
-            back_expr ();
-            cur_cmd = 63;
-            cur_mod = 0;
-            cur_sym = 9760;
+            cur_cmd = 54;
+            cur_mod = 72;
+            cur_sym = 9761;
+            goto done;
           }
-          else {
-            if (cur_type != 16)
-            bad_sub_script ();
-            cur_cmd = 42;
-            cur_mod = cur_exp;
-            cur_sym = 0;
+          num = cur_exp;
+          denom = cur_mod;
+          if (denom == 0)
+          {
+            {
+              if (interaction == 3)
+                ;
+              if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+              {
+                print_nl(261);
+                print(fullsourcefilenamestack[in_open]);
+                print(58);
+                print_int (line);
+                print(262);
+                print(784);
+              }
+              else
+              {
+                print_nl(263);
+                print(784);
+              }
+            }
+            {
+              help_ptr = 1;
+              help_line[0] = 785;
+            }
+            error ();
+          }
+          else cur_exp = make_scaled (num, denom);
+          {
+            if (arith_error)
+            clear_arith ();
+          }
+          get_x_next ();
+        }
+        if (cur_cmd >= 30)
+        {
+          if (cur_cmd < 42)
+          {
+            p = stash_cur_exp ();
+            scan_primary ();
+            if ((abs (num) >= abs (denom)) || (cur_type < 14))
+              do_binary (p, 71);
+            else
+            {
+              frac_mult (num, denom);
+              free_node (p, 2);
+            }
           }
         }
-        if (cur_cmd > 42)
-        goto done1;
-        if (cur_cmd < 40)
-        goto done1;
-      }
-      done1: if (posthead != 0)
-      {
-        back_input ();
-        p = get_avail ();
-        q = mem[posthead].hh.v.RH;
-        mem[prehead].hh.lh = mem[prehead].hh.v.RH;
-        mem[prehead].hh.v.RH = posthead;
-        mem[posthead].hh.lh = q;
-        mem[posthead].hh.v.RH = p;
-        mem[p].hh.lh = mem[q].hh.v.RH;
-        mem[q].hh.v.RH = 0;
-        macro_call (macroref, prehead, 0);
-        decr (mem[macroref].hh.lh);
-        get_x_next ();
-        goto lab_restart;
-      }
-      q = mem[prehead].hh.v.RH;
-      {
-        mem[prehead].hh.v.RH = avail;
-        avail = prehead;
-        ;
-#ifdef STAT
-        decr (dyn_used);
-#endif /* STAT */
-      }
-      if (cur_cmd == myvar_flag)
-      {
-        cur_type = 20;
-        cur_exp = q;
         goto done;
       }
-      p = find_variable (q);
-      if (p != 0)
-      make_exp_copy (p);
-      else {
-        obliterated (q);
-        help_line[2] = 797;
-        help_line[1] = 798;
-        help_line[0] = 799;
-        put_get_flush_error (0);
+      break;
+    case 33:
+      do_nullary (cur_mod);
+      break;
+    case 34:
+    case 30:
+    case 36:
+    case 43:
+      {
+        c = cur_mod;
+        get_x_next ();
+        scan_primary ();
+        do_unary (c);
+        goto done;
       }
-      flush_node_list (q);
-      goto done;
-    }
-    break;
+      break;
+    case 37:
+      {
+        c = cur_mod;
+        get_x_next ();
+        scan_expression ();
+        if (cur_cmd != 69)
+        {
+          missing_err (479);
+          print(716);
+          print_cmd_mod (37, c);
+          {
+            help_ptr = 1;
+            help_line[0] = 717;
+          }
+          back_error ();
+        }
+        p = stash_cur_exp ();
+        get_x_next ();
+        scan_primary ();
+        do_binary (p, c);
+        goto done;
+      }
+      break;
+    case 35:
+      {
+        get_x_next ();
+        scan_suffix ();
+        old_setting = selector;
+        selector = 5;
+        show_token_list (cur_exp, 0, 100000L, 0);
+        flush_token_list (cur_exp);
+        cur_exp = make_string ();
+        selector = old_setting;
+        cur_type = 4;
+        goto done;
+      }
+      break;
+    case 40:
+      {
+        q = cur_mod;
+        if (myvar_flag == 77)
+        {
+          get_x_next ();
+          if (cur_cmd == 77)
+          {
+            cur_exp = get_avail ();
+            mem[cur_exp].hh.lh = q + 9769;
+            cur_type = 20;
+            goto done;
+          }
+          back_input ();
+        }
+        cur_type = 16;
+        cur_exp = internal[q];
+      }
+      break;
+    case 38:
+      make_exp_copy (cur_mod);
+      break;
+    case 41:
+      {
+        {
+          prehead = avail;
+          if (prehead == 0)
+            prehead = get_avail ();
+          else
+          {
+            avail = mem[prehead].hh.v.RH;
+            mem[prehead].hh.v.RH = 0;
+            ;
+#ifdef STAT
+            incr (dyn_used);
+#endif /* STAT */
+          }
+        }
+        tail = prehead;
+        posthead = 0;
+        tt = 1;
+        while (true)
+        {
+          t = cur_tok ();
+          mem[tail].hh.v.RH = t;
+          if (tt != 0)
+          {
+            {
+              p = mem[prehead].hh.v.RH;
+              q = mem[p].hh.lh;
+              tt = 0;
+              if (eqtb[q].lh % 86 == 41)
+              {
+                q = eqtb[q].v.RH;
+                if (q == 0)
+                  goto done2;
+                while (true)
+                {
+                  p = mem[p].hh.v.RH;
+                  if (p == 0)
+                  {
+                    tt = mem[q].hh.b0;
+                    goto done2;
+                  }
+                  if (mem[q].hh.b0 != 21)
+                    goto done2;
+                  q = mem[mem[q + 1].hh.lh].hh.v.RH;
+                  if (p >= hi_mem_min)
+                  {
+                    do {
+                      q = mem[q].hh.v.RH;
+                    } while (!(mem[q + 2].hh.lh >= mem[p].hh.lh));
+                    if (mem[q + 2].hh.lh > mem[p].hh.lh)
+                      goto done2;
+                  }
+                }
+              }
+              done2:;
+            }
+            if (tt >= 22)
+            {
+              mem[tail].hh.v.RH = 0;
+              if (tt > 22)
+              {
+                posthead = get_avail ();
+                tail = posthead;
+                mem[tail].hh.v.RH = t;
+                tt = 0;
+                macroref = mem[q + 1].cint;
+                incr (mem[macroref].hh.lh);
+              }
+              else
+              {
+                p = get_avail ();
+                mem[prehead].hh.lh = mem[prehead].hh.v.RH;
+                mem[prehead].hh.v.RH = p;
+                mem[p].hh.lh = t;
+                macro_call (mem[q + 1].cint, prehead, 0);
+                get_x_next ();
+                goto lab_restart;
+              }
+            }
+          }
+          get_x_next ();
+          tail = t;
+          if (cur_cmd == 63)
+          {
+            get_x_next ();
+            scan_expression ();
+            if (cur_cmd != 64)
+            {
+              back_input ();
+              back_expr ();
+              cur_cmd = 63;
+              cur_mod = 0;
+              cur_sym = 9760;
+            }
+            else
+            {
+              if (cur_type != 16)
+                bad_sub_script ();
+              cur_cmd = 42;
+              cur_mod = cur_exp;
+              cur_sym = 0;
+            }
+          }
+          if (cur_cmd > 42)
+            goto done1;
+          if (cur_cmd < 40)
+            goto done1;
+        }
+      done1:
+        if (posthead != 0)
+        {
+          back_input ();
+          p = get_avail ();
+          q = mem[posthead].hh.v.RH;
+          mem[prehead].hh.lh = mem[prehead].hh.v.RH;
+          mem[prehead].hh.v.RH = posthead;
+          mem[posthead].hh.lh = q;
+          mem[posthead].hh.v.RH = p;
+          mem[p].hh.lh = mem[q].hh.v.RH;
+          mem[q].hh.v.RH = 0;
+          macro_call (macroref, prehead, 0);
+          decr (mem[macroref].hh.lh);
+          get_x_next ();
+          goto lab_restart;
+        }
+        q = mem[prehead].hh.v.RH;
+        {
+          mem[prehead].hh.v.RH = avail;
+          avail = prehead;
+          ;
+#ifdef STAT
+          decr (dyn_used);
+#endif /* STAT */
+        }
+        if (cur_cmd == myvar_flag)
+        {
+          cur_type = 20;
+          cur_exp = q;
+          goto done;
+        }
+        p = find_variable (q);
+        if (p != 0)
+          make_exp_copy (p);
+        else
+        {
+          obliterated (q);
+          help_line[2] = 797;
+          help_line[1] = 798;
+          help_line[0] = 799;
+          put_get_flush_error (0);
+        }
+        flush_node_list (q);
+        goto done;
+      }
+      break;
     default:
-    {
-      bad_exp (769);
-      goto lab_restart;
-    }
-    break;
+      {
+        bad_exp (769);
+        goto lab_restart;
+      }
+      break;
   }
   get_x_next ();
-  done: if (cur_cmd == 63) {
+done:
+  if (cur_cmd == 63)
+  {
     if (cur_type >= 16)
     {
       p = stash_cur_exp ();
@@ -22370,7 +23127,8 @@ void scan_primary (void)
         }
         unstash_cur_exp (p);
       }
-      else {
+      else
+      {
         q = stash_cur_exp ();
         get_x_next ();
         scan_expression ();
@@ -22400,15 +23158,17 @@ void scan_suffix (void)
 {
   halfword h, t;
   halfword p;
+
   h = get_avail ();
   t = h;
-  while (true) {
+  while (true)
+  {
     if (cur_cmd == 63)
     {
       get_x_next ();
       scan_expression ();
       if (cur_type != 16)
-      bad_sub_script ();
+        bad_sub_script ();
       if (cur_cmd != 64)
       {
         missing_err (93);
@@ -22424,22 +23184,24 @@ void scan_suffix (void)
       cur_mod = cur_exp;
     }
     if (cur_cmd == 42)
-    p = new_num_tok (cur_mod);
+      p = new_num_tok (cur_mod);
     else if ((cur_cmd == 41) || (cur_cmd == 40))
     {
       p = get_avail ();
       mem[p].hh.lh = cur_sym;
     }
-    else goto done;
+    else
+      goto done;
     mem[t].hh.v.RH = p;
     t = p;
     get_x_next ();
   }
-  done: cur_exp = mem[h].hh.v.RH;
+done:
+  cur_exp = mem[h].hh.v.RH;
   {
     mem[h].hh.v.RH = avail;
     avail = h;
-        ;
+    ;
 #ifdef STAT
     decr (dyn_used);
 #endif /* STAT */
@@ -22452,10 +23214,14 @@ void scan_secondary (void)
   halfword p;
   halfword c, d;
   halfword macname;
-  lab_restart: if ((cur_cmd < 30) || (cur_cmd > 43))
-  bad_exp (804);
+
+lab_restart:
+  if ((cur_cmd < 30) || (cur_cmd > 43))
+    bad_exp (804);
   scan_primary ();
-  lab_continue: if (cur_cmd <= 55) {
+lab_continue:
+  if (cur_cmd <= 55)
+  {
     if (cur_cmd >= 52)
     {
       p = stash_cur_exp ();
@@ -22469,8 +23235,9 @@ void scan_secondary (void)
       get_x_next ();
       scan_primary ();
       if (d != 53)
-      do_binary (p, c);
-      else {
+       do_binary (p, c);
+      else
+      {
         back_input ();
         binary_mac (p, c, macname);
         decr (mem[c].hh.lh);
@@ -22487,12 +23254,16 @@ void scan_tertiary (void)
   halfword p;
   halfword c, d;
   halfword macname;
-  lab_restart: if ((cur_cmd < 30) || (cur_cmd > 43))
-  bad_exp (805);
+
+lab_restart:
+  if ((cur_cmd < 30) || (cur_cmd > 43))
+    bad_exp (805);
   scan_secondary ();
   if (cur_type == 8)
-  materialize_pen ();
-  lab_continue: if (cur_cmd <= 45) {
+    materialize_pen ();
+lab_continue:
+  if (cur_cmd <= 45)
+  {
     if (cur_cmd >= 43)
     {
       p = stash_cur_exp ();
@@ -22506,8 +23277,9 @@ void scan_tertiary (void)
       get_x_next ();
       scan_secondary ();
       if (d != 44)
-      do_binary (p, c);
-      else {
+        do_binary (p, c);
+      else
+      {
         back_input ();
         binary_mac (p, c, macname);
         decr (mem[c].hh.lh);
@@ -22528,12 +23300,17 @@ void scan_expression (void)
   boolean cyclehit;
   scaled x, y;
   unsigned char t;
+
   myvar_flag = var_flag;
-  lab_restart: if ((cur_cmd < 30) || (cur_cmd > 43))
-  bad_exp (808);
+lab_restart:
+  if ((cur_cmd < 30) || (cur_cmd > 43))
+    bad_exp (808);
   scan_tertiary ();
-  lab_continue: if (cur_cmd <= 51) {
-    if (cur_cmd >= 46) {
+lab_continue:
+  if (cur_cmd <= 51)
+  {
+    if (cur_cmd >= 46)
+    {
       if ((cur_cmd != 51) || (myvar_flag != 77))
       {
         p = stash_cur_exp ();
@@ -22544,20 +23321,20 @@ void scan_expression (void)
           macname = cur_sym;
           incr (mem[c].hh.lh);
         }
-        if ((d < 48) || ((d == 48) && ((mem[p].hh.b0 == 14)
-        || (mem[p].hh.b0 == 9))))
+        if ((d < 48) || ((d == 48) && ((mem[p].hh.b0 == 14) || (mem[p].hh.b0 == 9))))
         {
           cyclehit = false;
           {
             unstash_cur_exp (p);
             if (cur_type == 14)
-            p = new_knot ();
+              p = new_knot ();
             else if (cur_type == 9)
-            p = cur_exp;
-            else goto lab_exit;
+              p = cur_exp;
+            else
+              goto lab_exit;
             q = p;
-            while (mem[q].hh.v.RH != p) q = mem[q].hh
-          .v.RH;
+            while (mem[q].hh.v.RH != p)
+              q = mem[q].hh.v.RH;
             if (mem[p].hh.b0 != 0)
             {
               r = copy_knot (p);
@@ -22567,7 +23344,8 @@ void scan_expression (void)
             mem[p].hh.b0 = 4;
             mem[q].hh.b1 = 4;
           }
-          lab25: if (cur_cmd == 46)
+        lab25:
+          if (cur_cmd == 46)
           {
             t = scan_direction ();
             if (t != 4)
@@ -22590,7 +23368,7 @@ void scan_expression (void)
               get_x_next ();
               y = cur_cmd;
               if (cur_cmd == 59)
-              get_x_next ();
+                get_x_next ();
               scan_primary ();
               if ((cur_type != 16) || (cur_exp < 49152L))
               {
@@ -22602,14 +23380,14 @@ void scan_expression (void)
                 put_get_flush_error (65536L);
               }
               if (y == 59)
-              cur_exp = - (integer) cur_exp;
+                cur_exp = - (integer) cur_exp;
               mem[q + 6].cint = cur_exp;
               if (cur_cmd == 52)
               {
                 get_x_next ();
                 y = cur_cmd;
                 if (cur_cmd == 59)
-                get_x_next ();
+                  get_x_next ();
                 scan_primary ();
                 if ((cur_type != 16) || (cur_exp < 49152L))
                 {
@@ -22621,7 +23399,7 @@ void scan_expression (void)
                   put_get_flush_error (65536L);
                 }
                 if (y == 59)
-                cur_exp = - (integer) cur_exp;
+                  cur_exp = - (integer) cur_exp;
               }
               y = cur_exp;
             }
@@ -22639,7 +23417,8 @@ void scan_expression (void)
                 x = mem[q + 5].cint;
                 y = mem[q + 6].cint;
               }
-              else {
+              else
+              {
                 get_x_next ();
                 scan_primary ();
                 known_pair ();
@@ -22647,7 +23426,8 @@ void scan_expression (void)
                 y = cur_y;
               }
             }
-            else {
+            else
+            {
               mem[q + 6].cint = 65536L;
               y = 65536L;
               back_input ();
@@ -22665,14 +23445,15 @@ void scan_expression (void)
             done:;
           }
           else if (d != 48)
-          goto lab26;
+            goto lab26;
           get_x_next ();
           if (cur_cmd == 46)
           {
             t = scan_direction ();
             if (mem[q].hh.b1 != 1)
-            x = cur_exp;
-            else t = 1;
+              x = cur_exp;
+            else
+              t = 1;
           }
           else if (mem[q].hh.b1 != 1)
           {
@@ -22685,7 +23466,8 @@ void scan_expression (void)
             get_x_next ();
             pp = p;
             qq = p;
-            if (d == 48) {
+            if (d == 48)
+            {
               if (p == q)
               {
                 d = 47;
@@ -22694,15 +23476,17 @@ void scan_expression (void)
               }
             }
           }
-          else {
+          else
+          {
             scan_tertiary ();
             {
               if (cur_type != 9)
-              pp = new_knot ();
-              else pp = cur_exp;
+                pp = new_knot ();
+              else
+                pp = cur_exp;
               qq = pp;
-              while (mem[qq].hh.v.RH != pp) qq = mem[qq]
-              .hh.v.RH;
+              while (mem[qq].hh.v.RH != pp)
+                qq = mem[qq].hh.v.RH;
               if (mem[pp].hh.b0 != 0)
               {
                 r = copy_knot (pp);
@@ -22714,15 +23498,14 @@ void scan_expression (void)
             }
           }
           {
-            if (d == 48) {
-              if ((mem[q + 1].cint != mem[pp + 1].cint) || (mem[
-              q + 2].cint != mem[pp + 2].cint))
+            if (d == 48)
+            {
+              if ((mem[q + 1].cint != mem[pp + 1].cint) || (mem[q + 2].cint != mem[pp + 2].cint))
               {
                 {
                   if (interaction == 3)
-                ;
-                  if ((filelineerrorstylep && !(cur_input .name_field == 0)
-                ))
+                    ;
+                  if ((filelineerrorstylep && !(cur_input.name_field == 0)))
                   {
                     print_nl(261);
                     print(fullsourcefilenamestack[in_open]);
@@ -22731,7 +23514,8 @@ void scan_expression (void)
                     print(262);
                     print(828);
                   }
-                  else {
+                  else
+                  {
                     print_nl(263);
                     print(828);
                   }
@@ -22748,7 +23532,8 @@ void scan_expression (void)
                 y = 65536L;
               }
             }
-            if (mem[pp].hh.b1 == 4) {
+            if (mem[pp].hh.b1 == 4)
+            {
               if ((t == 3) || (t == 2))
               {
                 mem[pp].hh.b1 = t;
@@ -22757,14 +23542,16 @@ void scan_expression (void)
             }
             if (d == 48)
             {
-              if (mem[q].hh.b0 == 4) {
+              if (mem[q].hh.b0 == 4)
+              {
                 if (mem[q].hh.b1 == 4)
                 {
                   mem[q].hh.b0 = 3;
                   mem[q + 3].cint = 65536L;
                 }
               }
-              if (mem[pp].hh.b1 == 4) {
+              if (mem[pp].hh.b1 == 4)
+              {
                 if (t == 4)
                 {
                   mem[pp].hh.b1 = 3;
@@ -22777,12 +23564,13 @@ void scan_expression (void)
               mem[q + 6].cint = mem[pp + 6].cint;
               free_node (pp, 7);
               if (qq == pp)
-              qq = q;
+                qq = q;
             }
-            else {
-              if (mem[q].hh.b1 == 4) {
-                if ((mem[q].hh.b0 == 3) || (mem[q].hh
-                .b0 == 2))
+            else
+            {
+              if (mem[q].hh.b1 == 4)
+              {
+                if ((mem[q].hh.b0 == 3) || (mem[q].hh.b0 == 2))
                 {
                   mem[q].hh.b1 = mem[q].hh.b0;
                   mem[q + 5].cint = mem[q + 3].cint;
@@ -22798,18 +23586,22 @@ void scan_expression (void)
             }
             q = qq;
           }
-          if (cur_cmd >= 46) {
-            if (cur_cmd <= 48) {
+          if (cur_cmd >= 46)
+          {
+            if (cur_cmd <= 48)
+            {
               if (!cyclehit)
-              goto lab25;
+                goto lab25;
             }
           }
-          lab26: if (cyclehit)
+        lab26:
+          if (cyclehit)
           {
             if (d == 48)
-            p = q;
+              p = q;
           }
-          else {
+          else
+          {
             mem[p].hh.b0 = 0;
             if (mem[p].hh.b1 == 4)
             {
@@ -22828,12 +23620,14 @@ void scan_expression (void)
           cur_type = 9;
           cur_exp = p;
         }
-        else {
+        else
+        {
           get_x_next ();
           scan_tertiary ();
           if (d != 49)
-          do_binary (p, c);
-          else {
+            do_binary (p, c);
+          else
+          {
             back_input ();
             binary_mac (p, c, macname);
             decr (mem[c].hh.lh);
@@ -22884,22 +23678,23 @@ void close_files_and_terminate (void)
   short lkoffset;
   halfword p;
   scaled x;
-        ;
+
+  ;
 #ifdef STAT
-  if (internal[12] > 0) {
+  if (internal[12] > 0)
+  {
     if (log_opened)
     {
-      { putc (' ',  log_file);  putc ('\n',  log_file); }
-      fprintf (log_file, "%s%s\n",  "Here is how much of METAFONT's memory",       " you used:");
-      fprintf (log_file, "%c%ld%s",  ' ', (long)max_str_ptr - init_str_ptr, " string");
+      { putc (' ', log_file); putc ('\n', log_file); }
+      fprintf (log_file, "%s%s\n", "Here is how much of METAFONT's memory", " you used:");
+      fprintf (log_file, "%c%ld%s", ' ', (long)max_str_ptr - init_str_ptr, " string");
       if (max_str_ptr != init_str_ptr + 1)
-      putc ('s',  log_file);
-      fprintf (log_file, "%s%ld\n",  " out of ", (long)max_strings - init_str_ptr);
-      fprintf (log_file, "%c%ld%s%ld\n",  ' ', (long)max_pool_ptr - init_pool_ptr,       " string characters out of ", (long)pool_size - init_pool_ptr);
-      fprintf (log_file, "%c%ld%s%ld\n",  ' ', (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2,       " words of memory out of ", (long)mem_end + 1);
-      fprintf (log_file, "%c%ld%s%ld\n",  ' ', (long)st_count, " symbolic tokens out of ", (long)9500)
-;
-      fprintf (log_file, "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n",  ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,",       (long)max_wiggle, "r,", (long)150, "p,", (long)bufsize, 'b');
+        putc ('s', log_file);
+      fprintf (log_file, "%s%ld\n", " out of ", (long)max_strings - init_str_ptr);
+      fprintf (log_file, "%c%ld%s%ld\n", ' ', (long)max_pool_ptr - init_pool_ptr, " string characters out of ", (long)pool_size - init_pool_ptr);
+      fprintf (log_file, "%c%ld%s%ld\n", ' ', (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2, " words of memory out of ", (long)mem_end + 1);
+      fprintf (log_file, "%c%ld%s%ld\n", ' ', (long)st_count, " symbolic tokens out of ", (long)9500);
+      fprintf (log_file, "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n", ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,", (long)max_wiggle, "r,", (long)150, "p,", (long)bufsize, 'b');
     }
   }
 #endif /* STAT */
@@ -22909,76 +23704,92 @@ void close_files_and_terminate (void)
     mem[rover].hh.v.RH = 268435455L;
     lo_mem_max = hi_mem_min - 1;
     if (lo_mem_max - rover > 268435455L)
-    lo_mem_max = 268435455L + rover;
+      lo_mem_max = 268435455L + rover;
     mem[rover].hh.lh = lo_mem_max - rover;
     mem[rover + 1].hh.lh = rover;
     mem[rover + 1].hh.v.RH = rover;
     mem[lo_mem_max].hh.v.RH = 0;
     mem[lo_mem_max].hh.lh = 0;
     mem[memtop - 1].hh.v.RH = 19;
-    {integer for_end; k = bc;for_end = ec; if (k <= for_end) do
-      if (char_exists[k])
-      tfm_width[k] = sort_in (tfm_width[k]);
-    while (k++ < for_end);}
+    {
+      integer for_end; k = bc;for_end = ec;
+      if (k <= for_end) do
+        if (char_exists[k])
+          tfm_width[k] = sort_in (tfm_width[k]);
+        while (k++ < for_end);
+    }
     nw = skimp (255) + 1;
     dimen_head[1] = mem[memtop - 1].hh.v.RH;
     if (perturbation >= 4096)
-    tfmwarning (20);
-    fixdesignsize ();
-    fixchecksum ();
+      tfm_warning (20);
+    fix_design_size ();
+    fix_checksum ();
     if (internal[33] > 0)
     {
       mem[memtop - 1].hh.v.RH = 19;
-      {integer for_end; k = bc;for_end = ec; if (k <= for_end)
-      do
-        if (char_exists[k]) {
-
-          if (tfm_height[k] == 0)
-          tfm_height[k] = 15;
-          else tfm_height[k] = sort_in (tfm_height[k]);
-        }
-      while (k++ < for_end);}
+      {
+        integer for_end; k = bc;for_end = ec;
+        if (k <= for_end) do
+          if (char_exists[k])
+          {
+            if (tfm_height[k] == 0)
+              tfm_height[k] = 15;
+            else
+              tfm_height[k] = sort_in (tfm_height[k]);
+          }
+          while (k++ < for_end);
+      }
       nh = skimp (15) + 1;
       dimen_head[2] = mem[memtop - 1].hh.v.RH;
       if (perturbation >= 4096)
-      tfmwarning (21);
+        tfm_warning (21);
       mem[memtop - 1].hh.v.RH = 19;
-      {integer for_end; k = bc;for_end = ec; if (k <= for_end)
-      do
-        if (char_exists[k]) {
-          if (tfm_depth[k] == 0)
-          tfm_depth[k] = 15;
-          else tfm_depth[k] = sort_in (tfm_depth[k]);
-        }
-      while (k++ < for_end);}
+      {
+        integer for_end; k = bc;for_end = ec;
+        if (k <= for_end) do
+          if (char_exists[k])
+          {
+            if (tfm_depth[k] == 0)
+              tfm_depth[k] = 15;
+            else
+              tfm_depth[k] = sort_in (tfm_depth[k]);
+          }
+        while (k++ < for_end);
+      }
       nd = skimp (15) + 1;
       dimen_head[3] = mem[memtop - 1].hh.v.RH;
       if (perturbation >= 4096)
-      tfmwarning (22);
+        tfm_warning (22);
       mem[memtop - 1].hh.v.RH = 19;
-      {integer for_end; k = bc;for_end = ec; if (k <= for_end)
-      do
-        if (char_exists[k]) {
-          if (tfm_ital_corr[k] == 0)
-          tfm_ital_corr[k] = 15;
-          else tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
-        }
-      while (k++ < for_end);}
+      {
+        integer for_end; k = bc;for_end = ec;
+        if (k <= for_end) do
+          if (char_exists[k])
+          {
+            if (tfm_ital_corr[k] == 0)
+              tfm_ital_corr[k] = 15;
+            else
+              tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
+          }
+        while (k++ < for_end);
+      }
       ni = skimp (63) + 1;
       dimen_head[4] = mem[memtop - 1].hh.v.RH;
       if (perturbation >= 4096)
-      tfmwarning (23);
+        tfm_warning (23);
       internal[33] = 0;
       if (job_name == 0)
-      open_log_file ();
+        open_log_file ();
       pack_job_name (1045);
-      while (!bopenout (tfm_file)) prompt_file_name (1046, 1045);
+      while (!bopenout (tfm_file))
+        prompt_file_name (1046, 1045);
       metric_file_name = b_make_name_string (tfm_file);
       k = header_size;
-      while (header_byte[k]< 0) decr (k);
+      while (header_byte[k] < 0)
+        decr (k);
       lh = (k + 3) / 4;
       if (bc > ec)
-      bc = 1;
+        bc = 1;
       bchar = roundunscaled (internal[41]);
       if ((bchar < 0) || (bchar > 255))
       {
@@ -22986,7 +23797,8 @@ void close_files_and_terminate (void)
         lk_started = false;
         lkoffset = 0;
       }
-      else {
+      else
+      {
         lk_started = true;
         lkoffset = 1;
       }
@@ -22996,8 +23808,9 @@ void close_files_and_terminate (void)
         lkoffset = 0;
         lk_started = false;
         do {
-            char_remainder[label_char[k]] = lkoffset;
-          while (label_loc[k - 1] == label_loc[k]) {
+          char_remainder[label_char[k]] = lkoffset;
+          while (label_loc[k - 1] == label_loc[k])
+          {
             decr (k);
             char_remainder[label_char[k]] = lkoffset;
           }
@@ -23006,11 +23819,11 @@ void close_files_and_terminate (void)
         } while (!(lkoffset + label_loc[k]< 256));
       }
       if (lkoffset > 0)
-      while (k > 0) {
-        char_remainder[label_char[k]] = char_remainder[label_char[k]]
-        + lkoffset;
-        decr (k);
-      }
+        while (k > 0)
+        {
+          char_remainder[label_char[k]] = char_remainder[label_char[k]] + lkoffset;
+          decr (k);
+        }
       if (bch_label < lig_table_size)
       {
         lig_kern[nl].b0 = 255;
@@ -23019,8 +23832,7 @@ void close_files_and_terminate (void)
         lig_kern[nl].b3 = ((bch_label + lkoffset) % 256);
         incr (nl);
       }
-      put2bytes (tfm_file, 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl
-      + lkoffset + nk + ne + np);
+      put2bytes (tfm_file, 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + lkoffset + nk + ne + np);
       put2bytes (tfm_file, lh);
       put2bytes (tfm_file, bc);
       put2bytes (tfm_file, ec);
@@ -23032,62 +23844,74 @@ void close_files_and_terminate (void)
       put2bytes (tfm_file, nk);
       put2bytes (tfm_file, ne);
       put2bytes (tfm_file, np);
-      {integer for_end; k = 1;for_end = 4 * lh; if (k <=
-      for_end) do
+      {
+        integer for_end; k = 1;for_end = 4 * lh;
+        if (k <= for_end) do
         {
           if (header_byte[k]< 0)
-          header_byte[k] = 0;
+            header_byte[k] = 0;
           putbyte (header_byte[k], tfm_file);
         }
-      while (k++ < for_end);}
-      {integer for_end; k = bc;for_end = ec; if (k <= for_end)
-      do
-        if (!char_exists[k])
-        put4bytes (tfm_file, 0);
-        else {
-          putbyte (mem[tfm_width[k]].hh.lh, tfm_file);
-          putbyte ((mem[tfm_height[k]].hh.lh) * 16 + mem[
-          tfm_depth[k]].hh.lh, tfm_file);
-          putbyte ((mem[tfm_ital_corr[k]].hh.lh) * 4 +
-          char_tag[k], tfm_file);
-          putbyte (char_remainder[k], tfm_file);
-        }
-      while (k++ < for_end);}
+        while (k++ < for_end);
+      }
+      {
+        integer for_end; k = bc;for_end = ec;
+        if (k <= for_end) do
+          if (!char_exists[k])
+            put4bytes (tfm_file, 0);
+          else
+          {
+            putbyte (mem[tfm_width[k]].hh.lh, tfm_file);
+            putbyte ((mem[tfm_height[k]].hh.lh) * 16 + mem[
+            tfm_depth[k]].hh.lh, tfm_file);
+            putbyte ((mem[tfm_ital_corr[k]].hh.lh) * 4 +
+            char_tag[k], tfm_file);
+            putbyte (char_remainder[k], tfm_file);
+          }
+        while (k++ < for_end);
+      }
       tfm_changed = 0;
-      {integer for_end; k = 1;for_end = 4; if (k <= for_end) do
+      {
+        integer for_end; k = 1;for_end = 4;
+        if (k <= for_end) do
         {
           put4bytes (tfm_file, 0);
           p = dimen_head[k];
-          while (p != 19) {
-            put4bytes (tfm_file, dimenout (mem[p + 1].cint));
+          while (p != 19)
+          {
+            put4bytes (tfm_file, dimen_out (mem[p + 1].cint));
             p = mem[p].hh.v.RH;
           }
         }
-      while (k++ < for_end);}
-      {integer for_end; k = 0;for_end = 255; if (k <= for_end)
-      do
-        if (skip_table[k]< lig_table_size)
-        {
-          print_nl(1048);
-          print_int (k);
-          print(1049);
-          ll = skip_table[k];
-          do {
+        while (k++ < for_end);
+      }
+      {
+        integer for_end; k = 0;for_end = 255;
+        if (k <= for_end) do
+          if (skip_table[k]< lig_table_size)
+          {
+            print_nl(1048);
+            print_int (k);
+            print(1049);
+            ll = skip_table[k];
+            do {
               lll = lig_kern[ll].b0;
-            lig_kern[ll].b0 = 128;
-            ll = ll - lll;
-          } while (!(lll == 0));
-        }
-      while (k++ < for_end);}
+              lig_kern[ll].b0 = 128;
+              ll = ll - lll;
+            } while (!(lll == 0));
+          }
+        while (k++ < for_end);
+      }
       if (lk_started)
       {
         putbyte (255, tfm_file);
         putbyte (bchar, tfm_file);
         put2bytes (tfm_file, 0);
       }
-      else {
-          integer for_end; k = 1;for_end = lkoffset; if (k <=
-      for_end) do
+      else
+      {
+        integer for_end; k = 1;for_end = lkoffset;
+        if (k <= for_end) do
         {
           ll = label_loc[label_ptr];
           if (bchar < 0)
@@ -23095,62 +23919,77 @@ void close_files_and_terminate (void)
             putbyte (254, tfm_file);
             putbyte (0, tfm_file);
           }
-          else {
+          else
+          {
             putbyte (255, tfm_file);
             putbyte (bchar, tfm_file);
           }
           put2bytes (tfm_file, ll + lkoffset);
           do {
-              decr (label_ptr);
+            decr (label_ptr);
           } while (!(label_loc[label_ptr]< ll));
         }
-      while (k++ < for_end);}
-      {integer for_end; k = 0;for_end = nl - 1; if (k <=
-      for_end) do
-        tfm_qqqq (lig_kern[k]);
-      while (k++ < for_end);}
-      {integer for_end; k = 0;for_end = nk - 1; if (k <=
-      for_end) do
-        put4bytes (tfm_file, dimenout (kern[k]));
-      while (k++ < for_end);}
-      {integer for_end; k = 0;for_end = ne - 1; if (k <=
-      for_end) do
-        tfm_qqqq (exten[k]);
-      while (k++ < for_end);}
-      {integer for_end; k = 1;for_end = np; if (k <= for_end) do
-        if (k == 1) {
-          if (abs (param[1]) < 134217728L)
-          put4bytes (tfm_file, param[1]* 16);
-          else {
-            incr (tfm_changed);
-            if (param[1] > 0)
-            put4bytes (tfm_file, 2147483647L);
-            else put4bytes (tfm_file, -2147483647L);
+        while (k++ < for_end);
+      }
+      {
+        integer for_end; k = 0;for_end = nl - 1;
+        if (k <= for_end) do
+          tfm_qqqq (lig_kern[k]);
+          while (k++ < for_end);
+      }
+      {
+        integer for_end; k = 0;for_end = nk - 1;
+        if (k <= for_end) do
+          put4bytes (tfm_file, dimen_out (kern[k]));
+          while (k++ < for_end);
+      }
+      {
+        integer for_end; k = 0;for_end = ne - 1;
+        if (k <= for_end) do
+          tfm_qqqq (exten[k]);
+          while (k++ < for_end);
+      }
+      {
+        integer for_end; k = 1;for_end = np;
+        if (k <= for_end) do
+          if (k == 1)
+          {
+            if (abs (param[1]) < 134217728L)
+              put4bytes (tfm_file, param[1]* 16);
+            else
+            {
+              incr (tfm_changed);
+              if (param[1] > 0)
+                put4bytes (tfm_file, 2147483647L);
+              else
+                put4bytes (tfm_file, -2147483647L);
+            }
           }
-        }
-        else put4bytes (tfm_file, dimenout (param[k]));
-      while (k++ < for_end);}
+          else
+            put4bytes (tfm_file, dimen_out (param[k]));
+          while (k++ < for_end);
+      }
       if (tfm_changed > 0)
       {
         if (tfm_changed == 1)
-        print_nl(1050);
-        else {
-
+          print_nl(1050);
+        else
+        {
           print_nl(40);
           print_int (tfm_changed);
           print(1051);
         }
         print(1052);
       }
-        ;
+      ;
 #ifdef STAT
       if (internal[12] > 0)
       {
-        { putc (' ',  log_file);  putc ('\n',  log_file); }
+        { putc (' ', log_file);  putc ('\n', log_file); }
         if (bch_label < lig_table_size)
-        decr (nl);
-        fprintf (log_file, "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n",  "(You used ", (long)nw, "w,", (long)nh, "h,", (long)nd, "d,",         (long)ni, "i,", (long)nl, "l,", (long)nk, "k,", (long)ne, "e,", (long)np,         "p metric file positions");
-        fprintf (log_file, "%s%s%ld%s%ld%s%ld%s\n",  "  out of ", "256w,16h,16d,64i,", (long)lig_table_size,         "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
+          decr (nl);
+        fprintf (log_file, "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n", "(You used ", (long)nw, "w,", (long)nh, "h,", (long)nd, "d,", (long)ni, "i,", (long)nl, "l,", (long)nk, "k,", (long)ne, "e,", (long)np, "p metric file positions");
+        fprintf (log_file, "%s%s%ld%s%ld%s%ld%s\n", "  out of ", "256w,16h,16d,64i,", (long)lig_table_size, "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
       }
 #endif /* STAT */
       print_nl(1047);
@@ -23164,118 +24003,128 @@ void close_files_and_terminate (void)
         gf_buf[gf_ptr] = 248;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       gf_four (gf_prev_ptr);
       gf_prev_ptr = gf_offset + gf_ptr - 5;
       gf_four (internal[26]* 16);
-      {integer for_end; k = 1;for_end = 4; if (k <= for_end) do
+      {
+        integer for_end; k = 1;for_end = 4;
+        if (k <= for_end) do
         {
           gf_buf[gf_ptr] = header_byte[k];
           incr (gf_ptr);
           if (gf_ptr == gf_limit)
-          gf_swap ();
+            gf_swap ();
         }
-      while (k++ < for_end);}
+        while (k++ < for_end);
+      }
       gf_four (internal[27]);
       gf_four (internal[28]);
       gf_four (gf_min_m);
       gf_four (gf_max_m);
       gf_four (gf_min_n);
       gf_four (gf_max_n);
-      {integer for_end; k = 0;for_end = 255; if (k <= for_end)
-      do
-        if (char_exists[k])
-        {
-          x = gf_dx[k]/ 65536L;
-          if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k
-        ] == x * 65536L))
+      {
+        integer for_end; k = 0;for_end = 255;
+        if (k <= for_end) do
+          if (char_exists[k])
           {
+            x = gf_dx[k]/ 65536L;
+            if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * 65536L))
             {
-              gf_buf[gf_ptr] = 246;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-              gf_swap ();
+              {
+                gf_buf[gf_ptr] = 246;
+                incr (gf_ptr);
+                if (gf_ptr == gf_limit)
+                  gf_swap ();
+              }
+              {
+                gf_buf[gf_ptr] = k;
+                incr (gf_ptr);
+                if (gf_ptr == gf_limit)
+                  gf_swap ();
+              }
+              {
+                gf_buf[gf_ptr] = x;
+                incr (gf_ptr);
+                if (gf_ptr == gf_limit)
+                  gf_swap ();
+              }
             }
+            else
             {
-              gf_buf[gf_ptr] = k;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-              gf_swap ();
+              {
+                gf_buf[gf_ptr] = 245;
+                incr (gf_ptr);
+                if (gf_ptr == gf_limit)
+                  gf_swap ();
+              }
+              {
+                gf_buf[gf_ptr] = k;
+                incr (gf_ptr);
+                if (gf_ptr == gf_limit)
+                  gf_swap ();
+              }
+              gf_four (gf_dx[k]);
+              gf_four (gf_dy[k]);
             }
+            x = mem[tfm_width[k]+ 1].cint;
+            if (abs (x) > max_tfm_dimen)
             {
-              gf_buf[gf_ptr] = x;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-              gf_swap ();
+              if (x > 0)
+                x = 16777215L;
+              else
+                x = -16777215L;
             }
+            else
+              x = make_scaled (x * 16, internal[26]);
+            gf_four (x);
+            gf_four (char_ptr[k]);
           }
-          else {
-            {
-              gf_buf[gf_ptr] = 245;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-              gf_swap ();
-            }
-            {
-              gf_buf[gf_ptr] = k;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-              gf_swap ();
-            }
-            gf_four (gf_dx[k]);
-            gf_four (gf_dy[k]);
-          }
-          x = mem[tfm_width[k]+ 1].cint;
-          if (abs (x) > max_tfm_dimen) {
-            if (x > 0)
-            x = 16777215L;
-            else x = -16777215L;
-          }
-          else x = make_scaled (x * 16, internal[26]);
-          gf_four (x);
-          gf_four (char_ptr[k]);
-        }
-      while (k++ < for_end);}
+        while (k++ < for_end);
+      }
       {
         gf_buf[gf_ptr] = 249;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       gf_four (gf_prev_ptr);
       {
         gf_buf[gf_ptr] = 131;
         incr (gf_ptr);
         if (gf_ptr == gf_limit)
-        gf_swap ();
+          gf_swap ();
       }
       k = 4 + ((gf_buf_size - gf_ptr) % 4);
-      while (k > 0) {
+      while (k > 0)
+      {
         {
           gf_buf[gf_ptr] = 223;
           incr (gf_ptr);
           if (gf_ptr == gf_limit)
-          gf_swap ();
+            gf_swap ();
         }
         decr (k);
       }
       if (gf_limit == half_buf)
-      write_gf (half_buf, gf_buf_size - 1);
+        write_gf (half_buf, gf_buf_size - 1);
       if (gf_ptr > (2147483647L - gf_offset))
       {
         gf_prev_ptr = 0;
         fatal_error (1053);
       }
       if (gf_ptr > 0)
-      write_gf (0, gf_ptr - 1);
+        write_gf (0, gf_ptr - 1);
       print_nl(1064);
       print_file_name (0, output_file_name, 0);
       print(558);
       print_int (total_chars);
       if (total_chars != 1)
-      print(1065);
-      else print(1066);
+        print(1065);
+      else
+        print(1066);
       print(1067);
       print_int (gf_offset + gf_ptr);
       print(1068);
@@ -23284,7 +24133,7 @@ void close_files_and_terminate (void)
   }
   if (log_opened)
   {
-    putc ('\n',  log_file);
+    putc ('\n', log_file);
     aclose (log_file);
     selector = selector - 2;
     if (selector == 1)
@@ -23296,84 +24145,89 @@ void close_files_and_terminate (void)
   }
   print_ln ();
   if ((editnamestart != 0) && (interaction > 0))
-  calledit (str_pool, editnamestart, editname_length, editline);
+    calledit (str_pool, editnamestart, editname_length, editline);
 }
 
 #ifdef TEXMF_DEBUG
 void
-debughelp (void)
+debug_help (void)
 {
   integer k, l, m, n;
-  while (true) {
-;
+  while (true)
+  {
+    ;
     print_nl(1083);
     fflush (stdout);
     read (stdin, m);
     if (m < 0)
-    goto lab_exit;
+      goto lab_exit;
     else if (m == 0)
     {
       goto lab888;
       lab888: m = 0;
     }
-    else {
+    else
+    {
       read (stdin, n);
       switch (m)
-      {case 1 :
-        print_word (mem[n]);
-        break;
-      case 2 :
-        print_int (mem[n].hh.lh);
-        break;
-      case 3 :
-        print_int (mem[n].hh.v.RH);
-        break;
-      case 4 :
-        {
-          print_int (eqtb[n].lh);
-          print_char(58);
-          print_int (eqtb[n].v.RH);
-        }
-        break;
-      case 5 :
-        print_variable_name(n);
-        break;
-      case 6 :
-        print_int (internal[n]);
-        break;
-      case 7 :
-        do_show_dependencies ();
-        break;
-      case 9 :
-        show_token_list (n, 0, 100000L, 0);
-        break;
-      case 10 :
-        slow_print(n);
-        break;
-      case 11 :
-        check_mem (n > 0);
-        break;
-      case 12 :
-        search_mem (n);
-        break;
-      case 13 :
-        {
-          read (stdin, l);
-          print_cmd_mod (n, l);
-        }
-        break;
-      case 14 :
-        {integer for_end; k = 0;for_end = n; if (k <= for_end)
-        do
-          print(buffer[k]);
-        while (k++ < for_end);}
-        break;
-      case 15 :
-        panicking = !panicking;
-        break;
+      {
+        case 1:
+          print_word (mem[n]);
+          break;
+        case 2:
+          print_int (mem[n].hh.lh);
+          break;
+        case 3:
+          print_int (mem[n].hh.v.RH);
+          break;
+        case 4:
+          {
+            print_int (eqtb[n].lh);
+            print_char(58);
+            print_int (eqtb[n].v.RH);
+          }
+          break;
+        case 5:
+          print_variable_name(n);
+          break;
+        case 6:
+          print_int (internal[n]);
+          break;
+        case 7:
+          do_show_dependencies ();
+          break;
+        case 9:
+          show_token_list (n, 0, 100000L, 0);
+          break;
+        case 10:
+          slow_print(n);
+          break;
+        case 11:
+          check_mem (n > 0);
+          break;
+        case 12:
+          search_mem (n);
+          break;
+        case 13:
+          {
+            read (stdin, l);
+            print_cmd_mod (n, l);
+          }
+          break;
+        case 14:
+          {
+            integer for_end; k = 0;for_end = n;
+            if (k <= for_end) do
+              print(buffer[k]);
+            while (k++ < for_end);
+          }
+          break;
+        case 15:
+          panicking = !panicking;
+          break;
         default:
-        print(63);
-        break;
+          print(63);
+          break;
       }
     }
   }
