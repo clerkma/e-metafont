@@ -419,7 +419,9 @@ EXTERN ASCII_code xprn[256];
 EXTERN boolean stopatspace;
 
 /* M A C R O S */
-
+/* 90 */
+#define check_arith() \
+  do { if (arith_error) clear_arith(); } while (0)
 #define if_test 1
 #define fi_or_else 2
 #define input 3

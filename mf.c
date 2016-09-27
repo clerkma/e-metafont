@@ -2060,7 +2060,8 @@ void error (void)
   if (interaction == 3)
     while (true)
     {
-      lab_continue: clear_for_error_prompt ();
+    lab_continue:
+      clear_for_error_prompt ();
       {
         do_nothing();
         print(265);
@@ -2320,10 +2321,7 @@ void fatal_error (str_number s)
       print(285);
     }
   }
-  {
-    help_ptr = 1;
-    help_line[0] = s;
-  }
+  help1(s);
   {
     if (interaction == 3)
       interaction = 2;
@@ -6613,10 +6611,7 @@ void recycle_value (halfword p)
           flush_node_list (s);
           if (fix_needed)
             fix_dependencies ();
-          {
-            if (arith_error)
-              clear_arith ();
-          }
+          check_arith ();
         }
       }
       break;
@@ -7360,10 +7355,7 @@ void make_choices (halfword knots)
   scaled delx, dely;
   fraction sine, cosine;
 
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   if (internal[4] > 0)
     print_path (knots, 526, true);
   p = knots;
@@ -17194,10 +17186,7 @@ void do_nullary (quarterword c)
 {
   integer k;
 
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   if (internal[7] > 131072L)
     show_cmd_mod (33, c);
   switch (c)
@@ -17284,10 +17273,7 @@ void do_nullary (quarterword c)
       }
       break;
   }
-  {
-    if (arith_error)
-    clear_arith ();
-  }
+  check_arith ();
 }
 
 boolean nice_pair (integer p, quarterword t)
@@ -17537,10 +17523,7 @@ void do_unary (quarterword c)
   halfword p, q;
   integer x;
 
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   if (internal[7] > 131072L)
   {
     begin_diagnostic ();
@@ -17895,10 +17878,7 @@ void do_unary (quarterword c)
         bad_unary (43);
       break;
   }
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
 }
 
 void bad_binary (halfword p, quarterword c)
@@ -18937,10 +18917,7 @@ void do_binary (halfword p, quarterword c)
   halfword oldp, oldexp;
   integer v;
  
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   if (internal[7] > 131072L)
   {
     begin_diagnostic ();
@@ -19326,10 +19303,7 @@ void do_binary (halfword p, quarterword c)
   recycle_value (p);
   free_node (p, 2);
 lab_exit:
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   if (oldp != 0)
   {
     recycle_value (oldp);
@@ -20308,10 +20282,7 @@ lab_restart:
   }
   put_get_error ();
 done:
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   recycle_value (lhs);
   free_node (lhs, 2);
 }
@@ -22681,10 +22652,7 @@ void scan_primary (void)
   myvar_flag = var_flag;
   var_flag = 0;
 lab_restart:
-  {
-    if (arith_error)
-      clear_arith ();
-  }
+  check_arith ();
   ;
 #ifdef TEXMF_DEBUG
   if (panicking)
@@ -22847,8 +22815,7 @@ lab_restart:
           }
           else cur_exp = make_scaled (num, denom);
           {
-            if (arith_error)
-            clear_arith ();
+            check_arith ();
           }
           get_x_next ();
         }
