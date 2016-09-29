@@ -419,60 +419,319 @@ EXTERN ASCII_code xprn[256];
 EXTERN boolean stopatspace;
 
 /* M A C R O S */
+/* 74 */
+static inline void mf_help (unsigned int n, ...)
+{
+  int i;
+  va_list help_arg;
+
+  if (n > 6)
+    n = 6;
+
+  help_ptr = n;
+  va_start(help_arg, n);
+
+  for (i = n - 1; i > -1; --i)
+    help_line[i] = va_arg(help_arg, char *);
+
+  va_end(help_arg);
+}
+#define help0()     mf_help(0)
+#define help1(...)  mf_help(1, __VA_ARGS__)
+#define help2(...)  mf_help(2, __VA_ARGS__)
+#define help3(...)  mf_help(3, __VA_ARGS__)
+#define help4(...)  mf_help(4, __VA_ARGS__)
+#define help5(...)  mf_help(5, __VA_ARGS__)
+#define help6(...)  mf_help(6, __VA_ARGS__)
 /* 90 */
 #define check_arith() \
   do { if (arith_error) clear_arith(); } while (0)
-#define if_test 1
-#define fi_or_else 2
-#define input 3
-#define iteration 4
-#define repeat_loop 5
-#define exit_test 6
-#define relex 7
-#define scan_tokens 8
-#define expand_after 9
-#define defined_macro 10
-#define min_command (defined_macro + 1)
-#define display_command 12
-#define save_command 13
-#define let_command 14
-#define new_internal 15
-#define macro_def 16
-#define ship_out_command 17
-#define add_to_command 18
-#define cull_command 19
-#define tfm_command 20
-#define protection_command 21
-#define show_command 22
-#define mode_command 23
-#define random_seed 24
-#define message_command 25
-#define every_job_command 26
-#define delimiters 27
-#define open_window 28
-#define special_command 29
-#define type_name 30
+/* 186 */
+#define if_test 1 //{conditional text (\&{if})}
+#define fi_or_else 2 //{delimiters for conditionals (\&{elseif}, \&{else}, \&{fi})}
+#define input 3 //{input a source file (\&{input}, \&{endinput})}
+#define iteration 4 //{iterate (\&{for}, \&{forsuffixes}, \&{forever}, \&{endfor})}
+#define repeat_loop 5 //{special command substituted for \&{endfor}}
+#define exit_test 6 //{premature exit from a loop (\&{exitif})}
+#define relax 7 //{do nothing (\.{\char`\\})}
+#define scan_tokens 8 //{put a string into the input buffer}
+#define expand_after 9 //{look ahead one token}
+#define defined_macro 10 //{a macro defined by the user}
+#define min_command (defined_macro+1)
+#define display_command 11 //{online graphic output (\&{display})}
+#define save_command 12 //{save a list of tokens (\&{save})}
+#define interim_command 13 //{save an internal quantity (\&{interim})}
+#define let_command 14 //{redefine a symbolic token (\&{let})}
+#define new_internal 15 //{define a new internal quantity (\&{newinternal})}
+#define macro_def 16 //{define a macro (\&{def}, \&{vardef}, etc.)}
+#define ship_out_command 17 //{output a character (\&{shipout})}
+#define add_to_command 18 //{add to edges (\&{addto})}
+#define cull_command 19 //{cull and normalize edges (\&{cull})}
+#define tfm_command 20 //{command for font metric info (\&{ligtable}, etc.)}
+#define protection_command 21 //{set protection flag (\&{outer}, \&{inner})}
+#define show_command 22 //{diagnostic output (\&{show}, \&{showvariable}, etc.)}
+#define mode_command 23 //{set interaction level (\&{batchmode}, etc.)}
+#define random_seed 24 //{initialize random number generator (\&{randomseed})}
+#define message_command 25 //{communicate to user (\&{message}, \&{errmessage})}
+#define every_job_command 26 //{designate a starting token (\&{everyjob})}
+#define delimiters 27 //{define a pair of delimiters (\&{delimiters})}
+#define open_window 28 //{define a window on the screen (\&{openwindow})}
+#define special_command 29 //{output special info (\&{special}, \&{numspecial})}
+#define type_name 30 //{declare a type (\&{numeric}, \&{pair}, etc.)}
 #define max_statement_command type_name
 #define min_primary_command type_name
-#define let_delimiter 31
-#define begin_group 32
-#define nullary 33
-#define unary 34
-#define str_op 35
-#define cycle 36
-#define primary_binary 37
-#define capsule_token 38
-#define string_token 39
-#define internal_quantity 40
+#define left_delimiter 31 //{the left delimiter of a matching pair}
+#define begin_group 32 //{beginning of a group (\&{begingroup})}
+#define nullary 33 //{an operator without arguments (e.g., \&{normaldeviate})}
+#define unary 34 //{an operator with one argument (e.g., \&{sqrt})}
+#define str_op 35 //{convert a suffix to a string (\&{str})}
+#define cycle 36 //{close a cyclic path (\&{cycle})}
+#define primary_binary 37 //{binary operation taking `\&{of}' (e.g., \&{point})}
+#define capsule_token 38 //{a value that has been put into a token list}
+#define string_token 39 //{a string constant (e.g., |"hello"|)}
+#define internal_quantity 40 //{internal numeric parameter (e.g., \&{pausing})}
 #define min_suffix_token internal_quantity
-#define tag_token 41
-#define numeric_token 42
+#define tag_token 41 //{a symbolic token without a primitive meaning}
+#define numeric_token 42 //{a numeric constant (e.g., \.{3.14159})}
 #define max_suffix_token numeric_token
-#define plus_or_minus 43
-#define max_primary_command plus_or_minus
+#define plus_or_minus 43 //{either `\.+' or `\.-'}
+#define max_primary_command plus_or_minus //{should also be |numeric_token+1|}
 #define min_tertiary_command plus_or_minus
-#define tertiary_secondary_macro 44
-#define tertiary_binary 45
+#define tertiary_secondary_macro 44 //{a macro defined by \&{secondarydef}}
+#define tertiary_binary 45 //{an operator at the tertiary level (e.g., `\.{++}')}
+#define max_tertiary_command tertiary_binary
+#define left_brace 46 //{the operator `\.{\char`\{}'}
+#define min_expression_command left_brace
+#define path_join 47 //{the operator `\.{..}'}
+#define ampersand 48 //{the operator `\.\&'}
+#define expression_tertiary_macro 49 //{a macro defined by \&{tertiarydef}}
+#define expression_binary 50 //{an operator at the expression level (e.g., `\.<')}
+#define equals 51 //{the operator `\. '}
+#define max_expression_command equals
+#define and_command 52 //{the operator `\&{and}'}
+#define min_secondary_command and_command
+#define secondary_primary_macro 53 //{a macro defined by \&{primarydef}}
+#define slash 54 //{the operator `\./'}
+#define secondary_binary 55 //{an operator at the binary level (e.g., \&{shifted})}
+#define max_secondary_command secondary_binary
+#define param_type 56 //{type of parameter (\&{primary}, \&{expr}, \&{suffix}, etc.)}
+#define controls 57 //{specify control points explicitly (\&{controls})}
+#define tension 58 //{specify tension between knots (\&{tension})}
+#define at_least 59 //{bounded tension value (\&{atleast})}
+#define curl_command 60 //{specify curl at an end knot (\&{curl})}
+#define macro_special 61 //{special macro operators (\&{quote}, \.{\#\AT!}, etc.)}
+#define right_delimiter 62 //{the right delimiter of a matching pair}
+#define left_bracket 63 //{the operator `\.['}
+#define right_bracket 64 //{the operator `\.]'}
+#define right_brace 65 //{the operator `\.{\char`\}}'}
+#define with_option 66 //{option for filling (\&{withpen}, \&{withweight})}
+#define cull_op 67 //{the operator `\&{keeping}' or `\&{dropping}'}
+#define thing_to_add 68 //{variant of \&{addto} (\&{contour}, \&{doublepath}, \&{also})}
+#define of_token 69 //{the operator `\&{of}'}
+#define from_token 70 //{the operator `\&{from}'}
+#define to_token 71 //{the operator `\&{to}'}
+#define at_token 72 //{the operator `\&{at}'}
+#define in_window 73 //{the operator `\&{inwindow}'}
+#define step_token 74 //{the operator `\&{step}'}
+#define until_token 75 //{the operator `\&{until}'}
+#define lig_kern_token 76 //{the operators `\&{kern}' and `\.{ :}' and `\.{ :\char'174}', etc.}
+#define assignment 77 //{the operator `\.{: }'}
+#define skip_to 78 //{the operation `\&{skipto}'}
+#define bchar_label 79 //{the operator `\.{\char'174\char'174:}'}
+#define double_colon 80 //{the operator `\.{::}'}
+#define colon 81 //{the operator `\.:'}
+#define comma 82 //{the operator `\.,', must be |colon+1|}
+#define end_of_statement  (cur_cmd>comma)
+#define semicolon 83 //{the operator `\.;', must be |comma+1|}
+#define end_group 84 //{end a group (\&{endgroup}), must be |semicolon+1|}
+#define stop 85 //{end a job (\&{end}, \&{dump}), must be |end_group+1|}
+#define max_command_code stop
+#define outer_tag (max_command_code+1) //{protection code added to command code}
+/* 187 */
+#define undefined 0 //{no type has been declared}
+#define unknown_tag 1 //{this constant is added to certain type codes below}
+#define vacuous 1 //{no expression was present}
+#define boolean_type 2 //{\&{boolean} with a known value}
+#define unknown_boolean (boolean_type+unknown_tag)
+#define string_type 4 //{\&{string} with a known value}
+#define unknown_string (string_type+unknown_tag)
+#define pen_type 6 //{\&{pen} with a known value}
+#define unknown_pen (pen_type+unknown_tag)
+#define future_pen 8 //{subexpression that will become a \&{pen} at a higher level}
+#define path_type 9 //{\&{path} with a known value}
+#define unknown_path (path_type+unknown_tag)
+#define picture_type 11 //{\&{picture} with a known value}
+#define unknown_picture (picture_type+unknown_tag)
+#define transform_type 13 //{\&{transform} variable or capsule}
+#define pair_type 14 //{\&{pair} variable or capsule}
+#define numeric_type 15 //{variable that has been declared \&{numeric} but not used}
+#define known 16 //{\&{numeric} with a known value}
+#define dependent 17 //{a linear combination with |fraction| coefficients}
+#define proto_dependent 18 //{a linear combination with |scaled| coefficients}
+#define independent 19 //{\&{numeric} with unknown value}
+#define token_list 20 //{variable name or suffix argument or text argument}
+#define structured 21 //{variable with subscripts and attributes}
+#define unsuffixed_macro 22 //{variable defined with \&{vardef} but no \.{\AT!\#}}
+#define suffixed_macro 23 //{variable defined with \&{vardef} and \.{\AT!\#}}
+/* 188 */
+#define root 0 //{|name_type| at the top level of a variable}
+#define saved_root 1 //{same, when the variable has been saved}
+#define structured_root 2 //{|name_type| where a |structured| branch occurs}
+#define subscr 3 //{|name_type| in a subscript node}
+#define attr 4 //{|name_type| in an attribute node}
+#define x_part_sector 5 //{|name_type| in the \&{xpart} of a node}
+#define y_part_sector 6 //{|name_type| in the \&{ypart} of a node}
+#define xx_part_sector 7 //{|name_type| in the \&{xxpart} of a node}
+#define xy_part_sector 8 //{|name_type| in the \&{xypart} of a node}
+#define yx_part_sector 9 //{|name_type| in the \&{yxpart} of a node}
+#define yy_part_sector 10 //{|name_type| in the \&{yypart} of a node}
+#define capsule 11 //{|name_type| in stashed-away subexpressions}
+#define token 12 //{|name_type| in a numeric token or string token}
+/* 189 */
+#define true_code 30 //{operation code for \.{true}}
+#define false_code 31 //{operation code for \.{false}}
+#define null_picture_code 32 //{operation code for \.{nullpicture}}
+#define null_pen_code 33 //{operation code for \.{nullpen}}
+#define job_name_op 34 //{operation code for \.{jobname}}
+#define read_string_op 35 //{operation code for \.{readstring}}
+#define pen_circle 36 //{operation code for \.{pencircle}}
+#define normal_deviate 37 //{operation code for \.{normaldeviate}}
+#define odd_op 38 //{operation code for \.{odd}}
+#define known_op 39 //{operation code for \.{known}}
+#define unknown_op 40 //{operation code for \.{unknown}}
+#define not_op 41 //{operation code for \.{not}}
+#define decimal 42 //{operation code for \.{decimal}}
+#define reverse 43 //{operation code for \.{reverse}}
+#define make_path_op 44 //{operation code for \.{makepath}}
+#define make_pen_op 45 //{operation code for \.{makepen}}
+#define total_weight_op 46 //{operation code for \.{totalweight}}
+#define oct_op 47 //{operation code for \.{oct}}
+#define hex_op 48 //{operation code for \.{hex}}
+#define ASCII_op 49 //{operation code for \.{ASCII}}
+#define char_op 50 //{operation code for \.{char}}
+#define length_op 51 //{operation code for \.{length}}
+#define turning_op 52 //{operation code for \.{turningnumber}}
+#define x_part 53 //{operation code for \.{xpart}}
+#define y_part 54 //{operation code for \.{ypart}}
+#define xx_part 55 //{operation code for \.{xxpart}}
+#define xy_part 56 //{operation code for \.{xypart}}
+#define yx_part 57 //{operation code for \.{yxpart}}
+#define yy_part 58 //{operation code for \.{yypart}}
+#define sqrt_op 59 //{operation code for \.{sqrt}}
+#define m_exp_op 60 //{operation code for \.{mexp}}
+#define m_log_op 61 //{operation code for \.{mlog}}
+#define sin_d_op 62 //{operation code for \.{sind}}
+#define cos_d_op 63 //{operation code for \.{cosd}}
+#define floor_op 64 //{operation code for \.{floor}}
+#define uniform_deviate 65 //{operation code for \.{uniformdeviate}}
+#define char_exists_op 66 //{operation code for \.{charexists}}
+#define angle_op 67 //{operation code for \.{angle}}
+#define cycle_op 68 //{operation code for \.{cycle}}
+#define plus 69 //{operation code for \.+}
+#define minus 70 //{operation code for \.-}
+#define times 71 //{operation code for \.*}
+#define over 72 //{operation code for \./}
+#define pythag_add 73 //{operation code for \.{++}}
+#define pythag_sub 74 //{operation code for \.{+-+}}
+#define or_op 75 //{operation code for \.{or}}
+#define and_op 76 //{operation code for \.{and}}
+#define less_than 77 //{operation code for \.<}
+#define less_or_equal 78 //{operation code for \.{< }}
+#define greater_than 79 //{operation code for \.>}
+#define greater_or_equal 80 //{operation code for \.{> }}
+#define equal_to 81 //{operation code for \. }
+#define unequal_to 82 //{operation code for \.{<>}}
+#define concatenate 83 //{operation code for \.\&}
+#define rotated_by 84 //{operation code for \.{rotated}}
+#define slanted_by 85 //{operation code for \.{slanted}}
+#define scaled_by 86 //{operation code for \.{scaled}}
+#define shifted_by 87 //{operation code for \.{shifted}}
+#define transformed_by 88 //{operation code for \.{transformed}}
+#define x_scaled 89 //{operation code for \.{xscaled}}
+#define y_scaled 90 //{operation code for \.{yscaled}}
+#define z_scaled 91 //{operation code for \.{zscaled}}
+#define intersect 92 //{operation code for \.{intersectiontimes}}
+#define double_dot 93 //{operation code for improper \.{..}}
+#define substring_of 94 //{operation code for \.{substring}}
+#define min_of substring_of
+#define subpath_of 95 //{operation code for \.{subpath}}
+#define direction_time_of 96 //{operation code for \.{directiontime}}
+#define point_of 97 //{operation code for \.{point}}
+#define precontrol_of 98 //{operation code for \.{precontrol}}
+#define postcontrol_of 99 //{operation code for \.{postcontrol}}
+#define pen_offset_of 100 //{operation code for \.{penoffset}}
+/* 190 */
+#define tracing_titles 1 //{show titles online when they appear}
+#define tracing_equations 2 //{show each variable when it becomes known}
+#define tracing_capsules 3 //{show capsules too}
+#define tracing_choices 4 //{show the control points chosen for paths}
+#define tracing_specs 5 //{show subdivision of paths into octants before digitizing}
+#define tracing_pens 6 //{show details of pens that are made}
+#define tracing_commands 7 //{show commands and operations before they are performed}
+#define tracing_restores 8 //{show when a variable or internal is restored}
+#define tracing_macros 9 //{show macros before they are expanded}
+#define tracing_edges 10 //{show digitized edges as they are computed}
+#define tracing_output 11 //{show digitized edges as they are output}
+#define tracing_stats 12 //{show memory usage at end of job}
+#define tracing_online 13 //{show long diagnostics on terminal and in the log file}
+#define year 14 //{the current year (e.g., 1984)}
+#define month 15 //{the current month (e.g., 3 $\equiv$ March)}
+#define day 16 //{the current day of the month}
+#define time 17 //{the number of minutes past midnight when this job started}
+#define char_code 18 //{the number of the next character to be output}
+#define char_ext 19 //{the extension code of the next character to be output}
+#define char_wd 20 //{the width of the next character to be output}
+#define char_ht 21 //{the height of the next character to be output}
+#define char_dp 22 //{the depth of the next character to be output}
+#define char_ic 23 //{the italic correction of the next character to be output}
+#define char_dx 24 //{the device's $x$ movement for the next character, in pixels}
+#define char_dy 25 //{the device's $y$ movement for the next character, in pixels}
+#define design_size 26 //{the unit of measure used for |char_wd..char_ic|, in points}
+#define hppp 27 //{the number of horizontal pixels per point}
+#define vppp 28 //{the number of vertical pixels per point}
+#define x_offset 29 //{horizontal displacement of shipped-out characters}
+#define y_offset 30 //{vertical displacement of shipped-out characters}
+#define pausing 31 //{positive to display lines on the terminal before they are read}
+#define showstopping 32 //{positive to stop after each \&{show} command}
+#define fontmaking 33 //{positive if font metric output is to be produced}
+#define proofing 34 //{positive for proof mode, negative to suppress output}
+#define smoothing 35 //{positive if moves are to be ``smoothed''}
+#define autorounding 36 //{controls path modification to ``good'' points}
+#define granularity 37 //{autorounding uses this pixel size}
+#define fillin 38 //{extra darkness of diagonal lines}
+#define turning_check 39 //{controls reorientation of clockwise paths}
+#define warning_check 40 //{controls error message when variable value is large}
+#define boundary_char 41 //{the right boundary character for ligatures}
+#define max_given_internal 41
+/* 198 */
+#define digit_class 0 //{the class number of \.{0123456789}}
+#define period_class 1 //{the class number of `\..'}
+#define space_class 2 //{the class number of spaces and nonstandard characters}
+#define percent_class 3 //{the class number of `\.\%'}
+#define string_class 4 //{the class number of `\."'}
+#define right_paren_class 8 //{the class number of `\.)'}
+#define isolated_classes  5,6,7,8 //{characters that make length-one tokens only}
+#define letter_class 9 //{letters and the underline character}
+#define left_bracket_class 17 //{`\.['}
+#define right_bracket_class 18 //{`\.]'}
+#define invalid_class 20 //{bad character in the input}
+#define max_class 20 //{the largest class number}
+/* 201 */
+#define hash_top (hash_base+hash_size) //{the first location of the frozen area}
+#define frozen_inaccessible hash_top //{|hash| location to protect the frozen area}
+#define frozen_repeat_loop (hash_top+1) //{|hash| location of a loop-repeat token}
+#define frozen_right_delimiter (hash_top+2) //{|hash| location of a permanent `\.)'}
+#define frozen_left_bracket (hash_top+3) //{|hash| location of a permanent `\.['}
+#define frozen_slash (hash_top+4) //{|hash| location of a permanent `\./'}
+#define frozen_colon (hash_top+5) //{|hash| location of a permanent `\.:'}
+#define frozen_semicolon (hash_top+6) //{|hash| location of a permanent `\.;'}
+#define frozen_end_for (hash_top+7) //{|hash| location of a permanent \&{endfor}}
+#define frozen_end_def (hash_top+8) //{|hash| location of a permanent \&{enddef}}
+#define frozen_fi (hash_top+9) //{|hash| location of a permanent \&{fi}}
+#define frozen_end_group (hash_top+10) //{|hash| location of a permanent `\.{endgroup}'}
+#define frozen_bad_vardef (hash_top+11) //{|hash| location of `\.{a bad variable}'}
+#define frozen_undefined (hash_top+12) //{|hash| location that never gets defined}
+#define hash_end (hash_top+12) //{the actual size of the |hash| and |eqtb| arrays}
 /* 325 */
 #define knil info
 #define sorted_loc(a) (a + 1)

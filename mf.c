@@ -1139,14 +1139,14 @@ void mainbody (void)
   if (bad > 0)
   {
     fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long)bad);
-    goto lab9999;
+    goto lab_final_end;
   }
   initialize();
 #ifdef INIMF
   if (iniversion)
   {
     if (!get_strings_started())
-      goto lab9999;
+      goto lab_final_end;
     init_tab();
     init_prim();
     init_str_ptr = str_ptr;
@@ -1157,7 +1157,7 @@ void mainbody (void)
   }
 #endif /* INIMF */
   ready_already = 314159L;
-lab1:
+lab_start_of_MF:
   selector = 1;
   tally = 0;
   term_offset = 0;
@@ -1197,7 +1197,7 @@ lab1:
       cur_input.name_field = 0;
       force_eof = false;
       if (!initterminal())
-        goto lab9999;
+        goto lab_final_end;
       cur_input.limit_field = last;
       first = last + 1;
     }
@@ -1207,11 +1207,11 @@ lab1:
       if (base_ident != 0)
         initialize();
       if (!open_base_file())
-        goto lab9999;
+        goto lab_final_end;
       if (!load_base_file())
       {
         wclose(base_file);
-        goto lab9999;
+        goto lab_final_end;
       }
       wclose(base_file);
       while ((cur_input.loc_field < cur_input.limit_field) && (buffer[
@@ -1239,7 +1239,7 @@ lab1:
   main_control();
   final_cleanup();
   close_files_and_terminate();
-lab9999:
+lab_final_end:
   {
     fflush(stdout);
     ready_already = 0;
@@ -5823,6 +5823,7 @@ void print_dependency (halfword p, small_number t)
   lab_exit:;
 }
 
+// 805
 void print_dp (small_number t, halfword p, small_number verbosity)
 {
   halfword q;
@@ -5834,6 +5835,7 @@ void print_dp (small_number t, halfword p, small_number verbosity)
     print(764);
 }
 
+// 799
 halfword stash_cur_exp (void)
 {
   halfword Result;
@@ -5868,6 +5870,7 @@ halfword stash_cur_exp (void)
   return Result;
 }
 
+//800
 void unstash_cur_exp (halfword p)
 {
   cur_type = mem[p].hh.b0;
@@ -5894,6 +5897,7 @@ void unstash_cur_exp (halfword p)
   }
 }
 
+// 801
 void print_exp (halfword p, small_number verbosity)
 {
   boolean restorecur_exp;
@@ -6026,6 +6030,7 @@ void print_exp (halfword p, small_number verbosity)
     unstash_cur_exp (p);
 }
 
+// 807
 void disp_err (halfword p, str_number s)
 {
   if (interaction == 3)
