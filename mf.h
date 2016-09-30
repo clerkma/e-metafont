@@ -986,7 +986,176 @@ static inline void mf_help (unsigned int n, ...)
 #define edge_header_size 6
 #define valid_range(a) (abs(a - 4096) < 4096)
 #define empty_edges(a) link(a)==a
+/* 553 */
+#define stack_1(a) bisect_stack[a] //{$U_1$, $V_1$, $X_1$, or $Y_1$}
+#define stack_2(a) bisect_stack[a+1] //{$U_2$, $V_2$, $X_2$, or $Y_2$}
+#define stack_3(a) bisect_stack[a+2] //{$U_3$, $V_3$, $X_3$, or $Y_3$}
+#define stack_min(a) bisect_stack[a+3]
+//  {$U\submin$, $V\submin$, $X\submin$, or $Y\submin$}
+#define stack_max(a) bisect_stack[a+4]
+//  {$U\submax$, $V\submax$, $X\submax$, or $Y\submax$}
+#define int_packets 20 //{number of words to represent $U_k$, $V_k$, $X_k$, and $Y_k$}
+#define u_packet(a) (a-5)
+#define v_packet(a) (a-10)
+#define x_packet(a) (a-15)
+#define y_packet(a) (a-20)
+#define l_packets (bisect_ptr-int_packets)
+#define r_packets bisect_ptr
+#define ul_packet u_packet(l_packets) //{base of $U'_k$ variables}
+#define vl_packet v_packet(l_packets) //{base of $V'_k$ variables}
+#define xl_packet x_packet(l_packets) //{base of $X'_k$ variables}
+#define yl_packet y_packet(l_packets) //{base of $Y'_k$ variables}
+#define ur_packet u_packet(r_packets) //{base of $U''_k$ variables}
+#define vr_packet v_packet(r_packets) //{base of $V''_k$ variables}
+#define xr_packet x_packet(r_packets) //{base of $X''_k$ variables}
+#define yr_packet y_packet(r_packets) //{base of $Y''_k$ variables}
+#define u1l stack_1(ul_packet) //{$U'_1$}
+#define u2l stack_2(ul_packet) //{$U'_2$}
+#define u3l stack_3(ul_packet) //{$U'_3$}
+#define v1l stack_1(vl_packet) //{$V'_1$}
+#define v2l stack_2(vl_packet) //{$V'_2$}
+#define v3l stack_3(vl_packet) //{$V'_3$}
+#define x1l stack_1(xl_packet) //{$X'_1$}
+#define x2l stack_2(xl_packet) //{$X'_2$}
+#define x3l stack_3(xl_packet) //{$X'_3$}
+#define y1l stack_1(yl_packet) //{$Y'_1$}
+#define y2l stack_2(yl_packet) //{$Y'_2$}
+#define y3l stack_3(yl_packet) //{$Y'_3$}
+#define u1r stack_1(ur_packet) //{$U''_1$}
+#define u2r stack_2(ur_packet) //{$U''_2$}
+#define u3r stack_3(ur_packet) //{$U''_3$}
+#define v1r stack_1(vr_packet) //{$V''_1$}
+#define v2r stack_2(vr_packet) //{$V''_2$}
+#define v3r stack_3(vr_packet) //{$V''_3$}
+#define x1r stack_1(xr_packet) //{$X''_1$}
+#define x2r stack_2(xr_packet) //{$X''_2$}
+#define x3r stack_3(xr_packet) //{$X''_3$}
+#define y1r stack_1(yr_packet) //{$Y''_1$}
+#define y2r stack_2(yr_packet) //{$Y''_2$}
+#define y3r stack_3(yr_packet) //{$Y''_3$}
+#define stack_dx bisect_stack[bisect_ptr] //{stacked value of |delx|}
+#define stack_dy bisect_stack[bisect_ptr+1] //{stacked value of |dely|}
+#define stack_tol bisect_stack[bisect_ptr+2] //{stacked value of |tol|}
+#define stack_uv bisect_stack[bisect_ptr+3] //{stacked value of |uv|}
+#define stack_xy bisect_stack[bisect_ptr+4] //{stacked value of |xy|}
+#define int_increment (int_packets+int_packets+5) //{number of stack words per level}
+/* 592 */
+#define coef_bound 04525252525 //{|fraction| approximation to 7/3}
+#define independent_needing_fix 0
+/* 594 */
+#define fraction_threshold 2685 //{a |fraction| coefficient less than this is zeroed}
+#define half_fraction_threshold 1342 //{half of |fraction_threshold|}
+#define scaled_threshold 8 //{a |scaled| coefficient less than this is zeroed}
+#define half_scaled_threshold 4 //{half of |scaled_threshold|}
+/* 632 */
+#define token_type index //{type of current token list}
+#define token_state (index>max_in_open) //{are we scanning a token list?}
+#define file_state (index<=max_in_open) //{are we scanning a file line?}
+#define param_start limit //{base of macro parameters in |param_stack|}
+#define forever_text (max_in_open+1) //{|token_type| code for loop texts}
+#define loop_text (max_in_open+2) //{|token_type| code for loop texts}
+#define parameter (max_in_open+3) //{|token_type| code for parameter texts}
+#define backed_up (max_in_open+4) //{|token_type| code for texts to be reread}
+#define inserted (max_in_open+5) //{|token_type| code for inserted texts}
+#define macro (max_in_open+6) //{|token_type| code for macro replacement texts}
+/* 659 */
+#define normal 0 //{|scanner_status| at ``quiet times''}
+#define skipping 1 //{|scanner_status| when false conditional text is being skipped}
+#define flushing 2 //{|scanner_status| when junk after a statement is being ignored}
+#define absorbing 3 //{|scanner_status| when a \&{text} parameter is being scanned}
+#define var_defining 4 //{|scanner_status| when a \&{vardef} is being scanned}
+#define op_defining 5 //{|scanner_status| when a macro \&{def} is being scanned}
+#define loop_defining 6 //{|scanner_status| when a \&{for} loop is being scanned}
+/* 667 */
+#define _switch 25 //{a label in |get_next|}
+#define start_numeric_token 85 //{another}
+#define start_decimal_token 86 //{and another}
+#define fin_numeric_token 87
+//  {and still another, although |goto| is considered harmful}
+/* 683 */
+#define start_def 1 //{command modifier for \&{def}}
+#define var_def 2 //{command modifier for \&{vardef}}
+#define end_def 0 //{command modifier for \&{enddef}}
+#define start_forever 1 //{command modifier for \&{forever}}
+#define end_for 0 //{command modifier for \&{endfor}}
+/* 688 */
+#define quote 0 //{|macro_special| modifier for \&{quote}}
+#define macro_prefix 1 //{|macro_special| modifier for \.{\#\AT!}}
+#define macro_at 2 //{|macro_special| modifier for \.{\AT!}}
+#define macro_suffix 3 //{|macro_special| modifier for \.{\AT!\#}}
+/* 738 */
+#define if_node_size 2 //{number of words in stack entry for conditionals}
+#define if_line_field(a) mem[a+1].cint
+#define if_code 1 //{code for \&{if} being evaluated}
+#define fi_code 2 //{code for \&{fi}}
+#define else_code 3 //{code for \&{else}}
+#define else_if_code 4 //{code for \&{elseif}}
+/* 752 */
+#define loop_list_loc(a) a+1 //{where the |loop_list| field resides}
+#define loop_type(a) info(loop_list_loc(a)) //{the type of \&{for} loop}
+#define loop_list(a) link(loop_list_loc(a)) //{the remaining list elements}
+#define loop_node_size 2 //{the number of words in a loop control node}
+#define progression_node_size 4 //{the number of words in a progression node}
+#define step_size(a) mem[a+2].sc //{the step size in an arithmetic progression}
+#define final_value(a) mem[a+3].sc //{the final value in an arithmetic progression}
+/* 1037 */
+#define show_token_code 0 //{show the meaning of a single token}
+#define show_stats_code 1 //{show current memory and string usage}
+#define show_code 2 //{show a list of expressions}
+#define show_var_code 3 //{show a variable and its descendents}
+#define show_dependencies_code 4 //{show dependent variables in terms of independents}
+/* 1091 */
+#define no_tag 0 //{vanilla character}
+#define lig_tag 1 //{character has a ligature/kerning program}
+#define list_tag 2 //{character has a successor in a charlist}
+#define ext_tag 3 //{character is extensible}
+/* 1093 */
+#define stop_flag (128+min_quarterword)
+//  {value indicating `\.{STOP}' in a lig/kern program}
+#define kern_flag (128+min_quarterword) //{op code for a kern step}
+#define skip_byte(a) lig_kern[a].b0
+#define next_char(a) lig_kern[a].b1
+#define op_byte(a) lig_kern[a].b2
+#define rem_byte(a) lig_kern[a].b3
+/* 1094 */
+#define ext_top(a) exten[a].b0 //{|top| piece in a recipe}
+#define ext_mid(a) exten[a].b1 //{|mid| piece in a recipe}
+#define ext_bot(a) exten[a].b2 //{|bot| piece in a recipe}
+#define ext_rep(a) exten[a].b3 //{|rep| piece in a recipe}
+/* 1095 */
+#define slant_code 1
+#define space_code 2
+#define space_stretch_code 3
+#define space_shrink_code 4
+#define x_height_code 5
+#define quad_code 6
+#define extra_space_code 7
+/* 1101 */
+#define char_list_code 0
+#define lig_table_code 1
+#define extensible_code 2
+#define header_byte_code 3
+#define font_dimen_code 4
+/* 1145 */
+#define paint_0 0 //{beginning of the \\{paint} commands}
+#define paint1 64 /*{move right a given number of columns, then
+  black${}\swap{}$white}*/
+#define boc 67 //{beginning of a character}
+#define boc1 68 //{short form of |boc|}
+#define eoc 69 //{end of a character}
+#define skip0 70 //{skip no blank rows}
+#define skip1 71 //{skip over blank rows}
+#define new_row_0 74 //{move down one row and then right}
+#define max_new_row 164 //{the largest \\{new\_row} command is |new_row_164|}
+#define xxx1 239 //{for \&{special} strings}
+#define xxx3 241 //{for long \&{special} strings}
+#define yyy 243 //{for \&{numspecial} numbers}
+#define char_loc 245 //{character locators in the postamble}
+#define pre 247 //{preamble}
+#define post 248 //{postamble beginning}
+#define post_post 249 //{postamble ending}
 
+/* F U N C T I O N S */
 void initialize(void);
 void print_ln(void);
 void print_char(ASCIIcode s);
