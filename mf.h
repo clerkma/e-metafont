@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef int32_t  integer;
 typedef uint32_t boolean;
@@ -51,15 +52,15 @@ EXTERN constcstring dumpname;
 EXTERN integer bounddefault;
 EXTERN constcstring boundname;
 EXTERN integer mainmemory;
-EXTERN integer memtop;
-EXTERN integer memmax;
-EXTERN integer bufsize;
-EXTERN integer errorline;
-EXTERN integer halferrorline;
-EXTERN integer maxprintline;
+EXTERN integer mem_top;
+EXTERN integer mem_max;
+EXTERN integer buf_size;
+EXTERN integer error_line;
+EXTERN integer half_error_line;
+EXTERN integer max_print_line;
 EXTERN integer screenwidth;
 EXTERN integer screendepth;
-EXTERN integer gf_bufsize;
+EXTERN integer gf_buf_size;
 EXTERN cinttype parsefirstlinep;
 EXTERN cinttype filelineerrorstylep;
 EXTERN cinttype eightbitp;
@@ -184,7 +185,7 @@ EXTERN fraction st, ct, sf, cf;
 EXTERN integer move[move_size + 1];
 EXTERN integer move_ptr;
 
-EXTERN integer bisect_stack[bi_stack_size + 1];
+EXTERN integer bisect_stack[bistack_size + 1];
 EXTERN integer bisect_ptr;
 
 EXTERN halfword cur_edges;
@@ -301,9 +302,9 @@ EXTERN str_number cur_ext;
 
 EXTERN pool_pointer area_delimiter;
 EXTERN pool_pointer ext_delimiter;
-EXTERN integer basedefaultlength;
+EXTERN integer base_default_length;
 
-EXTERN cstring MF_base_default;
+EXTERN char * MF_base_default;
 
 EXTERN str_number job_name;
 EXTERN boolean log_opened;
@@ -411,15 +412,15 @@ EXTERN boolean stopatspace;
 #define pool_name (TEXMFpool_name)
 #define enginename (TEXMFENGINENAME)
 #define path_size (1000)
-#define bi_stack_size (1500)
+#define bistack_size (1500)
 #define header_size (100)
 #define lig_table_size (15000)
 #define max_kerns (2500)
 #define max_font_dimen (60)
 #define infmainmemory (3000)
 #define supmainmemory (8000000L)
-#define infbufsize (500)
-#define supbufsize (30000000L)
+#define infbuf_size (500)
+#define supbuf_size (30000000L)
 */
 const uint32_t mem_max = 30000; /*{greatest index in \MF's internal |mem| array;
   must be strictly less than |max_halfword|;
@@ -1158,11 +1159,11 @@ static inline void mf_help (unsigned int n, ...)
 /* F U N C T I O N S */
 void initialize(void);
 void print_ln(void);
-void print_char(ASCIIcode s);
+void print_char(ASCII_code s);
 void print(integer s);
 void slow_print(integer s);
 void print_nl(str_number s);
-void print_the_digs(eightbits k);
+void print_the_digs(eight_bits k);
 void print_int(integer n);
 void print_scaled(scaled s);
 void print_two(scaled x, scaled y);
@@ -1172,7 +1173,7 @@ void end_diagnostic(boolean blankline);
 void print_diagnostic(str_number s, str_number t, boolean nuline);
 void print_file_name(integer n, integer a, integer e);
 void flush_string(str_number s);
-void jumpout(void);
+void jump_out(void);
 void error(void);
 void fatal_error(str_number s);
 void overflow(str_number s, integer n);
@@ -1246,7 +1247,7 @@ void unstash_cur_exp(halfword p);
 void print_exp(halfword p, small_number verbosity);
 void disp_err(halfword p, str_number s);
 halfword p_plus_fq(halfword p, integer f, halfword q, small_number t, small_number tt);
-halfword poverv(halfword p, scaled v, small_number t0, small_number t1);
+halfword p_over_v(halfword p, scaled v, small_number t0, small_number t1);
 void val_too_big(scaled x);
 void make_known(halfword p, halfword q);
 void fix_dependencies(void);
@@ -1329,8 +1330,8 @@ halfword make_ellipse(scaled major_axis, scaled minor_axis, angle theta);
 scaled find_direction_time(scaled x, scaled y, halfword h);
 void cubic_intersection(halfword p, halfword pp);
 void path_intersection(halfword h, halfword hh);
-void open_a_window(windownumber k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y);
-void disp_edges(windownumber k);
+void open_a_window(window_number k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y);
+void disp_edges(window_number k);
 fraction max_coef(halfword p);
 halfword p_plus_q(halfword p, halfword q, small_number t);
 halfword p_times_v(halfword p, integer v, small_number t0, small_number t1, boolean v_is_scaled);
@@ -1356,7 +1357,7 @@ void back_error(void);
 void ins_error(void);
 void begin_file_reading(void);
 void end_file_reading(void);
-void clear_for_err_or_prompt(void);
+void clear_for_error_prompt(void);
 boolean check_outer_validity(void);
 void get_next(void);
 void firmup_the_line(void);
@@ -1384,14 +1385,14 @@ void begin_iteration(void);
 void resume_iteration(void);
 void stop_iteration(void);
 void begin_name(void);
-boolean more_name(ASCIIcode c);
+boolean more_name(ASCII_code c);
 void end_name(void);
 void pack_file_name(str_number n, str_number a, str_number e);
 void pack_buffered_name(small_number n, integer a, integer b);
 str_number make_name_string(void);
-str_number a_make_name_string(alphafile f);
-str_number b_make_name_string(bytefile f);
-str_number w_make_name_string(wordfile f);
+str_number a_make_name_string(alpha_file f);
+str_number b_make_name_string(byte_file f);
+str_number w_make_name_string(word_file f);
 void scan_file_name(void);
 void pack_job_name(str_number s);
 void prompt_file_name(str_number s, str_number e);
@@ -1452,7 +1453,7 @@ void gf_paint(integer d);
 void gf_string(str_number s, str_number t);
 void gf_boc(integer minm, integer maxm, integer minn, integer maxn);
 void init_gf(void);
-void shipout(eightbits c);
+void shipout(eight_bits c);
 void try_eq(halfword l, halfword r);
 void make_eq(halfword lhs);
 void do_equation(void);
@@ -1482,7 +1483,7 @@ boolean get_pair(commandcode c);
 void do_open_window(void);
 void do_cull(void);
 void do_message(void);
-eightbits get_code(void);
+eight_bits get_code(void);
 void set_tag(halfword c, small_number t, halfword r);
 void do_tfm_command(void);
 void do_special(void);
@@ -1497,7 +1498,7 @@ void tfm_warning(small_number m);
 void fix_design_size(void);
 integer dimen_out(scaled x);
 void fix_checksum(void);
-void tfm_qqqq(fourquarters x);
+void tfm_qqqq(four_quarters x);
 boolean open_base_file(void);
 boolean load_base_file(void);
 void scan_primary(void);
@@ -1515,7 +1516,5 @@ void init_tab(void);
 void debug_help(void);
 
 str_number getjobname(str_number);
-void calledit(packedASCIIcode *, poolpointer, integer, integer);
 void blankrectangle(screencol, screencol, screenrow, screenrow);
 void paintrow(screenrow, pixelcolor, transspec, screencol);
-str_number makefullnamestring(void);
