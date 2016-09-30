@@ -7,26 +7,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define max_internal (300) 
-#define stack_size (300) 
-#define max_strings (7500) 
-#define string_vacancies (74000L) 
-#define pool_size (100000L) 
-#define move_size (20000) 
-#define max_wiggle (1000) 
-#define pool_name (TEXMFpool_name) 
-#define enginename (TEXMFENGINENAME) 
-#define path_size (1000) 
-#define bi_stack_size (1500) 
-#define header_size (100)
-#define lig_table_size (15000)
-#define max_kerns (2500)
-#define max_font_dimen (60)
-#define infmainmemory (3000)
-#define supmainmemory (8000000L)
-#define infbufsize (500)
-#define supbufsize (30000000L)
-
 typedef int32_t  integer;
 typedef uint32_t boolean;
 typedef char* constcstring;
@@ -419,6 +399,111 @@ EXTERN ASCII_code xprn[256];
 EXTERN boolean stopatspace;
 
 /* M A C R O S */
+/* 11 */
+/*
+#define max_internal (300)
+#define stack_size (300)
+#define max_strings (7500)
+#define string_vacancies (74000L)
+#define pool_size (100000L)
+#define move_size (20000)
+#define max_wiggle (1000)
+#define pool_name (TEXMFpool_name)
+#define enginename (TEXMFENGINENAME)
+#define path_size (1000)
+#define bi_stack_size (1500)
+#define header_size (100)
+#define lig_table_size (15000)
+#define max_kerns (2500)
+#define max_font_dimen (60)
+#define infmainmemory (3000)
+#define supmainmemory (8000000L)
+#define infbufsize (500)
+#define supbufsize (30000000L)
+*/
+const uint32_t mem_max = 30000; /*{greatest index in \MF's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INIMF}, otherwise |>=mem_top|}*/
+const uint32_t max_internal = 100; //{maximum number of internal quantities}
+const uint32_t buf_size = 500; /*{maximum number of characters simultaneously present in
+  current lines of open files; must not exceed |max_halfword|}*/
+const uint32_t error_line = 72; //{width of context lines on terminal error messages}
+const uint32_t half_error_line = 42; /*{width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}*/
+const uint32_t max_print_line = 79; //{width of longest text lines output; should be at least 60}
+const uint32_t screen_width = 768; //{number of pixels in each row of screen display}
+const uint32_t screen_depth = 1024; //{number of pixels in each column of screen display}
+const uint32_t stack_size = 30; //{maximum number of simultaneous input sources}
+const uint32_t max_strings = 2000; //{maximum number of strings; must not exceed |max_halfword|}
+const uint32_t string_vacancies = 8000; /*{the minimum number of characters that should be
+  available for the user's identifier names and strings,
+  after \MF's own error messages are stored}*/
+const uint32_t pool_size = 32000; /*{maximum number of characters in strings, including all
+  error messages and help texts, and the names of all identifiers;
+  must exceed |string_vacancies| by the total
+  length of \MF's own strings, which is currently about 22000}*/
+const uint32_t move_size = 5000; //{space for storing moves in a single octant}
+const uint32_t max_wiggle = 300; //{number of autorounded points per cycle}
+const uint32_t gf_buf_size = 800; //{size of the output buffer, must be a multiple of 8}
+const uint32_t file_name_size = 40; //{file names shouldn't be longer than this}
+const uint8_t* pool_name = "MFbases:MF.POOL                         ";
+  //{string of length |file_name_size|; tells where the string pool appears}
+const uint32_t path_size = 300; //{maximum number of knots between breakpoints of a path}
+const uint32_t bistack_size = 785; /*{size of stack for bisection algorithms;
+  should probably be left at this value}*/
+const uint32_t header_size = 100; //{maximum number of \.{TFM} header words, times~4}
+const uint32_t lig_table_size = 5000; /*{maximum number of ligature/kern steps, must be
+  at least 255 and at most 32510}*/
+const uint32_t max_kerns = 500; //{maximum number of distinct kern amounts}
+const uint32_t max_font_dimen = 50; //{maximum number of \&{fontdimen} parameters}
+/* 12 */
+#define mem_min 0 /*{smallest index in the |mem| array, must not be less
+  than |min_halfword|}*/
+#define mem_top 30000 /*{largest index in the |mem| array dumped by \.{INIMF};
+  must be substantially larger than |mem_min|
+  and not greater than |mem_max|}*/
+#define hash_size 2100 /*{maximum number of symbolic tokens,
+  must be less than |max_halfword-3*param_size|}*/
+#define hash_prime 1777 //{a prime number equal to about 85\pct! of |hash_size|}
+#define max_in_open 6 /*{maximum number of input files and error insertions that
+  can be going on simultaneously}*/
+#define param_size 150 //{maximum number of simultaneous macro parameters}
+/* 16 */
+#define incr(a) a=a+1 //{increase a variable by unity}
+#define decr(a) a=a-1 //{decrease a variable by unity}
+#define negate(a) a=-a //{change the sign of a variable}
+#define double(a) a=a+a //{multiply a variable by two}
+#define do_nothing //{empty statement}
+/* 19 */
+#define text_char char //{the data type of characters in text files}
+#define first_text_char 0 //{ordinal number of the smallest element of |text_char|}
+#define last_text_char 255 //{ordinal number of the largest element of |text_char|}
+/* 37 */
+#define si(a) a //{convert from |ASCII_code| to |packed_ASCII_code|}
+#define so(a) a //{convert from |packed_ASCII_code| to |ASCII_code|}
+/* 39 */
+#define length(a) (str_start[a+1]-str_start[a]) /*{the number of characters
+  in string number \#}*/
+/* 40 */
+#define cur_length (pool_ptr - str_start[str_ptr])
+/* 54 */
+#define no_print 0 //{|selector| setting that makes data disappear}
+#define term_only 1 //{printing is destined for the terminal only}
+#define log_only 2 //{printing is destined for the transcript file only}
+#define term_and_log 3 //{normal |selector| setting}
+#define pseudo 4 //{special |selector| setting for |show_context|}
+#define new_string 5 //{printing is deflected to the string pool}
+#define max_selector 5 //{highest selector setting}
+/* 68 */
+#define batch_mode 0 {omits all stops and omits terminal output}
+#define nonstop_mode 1 {omits all stops}
+#define scroll_mode 2 {omits error stops}
+#define error_stop_mode 3 {stops at every opportunity to interact}
+/* 71 */
+#define spotless 0 //{|history| value when nothing has been amiss yet}
+#define warning_issued 1 //{|history| value when |begin_diagnostic| has been called}
+#define error_message_issued 2 //{|history| value when |error| has been called}
+#define fatal_error_stop 3 //{|history| value when termination was premature}
 /* 74 */
 static inline void mf_help (unsigned int n, ...)
 {
@@ -443,9 +528,68 @@ static inline void mf_help (unsigned int n, ...)
 #define help4(...)  mf_help(4, __VA_ARGS__)
 #define help5(...)  mf_help(5, __VA_ARGS__)
 #define help6(...)  mf_help(6, __VA_ARGS__)
-/* 90 */
+/* 95 */
+#define el_gordo 017777777777 //{$2^{31}-1$, the largest value that \MF\ likes}
+/* 96 */
+#define half(a) (a)/2
+/* 99 */
 #define check_arith() \
   do { if (arith_error) clear_arith(); } while (0)
+/* 101 */
+#define quarter_unit 040000 //{$2^{14}$, represents 0.250000}
+#define half_unit 0100000 //{$2^{15}$, represents 0.50000}
+#define three_quarter_unit 0140000 //{$3\cdot2^{14}$, represents 0.75000}
+#define unity 0200000 //{$2^{16}$, represents 1.00000}
+#define two 0400000 //{$2^{17}$, represents 2.00000}
+#define three 0600000 //{$2^{17}+2^{16}$, represents 3.00000}
+/* 105 */
+#define fraction_half 01000000000 //{$2^{27}$, represents 0.50000000}
+#define fraction_one 02000000000 //{$2^{28}$, represents 1.00000000}
+#define fraction_two 04000000000 //{$2^{29}$, represents 2.00000000}
+#define fraction_three 06000000000 //{$3\cdot2^{28}$, represents 3.00000000}
+#define fraction_four 010000000000 //{$2^{30}$, represents 4.00000000}
+/* 106 */
+#define forty_five_deg 0264000000 //{$45\cdot2^{20}$, represents $45^\circ$}
+#define ninety_deg 0550000000 //{$90\cdot2^{20}$, represents $90^\circ$}
+#define one_eighty_deg 01320000000 //{$180\cdot2^{20}$, represents $180^\circ$}
+#define three_sixty_deg 02640000000 //{$360\cdot2^{20}$, represents $360^\circ$}
+/* 139 */
+#define negate_x 1
+#define negate_y 2
+#define switch_x_and_y 4
+#define first_octant 1
+#define second_octant (first_octant+switch_x_and_y)
+#define third_octant (first_octant+switch_x_and_y+negate_x)
+#define fourth_octant (first_octant+negate_x)
+#define fifth_octant (first_octant+negate_x+negate_y)
+#define sixth_octant (first_octant+switch_x_and_y+negate_x+negate_y)
+#define seventh_octant (first_octant+switch_x_and_y+negate_y)
+#define eighth_octant (first_octant+negate_y)
+/* 161 */
+#define link(a) mem[a].hh.rh //{the |link| field of a memory word}
+#define info(a) mem[a].hh.lh //{the |info| field of a memory word}
+/* 166 */
+#define empty_flag max_halfword //{the |link| of an empty variable-size node}
+#define is_empty(a) (link(a)==empty_flag) //{tests for empty node}
+#define node_size info //{the size field in empty variable-size nodes}
+#define llink(a) info(a+1) //{left link in doubly-linked list of empty nodes}
+#define rlink(a) link(a+1) //{right link in doubly-linked list of empty nodes}
+/* 175 */
+#define null_coords mem_min //{specification for pen offsets of $(0,0)$}
+#define null_pen (null_coords+3) //{we will define |coord_node_size=3|}
+#define dep_head (null_pen+10) //{and |pen_node_size=10|}
+#define zero_val (dep_head+2) //{two words for a permanently zero value}
+#define temp_val (zero_val+2) //{two words for a temporary value node}
+#define end_attr (temp_val) //{we use |end_attr+2| only}
+#define inf_val (end_attr+2) //{and |inf_val+1| only}
+#define bad_vardef (inf_val+2) //{two words for \&{vardef} error recovery}
+#define lo_mem_stat_max (bad_vardef+1)  /*{largest statically
+  allocated word in the variable-size |mem|}*/
+#define sentinel mem_top //{end of sorted lists}
+#define temp_head (mem_top-1) //{head of a temporary list of some kind}
+#define hold_head (mem_top-2) //{head of a temporary list of another kind}
+#define hi_mem_stat_min (mem_top-2) /*{smallest statically allocated word in
+  the one-word |mem|}*/
 /* 186 */
 #define if_test 1 //{conditional text (\&{if})}
 #define fi_or_else 2 //{delimiters for conditionals (\&{elseif}, \&{else}, \&{fi})}
@@ -716,6 +860,13 @@ static inline void mf_help (unsigned int n, ...)
 #define right_bracket_class 18 //{`\.]'}
 #define invalid_class 20 //{bad character in the input}
 #define max_class 20 //{the largest class number}
+/* 200 */
+#define next(a) hash[a].lh //{link for coalesced lists}
+#define text(a) hash[a].rh //{string number for symbolic token name}
+#define eq_type(a) eqtb[a].lh //{the current ``meaning'' of a symbolic token}
+#define equiv(a) eqtb[a].rh //{parametric part of a token's meaning}
+#define hash_base=257 //{hashing actually starts here}
+#define hash_is_full (hash_used==hash_base) //{are all positions occupied?}
 /* 201 */
 #define hash_top (hash_base+hash_size) //{the first location of the frozen area}
 #define frozen_inaccessible hash_top //{|hash| location to protect the frozen area}
@@ -728,10 +879,93 @@ static inline void mf_help (unsigned int n, ...)
 #define frozen_end_for (hash_top+7) //{|hash| location of a permanent \&{endfor}}
 #define frozen_end_def (hash_top+8) //{|hash| location of a permanent \&{enddef}}
 #define frozen_fi (hash_top+9) //{|hash| location of a permanent \&{fi}}
-#define frozen_end_group (hash_top+10) //{|hash| location of a permanent `\.{endgroup}'}
+#define frozen_end_group (hash_top+10)
+//  {|hash| location of a permanent `\.{endgroup}'}
 #define frozen_bad_vardef (hash_top+11) //{|hash| location of `\.{a bad variable}'}
 #define frozen_undefined (hash_top+12) //{|hash| location that never gets defined}
 #define hash_end (hash_top+12) //{the actual size of the |hash| and |eqtb| arrays}
+/* 214 */
+#define type(a) mem[a].hh.b0 //{identifies what kind of value this is}
+#define name_type(a) mem[a].hh.b1 //{a clue to the name of this value}
+#define token_node_size 2 //{the number of words in a large token node}
+#define value_loc(a) (a+1) //{the word that contains the |value| field}
+#define value(a) mem[value_loc(a)].cint //{the value stored in a large token node}
+#define expr_base (hash_end+1) //{code for the zeroth \&{expr} parameter}
+#define suffix_base (expr_base+param_size) //{code for the zeroth \&{suffix} parameter}
+#define text_base (suffix_base+param_size) //{code for the zeroth \&{text} parameter}
+/* 226 */
+#define ref_count info //{reference count preceding a macro definition or pen header}
+#define add_mac_ref(a) incr(ref_count(a)) //{make a new reference to a macro list}
+#define general_macro 0 //{preface to a macro defined with a parameter list}
+#define primary_macro 1 //{preface to a macro with a \&{primary} parameter}
+#define secondary_macro 2 //{preface to a macro with a \&{secondary} parameter}
+#define tertiary_macro 3 //{preface to a macro with a \&{tertiary} parameter}
+#define expr_macro 4 //{preface to a macro with an undelimited \&{expr} parameter}
+#define of_macro 5 /*{preface to a macro with
+  undelimited `\&{expr} |x| \&{of}~|y|' parameters}*/
+#define suffix_macro 6 //{preface to a macro with an undelimited \&{suffix} parameter}
+#define text_macro 7 //{preface to a macro with an undelimited \&{text} parameter}
+/* 228 */
+#define subscr_head_loc(a) (a+1) //{where |value|, |subscr_head|, and |attr_head| are}
+#define attr_head(a) info(subscr_head_loc(a)) //{pointer to attribute info}
+#define subscr_head(a) link(subscr_head_loc(a)) //{pointer to subscript info}
+#define value_node_size 2 //{the number of words in a value node}
+/* 229 */
+#define attr_loc_loc(a) (a+2) //{where the |attr_loc| and |parent| fields are}
+#define attr_loc(a) info(attr_loc_loc(a)) //{hash address of this attribute}
+#define parent(a) link(attr_loc_loc(a)) //{pointer to |structured| variable}
+#define subscript_loc(a) a+2 //{where the |subscript| field lives}
+#define subscript(a) mem[subscript_loc(a)].sc //{subscript of this variable}
+#define attr_node_size 3 //{the number of words in an attribute node}
+#define subscr_node_size 3 //{the number of words in a subscript node}
+#define collective_subscript 0 //{code for the attribute `\.{[]}'}
+/* 230 */
+#define x_part_loc(a) a //{where the \&{xpart} is found in a pair or transform node}
+#define y_part_loc(a) (a+2) //{where the \&{ypart} is found in a pair or transform node}
+#define xx_part_loc(a) (a+4) //{where the \&{xxpart} is found in a transform node}
+#define xy_part_loc(a) (a+6) //{where the \&{xypart} is found in a transform node}
+#define yx_part_loc(a) (a+8) //{where the \&{yxpart} is found in a transform node}
+#define yy_part_loc(a) (a+10) //{where the \&{yypart} is found in a transform node}
+#define pair_node_size 4 //{the number of words in a pair node}
+#define transform_node_size 12 //{the number of words in a transform node}
+/* 255 */
+#define left_type(a) mem[a].hh.b0 //{characterizes the path entering this knot}
+#define right_type(a) mem[a].hh.b1 //{characterizes the path leaving this knot}
+#define endpoint 0 //{|left_type| at path beginning and |right_type| at path end}
+#define x_coord(a) mem[a+1].sc //{the |x| coordinate of this knot}
+#define y_coord(a) mem[a+2].sc //{the |y| coordinate of this knot}
+#define left_x(a) mem[a+3].sc //{the |x| coordinate of previous control point}
+#define left_y(a) mem[a+4].sc //{the |y| coordinate of previous control point}
+#define right_x(a) mem[a+5].sc //{the |x| coordinate of next control point}
+#define right_y(a) mem[a+6].sc //{the |y| coordinate of next control point}
+#define knot_node_size 7 //{number of words in a knot node}
+/* 256 */
+#define left_curl left_x //{curl information when entering this knot}
+#define left_given left_x //{given direction when entering this knot}
+#define left_tension left_y //{tension information when entering this knot}
+#define right_curl right_x //{curl information when leaving this knot}
+#define right_given right_x //{given direction when leaving this knot}
+#define right_tension right_y //{tension information when leaving this knot}
+#define explicit 1 //{|left_type| or |right_type| when control points are known}
+#define given 2 //{|left_type| or |right_type| when a direction is given}
+#define curl 3 //{|left_type| or |right_type| when a curl is desired}
+#define open 4 //{|left_type| or |right_type| when \MF\ should choose the direction}
+/* 309 */
+#define stack_x1 bisect_stack[bisect_ptr] //{stacked value of $X_1$}
+#define stack_x2 bisect_stack[bisect_ptr+1] //{stacked value of $X_2$}
+#define stack_x3 bisect_stack[bisect_ptr+2] //{stacked value of $X_3$}
+#define stack_r bisect_stack[bisect_ptr+3] //{stacked value of $R$}
+#define stack_m bisect_stack[bisect_ptr+4] //{stacked value of $m$}
+#define stack_y1 bisect_stack[bisect_ptr+5] //{stacked value of $Y_1$}
+#define stack_y2 bisect_stack[bisect_ptr+6] //{stacked value of $Y_2$}
+#define stack_y3 bisect_stack[bisect_ptr+7] //{stacked value of $Y_3$}
+#define stack_s bisect_stack[bisect_ptr+8] //{stacked value of $S$}
+#define stack_n bisect_stack[bisect_ptr+9] //{stacked value of $n$}
+#define stack_l bisect_stack[bisect_ptr+10] //{stacked value of $l$}
+#define move_increment 11 //{number of items pushed by |make_moves|}
+/* 324 */
+#define zero_w 4
+#define _void (null+1)
 /* 325 */
 #define knil info
 #define sorted_loc(a) (a + 1)
@@ -751,7 +985,7 @@ static inline void mf_help (unsigned int n, ...)
 #define n_rover(a) link(a + 5)
 #define edge_header_size 6
 #define valid_range(a) (abs(a - 4096) < 4096)
-#define empty_edges(a) link(a)=a
+#define empty_edges(a) link(a)==a
 
 void initialize(void);
 void print_ln(void);
