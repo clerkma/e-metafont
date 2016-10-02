@@ -100,10 +100,10 @@ void primitive (str_number s, halfword c, halfword o)
   if (s >= 256)
   {
     flush_string(str_ptr - 1);
-    hash[cur_sym].v.RH = s;
+    hash[cur_sym].rh = s;
   }
   eqtb[cur_sym].lh = c;
-  eqtb[cur_sym].v.RH = o;
+  eqtb[cur_sym].rh = o;
 }
 /* 1186 */
 void store_base_file (void)
@@ -117,13 +117,13 @@ void store_base_file (void)
   selector = new_string;
   print(1073);
   print(job_name);
-  print_char(32);
+  print_char(' ');
   print_int(round_unscaled(internal[14]));
-  print_char(46);
+  print_char('.');
   print_int(round_unscaled(internal[15]));
-  print_char(46);
+  print_char('.');
   print_int(round_unscaled(internal[16]));
-  print_char(41);
+  print_char(')');
   if (interaction == 0)
     selector = 2;
   else
@@ -150,10 +150,9 @@ void store_base_file (void)
   x = strlen(enginename);
   baseengine = xmallocarray(ASCII_code, x + 4);
   strcpy(stringcast(baseengine), enginename);
+  for (k = x; k <= x + 3; k++)
   {
-    integer for_end; k = x; for_end = x + 3; if (k <= for_end) do
     baseengine[k] = 0;
-    while (k++ < for_end);
   }
   x = x + 4 - (x % 4);
   dump_int(x);
@@ -169,10 +168,9 @@ void store_base_file (void)
   dump_int(15);
   dump_int(pool_ptr);
   dump_int(str_ptr);
+  for (k = 0; k <= str_ptr; k++)
   {
-    integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
     dump_int(str_start[k]);
-    while (k++ < for_end);
   }
   k = 0;
   while (k + 4 < pool_ptr)
@@ -202,10 +200,9 @@ void store_base_file (void)
   q = rover;
   x = 0;
   do {
+    for (k = p; k <= q + 1; k++)
     {
-      integer for_end; k = p; for_end = q + 1; if (k <= for_end) do
       dumpwd(mem[k]);
-      while (k++ < for_end);
     }
     x = x + q + 2 - p;
     var_used = var_used + q - p;
@@ -214,19 +211,16 @@ void store_base_file (void)
   } while (!(q == rover));
   var_used = var_used + lo_mem_max - p;
   dyn_used = mem_end + 1 - hi_mem_min;
+  for (k = p; k <= lo_mem_max; k ++)
   {
-    integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
-    do
-      dumpwd(mem[k]);
-    while (k++ < for_end);
+    dumpwd(mem[k]);
   }
   x = x + lo_mem_max + 1 - p;
   dump_int(hi_mem_min);
   dump_int(avail);
+  for (k = hi_mem_min; k <= mem_end; k++)
   {
-    integer for_end; k = hi_mem_min; for_end = mem_end; if (k <= for_end) do
     dumpwd(mem[k]);
-    while (k++ < for_end);
   }
   x = x + mem_end + 1 - hi_mem_min;
   p = avail;
@@ -241,40 +235,34 @@ void store_base_file (void)
   print_int(x);
   print(1071);
   print_int(var_used);
-  print_char(38);
+  print_char('&');
   print_int(dyn_used);
   dump_int(hash_used);
   st_count = 9756 - hash_used;
+  for (p = 1; p <= hash_used; p++)
   {
-    integer for_end; p = 1; for_end = hash_used; if (p <= for_end)
-    do
-      if (hash[p].v.RH != 0)
-      {
-        dump_int(p);
-        dumphh(hash[p]);
-        dumphh(eqtb[p]);
-        incr(st_count);
-      }
-    while (p++ < for_end);
-  }
-  {
-    integer for_end; p = hash_used + 1; for_end = 9769; if (p <= for_end) do
+    if (hash[p].rh != 0)
     {
+      dump_int(p);
       dumphh(hash[p]);
       dumphh(eqtb[p]);
-    } while (p++ < for_end);
+      incr(st_count);
+    }
+  }
+  for (p = hash_used + 1; p <= 9769; p++)
+  {
+    dumphh(hash[p]);
+    dumphh(eqtb[p]);
   }
   dump_int(st_count);
   print_ln();
   print_int(st_count);
   print(1072);
   dump_int(int_ptr);
+  for (k = 1; k <= int_ptr; k++)
   {
-    integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
-    {
-      dump_int(internal[k]);
-      dump_int(int_name[k]);
-    } while (k++ < for_end);
+    dump_int(internal[k]);
+    dump_int(int_name[k]);
   }
   dump_int(start_sym);
   dump_int(interaction);
@@ -374,7 +362,7 @@ boolean load_base_file (void)
     }
     else str_ptr = x;
   }
-  {integer for_end; k = 0; for_end = str_ptr; if (k <= for_end) do
+  for (k = 0; k <= str_ptr; k++)
   {
     {
       undump_int(x);
@@ -383,7 +371,7 @@ boolean load_base_file (void)
       else str_start[k] = x;
     }
     str_ref[k] = 127;
-  } while (k++ < for_end);}
+  }
   k = 0;
   while (k + 4 < pool_ptr)
   {
@@ -421,21 +409,18 @@ boolean load_base_file (void)
   p = 0;
   q = rover;
   do {
-    { integer for_end; k = p; for_end = q + 1; if (k <=
-      for_end) do
+    for (k = p; k <= q + 1; k++)
+    {
       undumpwd(mem[k]);
-      while (k++ < for_end);
     }
     p = q + mem[q].hh.lh;
     if ((p > lo_mem_max) || ((q >= mem[q + 1].hh.rh) && (mem[q + 1].hh.rh != rover)))
       goto lab6666;
     q = mem[q + 1].hh.rh;
   } while (!(q == rover));
+  for (k = p; k <= lo_mem_max; k++)
   {
-    integer for_end; k = p; for_end = lo_mem_max; if (k <= for_end)
-    do
-      undumpwd(mem[k]);
-    while (k++ < for_end);
+    undumpwd(mem[k]);
   }
   {
     undump_int(x);
@@ -452,10 +437,9 @@ boolean load_base_file (void)
       avail = x;
   }
   mem_end = mem_top;
+  for (k = hi_mem_min; k <= mem_end; k++)
   {
-    integer for_end; k = hi_mem_min; for_end = mem_end; if (k <= for_end) do
     undumpwd(mem[k]);
-    while (k++ < for_end);
   }
   undump_int(var_used);
   undump_int(dyn_used);
@@ -478,12 +462,10 @@ boolean load_base_file (void)
     undumphh(hash[p]);
     undumphh(eqtb[p]);
   } while (!(p == hash_used));
+  for (p = hash_used + 1; p <= 9769; p++)
   {
-    integer for_end; p = hash_used + 1; for_end = 9769; if (p <= for_end) do
-    {
-      undumphh(hash[p]);
-      undumphh(eqtb[p]);
-    } while (p++ < for_end);
+    undumphh(hash[p]);
+    undumphh(eqtb[p]);
   }
   undump_int(st_count);
   {
@@ -493,18 +475,16 @@ boolean load_base_file (void)
     else
       int_ptr = x;
   }
+  for (k = 1; k <= int_ptr; k++)
   {
-    integer for_end; k = 1; for_end = int_ptr; if (k <= for_end) do
+    undump_int(internal[k]);
     {
-      undump_int(internal[k]);
-      {
-        undump_int(x);
-        if ((x < 0) || (x > str_ptr))
-          goto lab6666;
-        else
-          int_name[k] = x;
-      }
-    } while (k++ < for_end);
+      undump_int(x);
+      if ((x < 0) || (x > str_ptr))
+        goto lab6666;
+      else
+        int_name[k] = x;
+    }
   }
   {
     undump_int(x);
@@ -564,7 +544,7 @@ void final_cleanup (void)
   if (job_name == 0)
     open_log_file();
   while (input_ptr > 0)
-    if ((cur_input.index_field > 15))
+    if ((index > 15))
       end_token_list();
     else
       end_file_reading();
@@ -871,10 +851,9 @@ void init_tab (void)
   lo_mem_max = rover + 1000;
   mem[lo_mem_max].hh.rh = 0;
   mem[lo_mem_max].hh.lh = 0;
+  for (k = mem_top - 2; k <= mem_top; k++)
   {
-    integer for_end; k = mem_top - 2; for_end = mem_top; if (k <= for_end) do
     mem[k] = mem[lo_mem_max];
-    while (k++ < for_end);
   }
   avail = 0;
   mem_end = mem_top;
@@ -924,17 +903,17 @@ void init_tab (void)
   int_name[41] = 449;
   hash_used = 9757;
   st_count = 0;
-  hash[9768].v.RH = 451;
-  hash[9766].v.RH = 452;
-  hash[9767].v.RH = 453;
-  hash[9765].v.RH = 454;
-  hash[9764].v.RH = 455;
-  hash[9763].v.RH = 59;
-  hash[9762].v.RH = 58;
-  hash[9761].v.RH = 47;
-  hash[9760].v.RH = 91;
-  hash[9759].v.RH = 41;
-  hash[9757].v.RH = 456;
+  hash[9768].rh = 451;
+  hash[9766].rh = 452;
+  hash[9767].rh = 453;
+  hash[9765].rh = 454;
+  hash[9764].rh = 455;
+  hash[9763].rh = 59;
+  hash[9762].rh = 58;
+  hash[9761].rh = 47;
+  hash[9760].rh = 91;
+  hash[9759].rh = 41;
+  hash[9757].rh = 456;
   eqtb[9759].lh = 62;
   mem[19].hh.lh = 9770;
   mem[19].hh.rh = 0;
@@ -943,11 +922,9 @@ void init_tab (void)
   mem[3].hh.rh = 0;
   mem[4].hh.lh = 1;
   mem[4].hh.rh = 0;
+  for (k = 5; k <= 11; k++)
   {
-    integer for_end; k = 5; for_end = 11;
-    if (k <= for_end) do
-      mem[k] = mem[4];
-    while (k++ < for_end);
+    mem[k] = mem[4];
   }
   mem[12].cint = 0;
   mem[0].hh.rh = 0;
@@ -961,10 +938,10 @@ void init_tab (void)
   mem[14].hh.rh = 0;
   mem[21].hh.b1 = 0;
   mem[21].hh.rh = 9768;
-  eqtb[9768].v.RH = 21;
+  eqtb[9768].rh = 21;
   eqtb[9768].lh = 41;
   eqtb[9758].lh = 91;
-  hash[9758].v.RH = 735;
+  hash[9758].rh = 735;
   mem[17].hh.b1 = 11;
   mem[20].cint = 1073741824;
   mem[16].cint = 0;
@@ -1071,18 +1048,18 @@ lab_start_of_MF:
       param_ptr = 0;
       max_param_stack = 0;
       first = 1;
-      cur_input.start_field = 1;
-      cur_input.index_field = 0;
+      start = 1;
+      index = 0;
       line = 0;
-      cur_input.name_field = 0;
+      name = 0;
       force_eof = false;
       if (!initterminal())
         goto lab_final_end;
-      cur_input.limit_field = last;
+      limit = last;
       first = last + 1;
     }
     scanner_status = 0;
-    if ((base_ident == 0) || (buffer[cur_input.loc_field] == 38))
+    if ((base_ident == 0) || (buffer[loc] == 38))
     {
       if (base_ident != 0)
         initialize();
@@ -1094,19 +1071,19 @@ lab_start_of_MF:
         goto lab_final_end;
       }
       wclose(base_file);
-      while ((cur_input.loc_field < cur_input.limit_field) && (buffer[cur_input.loc_field] == 32))
-        incr(cur_input.loc_field);
+      while ((loc < limit) && (buffer[loc] == 32))
+        incr(loc);
     }
-    buffer[cur_input.limit_field] = 37;
+    buffer[limit] = 37;
     fix_date_and_time();
     ini_trandoms((internal[17] / 65536) + internal[16]);
     if (interaction == 0)
       selector = 0;
     else
       selector = 1;
-    if (cur_input.loc_field < cur_input.limit_field)
+    if (loc < limit)
     {
-      if (buffer[cur_input.loc_field] != 92)
+      if (buffer[loc] != 92)
         start_input();
     }
   }
@@ -1230,25 +1207,25 @@ void initialize (void)
   xchr[124] = '|';
   xchr[125] = '}';
   xchr[126] = '~';
-  {integer for_end; i = 0;for_end = 31; if (i <= for_end) do
+  for (i = 0; i <= 31; i++)
+  {
     xchr[i] = i;
-    while (i++ < for_end);
   }
-  {integer for_end; i = 127;for_end = 255; if (i <= for_end) do
+  for (i = 127; i <= 255; i++)
+  {
     xchr[i] = i;
-    while (i++ < for_end);
   }
-  {integer for_end; i = 0;for_end = 255; if (i <= for_end) do
+  for (i = 0; i <= 255; i++)
+  {
     xord[chr (i)] = 127;
-    while (i++ < for_end);
   }
-  {integer for_end; i = 128;for_end = 255; if (i <= for_end) do
+  for (i = 128; i <= 255; i++)
+  {
     xord[xchr[i]] = i;
-    while (i++ < for_end);
   }
-  {integer for_end; i = 0;for_end = 126; if (i <= for_end) do
+  for (i = 0; i <= 126; i++)
+  {
     xord[xchr[i]] = i;
-    while (i++ < for_end);
   }
   interaction = 3;
   deletions_allowed = true;
@@ -1360,16 +1337,13 @@ void initialize (void)
   char_class[9] = 2;
   char_class[12] = 2;
   hash[1].lh = 0;
-  hash[1].v.RH = 0;
+  hash[1].rh = 0;
   eqtb[1].lh = 41;
-  eqtb[1].v.RH = 0;
+  eqtb[1].rh = 0;
+  for (k = 2; k <= 9769; k++)
   {
-    integer for_end; k = 2;for_end = 9769; if (k <= for_end) do
-    {
-      hash[k] = hash[1];
-      eqtb[k] = eqtb[1];
-    }
-    while (k++ < for_end);
+    hash[k] = hash[1];
+    eqtb[k] = eqtb[1];
   }
   big_node_size[13] = 12;
   big_node_size[14] = 4;
@@ -1391,10 +1365,9 @@ void initialize (void)
   octant_code[6] = 8;
   octant_code[7] = 7;
   octant_code[8] = 3;
+  for (k = 1; k <= 8; k++)
   {
-    integer for_end; k = 1;for_end = 8; if (k <= for_end) do
     octant_number[octant_code[k]] = k;
-    while (k++ < for_end);
   }
   rev_turns = false;
   x_corr[1] = 0;
@@ -1421,20 +1394,16 @@ void initialize (void)
   x_corr[3] = -1;
   y_corr[3] = 1;
   xy_corr[3] = 0;
+  for (k = 1; k <= 8; k++)
   {
-    integer for_end; k = 1;for_end = 8; if (k <= for_end) do
     z_corr[k] = xy_corr[k] - x_corr[k];
-    while (k++ < for_end);
   }
   screen_started = false;
   screen_OK = false;
+  for (k = 0; k <= 15; k++)
   {
-    integer for_end; k = 0;for_end = 15; if (k <= for_end) do
-    {
-      window_open[k] = false;
-      window_time[k] = 0;
-    }
-    while (k++ < for_end);
+    window_open[k] = false;
+    window_time[k] = 0;
   }
   fix_needed = false;
   watch_coefs = true;
@@ -1447,24 +1416,20 @@ void initialize (void)
   var_flag = 0;
   start_sym = 0;
   long_help_seen = false;
+  for (k = 0; k <= 255; k++)
   {
-    integer for_end; k = 0;for_end = 255; if (k <= for_end) do
-    {
-      tfm_width[k] = 0;
-      tfm_height[k] = 0;
-      tfm_depth[k] = 0;
-      tfm_ital_corr[k] = 0;
-      char_exists[k] = false;
-      char_tag[k] = 0;
-      char_remainder[k] = 0;
-      skip_table[k] = lig_table_size;
-    }
-    while (k++ < for_end);
+    tfm_width[k] = 0;
+    tfm_height[k] = 0;
+    tfm_depth[k] = 0;
+    tfm_ital_corr[k] = 0;
+    char_exists[k] = false;
+    char_tag[k] = 0;
+    char_remainder[k] = 0;
+    skip_table[k] = lig_table_size;
   }
+  for (k = 1; k <= header_size; k++)
   {
-    integer for_end; k = 1;for_end = header_size; if (k <= for_end) do
     header_byte[k] = -1;
-    while (k++ < for_end);
   }
   bc = 255;
   ec = 0;
@@ -1579,7 +1544,7 @@ void print (integer s)
 
   if ((s < 0) || (s >= str_ptr))
     s = 259;
-  if ((s < 256) && (selector > pseud))
+  if ((s < 256) && (selector > pseudo))
     print_char(s);
   else
   {
@@ -1777,7 +1742,7 @@ void print_type (small_number t)
 void begin_diagnostic (void)
 {
   old_setting = selector;
-  if ((internal[13] <= 0) && (selector == term_and_log))
+  if ((internal[tracing_online] <= 0) && (selector == term_and_log))
   {
     decr (selector);
     if (history == spotless)
@@ -1837,12 +1802,12 @@ void error (void)
 
   if (history < 2)
     history = 2;
-  print_char(46);
+  print_char('.');
   show_context ();
   if (interaction == 3)
     while (true)
     {
-    lab_continue:
+lab_continue:
       clear_for_error_prompt ();
       {
         do_nothing();
@@ -1935,7 +1900,7 @@ void error (void)
               else
               {
                 incr (j);
-                print_char(37);
+                print_char('%');
               }
               incr (j);
             }
@@ -1970,17 +1935,13 @@ void error (void)
           begin_file_reading ();
           if (last > first + 1)
           {
-            cur_input.loc_field = first + 1;
+            loc = first + 1;
             buffer[first] = 32;
           }
           else
           {
-            {
-              ;
-              print(277);
-              term_input ();
-            }
-            cur_input.loc_field = first;
+            prompt_input("insert>");
+            loc = first;
           }
           first = last + 1;
           cur_input.limit_field = last;
@@ -2060,7 +2021,7 @@ void error (void)
       else
       {
         incr (j);
-        print_char(37);
+        print_char('%');
       }
       incr (j);
     }
@@ -2134,10 +2095,10 @@ boolean init_terminal (void)
   topenin ();
   if (last > first)
   {
-    cur_input.loc_field = first;
-    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field] == ' '))
-      incr (cur_input.loc_field);
-    if (cur_input.loc_field < last)
+    loc = first;
+    while ((loc < last) && (buffer[loc] == ' '))
+      incr (loc);
+    if (loc < last)
     {
       Result = true;
       goto lab_exit;
@@ -2155,10 +2116,10 @@ boolean init_terminal (void)
       Result = false;
       goto lab_exit;
     }
-    cur_input.loc_field = first;
-    while ((cur_input.loc_field < last) && (buffer[cur_input.loc_field] == 32))
-      incr (cur_input.loc_field);
-    if (cur_input.loc_field < last)
+    loc = first;
+    while ((loc < last) && (buffer[loc] == 32))
+      incr (loc);
+    if (loc < last)
     {
       Result = true;
       goto lab_exit;
@@ -3204,22 +3165,20 @@ void new_randoms (void)
   unsigned char k;
   fraction x;
   
-  {integer for_end; k = 0;for_end = 23; if (k <= for_end) do
-    {
-      x = randoms[k] - randoms[k + 31];
-      if (x < 0)
-        x = x + 268435456L;
-      randoms[k] = x;
-    }
-  while (k++ < for_end);}
-  {integer for_end; k = 24;for_end = 54; if (k <= for_end) do
-    {
-      x = randoms[k] - randoms[k - 24];
-      if (x < 0)
-        x = x + 268435456L;
-      randoms[k] = x;
-    }
-  while (k++ < for_end);}
+  for (k = 0; k <= 23; k++)
+  {
+    x = randoms[k] - randoms[k + 31];
+    if (x < 0)
+      x = x + 268435456L;
+    randoms[k] = x;
+  }
+  for (k = 24; k <= 54; k++)
+  {
+    x = randoms[k] - randoms[k - 24];
+    if (x < 0)
+      x = x + 268435456L;
+    randoms[k] = x;
+  }
   j_random = 54;
 }
 /* 150 */
@@ -3232,16 +3191,15 @@ void init_randoms (scaled seed)
   while (j >= 268435456L)
     j = half (j);
   k = 1;
-  {integer for_end; i = 0;for_end = 54; if (i <= for_end) do
-    {
-      jj = k;
-      k = j - k;
-      j = jj;
-      if (k < 0)
-        k = k + 268435456L;
-      randoms[(i * 21) % 55] = j;
-    }
-  while (i++ < for_end);}
+  for (i = 0; i <= 54; i++)
+  {
+    jj = k;
+    k = j - k;
+    j = jj;
+    if (k < 0)
+      k = k + 268435456L;
+    randoms[(i * 21) % 55] = j;
+  }
   new_randoms ();
   new_randoms ();
   new_randoms ();
@@ -3294,25 +3252,25 @@ scaled norm_rand (void)
 void print_word (memory_word w)
 {
   print_int (w .cint);
-  print_char(32);
+  print_char(' ');
   print_scaled(w .cint);
-  print_char(32);
+  print_char(' ');
   print_scaled(w .cint / 4096);
   print_ln ();
   print_int (w .hh.lh);
-  print_char(61);
+  print_char('=');
   print_int (w .hh.b0);
-  print_char(58);
+  print_char(':');
   print_int (w .hh.b1);
-  print_char(59);
+  print_char(';');
   print_int (w .hh.rh);
-  print_char(32);
+  print_char(' ');
   print_int (w .qqqq.b0);
-  print_char(58);
+  print_char(':');
   print_int (w .qqqq.b1);
-  print_char(58);
+  print_char(':');
   print_int (w .qqqq .b2);
-  print_char(58);
+  print_char(':');
   print_int (w .qqqq .b3);
 }
 #endif /* TEXMF_DEBUG */
@@ -3346,15 +3304,15 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
         if (mem[p].hh.b0 == 16)
         {
           if (cclass == 0)
-            print_char(32);
+            print_char(' ');
           v = mem[p + 1].cint;
           if (v < 0)
           {
             if (cclass == 17)
-              print_char(32);
-            print_char(91);
+              print_char(' ');
+            print_char('[');
             print_scaled(v);
-            print_char(93);
+            print_char(']');
             c = 18;
           }
           else
@@ -3367,9 +3325,9 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
           print(496);
         else
         {
-          print_char(34);
+          print_char('"');
           slow_print(mem[p + 1].cint);
-          print_char(34);
+          print_char('"');
           c = 4;
         }
       }
@@ -3403,7 +3361,7 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
           r = r - (10070);
         }
         print_int (r);
-        print_char(41);
+        print_char(')');
         c = 8;
       }
       else if (r < 1)
@@ -3411,7 +3369,7 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
         if (r == 0)
         {
           if (cclass == 17)
-            print_char(32);
+            print_char(' ');
           print(497);
           c = 18;
         }
@@ -3420,7 +3378,7 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
       }
       else
       {
-        r = hash[r].v.RH;
+        r = hash[r].rh;
         if ((r < 0) || (r >= str_ptr))
           print(495);
         else
@@ -3430,7 +3388,7 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
             switch (c)
             {
               case 9:
-                print_char(46);
+                print_char('.');
                 break;
               case 5:
               case 6:
@@ -3439,7 +3397,7 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
                 ;
                 break;
               default:
-                print_char(32);
+                print_char(' ');
                 break;
             }
           slow_print(r);
@@ -3663,14 +3621,14 @@ void check_mem (boolean print_locs)
   halfword p, q, r;
   boolean clobbered;
   
-  {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end)
-    do
-      freearr[p] = false;
-    while (p++ < for_end);}
-  {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <= for_end)
-    do
-      freearr[p] = false;
-    while (p++ < for_end);}
+  for (p = 0; p <= lo_mem_max; p++)
+  {
+    freearr[p] = false;
+  }
+  for (p = hi_mem_min; p <= mem_end; p++)
+  {
+    freearr[p] = false;
+  }
   p = avail;
   q = 0;
   clobbered = false;
@@ -3708,18 +3666,16 @@ void check_mem (boolean print_locs)
       print_int (q);
       goto done2;
     }
-    {integer for_end; q = p;for_end = p + mem[p].hh.lh - 1;
-      if (q <= for_end)
-        do {
-          if (freearr[q])
-          {
-            print_nl(318);
-            print_int (q);
-            goto done2;
-          }
-          freearr[q] = true;
-        }
-    while (q++ < for_end);}
+    for (q = p; q <= p + mem[p].hh.lh - 1; q++)
+    {
+      if (freearr[q])
+      {
+        print_nl(318);
+        print_int (q);
+        goto done2;
+      }
+      freearr[q] = true;
+    }
     q = p;
     p = mem[p + 1].hh.rh;
   } while (!(p == rover));
@@ -3762,30 +3718,31 @@ void check_mem (boolean print_locs)
   if (print_locs)
   {
     print_nl(320);
-    {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end) do
+    for (p = 0; p <= lo_mem_max; p++)
+    {
       if (!freearr[p] && ((p > was_lo_max) || was_free[p]))
       {
-        print_char(32);
+        print_char(' ');
         print_int (p);
       }
-    while (p++ < for_end);}
-    {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <=
-    for_end) do
+    }
+    for (p = hi_mem_min; p <= mem_end; p++)
+    {
       if (!freearr[p]&& ((p < was_hi_min) || (p > was_mem_end) || was_free[p]))
       {
-        print_char(32);
+        print_char(' ');
         print_int (p);
       }
-    while (p++ < for_end);}
+    }
   }
-  {integer for_end; p = 0;for_end = lo_mem_max; if (p <= for_end)
-    do
-      was_free[p] = freearr[p];
-  while (p++ < for_end);}
-  {integer for_end; p = hi_mem_min;for_end = mem_end; if (p <=
-  for_end) do
+  for (p = 0; p <= lo_mem_max; p++)
+  {
     was_free[p] = freearr[p];
-  while (p++ < for_end);}
+  }
+  for (p = hi_mem_min; p <= mem_end; p++)
+  {
+    was_free[p] = freearr[p];
+  }
   was_mem_end = mem_end;
   was_lo_max = lo_mem_max;
   was_hi_min = hi_mem_min;
@@ -3797,49 +3754,45 @@ void search_mem (halfword p)
 {
   integer q;
 
-  {integer for_end; q = 0;for_end = lo_mem_max; if (q <= for_end)
-    do {
-      if (mem[q].hh.rh == p)
-      {
-        print_nl(321);
-        print_int (q);
-        print_char(41);
-      }
-      if (mem[q].hh.lh == p)
-      {
-        print_nl(322);
-        print_int (q);
-        print_char(41);
-      }
-    }
-  while (q++ < for_end);}
-  {integer for_end; q = hi_mem_min;for_end = mem_end; if (q <=
-  for_end) do
+  for (q = 0; q <= lo_mem_max; q++)
+  {
+    if (mem[q].hh.rh == p)
     {
-      if (mem[q].hh.rh == p)
-      {
-        print_nl(321);
-        print_int (q);
-        print_char(41);
-      }
-      if (mem[q].hh.lh == p)
-      {
-        print_nl(322);
-        print_int (q);
-        print_char(41);
-      }
+      print_nl(321);
+      print_int (q);
+      print_char(')');
     }
-  while (q++ < for_end);}
-  {integer for_end; q = 1;for_end = 9769; if (q <= for_end) do
+    if (mem[q].hh.lh == p)
     {
-      if (eqtb[q].v.RH == p)
-      {
-        print_nl(458);
-        print_int (q);
-        print_char(41);
-      }
+      print_nl(322);
+      print_int (q);
+      print_char(')');
     }
-  while (q++ < for_end);}
+  }
+  for (q = hi_mem_min; q <= mem_end; q++)
+  {
+    if (mem[q].hh.rh == p)
+    {
+      print_nl(321);
+      print_int (q);
+      print_char(')');
+    }
+    if (mem[q].hh.lh == p)
+    {
+      print_nl(322);
+      print_int (q);
+      print_char(')');
+    }
+  }
+  for (q = 1; q <= 9769; q++)
+  {
+    if (eqtb[q].rh == p)
+    {
+      print_nl(458);
+      print_int (q);
+      print_char(')');
+    }
+  }
 }
 #endif /* TEXMF_DEBUG */
 /* 189 */
@@ -4086,37 +4039,36 @@ halfword id_lookup (integer j, integer l)
   if (l == 1)
   {
     p = buffer[j]+ 1;
-    hash[p].v.RH = p - 1;
+    hash[p].rh = p - 1;
     goto found;
   }
   h = buffer[j];
-  {integer for_end; k = j + 1;for_end = j + l - 1; if (k <= for_end) do
-    {
-      h = h + h + buffer[k];
-      while (h >= 7919)
-        h = h - 7919;
-    }
-  while (k++ < for_end);}
+  for (k = j + 1; k <= j + l - 1; k++)
+  {
+    h = h + h + buffer[k];
+    while (h >= 7919)
+      h = h - 7919;
+  }
   p = h + 257;
   while (true)
   {
-    if (hash[p].v.RH > 0)
+    if (hash[p].rh > 0)
     {
-      if ((str_start[hash[p].v.RH + 1] - str_start[hash[p].v.RH]) == l)
+      if ((str_start[hash[p].rh + 1] - str_start[hash[p].rh]) == l)
       {
-        if (str_eq_buf (hash[p].v.RH, j))
+        if (str_eq_buf (hash[p].rh, j))
           goto found;
       }
     }
     if (hash[p].lh == 0)
     {
-      if (hash[p].v.RH > 0)
+      if (hash[p].rh > 0)
       {
         do {
           if ((hash_used == 257))
             overflow (457, 9500);
           decr (hash_used);
-        } while (!(hash[hash_used].v.RH == 0));
+        } while (!(hash[hash_used].rh == 0));
         hash[p].lh = hash_used;
         p = hash_used;
       }
@@ -4128,14 +4080,13 @@ halfword id_lookup (integer j, integer l)
           max_pool_ptr = pool_ptr + l;
         }
       }
-      {integer for_end; k = j;for_end = j + l - 1; if (k <= for_end) do
-        {
-          str_pool[pool_ptr] = buffer[k];
-          incr (pool_ptr);
-        }
-      while (k++ < for_end);}
-      hash[p].v.RH = make_string ();
-      str_ref[hash[p].v.RH] = 127;
+      for (k = j; k <= j + l - 1; k++)
+      {
+        str_pool[pool_ptr] = buffer[k];
+        incr (pool_ptr);
+      }
+      hash[p].rh = make_string ();
+      str_ref[hash[p].rh] = 127;
       ;
 #ifdef STAT
       incr (st_count);
@@ -4144,7 +4095,8 @@ halfword id_lookup (integer j, integer l)
     }
     p = hash[p].lh;
   }
-  found: Result = p;
+found:
+  Result = p;
   return Result;
 }
 /* 215 */
@@ -4326,7 +4278,7 @@ void print_cmd_mod (integer c, integer m)
       print(481);
       break;
     case 7:
-      print_char(92);
+      print_char('\\');
       break;
     case 65:
       print(125);
@@ -4401,7 +4353,7 @@ void print_cmd_mod (integer c, integer m)
           print(664);
           break;
         case 2:
-          print_char(64);
+          print_char('@');
           break;
         case 3:
           print(665);
@@ -4526,7 +4478,7 @@ void print_cmd_mod (integer c, integer m)
         else
           print(943);
         print(944);
-        slow_print(hash[m].v.RH);
+        slow_print(hash[m].rh);
       }
       break;
     case 41:
@@ -4673,7 +4625,7 @@ void show_macro (halfword p, integer q, integer l)
     case 2:
     case 3:
       {
-        print_char(60);
+        print_char('<');
         print_cmd_mod (56, mem[p].hh.lh);
         print(502);
       }
@@ -4749,7 +4701,7 @@ void new_root (halfword x)
   mem[p].hh.b0 = 0;
   mem[p].hh.b1 = 0;
   mem[p].hh.rh = x;
-  eqtb[x].v.RH = p;
+  eqtb[x].rh = p;
 }
 /* 235 */
 void print_variable_name (halfword p)
@@ -4762,10 +4714,10 @@ void print_variable_name (halfword p)
     switch (mem[p].hh.b1)
     {
       case 5:
-        print_char(120);
+        print_char('x');
         break;
       case 6:
-        print_char(121);
+        print_char('y');
         break;
       case 7:
         print(509);
@@ -4857,7 +4809,7 @@ halfword new_structure (halfword p)
       {
         q = mem[p].hh.rh;
         r = get_node (2);
-        eqtb[q].v.RH = r;
+        eqtb[q].rh = r;
       }
       break;
     case 3:
@@ -4933,9 +4885,9 @@ halfword find_variable (halfword t)
     Result = 0;
     goto lab_exit;
   }
-  if (eqtb[p].v.RH == 0)
+  if (eqtb[p].rh == 0)
     new_root (p);
-  p = eqtb[p].v.RH;
+  p = eqtb[p].rh;
   pp = p;
   while (t != 0)
   {
@@ -5109,12 +5061,12 @@ void print_path (halfword h, str_number s, boolean nuline)
           else
           {
             n_sin_cos(mem[p + 5].cint);
-            print_char(123);
+            print_char('{');
             print_scaled(n_cos);
-            print_char(44);
+            print_char(',');
             print_scaled(n_sin);
           }
-          print_char(125);
+          print_char('}');
         }
         break;
       default:
@@ -5145,17 +5097,17 @@ void print_path (halfword h, str_number s, boolean nuline)
       if (mem[p].hh.b0 == 2)
       {
         n_sin_cos(mem[p + 3].cint);
-        print_char(123);
+        print_char('{');
         print_scaled(n_cos);
-        print_char(44);
+        print_char(',');
         print_scaled(n_sin);
-        print_char(125);
+        print_char('}');
       }
       else if (mem[p].hh.b0 == 3)
       {
         print(521);
         print_scaled(mem[p + 3].cint);
-        print_char(125);
+        print_char('}');
       }
     }
   } while (!(p == h));
@@ -5175,16 +5127,16 @@ void print_weight (halfword q, integer xoff)
   if (file_offset > max_print_line - 9)
     print_nl(32);
   else
-    print_char(32);
+    print_char(' ');
   print_int (m + xoff);
   while (w > 4)
   {
-    print_char(43);
+    print_char('+');
     decr (w);
   }
   while (w < 4)
   {
-    print_char(45);
+    print_char('-');
     incr (w);
   }
 }
@@ -5205,7 +5157,7 @@ void print_edges (str_number s, boolean nuline, integer xoff, integer yoff)
     {
       print_nl(533);
       print_int (n + yoff);
-      print_char(58);
+      print_char(':');
       while (q > 1)
       {
         print_weight (q, xoff);
@@ -5290,35 +5242,32 @@ void print_pen (halfword p, str_number s, boolean nuline)
   print_diagnostic(569, s, nuline);
   nothingprinted = true;
   print_ln ();
-  {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
+  for (k = 1; k <= 8; k++)
+  {
+    octant = octant_code[k];
+    h = p + octant;
+    n = mem[h].hh.lh;
+    w = mem[h].hh.rh;
+    if (!odd (k))
+      w = mem[w].hh.lh;
+    for (m = 1; m <= n + 1; m++)
     {
-      octant = octant_code[k];
-      h = p + octant;
-      n = mem[h].hh.lh;
-      w = mem[h].hh.rh;
-      if (!odd (k))
-        w = mem[w].hh.lh;
-      {integer for_end; m = 1;for_end = n + 1; if (m <= for_end)
-      do
-        {
-          if (odd (k))
-            ww = mem[w].hh.rh;
-          else
-            ww = mem[w].hh.lh;
-          if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww + 2].cint != mem[w + 2].cint))
-          {
-            if (nothingprinted)
-              nothingprinted = false;
-            else
-              print_nl(571);
-            unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
-            print_two (cur_x, cur_y);
-          }
-          w = ww;
-        }
-      while (m++ < for_end);}
+      if (odd (k))
+        ww = mem[w].hh.rh;
+      else
+        ww = mem[w].hh.lh;
+      if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww + 2].cint != mem[w + 2].cint))
+      {
+        if (nothingprinted)
+          nothingprinted = false;
+        else
+          print_nl(571);
+        unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
+        print_two (cur_x, cur_y);
+      }
+      w = ww;
     }
-  while (k++ < for_end);}
+  }
   if (nothingprinted)
   {
     w = mem[p + 1].hh.rh;
@@ -5345,16 +5294,16 @@ void print_dependency (halfword p, small_number t)
         if (mem[p + 1].cint > 0)
         {
           if (p != pp)
-            print_char(43);
+            print_char('+');
         }
         print_scaled(mem[p + 1].cint);
       }
       goto lab_exit;
     }
     if (mem[p + 1].cint < 0)
-      print_char(45);
+      print_char('-');
     else if (p != pp)
-      print_char(43);
+      print_char('+');
     if (t == 17)
       v = round_fraction (v);
     if (v != 65536L)
@@ -5484,7 +5433,7 @@ void print_exp (halfword p, small_number verbosity)
         print_type (t);
         if (v != 0)
         {
-          print_char(32);
+          print_char(' ');
           while ((mem[v].hh.b1 == 11) && (v != p))
             v = mem[v + 1].cint;
           print_variable_name(v);
@@ -5493,9 +5442,9 @@ void print_exp (halfword p, small_number verbosity)
       break;
     case 4:
       {
-        print_char(34);
+        print_char('"');
         slow_print(v);
-        print_char(34);
+        print_char('"');
       }
       break;
     case 6:
@@ -5542,7 +5491,7 @@ void print_exp (halfword p, small_number verbosity)
         print_type (t);
       else
       {
-        print_char(40);
+        print_char('(');
         q = v + big_node_size[t];
         do {
           if (mem[v].hh.b0 == 16)
@@ -5553,9 +5502,9 @@ void print_exp (halfword p, small_number verbosity)
             print_dp (mem[v].hh.b0, mem[v + 1].hh.rh, verbosity);
           v = v + 2;
           if (v != q)
-            print_char(44);
+            print_char(',');
         } while (!(v == q));
-        print_char(41);
+        print_char(')');
       }
       break;
     case 16:
@@ -5740,7 +5689,7 @@ void val_too_big (scaled x)
   {
     print_err("Value is too large (");
     print_scaled(x);
-    print_char(41);
+    print_char(')');
     {
       help_ptr = 4;
       help_line[3] = 592;
@@ -5771,7 +5720,7 @@ void make_known (halfword p, halfword q)
       begin_diagnostic ();
       print_nl(596);
       print_variable_name(p);
-      print_char(61);
+      print_char('=');
       print_scaled(mem[p + 1].cint);
       end_diagnostic (false);
     }
@@ -5885,16 +5834,15 @@ void toss_pen (halfword p)
 
   if (p != 3)
   {
-    {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
-      {
-        w = mem[p + k].hh.rh;
-        do {
-            ww = mem[w].hh.rh;
-          free_node (w, 3);
-          w = ww;
-        } while (!(w == mem[p + k].hh.rh));
-      }
-    while (k++ < for_end);}
+    for (k = 1; k <= 8; k++)
+    {
+      w = mem[p + k].hh.rh;
+      do {
+        ww = mem[w].hh.rh;
+        free_node (w, 3);
+        w = ww;
+      } while (!(w == mem[p + k].hh.rh));
+    }
     free_node (p, 10);
   }
 }
@@ -6069,7 +6017,7 @@ void recycle_value (halfword p)
               begin_diagnostic ();
               print_nl(767);
               if (v > 0)
-                print_char(45);
+                print_char('-');
               if (t == 17)
                 vv = round_fraction (max_c[17]);
               else
@@ -6083,7 +6031,7 @@ void recycle_value (halfword p)
                 mem[p + 1].cint = mem[p + 1].cint - 2;
               }
               if (t == 17)
-                print_char(61);
+                print_char('=');
               else
                 print(768);
               print_dependency(s, t);
@@ -6098,8 +6046,8 @@ void recycle_value (halfword p)
           }
           if (t != 17)
           {
-            integer for_end; t = 17;for_end = 18; if (t <= for_end)
-            do {
+            for (t = 17; t <= 18; t++)
+            {
               r = max_link[t];
               while (r != 0)
               {
@@ -6111,35 +6059,35 @@ void recycle_value (halfword p)
                 r = mem[r].hh.rh;
                 free_node (q, 2);
               }
-            } while (t++ < for_end);
+            }
           }
           else
           {
-            integer for_end; t = 17;for_end = 18; if (t <= for_end)
-              do {
-                r = max_link[t];
-                while (r != 0)
+            for (t = 17; t <= 18; t++)
+            {
+              r = max_link[t];
+              while (r != 0)
+              {
+                q = mem[r].hh.lh;
+                if (t == 17)
                 {
-                  q = mem[r].hh.lh;
-                  if (t == 17)
+                  if (cur_exp == q)
                   {
-                    if (cur_exp == q)
-                    {
-                      if (cur_type == 17)
-                        cur_type = 18;
-                    }
-                    mem[q + 1].hh.rh = p_over_v (mem[q + 1].hh.rh, 65536L, 17, 18);
-                    mem[q].hh.b0 = 18;
-                    mem[r + 1].cint = round_fraction (mem[r + 1].cint);
+                    if (cur_type == 17)
+                      cur_type = 18;
                   }
-                  mem[q + 1].hh.rh = p_plus_fq (mem[q + 1].hh.rh, make_scaled (mem[r + 1].cint, -v), s , 18, 18);
-                  if (mem[q + 1].hh.rh == dep_final)
-                    make_known (q, dep_final);
-                  q = r;
-                  r = mem[r].hh.rh;
-                  free_node (q, 2);
+                  mem[q + 1].hh.rh = p_over_v (mem[q + 1].hh.rh, 65536L, 17, 18);
+                  mem[q].hh.b0 = 18;
+                  mem[r + 1].cint = round_fraction (mem[r + 1].cint);
                 }
-            } while (t++ < for_end);
+                mem[q + 1].hh.rh = p_plus_fq (mem[q + 1].hh.rh, make_scaled (mem[r + 1].cint, -v), s , 18, 18);
+                if (mem[q + 1].hh.rh == dep_final)
+                  make_known (q, dep_final);
+                q = r;
+                r = mem[r].hh.rh;
+                free_node (q, 2);
+              }
+            }
           }
           flush_node_list (s);
           if (fix_needed)
@@ -6363,7 +6311,7 @@ void clear_symbol (halfword p, boolean saving)
 {
   halfword q;
 
-  q = eqtb[p].v.RH;
+  q = eqtb[p].rh;
   switch (eqtb[p].lh % 86)
   {
     case 10:
@@ -6436,9 +6384,9 @@ void unsave (void)
         begin_diagnostic ();
         print_nl(516);
         slow_print(int_name[q - (9769)]);
-        print_char(61);
+        print_char('=');
         print_scaled(mem[save_ptr + 1].cint);
-        print_char(125);
+        print_char('}');
         end_diagnostic (false);
       }
       internal[q - (9769)] = mem[save_ptr + 1].cint;
@@ -6449,15 +6397,15 @@ void unsave (void)
       {
         begin_diagnostic ();
         print_nl(516);
-        slow_print(hash[q].v.RH);
-        print_char(125);
+        slow_print(hash[q].rh);
+        print_char('}');
         end_diagnostic (false);
       }
       clear_symbol (q, false);
       eqtb[q] = mem[save_ptr + 1].hh;
       if (eqtb[q].lh % 86 == 41)
       {
-        p = eqtb[q].v.RH;
+        p = eqtb[q].rh;
         if (p != 0)
         mem[p].hh.b1 = 0;
       }
@@ -6485,10 +6433,9 @@ halfword copy_knot (halfword p)
   unsigned char k;
 
   q = get_node (7);
-  {integer for_end; k = 0;for_end = 6; if (k <= for_end)
-    do
-      mem[q + k] = mem[p + k];
-    while (k++ < for_end);
+  for (k = 0; k <= 6; k++)
+  {
+    mem[q + k] = mem[p + k];
   }
   Result = q;
   return Result;
@@ -6815,10 +6762,9 @@ void solve_choices (halfword p, halfword q, halfword n)
               aa = make_fraction (aa, 268435456L - bb);
               theta[n] = aa;
               vv[0] = aa;
-              {integer for_end; k = 1;for_end = n - 1; if (k <= for_end)
-                do
-                  vv[k] = vv[k]+ take_fraction (aa, ww[k]);
-                while (k++ < for_end);
+              for (k = 1; k <= n - 1; k++)
+              {
+                vv[k] = vv[k]+ take_fraction (aa, ww[k]);
               }
               goto found;
             }
@@ -6855,12 +6801,10 @@ void solve_choices (halfword p, halfword q, halfword n)
     s = t;
     incr (k);
   }
-found: 
+found:
+  for (k = n - 1; k <= 0; k--)
   {
-    integer for_end; k = n - 1;for_end = 0; if (k >= for_end)
-      do
-        theta[k] = vv[k] - take_fraction (theta[k + 1], uu[k]);
-      while (k-- > for_end);
+    theta[k] = vv[k] - take_fraction (theta[k + 1], uu[k]);
   }
   s = p;
   k = 0;
@@ -7458,38 +7402,37 @@ void y_scale_edges (integer s)
     do {
       q = p;
       p = mem[p].hh.rh;
-      {integer for_end; t = 2;for_end = s; if (t <= for_end) do
+      for (t = 2; t <= s; t++)
+      {
+        pp = get_node (2);
+        mem[q].hh.rh = pp;
+        mem[p].hh.lh = pp;
+        mem[pp].hh.rh = p;
+        mem[pp].hh.lh = q;
+        q = pp;
+        r = mem[p + 1].hh.rh;
+        rr = pp + 1;
+        while (r != mem_top)
         {
-          pp = get_node (2);
-          mem[q].hh.rh = pp;
-          mem[p].hh.lh = pp;
-          mem[pp].hh.rh = p;
-          mem[pp].hh.lh = q;
-          q = pp;
-          r = mem[p + 1].hh.rh;
-          rr = pp + 1;
-          while (r != mem_top)
-          {
-            ss = get_avail ();
-            mem[rr].hh.rh = ss;
-            rr = ss;
-            mem[rr].hh.lh = mem[r].hh.lh;
-            r = mem[r].hh.rh;
-          }
-          mem[rr].hh.rh = mem_top;
-          r = mem[p + 1].hh.lh;
-          rr = mem_top - 1;
-          while (r > 1)
-          {
-            ss = get_avail ();
-            mem[rr].hh.rh = ss;
-            rr = ss;
-            mem[rr].hh.lh = mem[r].hh.lh;
-            r = mem[r].hh.rh;
-          }
-          mem[rr].hh.rh = r;
-          mem[pp + 1].hh.lh = mem[mem_top - 1].hh.rh;
-        } while (t++ < for_end);
+          ss = get_avail ();
+          mem[rr].hh.rh = ss;
+          rr = ss;
+          mem[rr].hh.lh = mem[r].hh.lh;
+          r = mem[r].hh.rh;
+        }
+        mem[rr].hh.rh = mem_top;
+        r = mem[p + 1].hh.lh;
+        rr = mem_top - 1;
+        while (r > 1)
+        {
+          ss = get_avail ();
+          mem[rr].hh.rh = ss;
+          rr = ss;
+          mem[rr].hh.lh = mem[r].hh.lh;
+          r = mem[r].hh.rh;
+        }
+        mem[rr].hh.rh = r;
+        mem[pp + 1].hh.lh = mem[mem_top - 1].hh.rh;
       }
     } while (!(mem[p].hh.rh == cur_edges));
     mem[cur_edges + 4].cint = 0;
@@ -7783,18 +7726,15 @@ void xy_swap_edges (void)
   integer ww;
   integer dw;
   integer extras;
-  schar xw;
+  int8_t xw;
   integer k;
 
   mspread = mem[cur_edges + 2].hh.rh - mem[cur_edges + 2].hh.lh;
   if (mspread > move_size)
     overflow (540, move_size);
+  for (j = 0; j <= mspread; j++)
   {
-    integer for_end; j = 0;for_end = mspread;
-    if (j <= for_end)
-      do
-        move[j] = mem_top;
-      while (j++ < for_end);
+    move[j] = mem_top;
   }
   p = get_node (2);
   mem[p + 1].hh.rh = mem_top;
@@ -7844,15 +7784,12 @@ void xy_swap_edges (void)
             ww = w;
           do {
             j = m - mmagic;
+            for (k = 1; k <= extras; k++)
             {
-              integer for_end; k = 1;for_end = extras;
-              if (k <= for_end)
-                do {
-                  s = get_avail ();
-                  mem[s].hh.lh = nmagic + xw;
-                  mem[s].hh.rh = move[j];
-                  move[j] = s;
-                } while (k++ < for_end);
+              s = get_avail ();
+              mem[s].hh.lh = nmagic + xw;
+              mem[s].hh.rh = move[j];
+              move[j] = s;
             }
             s = get_avail ();
             mem[s].hh.lh = nmagic + ww;
@@ -8058,7 +7995,7 @@ void begin_edge_tracing (void)
   print_diagnostic(541, 261, true);
   print(542);
   print_int (cur_wt);
-  print_char(41);
+  print_char(')');
   trace_x = -4096;
 }
 /* 372 */
@@ -8066,11 +8003,11 @@ void trace_a_corner (void)
 {
   if (file_offset > max_print_line - 13)
     print_nl(261);
-  print_char(40);
+  print_char('(');
   print_int (trace_x);
-  print_char(44);
+  print_char(',');
   print_int (trace_yy);
-  print_char(41);
+  print_char(')');
   trace_y = trace_yy;
 }
 /* 372 */
@@ -8081,7 +8018,7 @@ void end_edge_tracing (void)
   else
   {
     trace_a_corner ();
-    print_char(46);
+    print_char('.');
   }
   end_diagnostic (true);
 }
@@ -8113,7 +8050,7 @@ void trace_new_edge (halfword r, integer n)
       trace_yy = n0;
     }
     else if (trace_yy != n0)
-      print_char(63);
+      print_char('?');
     else
       trace_a_corner ();
     trace_x = m;
@@ -8122,7 +8059,7 @@ void trace_new_edge (halfword r, integer n)
   else
   {
     if (n0 != trace_yy)
-      print_char(33);
+      print_char('!');
     if (((n0 < n1) && (trace_y > trace_yy)) || ((n0 > n1) && (trace_y < trace_yy)))
       trace_a_corner ();
   }
@@ -8258,13 +8195,9 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
   ;
 #ifdef TEXMF_DEBUG
   sum = move[0];
+  for (k = 1; k <= delta; k++)
   {
-    integer for_end;
-    k = 1; for_end = delta;
-    if (k <= for_end)
-      do
-        sum = sum + abs (move[k]);
-      while (k++ < for_end);
+    sum = sum + abs (move[k]);
   }
   if (sum != m1 - m0)
     confusion(48);
@@ -8697,7 +8630,7 @@ void print_spec (str_number s)
   while (true)
   {
     print(octant_dir[octant]);
-    print_char(39);
+    print_char('\'');
     while (true)
     {
       q = mem[p].hh.rh;
@@ -8765,7 +8698,7 @@ void print_strange (str_number s)
       if (mem[p].hh.b0 != t)
       {
         t = mem[p].hh.b0;
-        print_char(32);
+        print_char(' ');
         print_int (t - 1);
       }
       if (q != 0)
@@ -8777,13 +8710,13 @@ void print_strange (str_number s)
           q = mem[q].hh.rh;
           while (mem[mem[q].hh.rh].hh.b0 == 0)
           {
-            print_char(32);
+            print_char(' ');
             print(octant_dir[mem[q + 3].cint]);
             q = mem[q].hh.rh;
           }
-          print_char(41);
+          print_char(')');
         }
-        print_char(32);
+        print_char(' ');
         print(octant_dir[mem[q + 3].cint]);
         q = 0;
       }
@@ -8792,7 +8725,7 @@ void print_strange (str_number s)
     q = p;
     p = mem[p].hh.rh;
   } while (!(p == f));
-  print_char(32);
+  print_char(' ');
   print_int (mem[p].hh.b0 - 1);
   if (q != 0)
   {
@@ -8803,11 +8736,11 @@ void print_strange (str_number s)
       q = mem[q].hh.rh;
       while (mem[mem[q].hh.rh].hh.b0 == 0)
       {
-        print_char(32);
+        print_char(' ');
         print(octant_dir[mem[q + 3].cint]);
         q = mem[q].hh.rh;
       }
-      print_char(41);
+      print_char(')');
     }
   }
   print_err(s);
@@ -9360,24 +9293,23 @@ void make_safe (void)
     after[cur_rounding_ptr] = after[0];
     allsafe = true;
     nexta = after[0];
-    {integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k <= for_end) do
+    for (k = 0; k <= cur_rounding_ptr - 1; k++)
+    {
+      deltab = before[k + 1] - before[k];
+      if (deltab >= 0)
+        deltaa = after[k + 1] - nexta;
+      else
+        deltaa = nexta - after[k + 1];
+      nexta = after[k + 1];
+      if ((deltaa < 0) || (deltaa > abs (deltab + deltab)))
       {
-        deltab = before[k + 1] - before[k];
-        if (deltab >= 0)
-          deltaa = after[k + 1] - nexta;
+        allsafe = false;
+        after[k] = before[k];
+        if (k == cur_rounding_ptr - 1)
+          after[0] = before[0];
         else
-          deltaa = nexta - after[k + 1];
-        nexta = after[k + 1];
-        if ((deltaa < 0) || (deltaa > abs (deltab + deltab)))
-        {
-          allsafe = false;
-          after[k] = before[k];
-          if (k == cur_rounding_ptr - 1)
-            after[0] = before[0];
-          else
-            after[k + 1] = before[k + 1];
-        }
-      } while (k++ < for_end);
+          after[k + 1] = before[k + 1];
+      }
     }
   } while (!(allsafe));
 }
@@ -9644,85 +9576,12 @@ void diag_round (void)
       after[cur_rounding_ptr] = after[0];
       allsafe = true;
       nexta = after[0];
-      {integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k <= for_end) do
-        {
-          a = nexta;
-          b = before[k];
-          nexta = after[k + 1];
-          aa = nexta;
-          bb = before[k + 1];
-          if ((a != b) || (aa != bb))
-          {
-            p = node_to_round[k];
-            pp = node_to_round[k + 1];
-            if (aa == bb)
-            {
-              if (pp == node_to_round[0])
-                unskew (firstx, firsty, mem[pp].hh.b1);
-              else
-                unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[pp].hh.b1);
-              skew (cur_x, cur_y, mem[p].hh.b1);
-              bb = cur_x;
-              aa = bb;
-              dd = cur_y;
-              cc = dd;
-              if (mem[p].hh.b1 > 4)
-              {
-                b = -b;
-                a = -a;
-              }
-            }
-            else
-            {
-              if (mem[p].hh.b1 > 4)
-              {
-                bb = -bb;
-                aa = -aa;
-                b = -b;
-                a = -a;
-              }
-              if (pp == node_to_round[0])
-                dd = firsty - bb;
-              else
-                dd = mem[pp + 2].cint - bb;
-              if (odd (aa - bb))
-              {
-                if (mem[p].hh.b1 > 4)
-                  cc = dd - half (aa - bb + 1);
-                else
-                  cc = dd - half (aa - bb - 1);
-              }
-              else
-                cc = dd - half (aa - bb);
-            }
-            d = mem[p + 2].cint;
-            if (odd (a - b))
-            {
-              if (mem[p].hh.b1 > 4)
-                c = d - half (a - b - 1);
-              else
-                c = d - half (a - b + 1);
-            }
-            else
-              c = d - half (a - b);
-            if ((aa < a) || (cc < c) || (aa - a > 2 * (bb - b)) || (cc - c > 2 * (dd - d)))
-            {
-              allsafe = false;
-              after[k] = before[k];
-              if (k == cur_rounding_ptr - 1)
-                after[0] = before[0];
-              else
-                after[k + 1] = before[k + 1];
-            }
-          }
-        }
-      while (k++ < for_end);}
-    } while (!(allsafe));
-    {integer for_end; k = 0;for_end = cur_rounding_ptr - 1; if (k <= for_end) do
+      for (k = 0; k <= cur_rounding_ptr - 1; k++)
       {
-        a = after[k];
+        a = nexta;
         b = before[k];
-        aa = after[k + 1];
+        nexta = after[k + 1];
+        aa = nexta;
         bb = before[k + 1];
         if ((a != b) || (aa != bb))
         {
@@ -9778,26 +9637,97 @@ void diag_round (void)
           }
           else
             c = d - half (a - b);
-          if (b == bb)
-            alpha = 268435456L;
-          else
-            alpha = make_fraction (aa - a, bb - b);
-          if (d == dd)
-            beta = 268435456L;
-          else
-            beta = make_fraction (cc - c, dd - d);
-          do {
-            mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint - b) + a;
-            mem[p + 2].cint = take_fraction (beta, mem[p + 2].cint - d) + c;
-            mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b) + a;
-            mem[p + 6].cint = take_fraction (beta, mem[p + 6].cint - d) + c;
-            p = mem[p].hh.rh;
-            mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b) + a;
-            mem[p + 4].cint = take_fraction (beta, mem[p + 4].cint - d) + c;
-          } while (!(p == pp));
+          if ((aa < a) || (cc < c) || (aa - a > 2 * (bb - b)) || (cc - c > 2 * (dd - d)))
+          {
+            allsafe = false;
+            after[k] = before[k];
+            if (k == cur_rounding_ptr - 1)
+              after[0] = before[0];
+            else
+              after[k + 1] = before[k + 1];
+          }
         }
       }
-    while (k++ < for_end);}
+    } while (!(allsafe));
+    for (k = 0; k <= cur_rounding_ptr - 1; k++)
+    {
+      a = after[k];
+      b = before[k];
+      aa = after[k + 1];
+      bb = before[k + 1];
+      if ((a != b) || (aa != bb))
+      {
+        p = node_to_round[k];
+        pp = node_to_round[k + 1];
+        if (aa == bb)
+        {
+          if (pp == node_to_round[0])
+            unskew (firstx, firsty, mem[pp].hh.b1);
+          else
+            unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[pp].hh.b1);
+          skew (cur_x, cur_y, mem[p].hh.b1);
+          bb = cur_x;
+          aa = bb;
+          dd = cur_y;
+          cc = dd;
+          if (mem[p].hh.b1 > 4)
+          {
+            b = -b;
+            a = -a;
+          }
+        }
+        else
+        {
+          if (mem[p].hh.b1 > 4)
+          {
+            bb = -bb;
+            aa = -aa;
+            b = -b;
+            a = -a;
+          }
+          if (pp == node_to_round[0])
+            dd = firsty - bb;
+          else
+            dd = mem[pp + 2].cint - bb;
+          if (odd (aa - bb))
+          {
+            if (mem[p].hh.b1 > 4)
+              cc = dd - half (aa - bb + 1);
+            else
+              cc = dd - half (aa - bb - 1);
+          }
+          else
+            cc = dd - half (aa - bb);
+        }
+        d = mem[p + 2].cint;
+        if (odd (a - b))
+        {
+          if (mem[p].hh.b1 > 4)
+            c = d - half (a - b - 1);
+          else
+            c = d - half (a - b + 1);
+        }
+        else
+          c = d - half (a - b);
+        if (b == bb)
+          alpha = 268435456L;
+        else
+          alpha = make_fraction (aa - a, bb - b);
+        if (d == dd)
+          beta = 268435456L;
+        else
+          beta = make_fraction (cc - c, dd - d);
+        do {
+          mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint - b) + a;
+          mem[p + 2].cint = take_fraction (beta, mem[p + 2].cint - d) + c;
+          mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b) + a;
+          mem[p + 6].cint = take_fraction (beta, mem[p + 6].cint - d) + c;
+          p = mem[p].hh.rh;
+          mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b) + a;
+          mem[p + 4].cint = take_fraction (beta, mem[p + 4].cint - d) + c;
+        } while (!(p == pp));
+      }
+    }
   }
 }
 /* 451 */
@@ -10328,37 +10258,20 @@ halfword make_pen (halfword h)
   mem[p].hh.lh = 0;
   if (mem[q].hh.rh != q)
     mem[p].hh.rh = 1;
-  {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
+  for (k = 1; k <= 8; k++)
+  {
+    octant = octant_code[k];
+    n = 0;
+    h = p + octant;
+    while (true)
     {
-      octant = octant_code[k];
-      n = 0;
-      h = p + octant;
-      while (true)
-      {
-        r = get_node (3);
-        skew (mem[q + 1].cint, mem[q + 2].cint, octant);
-        mem[r + 1].cint = cur_x;
-        mem[r + 2].cint = cur_y;
-        if (n == 0)
-          mem[h].hh.rh = r;
-        else if (odd (k))
-        {
-          mem[w].hh.rh = r;
-          mem[r].hh.lh = w;
-        }
-        else
-        {
-          mem[w].hh.lh = r;
-          mem[r].hh.rh = w;
-        }
-        w = r;
-        if (mem[q].hh.b1 != octant)
-          goto done1;
-        q = mem[q].hh.rh;
-        incr (n);
-      }
-      done1: r = mem[h].hh.rh;
-      if (odd (k))
+      r = get_node (3);
+      skew (mem[q + 1].cint, mem[q + 2].cint, octant);
+      mem[r + 1].cint = cur_x;
+      mem[r + 2].cint = cur_y;
+      if (n == 0)
+        mem[h].hh.rh = r;
+      else if (odd (k))
       {
         mem[w].hh.rh = r;
         mem[r].hh.lh = w;
@@ -10367,26 +10280,44 @@ halfword make_pen (halfword h)
       {
         mem[w].hh.lh = r;
         mem[r].hh.rh = w;
-        mem[h].hh.rh = w;
-        r = w;
       }
-      if ((mem[r + 2].cint != mem[mem[r].hh.rh + 2].cint) || (n == 0))
-      {
-        dup_offset (r);
-        incr (n);
-      }
-      r = mem[r].hh.lh;
-      if (mem[r + 1].cint != mem[mem[r].hh.lh + 1].cint)
-        dup_offset (r);
-      else
-        decr (n);
-      if (n >= 255)
-        overflow (579, 255);
-      mem[h].hh.lh = n;
+      w = r;
+      if (mem[q].hh.b1 != octant)
+        goto done1;
+      q = mem[q].hh.rh;
+      incr (n);
     }
-  while (k++ < for_end);}
+  done1:
+    r = mem[h].hh.rh;
+    if (odd (k))
+    {
+      mem[w].hh.rh = r;
+      mem[r].hh.lh = w;
+    }
+    else
+    {
+      mem[w].hh.lh = r;
+      mem[r].hh.rh = w;
+      mem[h].hh.rh = w;
+      r = w;
+    }
+    if ((mem[r + 2].cint != mem[mem[r].hh.rh + 2].cint) || (n == 0))
+    {
+      dup_offset (r);
+      incr (n);
+    }
+    r = mem[r].hh.lh;
+    if (mem[r + 1].cint != mem[mem[r].hh.lh + 1].cint)
+      dup_offset (r);
+    else
+      decr (n);
+    if (n >= 255)
+      overflow (579, 255);
+    mem[h].hh.lh = n;
+  }
   goto found;
-  not_found: p = 3;
+not_found:
+  p = 3;
   if (mc >= 268402688L)
   {
     print_err("Pen too large");
@@ -10442,31 +10373,29 @@ halfword make_path (halfword penhead)
   halfword w, ww;
 
   p = mem_top - 1;
-  {integer for_end; k = 1;for_end = 8; if (k <= for_end) do
+  for (k = 1; k <= 8; k++)
+  {
+    octant = octant_code[k];
+    h = penhead + octant;
+    n = mem[h].hh.lh;
+    w = mem[h].hh.rh;
+    if (!odd (k))
+      w = mem[w].hh.lh;
+    for (m = 1; m <= n + 1; m++)
     {
-      octant = octant_code[k];
-      h = penhead + octant;
-      n = mem[h].hh.lh;
-      w = mem[h].hh.rh;
-      if (!odd (k))
-        w = mem[w].hh.lh;
-      {integer for_end; m = 1;for_end = n + 1; if (m <= for_end)
-        do {
-          if (odd (k))
-            ww = mem[w].hh.rh;
-          else
-            ww = mem[w].hh.lh;
-          if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww + 2].cint != mem[w + 2].cint))
-          {
-            unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
-            mem[p].hh.rh = trivial_knot (cur_x, cur_y);
-            p = mem[p].hh.rh;
-          }
-          w = ww;
-        }
-      while (m++ < for_end);}
+      if (odd (k))
+        ww = mem[w].hh.rh;
+      else
+        ww = mem[w].hh.lh;
+      if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww + 2].cint != mem[w + 2].cint))
+      {
+        unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
+        mem[p].hh.rh = trivial_knot (cur_x, cur_y);
+        p = mem[p].hh.rh;
+      }
+      w = ww;
     }
-  while (k++ < for_end);}
+  }
   if (p == mem_top - 1)
   {
     w = mem[penhead + 1].hh.rh;
@@ -10863,11 +10792,9 @@ void dual_moves (halfword h, halfword p, halfword q)
   w = mem[ww].hh.lh;
   mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[octant]);
   mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[octant]);
+  for (n = 1; n <= n1 - n0 + 1; n++)
   {
-    integer for_end; n = 1;for_end = n1 - n0 + 1; if (n <= for_end)
-      do
-        env_move[n] = mm1;
-      while (n++ < for_end);
+    env_move[n] = mm1;
   }
   env_move[0] = mm0;
   move_ptr = 0;
@@ -10973,10 +10900,9 @@ void dual_moves (halfword h, halfword p, halfword q)
     confusion(50);
 #endif /* TEXMF_DEBUG */
   move[0] = d0 + env_move[1] - mm0;
-  {integer for_end; n = 1;for_end = move_ptr; if (n <= for_end)
-    do
-      move[n] = env_move[n + 1] - env_move[n]+ 1;
-    while (n++ < for_end);
+  for (n = 1; n <= move_ptr; n++)
+  {
+    move[n] = env_move[n + 1] - env_move[n]+ 1;
   }
   move[move_ptr] = move[move_ptr] - d1;
   if (internal[35] > 0)
@@ -11062,12 +10988,9 @@ void fill_envelope (halfword spechead)
       ww = mem[w].hh.lh;
       mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[octant]);
       mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[octant]);
+      for (n = 0; n <= n1 - n0; n++)
       {
-        integer for_end; n = 0;for_end = n1 - n0;
-        if (n <= for_end)
-          do
-            env_move[n] = mm0;
-          while (n++ < for_end);
+        env_move[n] = mm0;
       }
       env_move[n1 - n0] = mm1;
       move_ptr = 0;
@@ -11172,12 +11095,9 @@ void fill_envelope (halfword spechead)
         confusion(49);
 #endif /* TEXMF_DEBUG */
       move[0] = d0 + env_move[0] - mm0;
+      for (n = 1; n <= move_ptr; n++)
       {
-        integer for_end; n = 1;for_end = move_ptr;
-        if (n <= for_end)
-          do
-            move[n] = env_move[n] - env_move[n - 1]+ 1;
-          while (n++ < for_end);
+        move[n] = env_move[n] - env_move[n - 1]+ 1;
       }
       move[move_ptr] = move[move_ptr] - d1;
       if (internal[35] > 0)
@@ -12842,7 +12762,7 @@ void linear_eq (halfword p, small_number t)
         print(590);
         w = w - 2;
       }
-      print_char(61);
+      print_char('=');
       print_dependency(p, 17);
       end_diagnostic (false);
     }
@@ -13016,7 +12936,7 @@ void show_cmd_mod (integer c, integer m)
   begin_diagnostic ();
   print_nl(123);
   print_cmd_mod (c, m);
-  print_char(125);
+  print_char('}');
   end_diagnostic (false);
 }
 /* 635 */
@@ -13035,52 +12955,51 @@ void show_context (void)
   while (true)
   {
     cur_input = input_stack[file_ptr];
-    if ((file_ptr == input_ptr) || (cur_input.index_field <= 15) || (cur_input.index_field != 19) || (cur_input.loc_field != 0))
+    if ((file_ptr == input_ptr) || (index <= 15) || (index != 19) || (loc != 0))
     {
       tally = 0;
       old_setting = selector;
-      if ((cur_input.index_field <= 15))
+      if ((index <= 15))
       {
-        if (cur_input.name_field <= 1)
+        if (name <= 1)
         {
-          if ((cur_input.name_field == 0) && (file_ptr == 0))
+          if ((name == 0) && (file_ptr == 0))
             print_nl(604);
           else
             print_nl(605);
         }
-        else if (cur_input.name_field == 2)
+        else if (name == 2)
           print_nl(606);
         else
         {
           print_nl(607);
           print_int (line);
         }
-        print_char(32);
+        print_char(' ');
         {
           l = tally;
           tally = 0;
           selector = 4;
           trick_count = 1000000L;
         }
-        if (cur_input.limit_field > 0)
+        if (limit > 0)
         {
-          integer for_end; i = cur_input.start_field;for_end = cur_input.limit_field - 1;
-          if (i <= for_end)
-            do {
-              if (i == cur_input.loc_field)
-              {
-                first_count = tally;
-                trick_count = tally + 1 + error_line - half_error_line;
-                if (trick_count < error_line)
-                  trick_count = error_line;
-              }
-              print(buffer[i]);
-          } while (i++ < for_end);
+          for (i = start; i <= limit - 1; i++)
+          {
+            if (i == loc)
+            {
+              first_count = tally;
+              trick_count = tally + 1 + error_line - half_error_line;
+              if (trick_count < error_line)
+                trick_count = error_line;
+            }
+            print(buffer[i]);
+          }
         }
       }
       else
       {
-        switch (cur_input.index_field)
+        switch (index)
         {
           case 16:
             print_nl(608);
@@ -13088,7 +13007,7 @@ void show_context (void)
           case 17:
             {
               print_nl(613);
-              p = param_stack[cur_input.limit_field];
+              p = param_stack[limit];
               if (p != 0)
               {
                 if (mem[p].hh.rh == 1)
@@ -13103,7 +13022,7 @@ void show_context (void)
             print_nl(609);
             break;
           case 19:
-            if (cur_input.loc_field == 0)
+            if (loc == 0)
               print_nl(610);
             else
               print_nl(611);
@@ -13114,19 +13033,19 @@ void show_context (void)
           case 21:
             {
               print_ln ();
-              if (cur_input.name_field != 0)
-                slow_print(hash[cur_input.name_field].v.RH);
+              if (name != 0)
+                slow_print(hash[name].rh);
               else
               {
-                p = param_stack[cur_input.limit_field];
+                p = param_stack[limit];
                 if (p == 0)
-                  show_token_list (param_stack[cur_input.limit_field + 1], 0, 20, tally);
+                  show_token_list (param_stack[limit + 1], 0, 20, tally);
                 else
                 {
                   q = p;
                   while (mem[q].hh.rh != 0)
                     q = mem[q].hh.rh;
-                  mem[q].hh.rh = param_stack[cur_input.limit_field + 1];
+                  mem[q].hh.rh = param_stack[limit + 1];
                   show_token_list (p, 0, 20, tally);
                   mem[q].hh.rh = 0;
                 }
@@ -13144,10 +13063,10 @@ void show_context (void)
           selector = 4;
           trick_count = 1000000L;
         }
-        if (cur_input.index_field != 21)
-          show_token_list (cur_input.start_field, cur_input.loc_field, 100000L, 0);
+        if (index != 21)
+          show_token_list (start, loc, 100000L, 0);
         else
-          show_macro (cur_input.start_field, cur_input.loc_field, 100000L);
+          show_macro (start, loc, 100000L);
       }
       selector = old_setting;
       if (trick_count == 1000000L)
@@ -13172,35 +13091,29 @@ void show_context (void)
         p = l + first_count - half_error_line + 3;
         n = half_error_line;
       }
+      for (q = p; q <= first_count - 1; q++)
       {
-        integer for_end; q = p;for_end = first_count - 1;
-        if (q <= for_end) do
-          print_char(trick_buf[q % error_line]);
-          while (q++ < for_end);
+        print_char(trick_buf[q % error_line]);
       }
       print_ln ();
+      for (q = 1; q <= n; q++)
       {
-        integer for_end; q = 1;for_end = n;
-        if (q <= for_end) do
-          print_char(32);
-          while (q++ < for_end);
+        print_char(' ');
       }
       if (m + n <= error_line)
         p = first_count + m;
       else
         p = first_count + (error_line - n - 3);
+      for (q = first_count; q <= p - 1; q++)
       {
-        integer for_end; q = first_count;for_end = p - 1;
-        if (q <= for_end) do
-          print_char(trick_buf[q % error_line]);
-          while (q++ < for_end);
+        print_char(trick_buf[q % error_line]);
       }
       if (m + n > error_line)
         print(276);
     }
-    if ((cur_input.index_field <= 15))
+    if ((index <= 15))
     {
-      if ((cur_input.name_field > 2) || (file_ptr == 0))
+      if ((name > 2) || (file_ptr == 0))
         goto done;
     }
     decr (file_ptr);
@@ -13220,27 +13133,27 @@ void begin_token_list (halfword p, quarterword t)
     input_stack[input_ptr] = cur_input;
     incr (input_ptr);
   }
-  cur_input.start_field = p;
-  cur_input.index_field = t;
-  cur_input.limit_field = param_ptr;
-  cur_input.loc_field = p;
+  start = p;
+  index = t;
+  limit = param_ptr;
+  loc = p;
 }
 /* 650 */
 void end_token_list (void)
 {
   halfword p;
 
-  if (cur_input.index_field >= 19)
+  if (index >= 19)
   {
-    if (cur_input.index_field <= 20)
+    if (index <= 20)
     {
-      flush_token_list (cur_input.start_field);
+      flush_token_list (start);
       goto done;
     }
     else
-      delete_mac_ref (cur_input.start_field);
+      delete_mac_ref (start);
   }
-  while (param_ptr > cur_input.limit_field)
+  while (param_ptr > limit)
   {
     decr (param_ptr);
     p = param_stack[param_ptr];
@@ -13461,7 +13374,7 @@ void back_input (void)
   halfword p;
 
   p = cur_tok ();
-  while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
+  while ((index > 15) && (loc == 0))
     end_token_list ();
   begin_token_list (p, 19);
 }
@@ -13478,7 +13391,7 @@ void ins_error (void)
 {
   OK_to_interrupt = false;
   back_input ();
-  cur_input.index_field = 20;
+  index = 20;
   OK_to_interrupt = true;
   error ();
 }
@@ -13500,20 +13413,20 @@ void begin_file_reading (void)
     input_stack[input_ptr] = cur_input;
     incr (input_ptr);
   }
-  cur_input.index_field = in_open;
-  line_stack[cur_input.index_field] = line;
-  cur_input.start_field = first;
-  cur_input.name_field = 0;
+  index = in_open;
+  line_stack[index] = line;
+  start = first;
+  name = 0;
 }
 /* 655 */
 void end_file_reading (void)
 {
-  first = cur_input.start_field;
-  line = line_stack[cur_input.index_field];
-  if (cur_input.index_field != in_open)
+  first = start;
+  line = line_stack[index];
+  if (index != in_open)
     confusion(617);
-  if (cur_input.name_field > 2)
-    aclose (input_file[cur_input.index_field]);
+  if (name > 2)
+    aclose (input_file[index]);
   {
     decr (input_ptr);
     cur_input = input_stack[input_ptr];
@@ -13523,7 +13436,7 @@ void end_file_reading (void)
 /* 656 */
 void clear_for_error_prompt (void)
 {
-  while ((cur_input.index_field <= 15) && (cur_input.name_field == 0) && (input_ptr > 0) && (cur_input.loc_field == cur_input.limit_field))
+  while ((index <= 15) && (name == 0) && (input_ptr > 0) && (loc == limit))
     end_file_reading ();
   print_ln ();
 }
@@ -13579,7 +13492,7 @@ boolean check_outer_validity (void)
             else
             {
               cur_sym = 9759;
-              eqtb[9759].v.RH = warning_info;
+              eqtb[9759].rh = warning_info;
             }
           }
           break;
@@ -13588,7 +13501,7 @@ boolean check_outer_validity (void)
           {
             print(634);
             if (scanner_status == 5)
-              slow_print(hash[warning_info].v.RH);
+              slow_print(hash[warning_info].rh);
             else
               print_variable_name(warning_info);
             cur_sym = 9765;
@@ -13597,7 +13510,7 @@ boolean check_outer_validity (void)
         case 6:
           {
             print(635);
-            slow_print(hash[warning_info].v.RH);
+            slow_print(hash[warning_info].rh);
             print(636);
             help_line[3] = 637;
             cur_sym = 9764;
@@ -13636,11 +13549,11 @@ void get_next (void)
 
 lab_restart:
   cur_sym = 0;
-  if ((cur_input.index_field <= 15))
+  if ((index <= 15))
   {
 lab25:
-    c = buffer[cur_input.loc_field];
-    incr (cur_input.loc_field);
+    c = buffer[loc];
+    incr (loc);
     cclass = char_class[c];
     switch (cclass)
     {
@@ -13649,7 +13562,7 @@ lab25:
         break;
       case 1:
         {
-          cclass = char_class[buffer[cur_input.loc_field]];
+          cclass = char_class[buffer[loc]];
           if (cclass > 1)
             goto lab25;
           else if (cclass < 1)
@@ -13664,20 +13577,20 @@ lab25:
         break;
       case 3:
         {
-          if (cur_input.name_field > 2)
+          if (name > 2)
           {
             incr (line);
-            first = cur_input.start_field;
+            first = start;
             if (!force_eof)
             {
-              if (inputln (input_file[cur_input.index_field], true))
+              if (inputln (input_file[index], true))
                 firm_up_the_line ();
               else
                 force_eof = true;
             }
             if (force_eof)
             {
-              print_char(41);
+              print_char(')');
               decr (open_parens);
               fflush (stdout);
               force_eof = false;
@@ -13687,9 +13600,9 @@ lab25:
               else
                 goto lab_restart;
             }
-            buffer[cur_input.limit_field] = 37;
-            first = cur_input.limit_field + 1;
-            cur_input.loc_field = cur_input.start_field;
+            buffer[limit] = 37;
+            first = limit + 1;
+            loc = start;
           }
           else
           {
@@ -13702,19 +13615,15 @@ lab25:
               open_log_file ();
             if (interaction > 1)
             {
-              if (cur_input.limit_field == cur_input.start_field)
+              if (limit == start)
                 print_nl(652);
               print_ln ();
-              first = cur_input.start_field;
-              {
-                ;
-                print(42);
-                term_input ();
-              }
-              cur_input.limit_field = last;
-              buffer[cur_input.limit_field] = 37;
-              first = cur_input.limit_field + 1;
-              cur_input.loc_field = cur_input.start_field;
+              first = start;
+              prompt_input("*");
+              limit = last;
+              buffer[limit] = 37;
+              first = limit + 1;
+              loc = start;
             }
             else
               fatal_error (653);
@@ -13728,18 +13637,18 @@ lab25:
         break;
       case 4:
         {
-          if (buffer[cur_input.loc_field] == 34)
+          if (buffer[loc] == 34)
             cur_mod = 261;
           else
           {
-            k = cur_input.loc_field;
-            buffer[cur_input.limit_field + 1] = 34;
+            k = loc;
+            buffer[limit + 1] = 34;
             do {
-              incr (cur_input.loc_field);
-            } while (!(buffer[cur_input.loc_field] == 34));
-            if (cur_input.loc_field > cur_input.limit_field)
+              incr (loc);
+            } while (!(buffer[loc] == 34));
+            if (loc > limit)
             {
-              cur_input.loc_field = cur_input.limit_field;
+              loc = limit;
               print_err("Incomplete string token has been flushed");
               {
                 help_ptr = 3;
@@ -13752,16 +13661,16 @@ lab25:
               deletions_allowed = true;
               goto lab_restart;
             }
-            if ((cur_input.loc_field == k + 1) && ((str_start[buffer[k] + 1] - str_start[buffer[k]]) == 1))
+            if ((loc == k + 1) && ((str_start[buffer[k] + 1] - str_start[buffer[k]]) == 1))
               cur_mod = buffer[k];
             else
             {
               {
-                if (pool_ptr + cur_input.loc_field - k > max_pool_ptr)
+                if (pool_ptr + loc - k > max_pool_ptr)
                 {
-                  if (pool_ptr + cur_input.loc_field - k > pool_size)
+                  if (pool_ptr + loc - k > pool_size)
                     overflow (257, pool_size - init_pool_ptr);
-                  max_pool_ptr = pool_ptr + cur_input.loc_field - k;
+                  max_pool_ptr = pool_ptr + loc - k;
                 }
               }
               do {
@@ -13770,11 +13679,11 @@ lab25:
                   incr (pool_ptr);
                 }
                 incr (k);
-              } while (!(k == cur_input.loc_field));
+              } while (!(k == loc));
               cur_mod = make_string ();
             }
           }
-          incr (cur_input.loc_field);
+          incr (loc);
           cur_cmd = 39;
           goto lab_exit;
         }
@@ -13784,7 +13693,7 @@ lab25:
       case 7:
       case 8:
         {
-          k = cur_input.loc_field - 1;
+          k = loc - 1;
           goto found;
         }
         break;
@@ -13806,37 +13715,37 @@ lab25:
         ;
         break;
     }
-    k = cur_input.loc_field - 1;
-    while (char_class[buffer[cur_input.loc_field]] == cclass)
-      incr (cur_input.loc_field);
+    k = loc - 1;
+    while (char_class[buffer[loc]] == cclass)
+      incr (loc);
     goto found;
   lab85:
     n = c - 48;
-    while (char_class[buffer[cur_input.loc_field]] == 0)
+    while (char_class[buffer[loc]] == 0)
     {
       if (n < 4096)
-        n = 10 * n + buffer[cur_input.loc_field] - 48;
-      incr (cur_input.loc_field);
+        n = 10 * n + buffer[loc] - 48;
+      incr (loc);
     }
-    if (buffer[cur_input.loc_field] == 46)
+    if (buffer[loc] == 46)
     {
-      if (char_class[buffer[cur_input.loc_field + 1]] == 0)
+      if (char_class[buffer[loc + 1]] == 0)
         goto done;
     }
     f = 0;
     goto lab87;
   done:
-    incr (cur_input.loc_field);
+    incr (loc);
   lab86:
     k = 0;
     do {
       if (k < 17)
       {
-        dig[k] = buffer[cur_input.loc_field] - 48;
+        dig[k] = buffer[loc] - 48;
         incr (k);
       }
-      incr (cur_input.loc_field);
-    } while (!(char_class[buffer[cur_input.loc_field]]!= 0));
+      incr (loc);
+    } while (!(char_class[buffer[loc]]!= 0));
     f = round_decimals (k);
     if (f == 65536L)
     {
@@ -13862,36 +13771,36 @@ lab25:
     cur_cmd = 42;
     goto lab_exit;
   found:
-    cur_sym = id_lookup (k, cur_input.loc_field - k);
+    cur_sym = id_lookup (k, loc - k);
   }
-  else if (cur_input.loc_field >= hi_mem_min)
+  else if (loc >= hi_mem_min)
   {
-    cur_sym = mem[cur_input.loc_field].hh.lh;
-    cur_input.loc_field = mem[cur_input.loc_field].hh.rh;
+    cur_sym = mem[loc].hh.lh;
+    loc = mem[loc].hh.rh;
     if (cur_sym >= 9770)
     {
       if (cur_sym >= 9920)
       {
         if (cur_sym >= 10070)
         cur_sym = cur_sym - 150;
-        begin_token_list (param_stack[cur_input.limit_field + cur_sym - (9920)], 18);
+        begin_token_list (param_stack[limit + cur_sym - (9920)], 18);
         goto lab_restart;
       }
       else
       {
         cur_cmd = 38;
-        cur_mod = param_stack[cur_input.limit_field + cur_sym - (9770)];
+        cur_mod = param_stack[limit + cur_sym - (9770)];
         cur_sym = 0;
         goto lab_exit;
       }
     }
   }
-  else if (cur_input.loc_field > 0)
+  else if (loc > 0)
   {
-    if (mem[cur_input.loc_field].hh.b1 == 12)
+    if (mem[loc].hh.b1 == 12)
     {
-      cur_mod = mem[cur_input.loc_field + 1].cint;
-      if (mem[cur_input.loc_field].hh.b0 == 16)
+      cur_mod = mem[loc + 1].cint;
+      if (mem[loc].hh.b0 == 16)
         cur_cmd = 42;
       else
       {
@@ -13904,10 +13813,10 @@ lab25:
     }
     else
     {
-      cur_mod = cur_input.loc_field;
+      cur_mod = loc;
       cur_cmd = 38;
     }
-    cur_input.loc_field = mem[cur_input.loc_field].hh.rh;
+    loc = mem[loc].hh.rh;
     goto lab_exit;
   }
   else
@@ -13916,7 +13825,7 @@ lab25:
     goto lab_restart;
   }
   cur_cmd = eqtb[cur_sym].lh;
-  cur_mod = eqtb[cur_sym].v.RH;
+  cur_mod = eqtb[cur_sym].rh;
   if (cur_cmd >= 86)
   {
     if (check_outer_validity ())
@@ -13931,35 +13840,27 @@ void firm_up_the_line (void)
 {
   integer k;
 
-  cur_input.limit_field = last;
+  limit = last;
   if (internal[31] > 0)
   {
     if (interaction > 1)
     {
       ;
       print_ln ();
-      if (cur_input.start_field < cur_input.limit_field)
+      if (start < limit)
       {
-        integer for_end; k = cur_input.start_field; for_end = cur_input.limit_field - 1;
-        if (k <= for_end) do
+        for (k = start; k <= limit - 1; k++)
           print(buffer[k]);
-          while (k++ < for_end);
       }
-      first = cur_input.limit_field;
-      {
-        ;
-        print(654);
-        term_input ();
-      }
+      first = limit;
+      prompt_input("=>");
       if (last > first)
       {
+        for (k = first; k <= last - 1; k++)
         {
-          integer for_end; k = first;for_end = last - 1;
-          if (k <= for_end) do
-            buffer[k + cur_input.start_field - first] = buffer[k];
-            while (k++ < for_end);
+          buffer[k + start - first] = buffer[k];
         }
-        cur_input.limit_field = cur_input.start_field + last - first;
+        limit = start + last - first;
       }
     }
   }
@@ -14108,7 +14009,7 @@ void make_op_def (void)
   mem[r].hh.rh = scan_toks (16, p, 0, 0);
   scanner_status = 0;
   eqtb[warning_info].lh = m;
-  eqtb[warning_info].v.RH = q;
+  eqtb[warning_info].rh = q;
   get_x_next ();
 }
 /* 1032 */
@@ -14121,7 +14022,7 @@ void check_delimiter (halfword ldelim, halfword rdelim)
   }
   if (cur_sym != rdelim)
   {
-    missing_err (hash[rdelim].v.RH);
+    missing_err (hash[rdelim].rh);
     {
       help_ptr = 2;
       help_line[1] = 922;
@@ -14132,7 +14033,7 @@ void check_delimiter (halfword ldelim, halfword rdelim)
   else
   {
     print_err("The token `");
-    slow_print(hash[rdelim].v.RH);
+    slow_print(hash[rdelim].rh);
     print(925);
     {
       help_ptr = 3;
@@ -14193,7 +14094,7 @@ halfword scan_declared_variable (void)
 done:
   if (eqtb[x].lh % 86 != 41)
     clear_symbol (x, false);
-  if (eqtb[x].v.RH == 0)
+  if (eqtb[x].rh == 0)
     new_root (x);
   Result = h;
   return Result;
@@ -14225,12 +14126,12 @@ void scan_def (void)
     scanner_status = 5;
     n = 0;
     eqtb[warning_info].lh = 10;
-    eqtb[warning_info].v.RH = q;
+    eqtb[warning_info].rh = q;
   }
   else
   {
     p = scan_declared_variable ();
-    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p].hh.rh, true);
+    flush_variable (eqtb[mem[p].hh.lh].rh, mem[p].hh.rh, true);
     warning_info = find_variable (p);
     flush_list (p);
     if (warning_info == 0)
@@ -14362,12 +14263,12 @@ void print_macro_name (halfword a, halfword n)
   halfword p, q;
 
   if (n != 0)
-    slow_print(hash[n].v.RH);
+    slow_print(hash[n].rh);
   else
   {
     p = mem[a].hh.lh;
     if (p == 0)
-      slow_print(hash[mem[mem[mem[a].hh.rh].hh.lh].hh.lh].v.RH);
+      slow_print(hash[mem[mem[mem[a].hh.rh].hh.lh].hh.lh].rh);
     else
     {
       q = p;
@@ -14551,7 +14452,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         }
         else
         {
-          missing_err (hash[rdelim].v.RH);
+          missing_err (hash[rdelim].rh);
           {
             help_ptr = 2;
             help_line[1] = 715;
@@ -14587,9 +14488,9 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
   {
     print_err("Too many arguments to ");
     print_macro_name (arg_list, macro_name);
-    print_char(59);
+    print_char(';');
     print_nl(705);
-    slow_print(hash[rdelim].v.RH);
+    slow_print(hash[rdelim].rh);
     print(299);
     {
       help_ptr = 3;
@@ -14671,7 +14572,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
           {
             if ((cur_cmd != 62) || (cur_mod != ldelim))
             {
-              missing_err (hash[rdelim].v.RH);
+              missing_err (hash[rdelim].rh);
               {
                 help_ptr = 2;
                 help_line[1] = 715;
@@ -14709,7 +14610,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     }
   }
   r = mem[r].hh.rh;
-  while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
+  while ((index > 15) && (loc == 0))
     end_token_list ();
   if (param_ptr + n > max_param_stack)
   {
@@ -14718,8 +14619,8 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       overflow (687, 150);
   }
   begin_token_list (defref, 21);
-  cur_input.name_field = macro_name;
-  cur_input.loc_field = r;
+  name = macro_name;
+  loc = r;
   if (n > 0)
   {
     p = arg_list;
@@ -14804,7 +14705,7 @@ void expand (void)
       break;
     case 5:
       {
-        while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
+        while ((index > 15) && (loc == 0))
           end_token_list ();
         if (loop_ptr == 0)
         {
@@ -14843,12 +14744,12 @@ void expand (void)
           {
             p = 0;
             do {
-              if ((cur_input.index_field <= 15))
+              if ((index <= 15))
                 end_file_reading ();
               else
               {
-                if (cur_input.index_field <= 17)
-                  p = cur_input.start_field;
+                if (index <= 17)
+                  p = start;
                 end_token_list ();
               }
             } while (!(p != 0));
@@ -14904,7 +14805,7 @@ void expand (void)
           if ((str_start[cur_exp + 1] - str_start[cur_exp]) > 0)
           {
             begin_file_reading ();
-            cur_input.name_field = 2;
+            name = 2;
             k = first + (str_start[cur_exp + 1] - str_start[cur_exp]);
             if (k >= max_buf_stack)
             {
@@ -14916,16 +14817,16 @@ void expand (void)
               max_buf_stack = k + 1;
             }
             j = str_start[cur_exp];
-            cur_input.limit_field = k;
-            while (first < cur_input.limit_field)
+            limit = k;
+            while (first < limit)
             {
               buffer[first] = str_pool[j];
               incr (j);
               incr (first);
             }
-            buffer[cur_input.limit_field] = 37;
-            first = cur_input.limit_field + 1;
-            cur_input.loc_field = cur_input.start_field;
+            buffer[limit] = 37;
+            first = limit + 1;
+            loc = start;
             flush_cur_exp (0);
           }
         }
@@ -15289,7 +15190,7 @@ void resume_iteration (void)
       print_exp (q, 1);
     else
       show_token_list (q, 0, 50, 0);
-    print_char(125);
+    print_char('}');
     end_diagnostic (false);
   }
   goto lab_exit;
@@ -15417,18 +15318,14 @@ void end_name (void)
     }
     if (mustquote)
     {
+      for (j = pool_ptr - 1; j <= t; j++)
       {
-        integer for_end; j = pool_ptr - 1;for_end = t;
-        if (j >= for_end) do
-          str_pool[j + 2] = str_pool[j];
-          while (j-- > for_end);
+        str_pool[j + 2] = str_pool[j];
       }
       str_pool[t + 1] = 34;
+      for (j = t - 1; j <= s; j++)
       {
-        integer for_end; j = t - 1;for_end = s;
-        if (j >= for_end) do
-          str_pool[j + 1] = str_pool[j];
-          while (j-- > for_end);
+        str_pool[j + 1] = str_pool[j];
       }
       str_pool[s] = 34;
       pool_ptr = pool_ptr + 2;
@@ -15455,18 +15352,14 @@ void end_name (void)
     }
     if (mustquote)
     {
+      for (j = pool_ptr - 1; j <= t; j++)
       {
-        integer for_end; j = pool_ptr - 1;for_end = t;
-        if (j >= for_end) do
-          str_pool[j + 2] = str_pool[j];
-          while (j-- > for_end);
+        str_pool[j + 2] = str_pool[j];
       }
       str_pool[t + 1] = 34;
+      for (j = t - 1; j <= s; j++)
       {
-        integer for_end; j = t - 1;for_end = s;
-        if (j >= for_end) do
-          str_pool[j + 1] = str_pool[j];
-          while (j-- > for_end);
+        str_pool[j + 1] = str_pool[j];
       }
       str_pool[s] = 34;
       pool_ptr = pool_ptr + 2;
@@ -15488,11 +15381,9 @@ void end_name (void)
   if (mustquote)
   {
     str_pool[t + 1] = 34;
+    for (j = t - 1; j <= s; j++)
     {
-      integer for_end; j = t - 1;for_end = s;
-      if (j >= for_end) do
-        str_pool[j + 1] = str_pool[j];
-        while (j-- > for_end);
+      str_pool[j + 1] = str_pool[j];
     }
     str_pool[s] = 34;
     pool_ptr = pool_ptr + 2;
@@ -15513,44 +15404,35 @@ void pack_file_name (str_number n, str_number a, str_number e)
   if (name_of_file)
     libcfree (name_of_file);
   name_of_file = xmallocarray (ASCII_code, (str_start[a + 1] - str_start[a]) + (str_start[n + 1] - str_start[n]) + (str_start[e + 1] - str_start[e]) + 1);
+  for (j = str_start[a]; j <= str_start[a + 1] - 1; j++)
   {
-    integer for_end; j = str_start[a];for_end = str_start[a + 1] - 1;
-    if (j <= for_end) do
+    c = str_pool[j];
+    if (!(c == 34))
     {
-      c = str_pool[j];
-      if (!(c == 34))
-      {
-        incr (k);
-        if (k <= maxint)
-          name_of_file[k] = xchr[c];
-      }
-    } while (j++ < for_end);
+      incr (k);
+      if (k <= maxint)
+        name_of_file[k] = xchr[c];
+    }
   }
+  for (j = str_start[n]; j <= str_start[n + 1] - 1; j++)
   {
-    integer for_end; j = str_start[n];for_end = str_start[n + 1] - 1;
-    if (j <= for_end) do
+    c = str_pool[j];
+    if (!(c == 34))
     {
-      c = str_pool[j];
-      if (!(c == 34))
-      {
-        incr (k);
-        if (k <= maxint)
-          name_of_file[k] = xchr[c];
-      }
-    } while (j++ < for_end);
+      incr (k);
+      if (k <= maxint)
+        name_of_file[k] = xchr[c];
+    }
   }
+  for (j = str_start[e]; j <= str_start[e + 1] - 1; j++)
   {
-    integer for_end; j = str_start[e];for_end = str_start[e + 1] - 1;
-    if (j <= for_end) do
+    c = str_pool[j];
+    if (!(c == 34))
     {
-      c = str_pool[j];
-      if (!(c == 34))
-      {
-        incr (k);
-        if (k <= maxint)
-          name_of_file[k] = xchr[c];
-      }
-    } while (j++ < for_end);
+      incr (k);
+      if (k <= maxint)
+        name_of_file[k] = xchr[c];
+    }
   }
   if (k <= maxint)
     name_length = k;
@@ -15571,44 +15453,35 @@ void pack_buffered_name (small_number n, integer a, integer b)
   if (name_of_file)
     libcfree (name_of_file);
   name_of_file = xmallocarray (ASCII_code, n + (b - a + 1) + 6);
+  for (j = 1; j <= n; j++)
   {
-    integer for_end; j = 1;for_end = n; 
-    if (j <= for_end) do
+    c = xord[ucharcast (MF_base_default[j])];
+    if (!(c == 34))
     {
-      c = xord[ucharcast (MF_base_default[j])];
-      if (!(c == 34))
-      {
-        incr (k);
-        if (k <= maxint)
-          name_of_file[k] = xchr[c];
-      }
-    } while (j++ < for_end);
+      incr (k);
+      if (k <= maxint)
+        name_of_file[k] = xchr[c];
+    }
   }
+  for (j = a; j <= b; j++)
   {
-    integer for_end; j = a;for_end = b;
-    if (j <= for_end) do
+    c = buffer[j];
+    if (!(c == 34))
     {
-      c = buffer[j];
-      if (!(c == 34))
-      {
-        incr (k);
-        if (k <= maxint)
-          name_of_file[k] = xchr[c];
-      }
-    } while (j++ < for_end);
+      incr (k);
+      if (k <= maxint)
+        name_of_file[k] = xchr[c];
+    }
   }
+  for (j = base_default_length - 4; j <= base_default_length; j++)
   {
-    integer for_end; j = base_default_length - 4;for_end = base_default_length;
-    if (j <= for_end) do
+    c = xord[ucharcast (MF_base_default[j])];
+    if (!(c == 34))
     {
-      c = xord[ucharcast (MF_base_default[j])];
-      if (!(c == 34))
-      {
-        incr (k);
-        if (k <= maxint)
-          name_of_file[k] = xchr[c];
-      }
-    } while (j++ < for_end);
+      incr (k);
+      if (k <= maxint)
+        name_of_file[k] = xchr[c];
+    }
   }
   if (k <= maxint)
     name_length = k;
@@ -15626,13 +15499,10 @@ str_number make_name_string (void)
     Result = 63;
   else
   {
+    for (k = 1; k <= name_length; k++)
     {
-      integer for_end; k = 1;for_end = name_length;
-      if (k <= for_end) do
-      {
-        str_pool[pool_ptr] = xord[name_of_file[k]];
-        incr (pool_ptr);
-      } while (k++ < for_end);
+      str_pool[pool_ptr] = xord[name_of_file[k]];
+      incr (pool_ptr);
     }
     Result = make_string ();
   }
@@ -15673,15 +15543,15 @@ str_number w_make_name_string (word_file f)
 void scan_file_name (void)
 {
   begin_name ();
-  while ((buffer[cur_input.loc_field] == 32) || (buffer[cur_input.loc_field] == 9))
-    incr (cur_input.loc_field);
+  while ((buffer[loc] == 32) || (buffer[loc] == 9))
+    incr (loc);
   while (true)
   {
-    if ((buffer[cur_input.loc_field] == 59) || (buffer[cur_input.loc_field] == 37))
+    if ((buffer[loc] == 59) || (buffer[loc] == 37))
       goto done;
-    if (!more_name (buffer[cur_input.loc_field]))
+    if (!more_name (buffer[loc]))
       goto done;
-    incr (cur_input.loc_field);
+    incr (loc);
   }
 done:
   end_name ();
@@ -15715,11 +15585,7 @@ void prompt_file_name (str_number s, str_number e)
   if (interaction < 2)
     fatal_error (749);
   saved_cur_name = cur_name;
-  {
-    ;
-    print(262);
-    term_input ();
-  }
+  prompt_input(": ");
   {
     begin_name ();
     k = first;
@@ -15771,21 +15637,19 @@ void open_log_file (void)
     slow_print(base_ident);
     print(755);
     print_int (round_unscaled (internal[16]));
-    print_char(32);
+    print_char(' ');
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
     m = round_unscaled (internal[15]);
+    for (k = 3 * m - 2; k <= 3 * m; k++)
     {
-      integer for_end; k = 3 * m - 2;for_end = 3 * m;
-      if (k <= for_end) do
-        putc (months[k],  log_file);
-        while (k++ < for_end);
+      putc (months[k], log_file);
     }
-    print_char(32);
+    print_char(' ');
     print_int (round_unscaled (internal[14]));
-    print_char(32);
+    print_char(' ');
     m = round_unscaled (internal[17]);
     print_dd (m / 60);
-    print_char(58);
+    print_char(':');
     print_dd (m % 60);
     if (translatefilename)
     {
@@ -15798,11 +15662,9 @@ void open_log_file (void)
   input_stack[input_ptr] = cur_input;
   print_nl(753);
   l = input_stack[0].limit_field - 1;
+  for (k = 1; k <= l; k++)
   {
-    integer for_end; k = 1;for_end = l;
-    if (k <= for_end) do
-      print(buffer[k]);
-      while (k++ < for_end);
+    print(buffer[k]);
   }
   print_ln ();
   selector = old_setting + 2;
@@ -15810,9 +15672,9 @@ void open_log_file (void)
 /* 793 */
 void start_input (void)
 {
-  while ((cur_input.index_field > 15) && (cur_input.loc_field == 0))
+  while ((index > 15) && (loc == 0))
     end_token_list ();
-  if ((cur_input.index_field > 15))
+  if ((index > 15))
   {
     print_err("File names can't appear within macros");
     {
@@ -15823,7 +15685,7 @@ void start_input (void)
     }
     error ();
   }
-  if ((cur_input.index_field <= 15))
+  if ((index <= 15))
     scan_file_name ();
   else
   {
@@ -15840,35 +15702,35 @@ void start_input (void)
       cur_ext = 261;
       pack_file_name (cur_name, cur_area, cur_ext);
     }
-    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file[cur_input.index_field], kpsemfformat))
+    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file[index], kpsemfformat))
       goto done;
     end_file_reading ();
     prompt_file_name (743, 747);
   }
 done:
-  cur_input.name_field = a_make_name_string (input_file[cur_input.index_field]);
+  name = a_make_name_string (input_file[index]);
   str_ref[cur_name] = 127;
   if (job_name == 0)
   {
     job_name = getjob_name (cur_name);
     open_log_file ();
   }
-  if (term_offset + (str_start[cur_input.name_field + 1] - str_start[cur_input.name_field]) > max_print_line - 2)
+  if (term_offset + (str_start[name + 1] - str_start[name]) > max_print_line - 2)
     print_ln ();
   else if ((term_offset > 0) || (file_offset > 0))
-    print_char(32);
-  print_char(40);
+    print_char(' ');
+  print_char('(');
   incr (open_parens);
-  slow_print(cur_input.name_field);
+  slow_print(name);
   fflush (stdout);
   {
     line = 1;
-    if (inputln (input_file[cur_input.index_field], false))
+    if (inputln (input_file[index], false))
       ;
     firm_up_the_line ();
-    buffer[cur_input.limit_field] = 37;
-    first = cur_input.limit_field + 1;
-    cur_input.loc_field = cur_input.start_field;
+    buffer[limit] = 37;
+    first = limit + 1;
+    loc = start;
   }
 }
 /* 824 */
@@ -15879,7 +15741,7 @@ void bad_exp (str_number s)
   print_err(s);
   print(770);
   print_cmd_mod (cur_cmd, cur_mod);
-  print_char(39);
+  print_char('\'');
   {
     help_ptr = 4;
     help_line[3] = 771;
@@ -16268,27 +16130,20 @@ void do_nullary (quarterword c)
         if (interaction <= 1)
           fatal_error (835);
         begin_file_reading ();
-        cur_input.name_field = 1;
+        name = 1;
+        prompt_input("");
         {
-          ;
-          print(261);
-          term_input ();
-        }
-        {
-          if (pool_ptr + last - cur_input.start_field > max_pool_ptr)
+          if (pool_ptr + last - start > max_pool_ptr)
           {
-            if (pool_ptr + last - cur_input.start_field > pool_size)
+            if (pool_ptr + last - start > pool_size)
               overflow (257, pool_size - init_pool_ptr);
-            max_pool_ptr = pool_ptr + last - cur_input.start_field;
+            max_pool_ptr = pool_ptr + last - start;
           }
         }
+        for (k = start; k <= last - 1; k++)
         {
-          integer for_end; k = cur_input.start_field;for_end = last - 1;
-          if (k <= for_end) do
-          {
-            str_pool[pool_ptr] = buffer[k];
-            incr (pool_ptr);
-          } while (k++ < for_end);
+          str_pool[pool_ptr] = buffer[k];
+          incr (pool_ptr);
         }
         end_file_reading ();
         cur_type = 4;
@@ -16322,7 +16177,7 @@ boolean nice_pair (integer p, quarterword t)
 /* 900 */
 void print_known_or_unknown_type (small_number t, integer v)
 {
-  print_char(40);
+  print_char('(');
   if (t < 17)
   {
     if (t != 14)
@@ -16334,7 +16189,7 @@ void print_known_or_unknown_type (small_number t, integer v)
   }
   else
     print(837);
-  print_char(41);
+  print_char(')');
 }
 /* 901 */
 void bad_unary (quarterword c)
@@ -16405,32 +16260,29 @@ void str_to_num (quarterword c)
       b = 16;
     n = 0;
     badchar = false;
+    for (k = str_start[cur_exp]; k <= str_start[cur_exp + 1] - 1; k++)
     {
-      integer for_end; k = str_start[cur_exp];for_end = str_start[cur_exp + 1] - 1;
-      if (k <= for_end) do
+      m = str_pool[k];
+      if ((m >= 48) && (m <= 57))
+        m = m - 48;
+      else if ((m >= 65) && (m <= 70))
+        m = m - 55;
+      else if ((m >= 97) && (m <= 102))
+        m = m - 87;
+      else
       {
-        m = str_pool[k];
-        if ((m >= 48) && (m <= 57))
-          m = m - 48;
-        else if ((m >= 65) && (m <= 70))
-          m = m - 55;
-        else if ((m >= 97) && (m <= 102))
-          m = m - 87;
-        else
-        {
-          badchar = true;
-          m = 0;
-        }
-        if (m >= b)
-        {
-          badchar = true;
-          m = 0;
-        }
-        if (n < 32768L / b)
-          n = n * b + m;
-        else
-          n = 32767;
-      } while (k++ < for_end);
+        badchar = true;
+        m = 0;
+      }
+      if (m >= b)
+      {
+        badchar = true;
+        m = 0;
+      }
+      if (n < 32768L / b)
+        n = n * b + m;
+      else
+        n = 32767;
     }
     if (badchar)
     {
@@ -16451,7 +16303,7 @@ void str_to_num (quarterword c)
     {
       print_err("Number too large (");
       print_int (n);
-      print_char(41);
+      print_char(')');
       {
         help_ptr = 1;
         help_line[0] = 847;
@@ -16535,7 +16387,7 @@ void do_unary (quarterword c)
     begin_diagnostic ();
     print_nl(123);
     print_op (c);
-    print_char(40);
+    print_char('(');
     print_exp (0, 0);
     print(842);
     end_diagnostic (false);
@@ -17583,21 +17435,15 @@ void cat (halfword p)
       max_pool_ptr = pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]);
     }
   }
+  for (k = str_start[a]; k <= str_start[a + 1] - 1; k++)
   {
-    integer for_end; k = str_start[a];for_end = str_start[a + 1] - 1;
-    if (k <= for_end) do
-    {
-      str_pool[pool_ptr] = str_pool[k];
-      incr (pool_ptr);
-    } while (k++ < for_end);
+    str_pool[pool_ptr] = str_pool[k];
+    incr (pool_ptr);
   }
+  for (k = str_start[b]; k <= str_start[b + 1] - 1; k++)
   {
-    integer for_end; k = str_start[b];for_end = str_start[b + 1] - 1;
-    if (k <= for_end) do
-    {
-      str_pool[pool_ptr] = str_pool[k];
-      incr (pool_ptr);
-    } while (k++ < for_end);
+    str_pool[pool_ptr] = str_pool[k];
+    incr (pool_ptr);
   }
   cur_exp = make_string ();
   {
@@ -17654,21 +17500,19 @@ void chop_string (halfword p)
   }
   if (reversed)
   {
-    integer for_end; k = str_start[s]+ b - 1;for_end = str_start[s]+ a;
-    if (k >= for_end) do
+    for (k = str_start[s] + b - 1; k <= str_start[s] + a; k--)
     {
       str_pool[pool_ptr] = str_pool[k];
       incr (pool_ptr);
-    } while (k-- > for_end);
+    }
   }
   else
   {
-    integer for_end; k = str_start[s]+ a;for_end = str_start[s]+ b - 1;
-    if (k <= for_end) do
+    for (k = str_start[s] + a; k <= str_start[s] + b - 1; k++)
     {
       str_pool[pool_ptr] = str_pool[k];
       incr (pool_ptr);
-    } while (k++ < for_end);
+    }
   }
   cur_exp = make_string ();
   {
@@ -17895,9 +17739,9 @@ void do_binary (halfword p, quarterword c)
     begin_diagnostic ();
     print_nl(850);
     print_exp (p, 0);
-    print_char(41);
+    print_char(')');
     print_op (c);
-    print_char(40);
+    print_char('(');
     print_exp (0, 0);
     print(842);
     end_diagnostic (false);
@@ -18299,7 +18143,7 @@ void frac_mult (scaled n, scaled d)
     begin_diagnostic ();
     print_nl(850);
     print_scaled(n);
-    print_char(47);
+    print_char('/');
     print_scaled(d);
     print(855);
     print_exp (0, 0);
@@ -18514,27 +18358,23 @@ void gf_string (str_number s, str_number t)
       }
       gf_three (l);
     }
-    {
-      integer for_end; k = str_start[s];for_end = str_start[s + 1] - 1;
-      if (k <= for_end) do
-      {
-        gf_buf[gf_ptr] = str_pool[k];
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      } while (k++ < for_end);
-    }
-  }
-  if (t != 0)
-  {
-    integer for_end; k = str_start[t];for_end = str_start[t + 1] - 1;
-    if (k <= for_end) do
+    for (k = str_start[s]; k <= str_start[s + 1] - 1; k++)
     {
       gf_buf[gf_ptr] = str_pool[k];
       incr (gf_ptr);
       if (gf_ptr == gf_limit)
         gf_swap ();
-    } while (k++ < for_end);
+    }
+  }
+  if (t != 0)
+  {
+    for (k = str_start[t]; k <= str_start[t + 1] - 1; k++)
+    {
+      gf_buf[gf_ptr] = str_pool[k];
+      incr (gf_ptr);
+      if (gf_ptr == gf_limit)
+        gf_swap ();
+    }
   }
 }
 /* 1161 */
@@ -18638,11 +18478,9 @@ void init_gf (void)
   gf_max_m = -4096;
   gf_min_n = 4096;
   gf_max_n = -4096;
+  for (k = 0; k <= 255; k++)
   {
-    integer for_end; k = 0;for_end = 255;
-    if (k <= for_end) do
-      char_ptr[k] = -1;
-      while (k++ < for_end);
+    char_ptr[k] = -1;
   }
   if (internal[27]<= 0)
     gf_ext = 1055;
@@ -18650,7 +18488,7 @@ void init_gf (void)
   {
     old_setting = selector;
     selector = 5;
-    print_char(46);
+    print_char('.');
     print_int (make_scaled (internal[27], 59429463L));
     print(1056);
     gf_ext = make_string ();
@@ -18680,11 +18518,11 @@ void init_gf (void)
   selector = 5;
   print(1054);
   print_int (round_unscaled (internal[14]));
-  print_char(46);
+  print_char('.');
   print_dd (round_unscaled (internal[15]));
-  print_char(46);
+  print_char('.');
   print_dd (round_unscaled (internal[16]));
-  print_char(58);
+  print_char(':');
   t = round_unscaled (internal[17]);
   print_dd (t / 60);
   print_dd (t % 60);
@@ -18721,12 +18559,12 @@ void ship_out (eight_bits c)
   if (term_offset > max_print_line - 9)
     print_ln ();
   else if ((term_offset > 0) || (file_offset > 0))
-    print_char(32);
-  print_char(91);
+    print_char(' ');
+  print_char('[');
   print_int (c);
   if (f != 0)
   {
-    print_char(46);
+    print_char('.');
     print_int (f);
   }
   fflush (stdout);
@@ -18888,7 +18726,7 @@ void ship_out (eight_bits c)
   }
   gf_prev_ptr = gf_offset + gf_ptr;
   incr (total_chars);
-  print_char(93);
+  print_char(']');
   fflush (stdout);
   if (internal[11] > 0)
     print_edges (1057, true, xoff, yoff);
@@ -18995,7 +18833,7 @@ void try_eq (halfword l, halfword r)
       print_err("Inconsistent equation");
       print(899);
       print_scaled(mem[p + 1].cint);
-      print_char(41);
+      print_char(')');
       {
         help_ptr = 2;
         help_line[1] = 898;
@@ -19156,12 +18994,12 @@ lab_restart:
     print_type (mem[lhs].hh.b0);
   else
     print(340);
-  print_char(61);
+  print_char('=');
   if (cur_type <= 14)
     print_type (cur_type);
   else
     print(340);
-  print_char(41);
+  print_char(')');
   {
     help_ptr = 2;
     help_line[1] = 892;
@@ -19247,7 +19085,7 @@ void do_assignment (void)
         show_token_list (lhs, 0, 1000, 0);
       print(461);
       print_exp (0, 0);
-      print_char(125);
+      print_char('}');
       end_diagnostic (false);
     }
     if (mem[lhs].hh.lh > 9769)
@@ -19304,7 +19142,7 @@ void do_type_declaration (void)
     t = cur_mod + 1;
   do {
     p = scan_declared_variable ();
-    flush_variable (eqtb[mem[p].hh.lh].v.RH, mem[p].hh.rh, false);
+    flush_variable (eqtb[mem[p].hh.lh].rh, mem[p].hh.rh, false);
     q = find_variable (p);
     if (q != 0)
     {
@@ -19388,7 +19226,7 @@ void do_random_seed (void)
       selector = 2;
       print_nl(918);
       print_scaled(cur_exp);
-      print_char(125);
+      print_char('}');
       print_nl(261);
       selector = old_setting;
     }
@@ -19424,9 +19262,9 @@ void def_delims (void)
   get_clear_symbol ();
   rdelim = cur_sym;
   eqtb[ldelim].lh = 31;
-  eqtb[ldelim].v.RH = rdelim;
+  eqtb[ldelim].rh = rdelim;
   eqtb[rdelim].lh = 62;
-  eqtb[rdelim].v.RH = ldelim;
+  eqtb[rdelim].rh = ldelim;
   get_x_next ();
 }
 /* 1034 */
@@ -19439,7 +19277,7 @@ void do_interim (void)
     if (cur_sym == 0)
       print(929);
     else
-      slow_print(hash[cur_sym].v.RH);
+      slow_print(hash[cur_sym].rh);
     print(930);
     {
       help_ptr = 1;
@@ -19492,9 +19330,9 @@ void do_let (void)
   clear_symbol (l, false);
   eqtb[l].lh = cur_cmd;
   if (cur_cmd == 41)
-    eqtb[l].v.RH = 0;
+    eqtb[l].rh = 0;
   else
-    eqtb[l].v.RH = cur_mod;
+    eqtb[l].rh = cur_mod;
   get_x_next ();
 }
 /* 1036 */
@@ -19506,8 +19344,8 @@ void do_new_internal (void)
     get_clear_symbol ();
     incr (int_ptr);
     eqtb[cur_sym].lh = 40;
-    eqtb[cur_sym].v.RH = int_ptr;
-    int_name[int_ptr] = hash[cur_sym].v.RH;
+    eqtb[cur_sym].rh = int_ptr;
+    int_name[int_ptr] = hash[cur_sym].rh;
     internal[int_ptr] = 0;
     get_x_next ();
   } while (!(cur_cmd != 82));
@@ -19538,9 +19376,9 @@ void disp_token (void)
     }
     else
     {
-      print_char(34);
+      print_char('"');
       slow_print(cur_mod);
-      print_char(34);
+      print_char('"');
       {
         if (str_ref[cur_mod] < 127)
         {
@@ -19554,8 +19392,8 @@ void disp_token (void)
   }
   else
   {
-    slow_print(hash[cur_sym].v.RH);
-    print_char(61);
+    slow_print(hash[cur_sym].rh);
+    print_char('=');
     if (eqtb[cur_sym].lh >= 86)
       print(941);
     print_cmd_mod (cur_cmd, cur_mod);
@@ -19582,7 +19420,7 @@ void do_show_stats (void)
   ;
 #ifdef STAT
   print_int (var_used);
-  print_char(38);
+  print_char('&');
   print_int (dyn_used);
   if (false)
 #endif /* STAT */
@@ -19593,11 +19431,11 @@ void do_show_stats (void)
   print_ln ();
   print_nl(952);
   print_int (str_ptr - init_str_ptr);
-  print_char(38);
+  print_char('&');
   print_int (pool_ptr - init_pool_ptr);
   print(558);
   print_int (max_strings - max_str_ptr);
-  print_char(38);
+  print_char('&');
   print_int (pool_size - max_pool_ptr);
   print(951);
   print_ln ();
@@ -19640,7 +19478,7 @@ void disp_var (halfword p)
   {
     print_nl(261);
     print_variable_name(p);
-    print_char(61);
+    print_char('=');
     print_exp (p, 0);
   }
 }
@@ -19681,7 +19519,7 @@ void do_show_dependencies (void)
       print_nl(261);
       print_variable_name(p);
       if (mem[p].hh.b0 == 17)
-        print_char(61);
+        print_char('=');
       else
         print(768);
       print_dependency(mem[p + 1].hh.rh, mem[p].hh.b0);
@@ -19797,7 +19635,7 @@ void find_edges_var (halfword t)
     show_token_list (t, 0, 1000, 0);
     print(968);
     print_type (mem[p].hh.b0);
-    print_char(41);
+    print_char(')');
     {
       help_ptr = 2;
       help_line[1] = 969;
@@ -20750,7 +20588,7 @@ void do_statement (void)
     {
       print_err("A statement can't begin with `");
       print_cmd_mod (cur_cmd, cur_mod);
-      print_char(39);
+      print_char('\'');
       {
         help_ptr = 5;
         help_line[4] = 870;
@@ -21137,18 +20975,16 @@ void fix_check_sum (void)
           lb3 = bc;
           b4 = ec;
           tfm_changed = 0;
+          for (k = bc; k <= ec; k++)
           {
-            integer for_end; k = bc;for_end = ec;
-            if (k <= for_end) do
-              if (char_exists[k])
-              {
-                x = dimen_out (mem[tfm_width[k]+ 1].cint) + (k + 4) * 4194304L;
-                lb1 = (lb1 + lb1 + x) % 255;
-                lb2 = (lb2 + lb2 + x) % 253;
-                lb3 = (lb3 + lb3 + x) % 251;
-                b4 = (b4 + b4 + x) % 247;
-              }
-            while (k++ < for_end);
+            if (char_exists[k])
+            {
+              x = dimen_out (mem[tfm_width[k]+ 1].cint) + (k + 4) * 4194304L;
+              lb1 = (lb1 + lb1 + x) % 255;
+              lb2 = (lb2 + lb2 + x) % 253;
+              lb3 = (lb3 + lb3 + x) % 251;
+              b4 = (b4 + b4 + x) % 247;
+            }
           }
           header_byte[1] = lb1;
           header_byte[2] = lb2;
@@ -21159,14 +20995,12 @@ void fix_check_sum (void)
       }
     }
   }
+  for (k = 1; k <= 4; k++)
   {
-    integer for_end; k = 1;for_end = 4;
-    if (k <= for_end) do
-      if (header_byte[k]< 0)
-        header_byte[k] = 0;
-    while (k++ < for_end);
+    if (header_byte[k]< 0)
+      header_byte[k] = 0;
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 1133 */
 void tfm_qqqq (four_quarters x)
@@ -21182,15 +21016,15 @@ boolean open_base_file (void)
   boolean Result;
   integer j;
 
-  j = cur_input.loc_field;
-  if (buffer[cur_input.loc_field] == 38)
+  j = loc;
+  if (buffer[loc] == 38)
   {
-    incr (cur_input.loc_field);
-    j = cur_input.loc_field;
+    incr (loc);
+    j = loc;
     buffer[last] = 32;
     while (buffer[j]!= 32)
       incr (j);
-    pack_buffered_name (0, cur_input.loc_field, j - 1);
+    pack_buffered_name (0, loc, j - 1);
     if (w_open_in (base_file))
       goto found;
     Fputs (stdout,  "Sorry, I can't find the base `");
@@ -21211,7 +21045,7 @@ boolean open_base_file (void)
     goto lab_exit;
   }
 found:
-  cur_input.loc_field = j;
+  loc = j;
   Result = true;
   lab_exit:;
   return Result;
@@ -21489,7 +21323,7 @@ lab_restart:
               tt = 0;
               if (eqtb[q].lh % 86 == 41)
               {
-                q = eqtb[q].v.RH;
+                q = eqtb[q].rh;
                 if (q == 0)
                   goto done2;
                 while (true)
@@ -22158,9 +21992,9 @@ void get_boolean (void)
 /* 224 */
 void print_capsule (void)
 {
-  print_char(40);
+  print_char('(');
   print_exp (g_pointer, 0);
-  print_char(41);
+  print_char(')');
 }
 /* 224 */
 void token_recycle (void)
@@ -22208,12 +22042,10 @@ void close_files_and_terminate (void)
     mem[lo_mem_max].hh.rh = 0;
     mem[lo_mem_max].hh.lh = 0;
     mem[mem_top - 1].hh.rh = 19;
+    for (k = bc; k <= ec; k++)
     {
-      integer for_end; k = bc;for_end = ec;
-      if (k <= for_end) do
-        if (char_exists[k])
-          tfm_width[k] = sort_in (tfm_width[k]);
-        while (k++ < for_end);
+      if (char_exists[k])
+        tfm_width[k] = sort_in (tfm_width[k]);
     }
     nw = skimp (255) + 1;
     dimen_head[1] = mem[mem_top - 1].hh.rh;
@@ -22224,51 +22056,45 @@ void close_files_and_terminate (void)
     if (internal[33] > 0)
     {
       mem[mem_top - 1].hh.rh = 19;
+      for (k = bc; k <= ec; k++)
       {
-        integer for_end; k = bc;for_end = ec;
-        if (k <= for_end) do
-          if (char_exists[k])
-          {
-            if (tfm_height[k] == 0)
-              tfm_height[k] = 15;
-            else
-              tfm_height[k] = sort_in (tfm_height[k]);
-          }
-          while (k++ < for_end);
+        if (char_exists[k])
+        {
+          if (tfm_height[k] == 0)
+            tfm_height[k] = 15;
+          else
+            tfm_height[k] = sort_in (tfm_height[k]);
+        }
       }
       nh = skimp (15) + 1;
       dimen_head[2] = mem[mem_top - 1].hh.rh;
       if (perturbation >= 4096)
         tfm_warning (21);
       mem[mem_top - 1].hh.rh = 19;
+      for (k = bc; k <= ec; k++)
       {
-        integer for_end; k = bc;for_end = ec;
-        if (k <= for_end) do
-          if (char_exists[k])
-          {
-            if (tfm_depth[k] == 0)
-              tfm_depth[k] = 15;
-            else
-              tfm_depth[k] = sort_in (tfm_depth[k]);
-          }
-        while (k++ < for_end);
+        if (char_exists[k])
+        {
+          if (tfm_depth[k] == 0)
+            tfm_depth[k] = 15;
+          else
+            tfm_depth[k] = sort_in (tfm_depth[k]);
+        }
       }
       nd = skimp (15) + 1;
       dimen_head[3] = mem[mem_top - 1].hh.rh;
       if (perturbation >= 4096)
         tfm_warning (22);
       mem[mem_top - 1].hh.rh = 19;
+      for (k = bc; k <= ec; k++)
       {
-        integer for_end; k = bc;for_end = ec;
-        if (k <= for_end) do
-          if (char_exists[k])
-          {
-            if (tfm_ital_corr[k] == 0)
-              tfm_ital_corr[k] = 15;
-            else
-              tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
-          }
-        while (k++ < for_end);
+        if (char_exists[k])
+        {
+          if (tfm_ital_corr[k] == 0)
+            tfm_ital_corr[k] = 15;
+          else
+            tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
+        }
       }
       ni = skimp (63) + 1;
       dimen_head[4] = mem[mem_top - 1].hh.rh;
@@ -22341,63 +22167,51 @@ void close_files_and_terminate (void)
       put2bytes (tfm_file, nk);
       put2bytes (tfm_file, ne);
       put2bytes (tfm_file, np);
+      for (k = 1; k <= 4 * lh; k++)
       {
-        integer for_end; k = 1;for_end = 4 * lh;
-        if (k <= for_end) do
-        {
-          if (header_byte[k]< 0)
-            header_byte[k] = 0;
-          putbyte (header_byte[k], tfm_file);
-        }
-        while (k++ < for_end);
+        if (header_byte[k]< 0)
+          header_byte[k] = 0;
+        putbyte (header_byte[k], tfm_file);
       }
+      for (k = bc; k <= ec; k++)
       {
-        integer for_end; k = bc;for_end = ec;
-        if (k <= for_end) do
-          if (!char_exists[k])
-            put4bytes (tfm_file, 0);
-          else
-          {
-            putbyte (mem[tfm_width[k]].hh.lh, tfm_file);
-            putbyte ((mem[tfm_height[k]].hh.lh) * 16 + mem[
-            tfm_depth[k]].hh.lh, tfm_file);
-            putbyte ((mem[tfm_ital_corr[k]].hh.lh) * 4 +
-            char_tag[k], tfm_file);
-            putbyte (char_remainder[k], tfm_file);
-          }
-        while (k++ < for_end);
+        if (!char_exists[k])
+          put4bytes (tfm_file, 0);
+        else
+        {
+          putbyte (mem[tfm_width[k]].hh.lh, tfm_file);
+          putbyte ((mem[tfm_height[k]].hh.lh) * 16 + mem[
+          tfm_depth[k]].hh.lh, tfm_file);
+          putbyte ((mem[tfm_ital_corr[k]].hh.lh) * 4 +
+          char_tag[k], tfm_file);
+          putbyte (char_remainder[k], tfm_file);
+        }
       }
       tfm_changed = 0;
+      for (k = 1; k <= 4; k++)
       {
-        integer for_end; k = 1;for_end = 4;
-        if (k <= for_end) do
+        put4bytes (tfm_file, 0);
+        p = dimen_head[k];
+        while (p != 19)
         {
-          put4bytes (tfm_file, 0);
-          p = dimen_head[k];
-          while (p != 19)
-          {
-            put4bytes (tfm_file, dimen_out (mem[p + 1].cint));
-            p = mem[p].hh.rh;
-          }
+          put4bytes (tfm_file, dimen_out (mem[p + 1].cint));
+          p = mem[p].hh.rh;
         }
-        while (k++ < for_end);
       }
+      for (k = 0; k <= 255; k++)
       {
-        integer for_end; k = 0;for_end = 255;
-        if (k <= for_end) do
-          if (skip_table[k]< lig_table_size)
-          {
-            print_nl(1048);
-            print_int (k);
-            print(1049);
-            ll = skip_table[k];
-            do {
-              lll = lig_kern[ll].b0;
-              lig_kern[ll].b0 = 128;
-              ll = ll - lll;
-            } while (!(lll == 0));
-          }
-        while (k++ < for_end);
+        if (skip_table[k] < lig_table_size)
+        {
+          print_nl(1048);
+          print_int (k);
+          print(1049);
+          ll = skip_table[k];
+          do {
+            lll = lig_kern[ll].b0;
+            lig_kern[ll].b0 = 128;
+            ll = ll - lll;
+          } while (!(lll == 0));
+        }
       }
       if (lk_started)
       {
@@ -22407,8 +22221,7 @@ void close_files_and_terminate (void)
       }
       else
       {
-        integer for_end; k = 1;for_end = lkoffset;
-        if (k <= for_end) do
+        for (k = 1; k <= lkoffset; k++)
         {
           ll = label_loc[label_ptr];
           if (bchar < 0)
@@ -22426,45 +22239,36 @@ void close_files_and_terminate (void)
             decr (label_ptr);
           } while (!(label_loc[label_ptr]< ll));
         }
-        while (k++ < for_end);
       }
+      for (k = 0; k <= nl - 1; k++)
       {
-        integer for_end; k = 0;for_end = nl - 1;
-        if (k <= for_end) do
-          tfm_qqqq (lig_kern[k]);
-          while (k++ < for_end);
+        tfm_qqqq (lig_kern[k]);
       }
+      for (k = 0; k <= nk - 1; k++)
       {
-        integer for_end; k = 0;for_end = nk - 1;
-        if (k <= for_end) do
-          put4bytes (tfm_file, dimen_out (kern[k]));
-          while (k++ < for_end);
+        put4bytes (tfm_file, dimen_out (kern[k]));
       }
+      for (k = 0; k <= ne - 1; k++)
       {
-        integer for_end; k = 0;for_end = ne - 1;
-        if (k <= for_end) do
-          tfm_qqqq (exten[k]);
-          while (k++ < for_end);
+        tfm_qqqq (exten[k]);
       }
+      for (k = 1; k <= np; k++)
       {
-        integer for_end; k = 1;for_end = np;
-        if (k <= for_end) do
-          if (k == 1)
-          {
-            if (abs (param[1]) < 134217728L)
-              put4bytes (tfm_file, param[1]* 16);
-            else
-            {
-              incr (tfm_changed);
-              if (param[1] > 0)
-                put4bytes (tfm_file, 2147483647L);
-              else
-                put4bytes (tfm_file, -2147483647L);
-            }
-          }
+        if (k == 1)
+        {
+          if (abs (param[1]) < 134217728L)
+            put4bytes (tfm_file, param[1]* 16);
           else
-            put4bytes (tfm_file, dimen_out (param[k]));
-          while (k++ < for_end);
+          {
+            incr (tfm_changed);
+            if (param[1] > 0)
+              put4bytes (tfm_file, 2147483647L);
+            else
+              put4bytes (tfm_file, -2147483647L);
+          }
+        }
+        else
+          put4bytes (tfm_file, dimen_out (param[k]));
       }
       if (tfm_changed > 0)
       {
@@ -22491,7 +22295,7 @@ void close_files_and_terminate (void)
 #endif /* STAT */
       print_nl(1047);
       print_file_name (0, metric_file_name, 0);
-      print_char(46);
+      print_char('.');
       b_close (tfm_file);
     }
     if (gf_prev_ptr > 0)
@@ -22505,16 +22309,12 @@ void close_files_and_terminate (void)
       gf_four (gf_prev_ptr);
       gf_prev_ptr = gf_offset + gf_ptr - 5;
       gf_four (internal[26]* 16);
+      for (k = 1; k <= 4; k++)
       {
-        integer for_end; k = 1;for_end = 4;
-        if (k <= for_end) do
-        {
-          gf_buf[gf_ptr] = header_byte[k];
-          incr (gf_ptr);
-          if (gf_ptr == gf_limit)
-            gf_swap ();
-        }
-        while (k++ < for_end);
+        gf_buf[gf_ptr] = header_byte[k];
+        incr (gf_ptr);
+        if (gf_ptr == gf_limit)
+          gf_swap ();
       }
       gf_four (internal[27]);
       gf_four (internal[28]);
@@ -22522,64 +22322,62 @@ void close_files_and_terminate (void)
       gf_four (gf_max_m);
       gf_four (gf_min_n);
       gf_four (gf_max_n);
+      for (k = 0; k <= 255; k++)
       {
-        integer for_end; k = 0;for_end = 255;
-        if (k <= for_end) do
-          if (char_exists[k])
+        if (char_exists[k])
+        {
+          x = gf_dx[k] / 65536L;
+          if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * 65536L))
           {
-            x = gf_dx[k]/ 65536L;
-            if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * 65536L))
             {
-              {
-                gf_buf[gf_ptr] = 246;
-                incr (gf_ptr);
-                if (gf_ptr == gf_limit)
-                  gf_swap ();
-              }
-              {
-                gf_buf[gf_ptr] = k;
-                incr (gf_ptr);
-                if (gf_ptr == gf_limit)
-                  gf_swap ();
-              }
-              {
-                gf_buf[gf_ptr] = x;
-                incr (gf_ptr);
-                if (gf_ptr == gf_limit)
-                  gf_swap ();
-              }
+              gf_buf[gf_ptr] = 246;
+              incr (gf_ptr);
+              if (gf_ptr == gf_limit)
+                gf_swap ();
             }
-            else
             {
-              {
-                gf_buf[gf_ptr] = 245;
-                incr (gf_ptr);
-                if (gf_ptr == gf_limit)
-                  gf_swap ();
-              }
-              {
-                gf_buf[gf_ptr] = k;
-                incr (gf_ptr);
-                if (gf_ptr == gf_limit)
-                  gf_swap ();
-              }
-              gf_four (gf_dx[k]);
-              gf_four (gf_dy[k]);
+              gf_buf[gf_ptr] = k;
+              incr (gf_ptr);
+              if (gf_ptr == gf_limit)
+                gf_swap ();
             }
-            x = mem[tfm_width[k]+ 1].cint;
-            if (abs (x) > max_tfm_dimen)
             {
-              if (x > 0)
-                x = 16777215L;
-              else
-                x = -16777215L;
+              gf_buf[gf_ptr] = x;
+              incr (gf_ptr);
+              if (gf_ptr == gf_limit)
+                gf_swap ();
             }
-            else
-              x = make_scaled (x * 16, internal[26]);
-            gf_four (x);
-            gf_four (char_ptr[k]);
           }
-        while (k++ < for_end);
+          else
+          {
+            {
+              gf_buf[gf_ptr] = 245;
+              incr (gf_ptr);
+              if (gf_ptr == gf_limit)
+                gf_swap ();
+            }
+            {
+              gf_buf[gf_ptr] = k;
+              incr (gf_ptr);
+              if (gf_ptr == gf_limit)
+                gf_swap ();
+            }
+            gf_four (gf_dx[k]);
+            gf_four (gf_dy[k]);
+          }
+          x = mem[tfm_width[k]+ 1].cint;
+          if (abs (x) > max_tfm_dimen)
+          {
+            if (x > 0)
+              x = 16777215L;
+            else
+              x = -16777215L;
+          }
+          else
+            x = make_scaled (x * 16, internal[26]);
+          gf_four (x);
+          gf_four (char_ptr[k]);
+        }
       }
       {
         gf_buf[gf_ptr] = 249;
@@ -22637,7 +22435,7 @@ void close_files_and_terminate (void)
     {
       print_nl(1076);
       print_file_name (0, texmflogname, 0);
-      print_char(46);
+      print_char('.');
     }
   }
   print_ln ();
@@ -22677,8 +22475,8 @@ void debug_help (void)
         case 4:
           {
             print_int (eqtb[n].lh);
-            print_char(58);
-            print_int (eqtb[n].v.RH);
+            print_char(':');
+            print_int (eqtb[n].rh);
           }
           break;
         case 5:
@@ -22709,11 +22507,9 @@ void debug_help (void)
           }
           break;
         case 14:
+          for (k = 0; k <= n; k++)
           {
-            integer for_end; k = 0;for_end = n;
-            if (k <= for_end) do
-              print(buffer[k]);
-            while (k++ < for_end);
+            print(buffer[k]);
           }
           break;
         case 15:

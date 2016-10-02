@@ -4,6 +4,7 @@
 #define INIMF
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -480,16 +481,18 @@ EXTERN boolean stopatspace;
 #define max_in_open 6 /*{maximum number of input files and error insertions that
   can be going on simultaneously}*/
 #define param_size 150 //{maximum number of simultaneous macro parameters}
-/* 16 */
+  /* 16 */
 #define incr(a) a=a+1 //{increase a variable by unity}
 #define decr(a) a=a-1 //{decrease a variable by unity}
 #define negate(a) a=-a //{change the sign of a variable}
 #define double(a) a=a+a //{multiply a variable by two}
-#define do_nothing //{empty statement}
+#define do_nothing() //{empty statement}
 /* 19 */
 #define text_char char //{the data type of characters in text files}
 #define first_text_char 0 //{ordinal number of the smallest element of |text_char|}
 #define last_text_char 255 //{ordinal number of the largest element of |text_char|}
+/* 35 */
+#define loc cur_input.loc_field //{location of first unread character in |buffer|}
 /* 37 */
 #define si(a) a //{convert from |ASCII_code| to |packed_ASCII_code|}
 #define so(a) a //{convert from |packed_ASCII_code| to |ASCII_code|}
@@ -498,6 +501,14 @@ EXTERN boolean stopatspace;
   in string number \#}*/
 /* 40 */
 #define cur_length (pool_ptr - str_start[str_ptr])
+/* 42 */
+#define max_str_ref 127 //{``infinite'' number of references}
+#define add_str_ref(a) \
+do {if (str_ref[a] < max_str_ref) incr(str_ref[a]);} while (0);
+/* 43 */
+#define delete_str_ref(a) \
+do { if (str_ref[a] < max_str_ref) \
+  if (str_ref[a] > 1) decr(str_ref[a]); else flush_string(a);} while (0);
 /* 54 */
 #define no_print 0 //{|selector| setting that makes data disappear}
 #define term_only 1 //{printing is destined for the terminal only}
@@ -529,7 +540,7 @@ static inline void mf_help (unsigned int n, ...)
   va_start(help_arg, n);
 
   for (i = n - 1; i > -1; --i)
-    help_line[i] = va_arg(help_arg, char *);
+    help_line[i] = va_arg(help_arg, (char *));
 
   va_end(help_arg);
 }
@@ -1059,6 +1070,11 @@ static inline void mf_help (unsigned int n, ...)
 #define half_fraction_threshold 1342 //{half of |fraction_threshold|}
 #define scaled_threshold 8 //{a |scaled| coefficient less than this is zeroed}
 #define half_scaled_threshold 4 //{half of |scaled_threshold|}
+/* 629 */
+#define index cur_input.index_field //{reference for buffer information}
+#define start cur_input.start_field //{starting position in |buffer|}
+#define limit cur_input.limit_field //{end of current line in |buffer|}
+#define name cur_input.name_field //{name of the current file}
 /* 632 */
 #define token_type index //{type of current token list}
 #define token_state (index>max_in_open) //{are we scanning a token list?}
@@ -1166,6 +1182,10 @@ static inline void mf_help (unsigned int n, ...)
 #define pre 247 //{preamble}
 #define post 248 //{postamble beginning}
 #define post_post 249 //{postamble ending}
+/* 1155 */
+#define gf_out(a) \
+do { gf_buf[gf_ptr] = a; incr(gf_ptr);\
+if (gf_ptr == gf_limit) gf_swap();} while (0);
 
 /* F U N C T I O N S */
 void initialize(void);
