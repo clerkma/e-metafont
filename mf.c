@@ -1096,7 +1096,7 @@ lab_start_of_MF:
       }
       wclose(base_file);
       while ((cur_input.loc_field < cur_input.limit_field) && (buffer[cur_input.loc_field] == 32))
-				incr(cur_input.loc_field);
+        incr(cur_input.loc_field);
     }
     buffer[cur_input.limit_field] = 37;
     fix_date_and_time();
@@ -1251,10 +1251,7 @@ void initialize (void)
     xord[xchr[i]] = i;
     while (i++ < for_end);
   }
-  if (interactionoption == 4)
-    interaction = 3;
-  else
-    interaction = interactionoption;
+  interaction = 3;
   deletions_allowed = true;
   error_count = 0;
   help_ptr = 0;
@@ -1263,10 +1260,9 @@ void initialize (void)
   interrupt = 0;
   OK_to_interrupt = true;
   arith_error = false;
-
   two_to_the[0] = 1;
   for (k = 1; k <= 30; k++)
-		two_to_the[k] = 2 * two_to_the[k - 1];
+    two_to_the[k] = 2 * two_to_the[k - 1];
   spec_log[1] = 93032640;
   spec_log[2] = 38612034;
   spec_log[3] = 17922280;
@@ -1280,10 +1276,9 @@ void initialize (void)
   spec_log[11] = 65552;
   spec_log[12] = 32772;
   spec_log[13] = 16385;
-	for (k = 14; k <= 27; k++)
-		spec_log[k] = two_to_the[27 - k];
+  for (k = 14; k <= 27; k++)
+    spec_log[k] = two_to_the[27 - k];
   spec_log[28] = 1;
-
   spec_atan[1] = 27855475;
   spec_atan[2] = 14718068;
   spec_atan[3] = 7471121;
@@ -1320,7 +1315,6 @@ void initialize (void)
   for (k = 1; k <= max_given_internal; k++)
     internal[k] = 0;
   int_ptr = max_given_internal;
-
   for (k = '0'; k <= '9'; k++)
     char_class[k] = digit_class;
   char_class['.'] = period_class;
@@ -1364,10 +1358,8 @@ void initialize (void)
     char_class[k] = invalid_class;
   for (k = 127; k <= 255; k++)
     char_class[k] = invalid_class;
-
   char_class[9] = 2;
   char_class[12] = 2;
-
   hash[1].lh = 0;
   hash[1].v.RH = 0;
   eqtb[1].lh = 41;
@@ -1500,7 +1492,7 @@ void print_ln (void)
 {
   switch (selector)
   {
-    case 3:
+    case term_and_log:
       {
         putc ('\n', stdout);
         putc ('\n', log_file);
@@ -1508,21 +1500,21 @@ void print_ln (void)
         file_offset = 0;
       }
       break;
-    case 2:
+    case log_only:
       {
         putc ('\n', log_file);
         file_offset = 0;
       }
       break;
-    case 1:
+    case term_only:
       {
         putc ('\n', stdout);
         term_offset = 0;
       }
       break;
-    case 0:
-    case 4:
-    case 5:
+    case no_print:
+    case pseudo:
+    case new_string:
       do_nothing();
       break;
   }
@@ -1532,7 +1524,7 @@ void print_char (ASCII_code s)
 {
   switch (selector)
   {
-    case 3:
+    case term_and_log:
       {
         putc (xchr[s], stdout);
         putc (xchr[s], log_file);
@@ -1550,7 +1542,7 @@ void print_char (ASCII_code s)
         }
       }
       break;
-    case 2:
+    case log_only:
       {
         putc (xchr[s], log_file);
         incr (file_offset);
@@ -1558,7 +1550,7 @@ void print_char (ASCII_code s)
           print_ln ();
       }
       break;
-    case 1:
+    case term_only:
       {
         putc (xchr[s], stdout);
         incr (term_offset);
@@ -1566,20 +1558,17 @@ void print_char (ASCII_code s)
           print_ln ();
       }
       break;
-    case 0:
+    case no_print:
       do_nothing();
       break;
-    case 4:
+    case pseudo:
       if (tally < trick_count)
         trick_buf[tally % error_line] = s;
       break;
-    case 5:
+    case new_string:
       {
         if (pool_ptr < pool_size)
-        {
-          str_pool[pool_ptr] = s;
-          incr (pool_ptr);
-        }
+          append_char(s);
       }
       break;
   }
@@ -1592,14 +1581,14 @@ void print (integer s)
 
   if ((s < 0) || (s >= str_ptr))
     s = 259;
-  if ((s < 256) && ((selector > 4) || xprn[s]))
+  if ((s < 256) && (selector > pseud))
     print_char(s);
   else
   {
     j = str_start[s];
     while (j < str_start[s + 1])
     {
-      print_char(str_pool[j]);
+      print_char(so(str_pool[j]));
       incr (j);
     }
   }
@@ -1611,14 +1600,14 @@ void slow_print (integer s)
 
   if ((s < 0) || (s >= str_ptr))
     s = 259;
-  if ((s < 256) && ((selector > 4) || xprn[s]))
+  if ((s < 256) && (selector > pseudo))
     print_char(s);
   else
   {
     j = str_start[s];
     while (j < str_start[s + 1])
     {
-      print(str_pool[j]);
+      print(so(str_pool[j]));
       incr (j);
     }
   }
@@ -1626,7 +1615,7 @@ void slow_print (integer s)
 /* 62 */
 void print_nl (str_number s)
 {
-  if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0) && (selector >= 2)))
+  if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0) && (selector >= log_only)))
     print_ln ();
   print(s);
 }
@@ -1636,7 +1625,7 @@ void print_the_digs (eight_bits k)
   while (k > 0)
   {
     decr (k);
-    print_char(48 + dig[k]);
+    print_char('0' + dig[k]);
   }
 }
 /* 64 */
@@ -1648,9 +1637,9 @@ void print_int (integer n)
   k = 0;
   if (n < 0)
   {
-    print_char(45);
-    if (n > -100000000L)
-      n = -n;
+    print_char('-');
+    if (n > -100000000)
+      negate(n);
     else
     {
       m = -1 - n;
@@ -1680,20 +1669,20 @@ void print_scaled (scaled s)
 
   if (s < 0)
   {
-    print_char(45);
-    s = -s;
+    print_char('-');
+    negate(s);
   }
-  print_int (s / 65536L);
-  s = 10 * (s % 65536L) + 5;
+  print_int (s / unity);
+  s = 10 * (s % unity) + 5;
   if (s != 5)
   {
     delta = 10;
-    print_char(46);
+    print_char('.');
     do {
-      if (delta > 65536L)
-        s = s + 32768L - (delta / 2);
-      print_char(48 + (s / 65536L));
-      s = 10 * (s % 65536L);
+      if (delta > unity)
+        s = s + 0100000 - (delta / 2);
+      print_char('0' + (s / unity));
+      s = 10 * (s % unity);
       delta = delta * 10;
     } while (!(s <= delta));
   }
@@ -1701,11 +1690,11 @@ void print_scaled (scaled s)
 /* 104 */
 void print_two (scaled x, scaled y)
 {
-  print_char(40);
+  print_char('(');
   print_scaled(x);
-  print_char(44);
+  print_char(',');
   print_scaled(y);
-  print_char(41);
+  print_char(')');
 }
 /* 187 */
 void print_type (small_number t)
@@ -1790,18 +1779,18 @@ void print_type (small_number t)
 void begin_diagnostic (void)
 {
   old_setting = selector;
-  if ((internal[13] <= 0) && (selector == 3))
+  if ((internal[13] <= 0) && (selector == term_and_log))
   {
     decr (selector);
-    if (history == 0)
-      history = 1;
+    if (history == spotless)
+      history = warning_issued;
   }
 }
 /* 195 */
-void end_diagnostic (boolean blankline)
+void end_diagnostic (boolean blank_line)
 {
   print_nl(261);
-  if (blankline)
+  if (blank_line)
     print_ln ();
   selector = old_setting;
 }
@@ -1816,61 +1805,14 @@ void print_diagnostic (str_number s, str_number t, boolean nuline)
   print(450);
   print_int (line);
   print(t);
-  print_char(58);
+  print_char(':');
 }
 /* 773 */
 void print_file_name (integer n, integer a, integer e)
 {
-  boolean mustquote;
-  pool_pointer j;
-  mustquote = false;
-
-  if (a != 0)
-  {
-    j = str_start[a];
-    while ((!mustquote) && (j < str_start[a + 1]))
-    {
-      mustquote = str_pool[j] == 32;
-      incr (j);
-    }
-  }
-  if (n != 0)
-  {
-    j = str_start[n];
-    while ((!mustquote) && (j < str_start[n + 1]))
-    {
-      mustquote = str_pool[j] == 32;
-      incr (j);
-    }
-  }
-  if (e != 0)
-  {
-    j = str_start[e];
-    while ((!mustquote) && (j < str_start[e + 1]))
-    {
-      mustquote = str_pool[j] == 32;
-      incr (j);
-    }
-  }
-  if (mustquote)
-    slow_print(34);
-  if (a != 0)
-  {integer for_end; j = str_start[a];for_end = str_start[a + 1] - 1; if (j <= for_end) do
-    if (str_pool[j]!= 34)
-    print(str_pool[j]);
-  while (j++ < for_end);}
-  if (n != 0)
-  {integer for_end; j = str_start[n];for_end = str_start[n + 1] - 1; if (j <= for_end) do
-    if (str_pool[j]!= 34)
-    print(str_pool[j]);
-  while (j++ < for_end);}
-  if (e != 0)
-  {integer for_end; j = str_start[e];for_end = str_start[e + 1] - 1; if (j <= for_end) do
-    if (str_pool[j]!= 34)
-    print(str_pool[j]);
-  while (j++ < for_end);}
-  if (mustquote)
-    slow_print(34);
+  slow_print(a);
+  slow_print(n);
+  slow_print(e);
 }
 /* 43 */
 void flush_string (str_number s)
@@ -1880,21 +1822,13 @@ void flush_string (str_number s)
   else
     do {
       decr (str_ptr);
-    } while (!(str_ref[str_ptr - 1]!= 0));
+    } while (!(str_ref[str_ptr - 1] != 0));
   pool_ptr = str_start[str_ptr];
 }
 /* 76 */
 void jump_out (void)
 {
   close_files_and_terminate ();
-  {
-    fflush (stdout);
-    ready_already = 0;
-    if ((history != 0) && (history != 1))
-      exit (1);
-    else
-      exit (0);
-  }
 }
 /* 77 */
 void error (void)
@@ -1907,7 +1841,6 @@ void error (void)
     history = 2;
   print_char(46);
   show_context ();
-  
   if ((haltonerrorp))
   {
     history = 3;
@@ -2215,33 +2148,21 @@ void overflow (str_number s, integer n)
     }
   }
   print(s);
-  print_char(61);
+  print_char('=');
   print_int (n);
-  print_char(93);
+  print_char(']');
   {
     help_ptr = 2;
     help_line[1] = 287;
     help_line[0] = 288;
   }
-  {
-    if (interaction == 3)
-      interaction = 2;
-    if (log_opened)
-      error ();
-    ;
-#ifdef TEXMF_DEBUG
-    if (interaction > 0)
-      debug_help ();
-#endif /* TEXMF_DEBUG */
-    history = 3;
-    jump_out ();
-  }
+  succumb ();
 }
 /* 90 */
 void confusion (str_number s)
 {
   normalize_selector ();
-  if (history < 2)
+  if (history < error_message_issued)
   {
     {
       if (interaction == 3)
@@ -2262,7 +2183,7 @@ void confusion (str_number s)
       }
     }
     print(s);
-    print_char(41);
+    print_char(')');
     {
       help_ptr = 1;
       help_line[0] = 290;
@@ -2294,19 +2215,7 @@ void confusion (str_number s)
       help_line[0] = 293;
     }
   }
-  {
-    if (interaction == 3)
-      interaction = 2;
-    if (log_opened)
-      error ();
-    ;
-#ifdef TEXMF_DEBUG
-    if (interaction > 0)
-      debug_help ();
-#endif /* TEXMF_DEBUG */
-    history = 3;
-    jump_out ();
-  }
+  succumb ();
 }
 /* 36 */
 boolean init_terminal (void)
@@ -2425,8 +2334,8 @@ lab_exit:;
 void print_dd (integer n)
 {
   n = abs (n) % 100;
-  print_char(48 + (n / 10));
-  print_char(48 + (n % 10));
+  print_char('0' + (n / 10));
+  print_char('0' + (n % 10));
 }
 /* 66 */
 void term_input (void)
@@ -2439,20 +2348,19 @@ void term_input (void)
   term_offset = 0;
   decr (selector);
   if (last != first)
-    {integer for_end; k = first;for_end = last - 1; if (k <= for_end) do
+    for (k = first; k <= last - 1; k++)
       print(buffer[k]);
-    while (k++ < for_end);}
   print_ln ();
-  buffer[last] = 37;
+  buffer[last] = '%';
   incr (selector);
 }
 /* 87 */
 void normalize_selector (void)
 {
   if (log_opened)
-    selector = 3;
+    selector = term_and_log;
   else
-    selector = 1;
+    selector = term_only;
   if (job_name == 0)
     open_log_file ();
   if (interaction == 0)
@@ -2463,8 +2371,8 @@ void pause_for_instructions (void)
 {
   if (OK_to_interrupt)
   {
-    interaction = 3;
-    if ((selector == 2) || (selector == 0))
+    interaction = error_stop_mode;
+    if ((selector == log_only) || (selector == no_print))
       incr (selector);
     {
       if (interaction == 3)
@@ -2558,20 +2466,20 @@ integer slow_add (integer x, integer y)
 
   if (x >= 0)
   {
-    if (y <= 2147483647L - x)
+    if (y <= el_gordo - x)
       Result = x + y;
     else
     {
       arith_error = true;
-      Result = 2147483647;
+      Result = el_gordo;
     }
   }
-  else if (-y <= 2147483647L + x)
+  else if (-y <= el_gordo + x)
     Result = x + y;
   else
   {
     arith_error = true;
-    Result = -2147483647;
+    Result = -el_gordo;
   }
   return Result;
 }
@@ -2585,7 +2493,7 @@ scaled round_decimals (small_number k)
   while (k > 0)
   {
     decr (k);
-    a = (a + dig[k] * 131072) / 10;
+    a = (a + dig[k] * two) / 10;
   }
   Result = half (a + 1);
   return Result;
@@ -2597,7 +2505,7 @@ fraction make_fraction (integer p, integer q)
   integer f;
   integer n;
   boolean negative;
-  integer becareful;
+  integer be_careful;
   
   if (p >= 0)
     negative = false;
@@ -2613,7 +2521,7 @@ fraction make_fraction (integer p, integer q)
     if (q == 0)
       confusion(47);
 #endif /* TEXMF_DEBUG */
-    q = -q;
+    negate(q);
     negative = !negative;
   }
   n = p / q;
@@ -2622,17 +2530,17 @@ fraction make_fraction (integer p, integer q)
   {
     arith_error = true;
     if (negative)
-      Result = -2147483647;
+      Result = -el_gordo;
     else
-      Result = 2147483647;
+      Result = el_gordo;
   }
   else
   {
-    n = (n - 1) * 268435456;
+    n = (n - 1) * fraction_one;
     f = 1;
     do {
-      becareful = p - q;
-      p = becareful + p;
+      be_careful = p - q;
+      p = be_careful + p;
       if (p >= 0)
         f = f + f + 1;
       else
@@ -2640,9 +2548,9 @@ fraction make_fraction (integer p, integer q)
         f = f + f;
         p = p + q;
       }
-    } while (!(f >= 268435456L));
-    becareful = p - q;
-    if (becareful + p >= 0)
+    } while (!(f >= fraction_one));
+    be_careful = p - q;
+    if (be_careful + p >= 0)
       incr (f);
     if (negative)
       Result = -(f + n);
