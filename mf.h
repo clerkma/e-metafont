@@ -77,7 +77,6 @@ EXTERN integer screenwidth;
 EXTERN integer screendepth;
 EXTERN integer gf_buf_size;
 EXTERN cinttype parsefirstlinep;
-EXTERN cinttype filelineerrorstylep;
 EXTERN cinttype haltonerrorp;
 EXTERN boolean quotedfilename;
 
@@ -510,10 +509,10 @@ const uint32_t max_font_dimen = 50; //{maximum number of \&{fontdimen} parameter
 #define new_string 5 //{printing is deflected to the string pool}
 #define max_selector 5 //{highest selector setting}
 /* 68 */
-#define batch_mode 0 {omits all stops and omits terminal output}
-#define nonstop_mode 1 {omits all stops}
-#define scroll_mode 2 {omits error stops}
-#define error_stop_mode 3 {stops at every opportunity to interact}
+#define batch_mode 0 //{omits all stops and omits terminal output}
+#define nonstop_mode 1 //{omits all stops}
+#define scroll_mode 2 //{omits error stops}
+#define error_stop_mode 3 //{stops at every opportunity to interact}
 /* 71 */
 #define spotless 0 //{|history| value when nothing has been amiss yet}
 #define warning_issued 1 //{|history| value when |begin_diagnostic| has been called}
@@ -1183,7 +1182,7 @@ void print_scaled(scaled s);
 void print_two(scaled x, scaled y);
 void print_type(small_number t);
 void begin_diagnostic(void);
-void end_diagnostic(boolean blankline);
+void end_diagnostic(boolean blank_line);
 void print_diagnostic(str_number s, str_number t, boolean nuline);
 void print_file_name(integer n, integer a, integer e);
 void flush_string(str_number s);

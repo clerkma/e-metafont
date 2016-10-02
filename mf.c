@@ -1701,77 +1701,77 @@ void print_type (small_number t)
 {
   switch (t)
   {
-    case 1:
-      print(323);
+    case vacuous:
+      print("vacuous");
       break;
-    case 2:
-      print(324);
+    case boolean_type:
+      print("boolean");
       break;
-    case 3:
-      print(325);
+    case unknown_boolean:
+      print("unknown boolean");
       break;
-    case 4:
-      print(326);
+    case string_type:
+      print("string");
       break;
-    case 5:
-      print(327);
+    case unknown_string:
+      print("unknown string");
       break;
-    case 6:
-      print(328);
+    case pen_type:
+      print("pen");
       break;
-    case 7:
-      print(329);
+    case unknown_pen:
+      print("unknown pen");
       break;
-    case 8:
-      print(330);
+    case future_pen:
+      print("future pen");
       break;
-    case 9:
-      print(331);
+    case path_type:
+      print("path");
       break;
-    case 10:
-      print(332);
+    case unknown_path:
+      print("unknown path");
       break;
-    case 11:
-      print(333);
+    case picture_type:
+      print("picture");
       break;
-    case 12:
-      print(334);
+    case unknown_picture:
+      print("unknown picture");
       break;
-    case 13:
-      print(335);
+    case transform_type:
+      print("transform");
       break;
-    case 14:
-      print(336);
+    case pair_type:
+      print("pair");
       break;
-    case 16:
-      print(337);
+    case known:
+      print("known numeric");
       break;
-    case 17:
-      print(338);
+    case dependent:
+      print("dependent");
       break;
-    case 18:
-      print(339);
+    case proto_dependent:
+      print("proto-dependent");
       break;
-   case 15:
-      print(340);
+    case numeric_type:
+      print("numeric");
       break;
-    case 19:
-      print(341);
+    case independent:
+      print("independent");
       break;
-    case 20:
-      print(342);
+    case token_list:
+      print("token list");
       break;
-    case 21:
-      print(343);
+    case structured:
+      print("structured");
       break;
-    case 22:
-      print(344);
+    case unsuffixed_macro:
+      print("unsuffixed macro");
       break;
-    case 23:
-      print(345);
+    case suffixed_macro:
+      print("suffixed macro");
       break;
     default:
-      print(346);
+      print("undefined");
       break;
   }
 }
@@ -2092,61 +2092,15 @@ void error (void)
 void fatal_error (str_number s)
 {
   normalize_selector ();
-  {
-    if (interaction == 3)
-      do_nothing();
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(285);
-    }
-    else
-    {
-      print_nl(263);
-      print(285);
-    }
-  }
+  print_err("Emergency stop");
   help1(s);
-  {
-    if (interaction == 3)
-      interaction = 2;
-    if (log_opened)
-      error ();
-    ;
-#ifdef TEXMF_DEBUG
-    if (interaction > 0)
-      debug_help ();
-#endif /* TEXMF_DEBUG */
-    history = 3;
-    jump_out ();
-  }
+  succumb();
 }
 /* 89 */
 void overflow (str_number s, integer n)
 {
   normalize_selector ();
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(286);
-    }
-    else
-    {
-      print_nl(263);
-      print(286);
-    }
-  }
+  print_err("METAFONT capacity exceeded, sorry [");
   print(s);
   print_char('=');
   print_int (n);
@@ -2164,24 +2118,7 @@ void confusion (str_number s)
   normalize_selector ();
   if (history < error_message_issued)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(289);
-      }
-      else
-      {
-        print_nl(263);
-        print(289);
-      }
-    }
+    print_err("This can't happen (");
     print(s);
     print_char(')');
     {
@@ -2191,24 +2128,7 @@ void confusion (str_number s)
   }
   else
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(291);
-      }
-      else
-      {
-        print_nl(263);
-        print(291);
-      }
-    }
+    print_err("I can't go on meeting you like this");
     {
       help_ptr = 2;
       help_line[1] = 292;
@@ -2374,24 +2294,7 @@ void pause_for_instructions (void)
     interaction = error_stop_mode;
     if ((selector == log_only) || (selector == no_print))
       incr (selector);
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(294);
-      }
-      else
-      {
-        print_nl(263);
-        print(294);
-      }
-    }
+    print_err("Interruption");
     {
       help_ptr = 3;
       help_line[2] = 295;
@@ -2407,48 +2310,14 @@ void pause_for_instructions (void)
 /* 94 */
 void missing_err (str_number s)
 {
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(298);
-    }
-    else
-    {
-      print_nl(263);
-      print(298);
-    }
-  }
+  print_err("Missing `");
   print(s);
   print(299);
 }
 /* 99 */
 void clear_arith (void)
 {
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(300);
-    }
-    else
-    {
-      print_nl(263);
-      print(300);
-    }
-  }
+  print_err("Arithmetic overflow");
   {
     help_ptr = 4;
     help_line[3] = 301;
@@ -2566,7 +2435,7 @@ integer take_fraction (integer q, fraction f)
   integer p;
   boolean negative;
   integer n;
-  integer becareful;
+  integer be_careful;
   
   if (f >= 0)
     negative = false;
@@ -2612,8 +2481,8 @@ integer take_fraction (integer q, fraction f)
         p = half (p);
       f = half (f);
   } while (!(f == 1));
-  becareful = n - 2147483647;
-  if (becareful + p > 0)
+  be_careful = n - 2147483647;
+  if (be_careful + p > 0)
   {
     arith_error = true;
     n = 2147483647L - p;
@@ -2631,7 +2500,7 @@ integer take_scaled (integer q, scaled f)
   integer p;
   boolean negative;
   integer n;
-  integer becareful;
+  integer be_careful;
   
   if (f >= 0)
     negative = false;
@@ -2677,8 +2546,8 @@ integer take_scaled (integer q, scaled f)
         p = half (p);
       f = half (f);
     } while (!(f == 1));
-  becareful = n - 2147483647;
-  if (becareful + p > 0)
+  be_careful = n - 2147483647;
+  if (be_careful + p > 0)
   {
     arith_error = true;
     n = 2147483647 - p;
@@ -2696,7 +2565,7 @@ scaled make_scaled (integer p, integer q)
   integer f;
   integer n;
   boolean negative;
-  integer becareful;
+  integer be_careful;
 
   if (p >= 0)
     negative = false;
@@ -2730,8 +2599,8 @@ scaled make_scaled (integer p, integer q)
     n = (n - 1) * 65536;
     f = 1;
     do {
-      becareful = p - q;
-      p = becareful + p;
+      be_careful = p - q;
+      p = be_careful + p;
       if (p >= 0)
         f = f + f + 1;
       else
@@ -2740,8 +2609,8 @@ scaled make_scaled (integer p, integer q)
         p = p + q;
       }
     } while (!(f >= 65536L));
-    becareful = p - q;
-    if (becareful + p >= 0)
+    be_careful = p - q;
+    if (be_careful + p >= 0)
       incr (f);
     if (negative)
       Result = -(f + n);
@@ -2897,24 +2766,7 @@ scaled square_rt (scaled x)
   {
     if (x < 0)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(305);
-        }
-        else
-        {
-          print_nl(263);
-          print(305);
-        }
-      }
+      print_err("Square root of ");
       print_scaled(x);
       print(306);
       {
@@ -3037,24 +2889,7 @@ integer pyth_sub (integer a, integer b)
   {
     if (a < b)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(309);
-        }
-        else
-        {
-          print_nl(263);
-          print(309);
-        }
-      }
+      print_err("Pythagorean subtraction ");
       print_scaled(a);
       print(310);
       print_scaled(b);
@@ -3103,24 +2938,7 @@ scaled m_log (scaled x)
   integer k;
   if (x <= 0)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(311);
-      }
-      else
-      {
-        print_nl(263);
-        print(311);
-      }
-    }
+    print_err("Logarithm of ");
     print_scaled(x);
     print(306);
     {
@@ -3234,24 +3052,7 @@ angle n_arg (integer x, integer y)
   }
   if (x == 0)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(313);
-      }
-      else
-      {
-        print_nl(263);
-        print(313);
-      }
-    }
+    print_err("angle(0,0) is taken as zero");
     {
       help_ptr = 2;
       help_line[1] = 314;
@@ -4060,218 +3861,218 @@ void print_op (quarterword c)
   else
     switch (c)
     {
-      case 30:
-        print(347);
+      case true_code:
+        print("true");
         break;
-      case 31:
-        print(348);
+      case false_code:
+        print("false");
         break;
-      case 32:
-        print(349);
+      case null_picture_code:
+        print("nullpicture");
         break;
-      case 33:
-        print(350);
+      case null_pen_code:
+        print("nullpen");
         break;
-      case 34:
-        print(351);
+      case job_name_op:
+        print("jobname");
         break;
-      case 35:
-        print(352);
+      case read_string_op:
+        print("readstring");
         break;
-      case 36:
-        print(353);
+      case pen_circle:
+        print("pencircle");
         break;
-      case 37:
-        print(354);
+      case normal_deviate:
+        print("normaldeviate");
         break;
-      case 38:
-        print(355);
+      case odd_op:
+        print("odd");
         break;
-      case 39:
-        print(356);
+      case known_op:
+        print("known");
         break;
-      case 40:
-        print(357);
+      case unknown_op:
+        print("unknown");
         break;
-      case 41:
-        print(358);
+      case not_op:
+        print("not");
         break;
-      case 42:
-        print(359);
+      case decimal:
+        print("decimal");
         break;
-      case 43:
-        print(360);
+      case reverse:
+        print("reverse");
         break;
-      case 44:
-        print(361);
+      case make_path_op:
+        print("makepath");
         break;
-      case 45:
-        print(362);
+      case make_pen_op:
+        print("makepen");
         break;
-      case 46:
-        print(363);
+      case total_weight_op:
+        print("totalweight");
         break;
-      case 47:
-        print(364);
+      case oct_op:
+        print("oct");
         break;
-      case 48:
-        print(365);
+      case hex_op:
+        print("hex");
         break;
-      case 49:
-        print(366);
+      case ASCII_op:
+        print("ASCII");
         break;
-      case 50:
-        print(367);
+      case char_op:
+        print("char");
         break;
-      case 51:
-        print(368);
+      case length_op:
+        print("length");
         break;
-      case 52:
-        print(369);
+      case turning_op:
+        print("turningnumber");
         break;
-      case 53:
-        print(370);
+      case x_part:
+        print("xpart");
         break;
-      case 54 :
-        print(371);
+      case y_part:
+        print("ypart");
         break;
-      case 55:
-        print(372);
+      case xx_part:
+        print("xxpart");
         break;
-      case 56:
-        print(373);
+      case xy_part:
+        print("xypart");
         break;
-      case 57:
-        print(374);
+      case yx_part:
+        print("yxpart");
         break;
-      case 58:
-        print(375);
+      case yy_part:
+        print("yypart");
         break;
-      case 59:
-        print(376);
+      case sqrt_op:
+        print("sqrt");
         break;
-      case 60:
-        print(377);
+      case m_exp_op:
+        print("mexp");
         break;
-      case 61:
-        print(378);
+      case m_log_op:
+        print("mlog");
         break;
-      case 62:
-        print(379);
+      case sin_d_op:
+        print("sind");
         break;
-      case 63:
-        print(380);
+      case cos_d_op:
+        print("cosd");
         break;
-      case 64:
-        print(381);
+      case floor_op:
+        print("floor");
         break;
-      case 65:
-        print(382);
+      case uniform_deviate:
+        print("uniformdeviate");
         break;
-      case 66:
-        print(383);
+      case char_exists_op:
+        print("charexists");
         break;
-      case 67:
-        print(384);
+      case angle_op:
+        print("angle");
         break;
-      case 68:
-        print(385);
+      case cycle_op:
+        print("cycle");
         break;
-      case 69:
-        print_char(43);
+      case plus:
+        print_char('+');
         break;
-      case 70:
-        print_char(45);
+      case minus:
+        print_char('-');
         break;
-      case 71:
-        print_char(42);
+      case times:
+        print_char('*');
         break;
-      case 72:
-        print_char(47);
+      case over:
+        print_char('/');
         break;
-      case 73:
-        print(386);
+      case pythag_add:
+        print("++");
         break;
-      case 74:
-        print(310);
+      case pythag_sub:
+        print("+-+");
         break;
-      case 75:
-        print(387);
+      case or_op:
+        print("or");
         break;
-      case 76:
-        print(388);
+      case and_op:
+        print("and");
         break;
-      case 77:
-        print_char(60);
+      case less_than:
+        print_char('<');
         break;
-      case 78:
-        print(389);
+      case less_or_equal:
+        print("<=");
         break;
-      case 79:
-        print_char(62);
+      case greater_than:
+        print_char(">");
         break;
-      case 80:
-        print(390);
+      case greater_or_equal:
+        print(">=");
         break;
-      case 81:
-        print_char(61);
+      case equal_to:
+        print_char("=");
         break;
-      case 82:
-        print(391);
+      case unequal_to:
+        print("<>");
         break;
-      case 83:
-        print(38);
+      case concatenate:
+        print("&");
         break;
-      case 84:
-        print(392);
+      case rotated_by:
+        print("rotated");
         break;
-      case 85:
-        print(393);
+      case slanted_by:
+        print("slanted");
         break;
-      case 86:
-        print(394);
+      case scaled_by:
+        print("scaled");
         break;
-      case 87:
-        print(395);
+      case shifted_by:
+        print("shifted");
         break;
-      case 88:
-        print(396);
+      case transformed_by:
+        print("transformed");
         break;
-      case 89:
-        print(397);
+      case x_scaled:
+        print("xscaled");
         break;
-      case 90:
-        print(398);
+      case y_scaled:
+        print("yscaled");
         break;
-      case 91:
-        print(399);
+      case z_scaled:
+        print("zscaled");
         break;
-      case 92:
-        print(400);
+      case intersect:
+        print("intersectiontimes");
         break;
-      case 94:
-        print(401);
+      case substring_of:
+        print("substring");
         break;
-      case 95:
-        print(402);
+      case subpath_of:
+        print("subpath");
         break;
-      case 96:
-        print(403);
+      case direction_time_of:
+        print("directiontime");
         break;
-      case 97:
-        print(404);
+      case point_of:
+        print("point");
         break;
-      case 98:
-        print(405);
+      case precontrol_of:
+        print("precontrol");
         break;
-      case 99:
-        print(406);
+      case postcontrol_of:
+        print("postcontrol");
         break;
-      case 100:
-        print(407);
+      case pen_offset_of:
+        print("penoffset");
         break;
       default:
-        print(408);
+        print("..");
         break;
   }
 }
@@ -5948,24 +5749,7 @@ void val_too_big (scaled x)
 {
   if (internal[40] > 0)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(591);
-      }
-      else
-      {
-        print_nl(263);
-        print(591);
-      }
-    }
+    print_err("Value is too large (");
     print_scaled(x);
     print_char(41);
     {
@@ -7235,24 +7019,7 @@ void make_choices (halfword knots)
     print_path (knots, 527, true);
   if (arith_error)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(528);
-      }
-      else
-      {
-        print_nl(263);
-        print(528);
-      }
-    }
+    print_err("Some number got too big");
     {
       help_ptr = 2;
       help_line[1] = 529;
@@ -7685,24 +7452,7 @@ void y_scale_edges (integer s)
 
   if ((s * (mem[cur_edges + 1].hh.rh - 4095) >= 4096) || (s * (mem[cur_edges + 1].hh.lh - 4096) <= -4096))
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(535);
-      }
-      else
-      {
-        print_nl(263);
-        print(535);
-      }
-    }
+    print_err("Scaled picture would be too big");
     {
       help_ptr = 3;
       help_line[2] = 536;
@@ -7766,24 +7516,7 @@ void x_scale_edges (integer s)
 
   if ((s * (mem[cur_edges + 2].hh.rh - 4096) >= 4096) || (s * (mem[cur_edges + 2].hh.lh - 4096) <= -4096))
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(535);
-      }
-      else
-      {
-        print_nl(263);
-        print(535);
-      }
-    }
+    print_err("Scaled picture would be too big");
     {
       help_ptr = 3;
       help_line[2] = 539;
@@ -9088,24 +8821,7 @@ void print_strange (str_number s)
       print_char(41);
     }
   }
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(s);
-    }
-    else
-    {
-      print_nl(263);
-      print(s);
-    }
-  }
+  print_err(s);
 }
 /* 405 */
 void remove_cubic (halfword p)
@@ -10224,24 +9940,7 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
   } while (!(p == cur_spec));
   if (chopped > 0)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(563);
-      }
-      else
-      {
-        print_nl(263);
-        print(563);
-      }
-    }
+    print_err("Curve out of range");
     {
       help_ptr = 4;
       help_line[3] = 564;
@@ -10701,24 +10400,7 @@ halfword make_pen (halfword h)
   not_found: p = 3;
   if (mc >= 268402688L)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(573);
-      }
-      else
-      {
-        print_nl(263);
-        print(573);
-      }
-    }
+    print_err("Pen too large");
     {
       help_ptr = 2;
       help_line[1] = 574;
@@ -10727,24 +10409,7 @@ halfword make_pen (halfword h)
   }
   else
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(576);
-      }
-      else
-      {
-        print_nl(263);
-        print(576);
-      }
-    }
+    print_err("Pen cycle must be convex");
     {
       help_ptr = 3;
       help_line[2] = 577;
@@ -13339,24 +13004,7 @@ void ring_merge (halfword p, halfword q)
     if (r == q)
     {
       {
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(600);
-          }
-          else
-          {
-            print_nl(263);
-            print(600);
-          }
-        }
+        print_err("Redundant equation");
         {
           help_ptr = 2;
           help_line[1] = 601;
@@ -13911,44 +13559,10 @@ boolean check_outer_validity (void)
     {
       runaway ();
       if (cur_sym == 0)
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(623);
-        }
-        else
-        {
-          print_nl(263);
-          print(623);
-        }
-      }
+        print_err("File ended");
       else
       {
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(624);
-          }
-          else
-          {
-            print_nl(263);
-            print(624);
-          }
-        }
+        print_err("Forbidden token found");
       }
       print(625);
       {
@@ -14005,24 +13619,7 @@ boolean check_outer_validity (void)
     }
     else
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(618);
-        }
-        else
-        {
-          print_nl(263);
-          print(618);
-        }
-      }
+      print_err("Incomplete if; all text was ignored after line ");
       print_int (warning_info);
       {
         help_ptr = 3;
@@ -14154,24 +13751,7 @@ lab25:
             if (cur_input.loc_field > cur_input.limit_field)
             {
               cur_input.loc_field = cur_input.limit_field;
-              {
-                if (interaction == 3)
-                  ;
-                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-                {
-                  print_nl(261);
-                  print(fullsourcefilenamestack[in_open]);
-                  print(58);
-                  print_int (line);
-                  print(262);
-                  print(645);
-                }
-                else
-                {
-                  print_nl(263);
-                  print(645);
-                }
-              }
+              print_err("Incomplete string token has been flushed");
               {
                 help_ptr = 3;
                 help_line[2] = 646;
@@ -14221,24 +13801,7 @@ lab25:
         break;
       case 20:
         {
-          {
-            if (interaction == 3)
-              ;
-            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-            {
-              print_nl(261);
-              print(fullsourcefilenamestack[in_open]);
-              print(58);
-              print_int (line);
-              print(262);
-              print(642);
-            }
-            else
-            {
-              print_nl(263);
-              print(642);
-            }
-          }
+          print_err("Text line contains an invalid character");
           {
             help_ptr = 2;
             help_line[1] = 643;
@@ -14296,24 +13859,7 @@ lab25:
       cur_mod = n * 65536L + f;
     else
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(649);
-        }
-        else
-        {
-          print_nl(263);
-          print(649);
-        }
-      }
+      print_err("Enormous number has been reduced");
       {
         help_ptr = 2;
         help_line[1] = 650;
@@ -14494,24 +14040,7 @@ lab_restart:
   get_next ();
   if ((cur_sym == 0) || (cur_sym > 9757))
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(666);
-      }
-      else
-      {
-        print_nl(263);
-        print(666);
-      }
-    }
+    print_err("Missing symbolic token inserted");
     {
       help_ptr = 3;
       help_line[2] = 667;
@@ -14613,24 +14142,7 @@ void check_delimiter (halfword ldelim, halfword rdelim)
   }
   else
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(924);
-      }
-      else
-      {
-        print_nl(263);
-        print(924);
-      }
-    }
+    print_err("The token `");
     slow_print(hash[rdelim].v.RH);
     print(925);
     {
@@ -14734,24 +14246,7 @@ void scan_def (void)
     flush_list (p);
     if (warning_info == 0)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(682);
-        }
-        else
-        {
-          print_nl(263);
-          print(682);
-        }
-      }
+      print_err("This variable already starts with a macro");
       {
         help_ptr = 2;
         help_line[1] = 683;
@@ -14783,24 +14278,7 @@ void scan_def (void)
         base = cur_mod;
       else
       {
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(685);
-          }
-          else
-          {
-            print_nl(263);
-            print(685);
-          }
-        }
+        print_err("Missing parameter type; `expr' will be assumed");
         {
           help_ptr = 1;
           help_line[0] = 686;
@@ -15031,24 +14509,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       get_x_next ();
       if (cur_cmd != 31)
       {
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(709);
-          }
-          else
-          {
-            print_nl(263);
-            print(709);
-          }
-        }
+        print_err("Missing argument to ");
         print_macro_name (arg_list, macro_name);
         {
           help_ptr = 3;
@@ -15135,24 +14596,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
   }
   if (cur_cmd == 82)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(704);
-      }
-      else
-      {
-        print_nl(263);
-        print(704);
-      }
-    }
+    print_err("Too many arguments to ");
     print_macro_name (arg_list, macro_name);
     print_char(59);
     print_nl(705);
@@ -15325,34 +14769,17 @@ void expand (void)
           cur_sym = 9762;
           ins_error ();
         }
-      else
-      {
+        else
         {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+          print_err("Extra ");
+          print_cmd_mod (2, cur_mod);
           {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(724);
+            help_ptr = 1;
+            help_line[0] = 725;
           }
-          else
-          {
-            print_nl(263);
-            print(724);
-          }
+          error ();
         }
-        print_cmd_mod (2, cur_mod);
-        {
-          help_ptr = 1;
-          help_line[0] = 725;
-        }
-        error ();
       }
-    }
       else
       {
         while (cur_mod != 2) pass_text ();
@@ -15375,24 +14802,7 @@ void expand (void)
     case 4:
       if (cur_mod == 0)
       {
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(688);
-          }
-          else
-          {
-            print_nl(263);
-            print(688);
-          }
-        }
+        print_err("Extra `endfor'");
         {
           help_ptr = 2;
           help_line[1] = 689;
@@ -15409,24 +14819,7 @@ void expand (void)
           end_token_list ();
         if (loop_ptr == 0)
         {
-          {
-            if (interaction == 3)
-              ;
-            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-            {
-              print_nl(261);
-              print(fullsourcefilenamestack[in_open]);
-              print(58);
-              print_int (line);
-              print(262);
-              print(692);
-            }
-            else
-            {
-              print_nl(263);
-              print(692);
-            }
-          }
+          print_err("Lost loop");
           {
             help_ptr = 2;
             help_line[1] = 693;
@@ -15447,24 +14840,7 @@ void expand (void)
         {
           if (loop_ptr == 0)
           {
-            {
-              if (interaction == 3)
-                ;
-              if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-              {
-                print_nl(261);
-                print(fullsourcefilenamestack[in_open]);
-                print(58);
-                print_int (line);
-                print(262);
-                print(695);
-              }
-              else
-              {
-                print_nl(263);
-                print(695);
-              }
-            }
+            print_err("No loop is in progress");
             {
               help_ptr = 1;
               help_line[0] = 696;
@@ -16338,43 +15714,9 @@ void prompt_file_name (str_number s, str_number e)
   if (interaction == 2)
     ;
   if (s == 743)
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(744);
-    }
-    else
-    {
-      print_nl(263);
-      print(744);
-    }
-  }
+    print_err("I can't find file `");
   else
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(745);
-    }
-    else
-    {
-      print_nl(263);
-      print(745);
-    }
-  }
+    print_err("I can't write on file `");
   print_file_name (cur_name, cur_area, cur_ext);
   print(746);
   if (e == 747)
@@ -16483,24 +15825,7 @@ void start_input (void)
     end_token_list ();
   if ((cur_input.index_field > 15))
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(757);
-      }
-      else
-      {
-        print_nl(263);
-        print(757);
-      }
-    }
+    print_err("File names can't appear within macros");
     {
       help_ptr = 3;
       help_line[2] = 758;
@@ -16562,24 +15887,7 @@ void bad_exp (str_number s)
 {
   unsigned char saveflag;
 
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(s);
-    }
-    else
-    {
-      print_nl(263);
-      print(s);
-    }
-  }
+  print_err(s);
   print(770);
   print_cmd_mod (cur_cmd, cur_mod);
   print_char(39);
@@ -16659,24 +15967,7 @@ void bad_sub_script (void)
 /* 851 */
 void obliterated (halfword q)
 {
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(790);
-    }
-    else
-    {
-      print_nl(263);
-      print(790);
-    }
-  }
+  print_err("Variable ");
   show_token_list (q, 0, 1000, 0);
   print(791);
   {
@@ -16711,24 +16002,7 @@ void materialize_pen (void)
   q = cur_exp;
   if (mem[q].hh.b0 == 0)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(806);
-      }
-      else
-      {
-        print_nl(263);
-        print(806);
-      }
-    }
+    print_err("Pen path must be a cycle");
     {
       help_ptr = 2;
       help_line[1] = 807;
@@ -17186,24 +16460,7 @@ void str_to_num (quarterword c)
     }
     if (n > 4095)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(846);
-        }
-        else
-        {
-          print_nl(263);
-          print(846);
-        }
-      }
+      print_err("Number too large (");
       print_int (n);
       print_char(41);
       {
@@ -18124,24 +17381,7 @@ void edges_trans (halfword p, quarterword c)
             ty = round_unscaled (ty);
             if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.rh + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.rh + ty >= 8191) || (abs (tx) >= 4096) || (abs (ty) >= 4096))
             {
-              {
-                if (interaction == 3)
-                  ;
-                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-                {
-                  print_nl(261);
-                  print(fullsourcefilenamestack[in_open]);
-                  print(58);
-                  print_int (line);
-                  print(262);
-                  print(867);
-                }
-                else
-                {
-                  print_nl(263);
-                  print(867);
-                }
-              }
+              print_err("Too far to shift");
               {
                 help_ptr = 3;
                 help_line[2] = 868;
@@ -18175,24 +17415,7 @@ void edges_trans (halfword p, quarterword c)
       }
     }
   }
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(864);
-    }
-    else
-    {
-      print_nl(263);
-      print(864);
-    }
-  }
+  print_err("That transformation is too hard");
   {
     help_ptr = 3;
     help_line[2] = 865;
@@ -19780,24 +19003,7 @@ void try_eq (halfword l, halfword r)
   {
     if (abs (mem[p + 1].cint) > 64)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(897);
-        }
-        else
-        {
-          print_nl(263);
-          print(897);
-        }
-      }
+      print_err("Inconsistent equation");
       print(899);
       print_scaled(mem[p + 1].cint);
       print_char(41);
@@ -19810,24 +19016,7 @@ void try_eq (halfword l, halfword r)
     }
     else if (r == 0)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(600);
-        }
-        else
-        {
-          print_nl(263);
-          print(600);
-        }
-      }
+      print_err("Redundant equation");
       {
         help_ptr = 2;
         help_line[1] = 601;
@@ -19891,24 +19080,7 @@ lab_restart:
           else if (v != cur_exp)
             goto not_found;
           {
-            {
-              if (interaction == 3)
-                ;
-              if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-              {
-                print_nl(261);
-                print(fullsourcefilenamestack[in_open]);
-                print(58);
-                print_int (line);
-                print(262);
-                print(600);
-              }
-              else
-              {
-                print_nl(263);
-                print(600);
-              }
-            }
+            print_err("Redundant equation");
             {
               help_ptr = 2;
               help_line[1] = 601;
@@ -19918,24 +19090,7 @@ lab_restart:
           }
           goto done;
         }
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(894);
-          }
-          else
-          {
-            print_nl(263);
-            print(894);
-          }
-        }
+        print_err("Redundant or inconsistent equation");
         {
           help_ptr = 2;
           help_line[1] = 895;
@@ -19944,24 +19099,7 @@ lab_restart:
         put_get_error ();
         goto done;
       not_found:
-        {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-          {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(897);
-          }
-          else
-          {
-            print_nl(263);
-            print(897);
-          }
-        }
+        print_err("Inconsistent equation");
         {
           help_ptr = 2;
           help_line[1] = 898;
@@ -20186,24 +19324,7 @@ void do_type_declaration (void)
     }
     else
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(900);
-        }
-        else
-        {
-          print_nl(263);
-          print(900);
-        }
-      }
+      print_err("Declared variable conflicts with previous vardef");
       {
         help_ptr = 2;
         help_line[1] = 901;
@@ -20214,24 +19335,7 @@ void do_type_declaration (void)
     flush_list (p);
     if (cur_cmd < 82)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(903);
-        }
-        else
-        {
-          print_nl(263);
-          print(903);
-        }
-      }
+      print_err("Illegal suffix of declared variable will be flushed");
       {
         help_ptr = 5;
         help_line[4] = 904;
@@ -20342,24 +19446,7 @@ void do_interim (void)
   get_x_next ();
   if (cur_cmd != 40)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(924);
-      }
-      else
-      {
-        print_nl(263);
-        print(924);
-      }
-    }
+    print_err("The token `");
     if (cur_sym == 0)
       print(929);
     else
@@ -20642,24 +19729,7 @@ void do_show_whatever (void)
   }
   if (internal[32] > 0)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(954);
-      }
-      else
-      {
-        print_nl(263);
-        print(954);
-      }
-    }
+    print_err("OK");
     if (interaction < 3)
     {
       help_ptr = 0;
@@ -20709,24 +19779,7 @@ boolean scan_with (void)
       result = true;
     else
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(967);
-        }
-        else
-        {
-          print_nl(263);
-          print(967);
-        }
-      }
+      print_err("Weight must be -3, -2, -1, +1, +2, or +3");
       {
         help_ptr = 1;
         help_line[0] = 965;
@@ -20751,24 +19804,7 @@ void find_edges_var (halfword t)
   }
   else if (mem[p].hh.b0 != 11)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(790);
-      }
-      else
-      {
-        print_nl(263);
-        print(790);
-      }
-    }
+    print_err("Variable ");
     show_token_list (t, 0, 1000, 0);
     print(968);
     print_type (mem[p].hh.b0);
@@ -20909,24 +19945,7 @@ void do_add_to (void)
             }
             else
             {
-              {
-                if (interaction == 3)
-                  ;
-                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-                {
-                  print_nl(261);
-                  print(fullsourcefilenamestack[in_open]);
-                  print(58);
-                  print_int (line);
-                  print(262);
-                  print(978);
-                }
-                else
-                {
-                  print_nl(263);
-                  print(978);
-                }
-              }
+              print_err("Not a cycle");
               {
                 help_ptr = 2;
                 help_line[1] = 979;
@@ -21002,24 +20021,7 @@ scaled tfm_check (small_number m)
   scaled Result;
   if (abs (internal[m]) >= 134217728L)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(1001);
-      }
-      else
-      {
-        print_nl(263);
-        print(1001);
-      }
-    }
+    print_err("Enormous ");
     print(int_name[m]);
     print(1002);
     {
@@ -21198,24 +20200,7 @@ void do_open_window (void)
   open_a_window (k, r0, c0, r1, c1, cur_x, cur_y);
   goto lab_exit;
 not_found:
-  {
-    if (interaction == 3)
-      ;
-    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-    {
-      print_nl(261);
-      print(fullsourcefilenamestack[in_open]);
-      print(58);
-      print_int (line);
-      print(262);
-      print(987);
-    }
-    else
-    {
-      print_nl(263);
-      print(987);
-    }
-  }
+  print_err("Improper `openwindow'");
   {
     help_ptr = 2;
     help_line[1] = 988;
@@ -21277,24 +20262,7 @@ void do_cull (void)
       cull_edges (floorunscaled (cur_x + 65535L), floorunscaled (cur_y), wout, win);
     goto lab_exit;
   not_found:
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(990);
-      }
-      else
-      {
-        print_nl(263);
-        print(990);
-      }
-    }
+    print_err("Bad culling amounts");
     {
       help_ptr = 1;
       help_line[0] = 991;
@@ -21330,75 +20298,58 @@ void do_message (void)
           slow_print(cur_exp);
         }
         break;
-    case 1:
-      {
+      case 1:
         {
-          if (interaction == 3)
-            ;
-          if ((filelineerrorstylep && !(cur_input.name_field == 0)))
+          print_err("");
+          slow_print(cur_exp);
+          if (err_help != 0)
+            use_err_help = true;
+          else if (long_help_seen)
           {
-            print_nl(261);
-            print(fullsourcefilenamestack[in_open]);
-            print(58);
-            print_int (line);
-            print(262);
-            print(261);
+            help_ptr = 1;
+            help_line[0] = 996;
           }
           else
           {
-            print_nl(263);
-            print(261);
+            if (interaction < 3)
+              long_help_seen = true;
+            {
+              help_ptr = 4;
+              help_line[3] = 997;
+              help_line[2] = 998;
+              help_line[1] = 999;
+              help_line[0] = 1000;
+            }
           }
+          put_get_error ();
+          use_err_help = false;
         }
-        slow_print(cur_exp);
-        if (err_help != 0)
-          use_err_help = true;
-        else if (long_help_seen)
+        break;
+      case 2:
         {
-          help_ptr = 1;
-          help_line[0] = 996;
-        }
-        else
-        {
-          if (interaction < 3)
-            long_help_seen = true;
-          {
-            help_ptr = 4;
-            help_line[3] = 997;
-            help_line[2] = 998;
-            help_line[1] = 999;
-            help_line[0] = 1000;
-          }
-        }
-        put_get_error ();
-        use_err_help = false;
-      }
-      break;
-    case 2:
-      {
-        if (err_help != 0)
-        {
-          if (str_ref[err_help]< 127)
-          {
-            if (str_ref[err_help] > 1)
-              decr (str_ref[err_help]);
-            else
-              flush_string (err_help);
-          }
-        }
-        if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
-          err_help = 0;
-        else
-        {
-          err_help = cur_exp;
+          if (err_help != 0)
           {
             if (str_ref[err_help]< 127)
-              incr (str_ref[err_help]);
+            {
+              if (str_ref[err_help] > 1)
+                decr (str_ref[err_help]);
+              else
+                flush_string (err_help);
+            }
+          }
+          if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
+            err_help = 0;
+          else
+          {
+            err_help = cur_exp;
+            {
+              if (str_ref[err_help]< 127)
+                incr (str_ref[err_help]);
+            }
           }
         }
-      }
-      break;
-  }
+        break;
+    }
   flush_cur_exp (0);
 }
 /* 1103 */
@@ -21454,24 +20405,7 @@ void set_tag (halfword c, small_number t, halfword r)
   }
   else
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(1012);
-      }
-      else
-      {
-        print_nl(263);
-        print(1012);
-      }
-    }
+    print_err("Character ");
     if ((c > 32) && (c < 127))
       print(c);
     else if (c == 256)
@@ -21533,24 +20467,7 @@ void do_tfm_command (void)
           if (nl - skip_table[c] > 128)
           {
             {
-              {
-                if (interaction == 3)
-                  ;
-                if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-                {
-                  print_nl(261);
-                  print(fullsourcefilenamestack[in_open]);
-                  print(58);
-                  print_int (line);
-                  print(262);
-                  print(1035);
-                }
-                else
-                {
-                  print_nl(263);
-                  print(1035);
-                }
-              }
+              print_err("Too far to skip");
               {
                 help_ptr = 1;
                 help_line[0] = 1036;
@@ -21600,24 +20517,7 @@ void do_tfm_command (void)
               if (nl - ll > 128)
               {
                 {
-                  {
-                    if (interaction == 3)
-                      ;
-                    if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-                    {
-                      print_nl(261);
-                      print(fullsourcefilenamestack[in_open]);
-                      print(58);
-                      print_int (line);
-                      print(262);
-                      print(1035);
-                    }
-                    else
-                    {
-                      print_nl(263);
-                      print(1035);
-                    }
-                  }
+                  print_err("Too far to skip");
                   {
                     help_ptr = 1;
                     help_line[0] = 1036;
@@ -21678,24 +20578,7 @@ void do_tfm_command (void)
         }
         else
         {
-          {
-            if (interaction == 3)
-              ;
-            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-            {
-              print_nl(261);
-              print(fullsourcefilenamestack[in_open]);
-              print(58);
-              print_int (line);
-              print(262);
-              print(1023);
-            }
-            else
-            {
-              print_nl(263);
-              print(1023);
-            }
-          }
+          print_err("Illegal ligtable step");
           {
             help_ptr = 1;
             help_line[0] = 1024;
@@ -21876,24 +20759,7 @@ void do_statement (void)
   {
     if (cur_cmd < 83)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(869);
-        }
-        else
-        {
-          print_nl(263);
-          print(869);
-        }
-      }
+      print_err("A statement can't begin with `");
       print_cmd_mod (cur_cmd, cur_mod);
       print_char(39);
       {
@@ -22044,24 +20910,7 @@ void do_statement (void)
   }
   if (cur_cmd < 83)
   {
-    {
-      if (interaction == 3)
-        ;
-      if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-      {
-        print_nl(261);
-        print(fullsourcefilenamestack[in_open]);
-        print(58);
-        print_int (line);
-        print(262);
-        print(875);
-      }
-      else
-      {
-        print_nl(263);
-        print(875);
-      }
-    }
+    print_err("Extra tokens will be flushed");
     {
       help_ptr = 6;
       help_line[5] = 876;
@@ -22097,24 +20946,7 @@ void main_control (void)
     do_statement ();
     if (cur_cmd == 84)
     {
-      {
-        if (interaction == 3)
-          ;
-        if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-        {
-          print_nl(261);
-          print(fullsourcefilenamestack[in_open]);
-          print(58);
-          print_int (line);
-          print(262);
-          print(910);
-        }
-        else
-        {
-          print_nl(263);
-          print(910);
-        }
-      }
+      print_err("Extra `endgroup'");
       {
         help_ptr = 2;
         help_line[1] = 911;
@@ -22485,24 +21317,7 @@ lab_restart:
         } while (!(cur_cmd != 83));
         if (cur_cmd != 84)
         {
-          {
-            if (interaction == 3)
-              ;
-            if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-            {
-              print_nl(261);
-              print(fullsourcefilenamestack[in_open]);
-              print(58);
-              print_int (line);
-              print(262);
-              print(780);
-            }
-            else
-            {
-              print_nl(263);
-              print(780);
-            }
-          }
+          print_err("A group begun on line ");
           print_int (groupline);
           print(781);
           {
@@ -22549,24 +21364,7 @@ lab_restart:
           denom = cur_mod;
           if (denom == 0)
           {
-            {
-              if (interaction == 3)
-                ;
-              if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-              {
-                print_nl(261);
-                print(fullsourcefilenamestack[in_open]);
-                print(58);
-                print_int (line);
-                print(262);
-                print(784);
-              }
-              else
-              {
-                print_nl(263);
-                print(784);
-              }
-            }
+            print_err("Division by zero");
             {
               help_ptr = 1;
               help_line[0] = 785;
@@ -23229,24 +22027,7 @@ lab_continue:
             {
               if ((mem[q + 1].cint != mem[pp + 1].cint) || (mem[q + 2].cint != mem[pp + 2].cint))
               {
-                {
-                  if (interaction == 3)
-                    ;
-                  if ((filelineerrorstylep && !(cur_input.name_field == 0)))
-                  {
-                    print_nl(261);
-                    print(fullsourcefilenamestack[in_open]);
-                    print(58);
-                    print_int (line);
-                    print(262);
-                    print(828);
-                  }
-                  else
-                  {
-                    print_nl(263);
-                    print(828);
-                  }
-                }
+                print_err("Paths don't touch; `&' will be changed to `..'");
                 {
                   help_ptr = 3;
                   help_line[2] = 829;
