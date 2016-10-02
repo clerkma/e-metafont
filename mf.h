@@ -12,6 +12,64 @@ typedef int32_t  integer;
 typedef uint32_t boolean;
 typedef char* constcstring;
 
+/* 11 */
+/*
+#define max_internal (300)
+#define stack_size (300)
+#define max_strings (7500)
+#define string_vacancies (74000L)
+#define pool_size (100000L)
+#define move_size (20000)
+#define max_wiggle (1000)
+#define pool_name (TEXMFpool_name)
+#define enginename (TEXMFENGINENAME)
+#define path_size (1000)
+#define bistack_size (1500)
+#define header_size (100)
+#define lig_table_size (15000)
+#define max_kerns (2500)
+#define max_font_dimen (60)
+#define infmainmemory (3000)
+#define supmainmemory (8000000L)
+#define infbuf_size (500)
+#define supbuf_size (30000000L)
+*/
+#define mem_max 30000 /*{greatest index in \MF's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INIMF}, otherwise |>=mem_top|}*/
+#define max_internal 100 //{maximum number of internal quantities}
+#define buf_size 500 /*{maximum number of characters simultaneously present in
+  current lines of open files; must not exceed |max_halfword|}*/
+#define error_line 72 //{width of context lines on terminal error messages}
+#define half_error_line 42 /*{width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}*/
+#define max_print_line 79 //{width of longest text lines output; should be at least 60}
+#define screen_width 768 //{number of pixels in each row of screen display}
+#define screen_depth 1024 //{number of pixels in each column of screen display}
+#define stack_size 30 //{maximum number of simultaneous input sources}
+#define max_strings 2000 //{maximum number of strings; must not exceed |max_halfword|}
+#define string_vacancies 8000 /*{the minimum number of characters that should be
+  available for the user's identifier names and strings,
+  after \MF's own error messages are stored}*/
+#define pool_size 32000 /*{maximum number of characters in strings, including all
+  error messages and help texts, and the names of all identifiers;
+  must exceed |string_vacancies| by the total
+  length of \MF's own strings, which is currently about 22000}*/
+#define move_size 5000 //{space for storing moves in a single octant}
+#define max_wiggle 300 //{number of autorounded points per cycle}
+#define gf_buf_size 800 //{size of the output buffer, must be a multiple of 8}
+#define file_name_size 40 //{file names shouldn't be longer than this}
+const uint8_t* pool_name = "MFbases:MF.POOL                         ";
+  //{string of length |file_name_size|; tells where the string pool appears}
+#define path_size 300 //{maximum number of knots between breakpoints of a path}
+#define bistack_size 785 /*{size of stack for bisection algorithms;
+  should probably be left at this value}*/
+#define header_size 100 //{maximum number of \.{TFM} header words, times~4}
+#define lig_table_size 5000 /*{maximum number of ligature/kern steps, must be
+  at least 255 and at most 32510}*/
+#define max_kerns 500 //{maximum number of distinct kern amounts}
+#define max_font_dimen 50 //{maximum number of \&{fontdimen} parameters}
+
 typedef uint8_t ASCII_code;
 typedef uint8_t eight_bits;
 typedef FILE* /* of  ASCII_code */ alpha_file;
@@ -27,20 +85,22 @@ typedef uint8_t quarterword;
 typedef integer halfword;
 typedef uint8_t twochoices;
 typedef uint8_t threechoices;
+typedef struct {
+  halfword rh;
+  union {
+    halfword lh;
+    struct {
+      quarterword b0, b1;
+    };
+  };
+} two_halves;
+typedef struct {
+  quarterword b0, b1, b2, b3;
+} four_quarters;
 typedef union {
   int32_t cint;
-  struct {
-    union {
-      uint16_t lh;
-      struct {
-        uint8_t b0, b1;
-      };
-    };
-    uint16_t rh;
-  } hh;
-  struct {
-    uint8_t b0, b1, b2, b3;
-  } qqqq;
+  two_halves hh;
+  four_quarters qqqq;
 } memory_word;
 typedef FILE* /* of  memory_word */ word_file;
 typedef uint8_t command_code;
@@ -68,16 +128,14 @@ EXTERN integer bounddefault;
 EXTERN constcstring boundname;
 EXTERN integer mainmemory;
 EXTERN integer mem_top;
-EXTERN integer mem_max;
-EXTERN integer buf_size;
-EXTERN integer error_line;
-EXTERN integer half_error_line;
-EXTERN integer max_print_line;
+//EXTERN integer mem_max;
+//EXTERN integer buf_size;
+//EXTERN integer error_line;
+//EXTERN integer half_error_line;
+//EXTERN integer max_print_line;
 EXTERN integer screenwidth;
 EXTERN integer screendepth;
-EXTERN integer gf_buf_size;
-EXTERN cinttype parsefirstlinep;
-EXTERN cinttype haltonerrorp;
+//EXTERN integer gf_buf_size;
 EXTERN boolean quotedfilename;
 
 EXTERN ASCII_code xord[256];
@@ -233,7 +291,7 @@ EXTERN uint8_t octant_code[9];
 EXTERN boolean rev_turns;
 
 EXTERN uint8_t y_corr[9], xy_corr[9], z_corr[9];
-EXTERN schar x_corr[9];
+EXTERN int8_t x_corr[9];
 
 EXTERN integer m0, n0, m1, n1;
 EXTERN uint8_t d0, d1;
@@ -361,11 +419,11 @@ EXTERN boolean char_exists[256];
 EXTERN uint8_t char_tag[256];
 EXTERN integer char_remainder[256];
 EXTERN short header_byte[header_size + 1];
-EXTERN fourquarters lig_kern[lig_table_size + 1];
+EXTERN four_quarters lig_kern[lig_table_size + 1];
 EXTERN short nl;
 EXTERN scaled kern[max_kerns + 1];
 EXTERN integer nk;
-EXTERN fourquarters exten[256];
+EXTERN four_quarters exten[256];
 EXTERN short ne;
 EXTERN scaled param[max_font_dimen + 1];
 EXTERN integer np;
@@ -407,69 +465,9 @@ EXTERN word_file base_file;
 
 EXTERN integer ready_already;
 
-EXTERN pool_pointer editnamestart;
-EXTERN integer editname_length, editline;
-EXTERN ASCII_code xprn[256];
 EXTERN boolean stopatspace;
 
 /* M A C R O S */
-/* 11 */
-/*
-#define max_internal (300)
-#define stack_size (300)
-#define max_strings (7500)
-#define string_vacancies (74000L)
-#define pool_size (100000L)
-#define move_size (20000)
-#define max_wiggle (1000)
-#define pool_name (TEXMFpool_name)
-#define enginename (TEXMFENGINENAME)
-#define path_size (1000)
-#define bistack_size (1500)
-#define header_size (100)
-#define lig_table_size (15000)
-#define max_kerns (2500)
-#define max_font_dimen (60)
-#define infmainmemory (3000)
-#define supmainmemory (8000000L)
-#define infbuf_size (500)
-#define supbuf_size (30000000L)
-*/
-const uint32_t mem_max = 30000; /*{greatest index in \MF's internal |mem| array;
-  must be strictly less than |max_halfword|;
-  must be equal to |mem_top| in \.{INIMF}, otherwise |>=mem_top|}*/
-const uint32_t max_internal = 100; //{maximum number of internal quantities}
-const uint32_t buf_size = 500; /*{maximum number of characters simultaneously present in
-  current lines of open files; must not exceed |max_halfword|}*/
-const uint32_t error_line = 72; //{width of context lines on terminal error messages}
-const uint32_t half_error_line = 42; /*{width of first lines of contexts in terminal
-  error messages; should be between 30 and |error_line-15|}*/
-const uint32_t max_print_line = 79; //{width of longest text lines output; should be at least 60}
-const uint32_t screen_width = 768; //{number of pixels in each row of screen display}
-const uint32_t screen_depth = 1024; //{number of pixels in each column of screen display}
-const uint32_t stack_size = 30; //{maximum number of simultaneous input sources}
-const uint32_t max_strings = 2000; //{maximum number of strings; must not exceed |max_halfword|}
-const uint32_t string_vacancies = 8000; /*{the minimum number of characters that should be
-  available for the user's identifier names and strings,
-  after \MF's own error messages are stored}*/
-const uint32_t pool_size = 32000; /*{maximum number of characters in strings, including all
-  error messages and help texts, and the names of all identifiers;
-  must exceed |string_vacancies| by the total
-  length of \MF's own strings, which is currently about 22000}*/
-const uint32_t move_size = 5000; //{space for storing moves in a single octant}
-const uint32_t max_wiggle = 300; //{number of autorounded points per cycle}
-const uint32_t gf_buf_size = 800; //{size of the output buffer, must be a multiple of 8}
-const uint32_t file_name_size = 40; //{file names shouldn't be longer than this}
-const uint8_t* pool_name = "MFbases:MF.POOL                         ";
-  //{string of length |file_name_size|; tells where the string pool appears}
-const uint32_t path_size = 300; //{maximum number of knots between breakpoints of a path}
-const uint32_t bistack_size = 785; /*{size of stack for bisection algorithms;
-  should probably be left at this value}*/
-const uint32_t header_size = 100; //{maximum number of \.{TFM} header words, times~4}
-const uint32_t lig_table_size = 5000; /*{maximum number of ligature/kern steps, must be
-  at least 255 and at most 32510}*/
-const uint32_t max_kerns = 500; //{maximum number of distinct kern amounts}
-const uint32_t max_font_dimen = 50; //{maximum number of \&{fontdimen} parameters}
 /* 12 */
 #define mem_min 0 /*{smallest index in the |mem| array, must not be less
   than |min_halfword|}*/

@@ -296,7 +296,6 @@ boolean load_base_file (void)
   ASCII_code * baseengine;
   ASCII_code dummyxord;
   ASCII_code dummyxchr;
-  ASCII_code dummyxprn;
 
   undump_int(x);
   if (x != 1462914374L)
@@ -1484,7 +1483,6 @@ void initialize (void)
   gf_ptr = 0;
   gf_offset = 0;
   base_ident = 0;
-  editnamestart = 0;
   stopatspace = true;
 }
 /* 57 */
@@ -1841,11 +1839,6 @@ void error (void)
     history = 2;
   print_char(46);
   show_context ();
-  if ((haltonerrorp))
-  {
-    history = 3;
-    jump_out ();
-  }
   if (interaction == 3)
     while (true)
     {
@@ -1923,10 +1916,6 @@ void error (void)
         case 69:
           if (file_ptr > 0)
           {
-            editnamestart = str_start[input_stack[file_ptr].name_field];
-            editname_length = str_start[input_stack[file_ptr].name_field + 1] -
-            str_start[input_stack[file_ptr].name_field];
-            editline = line;
             jump_out ();
           }
           break;
@@ -22652,8 +22641,6 @@ void close_files_and_terminate (void)
     }
   }
   print_ln ();
-  if ((editnamestart != 0) && (interaction > 0))
-    calledit (str_pool, editnamestart, editname_length, editline);
 }
 /* 1212 */
 #ifdef TEXMF_DEBUG
