@@ -504,11 +504,11 @@ EXTERN boolean stopatspace;
 /* 42 */
 #define max_str_ref 127 //{``infinite'' number of references}
 #define add_str_ref(a) \
-do {if (str_ref[a] < max_str_ref) incr(str_ref[a]);} while (0);
+do {if (str_ref[a] < max_str_ref) incr(str_ref[a]);} while (0)
 /* 43 */
 #define delete_str_ref(a) \
 do { if (str_ref[a] < max_str_ref) \
-  if (str_ref[a] > 1) decr(str_ref[a]); else flush_string(a);} while (0);
+  if (str_ref[a] > 1) decr(str_ref[a]); else flush_string(a);} while (0)
 /* 54 */
 #define no_print 0 //{|selector| setting that makes data disappear}
 #define term_only 1 //{printing is destined for the terminal only}
@@ -551,6 +551,9 @@ static inline void mf_help (unsigned int n, ...)
 #define help4(...)  mf_help(4, __VA_ARGS__)
 #define help5(...)  mf_help(5, __VA_ARGS__)
 #define help6(...)  mf_help(6, __VA_ARGS__)
+/* 91 */
+#define check_interrupt() \
+do { if (interrupt != 0) pause_for_instructions(); } while (0)
 /* 95 */
 #define el_gordo 017777777777 //{$2^{31}-1$, the largest value that \MF\ likes}
 /* 96 */
@@ -588,6 +591,9 @@ static inline void mf_help (unsigned int n, ...)
 #define sixth_octant (first_octant+switch_x_and_y+negate_x+negate_y)
 #define seventh_octant (first_octant+switch_x_and_y+negate_y)
 #define eighth_octant (first_octant+negate_y)
+/* 158 */
+#define pointer halfword //{a flag or a location in |mem| or |eqtb|}
+#define null mem_min //{the null pointer}
 /* 161 */
 #define link(a) mem[a].hh.rh //{the |link| field of a memory word}
 #define info(a) mem[a].hh.lh //{the |info| field of a memory word}
@@ -1164,6 +1170,10 @@ static inline void mf_help (unsigned int n, ...)
 #define extensible_code 2
 #define header_byte_code 3
 #define font_dimen_code 4
+/* 1128 */
+#define three_bytes 0100000000 //{$2^{24}$}
+/* 1144 */
+#define gf_id_byte 131 //{identifies the kind of \.{GF} files described here}
 /* 1145 */
 #define paint_0 0 //{beginning of the \\{paint} commands}
 #define paint1 64 /*{move right a given number of columns, then
@@ -1185,7 +1195,7 @@ static inline void mf_help (unsigned int n, ...)
 /* 1155 */
 #define gf_out(a) \
 do { gf_buf[gf_ptr] = a; incr(gf_ptr);\
-if (gf_ptr == gf_limit) gf_swap();} while (0);
+if (gf_ptr == gf_limit) gf_swap();} while (0)
 
 /* F U N C T I O N S */
 void initialize(void);

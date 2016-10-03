@@ -124,10 +124,10 @@ void store_base_file (void)
   print_char('.');
   print_int(round_unscaled(internal[16]));
   print_char(')');
-  if (interaction == 0)
-    selector = 2;
+  if (interaction == batch_mode)
+    selector = log_only;
   else
-    selector = 3;
+    selector = term_and_log;
   {
     if (pool_ptr + 1 > max_pool_ptr)
     {
@@ -571,15 +571,15 @@ void final_cleanup (void)
     cond_ptr = mem[cond_ptr].hh.rh;
     freenode(loop_ptr, 2);
   }
-  if (history != 0)
+  if (history != spotless)
   {
-    if (((history == 1) || (interaction < 3)))
+    if (((history == warning_issued) || (interaction < term_and_log)))
     {
-      if (selector == 3)
+      if (selector == term_and_log)
       {
-        selector = 1;
+        selector = term_only;
         print_nl(1081);
-        selector = 3;
+        selector = term_and_log;
       }
     }
   }
@@ -952,7 +952,7 @@ void init_tab (void)
 /* main */
 void mainbody (void)
 {
-  history = 3;
+  history = fatal_error_stop;
   if (ready_already == 314159)
     goto lab_start_of_MF;
   bad = 0;
@@ -1022,7 +1022,7 @@ void mainbody (void)
 #endif /* INIMF */
   ready_already = 314159;
 lab_start_of_MF:
-  selector = 1;
+  selector = term_only;
   tally = 0;
   term_offset = 0;
   file_offset = 0;
@@ -1077,17 +1077,17 @@ lab_start_of_MF:
     buffer[limit] = 37;
     fix_date_and_time();
     ini_trandoms((internal[17] / 65536) + internal[16]);
-    if (interaction == 0)
-      selector = 0;
+    if (interaction == batch_mode)
+      selector = no_print;
     else
-      selector = 1;
+      selector = term_only;
     if (loc < limit)
     {
       if (buffer[loc] != 92)
         start_input();
     }
   }
-  history = 0;
+  history = spotless;
   if (start_sym > 0)
   {
     cur_sym = start_sym;
@@ -1100,7 +1100,7 @@ lab_final_end:
   {
     fflush(stdout);
     ready_already = 0;
-    if ((history != 0) && (history != 1))
+    if ((history != spotless) && (history != warning_issued))
       uexit(1);
     else
       uexit(0);
@@ -1227,7 +1227,7 @@ void initialize (void)
   {
     xord[xchr[i]] = i;
   }
-  interaction = 3;
+  interaction = error_stop_mode;
   deletions_allowed = true;
   error_count = 0;
   help_ptr = 0;
@@ -1800,11 +1800,11 @@ void error (void)
   integer s1, s2, s3;
   pool_pointer j;
 
-  if (history < 2)
-    history = 2;
+  if (history < error_message_issued)
+    history = error_message_issued;
   print_char('.');
   show_context ();
-  if (interaction == 3)
+  if (interaction == error_stop_mode)
     while (true)
     {
 lab_continue:
@@ -1969,7 +1969,7 @@ lab_continue:
         break;
       case 88:
         {
-          interaction = 2;
+          interaction = scroll_mode;
           jump_out ();
         }
         break;
@@ -1992,10 +1992,10 @@ lab_continue:
   if (error_count == 100)
   {
     print_nl(264);
-    history = 3;
+    history = fatal_error_stop;
     jump_out ();
   }
-  if (interaction > 0)
+  if (interaction > batch_mode)
     decr (selector);
   if (use_err_help)
   {
@@ -2024,7 +2024,7 @@ lab_continue:
       print_nl(help_line[help_ptr]);
     }
   print_ln ();
-  if (interaction > 0)
+  if (interaction > batch_mode)
     incr (selector);
   print_ln ();
   lab_exit:;
@@ -2196,7 +2196,7 @@ void term_input (void)
 
   fflush (stdout);
   if (!inputln (stdin, true))
-    fatal_error (260);
+    fatal_error (/* 260 */ "End of file on the terminal!");
   term_offset = 0;
   decr (selector);
   if (last != first)
@@ -2215,7 +2215,7 @@ void normalize_selector (void)
     selector = term_only;
   if (job_name == 0)
     open_log_file ();
-  if (interaction == 0)
+  if (interaction == batch_mode)
     decr (selector);
 }
 /* 93 */
@@ -2314,7 +2314,7 @@ fraction make_fraction (integer p, integer q)
     ;
 #ifdef TEXMF_DEBUG
     if (q == 0)
-      confusion(47);
+      confusion("/");
 #endif /* TEXMF_DEBUG */
     negate(q);
     negative = !negative;
@@ -2505,7 +2505,7 @@ scaled make_scaled (integer p, integer q)
     ;
 #ifdef TEXMF_DEBUG
     if (q == 0)
-      confusion(47);
+      confusion("/");
 #endif /* TEXMF_DEBUG */
     q = -q;
     negative = !negative;
@@ -3216,27 +3216,27 @@ scaled norm_rand (void)
 #ifdef TEXMF_DEBUG
 void print_word (memory_word w)
 {
-  print_int (w .cint);
+  print_int (w.cint);
   print_char(' ');
-  print_scaled(w .cint);
+  print_scaled(w.cint);
   print_char(' ');
-  print_scaled(w .cint / 4096);
+  print_scaled(w.cint / 4096);
   print_ln ();
-  print_int (w .hh.lh);
+  print_int (w.hh.lh);
   print_char('=');
-  print_int (w .hh.b0);
+  print_int (w.hh.b0);
   print_char(':');
-  print_int (w .hh.b1);
+  print_int (w.hh.b1);
   print_char(';');
-  print_int (w .hh.rh);
+  print_int (w.hh.rh);
   print_char(' ');
-  print_int (w .qqqq.b0);
+  print_int (w.qqqq.b0);
   print_char(':');
-  print_int (w .qqqq.b1);
+  print_int (w.qqqq.b1);
   print_char(':');
-  print_int (w .qqqq .b2);
+  print_int (w.qqqq .b2);
   print_char(':');
-  print_int (w .qqqq .b3);
+  print_int (w.qqqq .b3);
 }
 #endif /* TEXMF_DEBUG */
 /* 217 */
@@ -4135,7 +4135,7 @@ void flush_token_list (halfword p)
           }
           break;
         default:
-          confusion(491);
+          confusion(/* 491 */ "token");
           break;
       }
       free_node (q, 2);
@@ -4725,7 +4725,7 @@ void print_variable_name (halfword p)
     else
     {
       if (mem[p].hh.b1 != 4)
-        confusion(508);
+        confusion(/* 508 */ "var");
       r = get_avail ();
       mem[r].hh.lh = mem[p + 2].hh.lh;
     }
@@ -4815,7 +4815,7 @@ halfword new_structure (halfword p)
       }
       break;
     default:
-      confusion(515);
+      confusion(/* 515 */ "struct");
       break;
   }
   mem[r].hh.rh = mem[p].hh.rh;
@@ -5274,7 +5274,7 @@ void print_dependency (halfword p, small_number t)
     if (v != unity)
       print_scaled(v);
     if (mem[q].hh.b0 != 19)
-      confusion(589);
+      confusion(/* 589 */ "dep");
     print_variable_name(q);
     v = mem[q + 1].cint % 64;
     while (v > 0)
@@ -5420,14 +5420,14 @@ void print_exp (halfword p, small_number verbosity)
         print_type (t);
       else
       {
-        if (selector == 3)
+        if (selector == term_and_log)
         {
-          if (internal[13]<= 0)
+          if (internal[13] <= 0)
           {
-            selector = 1;
+            selector = term_only;
             print_type (t);
             print(762);
-            selector = 3;
+            selector = term_and_log;
           }
         }
         switch (t)
@@ -5482,8 +5482,8 @@ void print_exp (halfword p, small_number verbosity)
     case 19:
       print_variable_name(p);
       break;
-      default:
-      confusion(761);
+    default:
+      confusion(/* 761 */ "exp");
       break;
   }
   if (restorecur_exp)
@@ -5492,7 +5492,7 @@ void print_exp (halfword p, small_number verbosity)
 /* 807 */
 void disp_err (halfword p, str_number s)
 {
-  if (interaction == 3)
+  if (interaction == error_stop_mode)
     ;
   print_nl(765);
   print_exp (p, 1);
@@ -6060,7 +6060,7 @@ void recycle_value (halfword p)
       break;
     case 20:
     case 21:
-      confusion(766);
+      confusion(/* 766 */ "recycle");
       break;
     case 22:
     case 23:
@@ -6928,7 +6928,7 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
   integer q, t, u, x2a, x3a, y2a, y3a;
 
   if ((xx3 < xx0) || (yy3 < yy0))
-    confusion(109);
+    confusion("m");
   l = 16;
   bisect_ptr = 0;
   x1 = xx1 - xx0;
@@ -7723,7 +7723,7 @@ void xy_swap_edges (void)
         if (m != mm)
         {
           if (mm - mmagic >= move_size)
-            confusion(510);
+            confusion(/* 510 */ "xy");
           extras = (abs (w) - 1) / 3;
           if (extras > 0)
           {
@@ -8153,7 +8153,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
     sum = sum + abs (move[k]);
   }
   if (sum != m1 - m0)
-    confusion(48);
+    confusion("0");
 #endif /* TEXMF_DEBUG */
   switch (octant)
   {
@@ -8623,7 +8623,7 @@ void print_strange (str_number s)
   halfword q;
   integer t;
 
-  if (interaction == 3)
+  if (interaction == error_stop_mode)
     ;
   print_nl(62);
   p = cur_spec;
@@ -10841,7 +10841,7 @@ void dual_moves (halfword h, halfword p, halfword q)
   ;
 #ifdef TEXMF_DEBUG
   if ((m != mm1) || (move_ptr != n1 - n0))
-    confusion(50);
+    confusion("2");
 #endif /* TEXMF_DEBUG */
   move[0] = d0 + env_move[1] - mm0;
   for (n = 1; n <= move_ptr; n++)
@@ -11036,7 +11036,7 @@ void fill_envelope (halfword spechead)
       ;
 #ifdef TEXMF_DEBUG
       if ((m != mm1) || (move_ptr != n1 - n0))
-        confusion(49);
+        confusion("1");
 #endif /* TEXMF_DEBUG */
       move[0] = d0 + env_move[0] - mm0;
       for (n = 1; n <= move_ptr; n++)
@@ -12920,7 +12920,7 @@ void show_context (void)
         {
           l = tally;
           tally = 0;
-          selector = 4;
+          selector = pseudo;
           trick_count = 1000000L;
         }
         if (limit > 0)
@@ -13001,7 +13001,7 @@ void show_context (void)
         {
           l = tally;
           tally = 0;
-          selector = 4;
+          selector = pseudo;
           trick_count = 1000000L;
         }
         if (index != 21)
@@ -13114,10 +13114,7 @@ done:
     decr (input_ptr);
     cur_input = input_stack[input_ptr];
   }
-  {
-    if (interrupt != 0)
-      pause_for_instructions ();
-  }
+  check_interrupt();
 }
 /* 856 */
 void encapsulate (halfword p)
@@ -13253,7 +13250,7 @@ lab_restart:
       }
       break;
     default:
-      confusion(800);
+      confusion(/* 800 */ "copy");
       break;
   }
 }
@@ -13365,7 +13362,7 @@ void end_file_reading (void)
   first = start;
   line = line_stack[index];
   if (index != in_open)
-    confusion(617);
+    confusion(/* 617 */ "endinput");
   if (name > 2)
     aclose (input_file[index]);
   {
@@ -13548,7 +13545,7 @@ lab25:
             }
             if (selector < 2)
               open_log_file ();
-            if (interaction > 1)
+            if (interaction > nonstop_mode)
             {
               if (limit == start)
                 print_nl(652);
@@ -13561,12 +13558,9 @@ lab25:
               loc = start;
             }
             else
-              fatal_error (653);
+              fatal_error (/* 653 */ "*** (job aborted, no legal end found)");
           }
-          {
-            if (interrupt != 0)
-              pause_for_instructions ();
-          }
+          check_interrupt ();
           goto lab25;
         }
         break;
@@ -13769,7 +13763,7 @@ void firm_up_the_line (void)
   limit = last;
   if (internal[31] > 0)
   {
-    if (interaction > 1)
+    if (interaction > nonstop_mode)
     {
       ;
       print_ln ();
@@ -14632,7 +14626,7 @@ void expand (void)
               }
             } while (!(p != 0));
             if (p != mem[loop_ptr].hh.lh)
-              fatal_error (699);
+              fatal_error (/* 699 */ "*** (loop confusion)");
             stop_iteration ();
           }
         }
@@ -14666,7 +14660,7 @@ void expand (void)
         scan_primary ();
         if (cur_type != 4)
         {
-          disp_err (0, 700);
+          disp_err (null, /* 700 */ "Not a string");
           help2(/* 701 */ "I'm going to flush this expression, since",
             /* 702 */ "scantokens should be followed by a known string.");
           put_get_flush_error (0);
@@ -14790,7 +14784,7 @@ void change_if_limit (small_number l, halfword p)
     while (true)
     {
       if (q == 0)
-        confusion(718);
+        confusion(/* 718 */ "if");
       if (mem[q].hh.rh == p)
       {
         mem[q].hh.b0 = l;
@@ -14890,7 +14884,7 @@ done:
 /* 754 */
 void bad_for (str_number s)
 {
-  disp_err (0, 726);
+  disp_err (null, /* 726 */ "Improper ");
   print(s);
   print(306);
   help4(/* 727 */ "When you say `for x=a step b until c',",
@@ -15427,7 +15421,7 @@ void prompt_file_name (str_number s, str_number e)
   integer k;
   str_number saved_cur_name;
 
-  if (interaction == 2)
+  if (interaction == scroll_mode)
     ;
   if (s == 743)
     print_err("I can't find file `");
@@ -15439,8 +15433,8 @@ void prompt_file_name (str_number s, str_number e)
     show_context ();
   print_nl(748);
   print(s);
-  if (interaction < 2)
-    fatal_error (749);
+  if (interaction < scroll_mode)
+    fatal_error (/* 749 */ "*** (job aborted, file error in nonstop mode)");
   saved_cur_name = cur_name;
   prompt_input(": ");
   {
@@ -15482,11 +15476,11 @@ void open_log_file (void)
   pack_job_name (752);
   while (!aopenout (log_file))
   {
-    selector = 1;
+    selector = term_only;
     prompt_file_name (754, 752);
   }
   texmflogname = a_make_name_string (log_file);
-  selector = 2;
+  selector = log_only;
   log_opened = true;
   {
     Fputs (log_file,  "This is METAFONT, Version 2.7182818");
@@ -15657,7 +15651,7 @@ void back_expr (void)
 /* 849 */
 void bad_sub_script (void)
 {
-  disp_err (0, 786);
+  disp_err (null, /* 786 */ "Improper subscript has been replaced by zero");
   help3(/* 787 */ "A bracketed subscript must have a known numeric value;",
     /* 788 */ "unfortunately, what I found was the value that appears just",
     /* 789 */ "above this error message. So I'll try a zero subscript.");
@@ -15744,7 +15738,7 @@ void known_pair (void)
 
   if (cur_type != 14)
   {
-    disp_err (0, 809);
+    disp_err (null, /* 809 */ "Undefined coordinates have been replaced by (0,0)");
     help5(/* 810 */ "I need x and y numbers for this part of the path.",
       /* 811 */ "The value I found (see above) was no good;",
       /* 812 */ "so I'll try to keep going by using zero instead.",
@@ -15761,7 +15755,7 @@ void known_pair (void)
       cur_x = mem[p + 1].cint;
     else
     {
-      disp_err (p, 815);
+      disp_err (p, /* 815 */ "Undefined x coordinate has been replaced by 0");
       help5(/* 816 */ "I need a `known' x value for this part of the path.",
         /* 811 */ "The value I found (see above) was no good;",
         /* 812 */ "so I'll try to keep going by using zero instead.",
@@ -15775,7 +15769,7 @@ void known_pair (void)
       cur_y = mem[p + 3].cint;
     else
     {
-      disp_err (p + 2, 817);
+      disp_err (p + 2, /* 817 */ "Undefined y coordinate has been replaced by 0");
       help5(/* 818 */ "I need a `known' y value for this part of the path.",
         /* 811 */ "The value I found (see above) was no good;",
         /* 812 */ "so I'll try to keep going by using zero instead.",
@@ -15818,7 +15812,7 @@ small_number scan_direction (void)
     scan_expression ();
     if ((cur_type != 16) || (cur_exp < 0))
     {
-      disp_err (0, 821);
+      disp_err (null, /* 821 */ "Improper curl has been replaced by 1");
       help1(/* 822 */ "A curl must be a known, nonnegative number.");
       put_get_flush_error (unity);
     }
@@ -15831,7 +15825,7 @@ small_number scan_direction (void)
     {
       if (cur_type != 16)
       {
-        disp_err (0, 815);
+        disp_err (null, /* 815 */ "Undefined x coordinate has been replaced by 0");
         help5(/* 816 */ "I need a `known' x value for this part of the path.", 
           /* 811 */ "The value I found (see above) was no good;",
           /* 812 */ "so I'll try to keep going by using zero instead.",
@@ -15851,7 +15845,7 @@ small_number scan_direction (void)
       scan_expression ();
       if (cur_type != 16)
       {
-        disp_err (0, 817);
+        disp_err (null, /* 817 */ "Undefined y coordinate has been replaced by 0");
         help5(/* 818 */ "I need a `known' y value for this part of the path.",
           /* 811 */ "The value I found (see above) was no good;",
           /* 812 */ "so I'll try to keep going by using zero instead.",
@@ -15945,8 +15939,8 @@ void do_nullary (quarterword c)
       break;
     case 35:
       {
-        if (interaction <= 1)
-          fatal_error (835);
+        if (interaction <= nonstop_mode)
+          fatal_error (/* 835 */ "*** (cannot readstring in nonstop modes)");
         begin_file_reading ();
         name = 1;
         prompt_input("");
@@ -16012,7 +16006,7 @@ void print_known_or_unknown_type (small_number t, integer v)
 /* 901 */
 void bad_unary (quarterword c)
 {
-  disp_err (0, 838);
+  disp_err (null, /* 838 */ "Not implemented: ");
   print_op (c);
   print_known_or_unknown_type (cur_type, cur_exp);
   help3(/* 839 */ "I'm afraid I don't know how to apply that operation to that",
@@ -16101,7 +16095,7 @@ void str_to_num (quarterword c)
     }
     if (badchar)
     {
-      disp_err (0, 843);
+      disp_err (null, /* 843 */ "String contains illegal digits");
       if (c == 47)
         help1(/* 844 */ "I zeroed out characters that weren't in the range 0..7.");
       else
@@ -16377,7 +16371,7 @@ void do_unary (quarterword c)
       else
       {
         old_setting = selector;
-        selector = 5;
+        selector = new_string;
         print_scaled(cur_exp);
         cur_exp = make_string ();
         selector = old_setting;
@@ -16547,8 +16541,8 @@ void do_unary (quarterword c)
 /* 923 */
 void bad_binary (halfword p, quarterword c)
 {
-  disp_err (p, 261);
-  disp_err (0, 838);
+  disp_err (p, /* 261 */ "");
+  disp_err (null, /* 838 */ "Not implemented: ");
   if (c >= 94)
     print_op (c);
   print_known_or_unknown_type (mem[p].hh.b0, p);
@@ -16874,7 +16868,7 @@ void set_up_trans (quarterword c)
         ;
         break;
     }
-    disp_err (p, 858);
+    disp_err (p, /* 858 */ "Improper transformation argument");
     help3(/* 859 */ "The expression shown above has the wrong type,",
       /* 860 */ "so I can't transform anything using it.",
       /* 538 */ "Proceed, and I'll omit the transformation.");
@@ -16905,7 +16899,7 @@ void set_up_known_trans (quarterword c)
   set_up_trans (c);
   if (cur_type != 16)
   {
-    disp_err (0, 861);
+    disp_err (null, /* 861 */ "Transform components aren't all known");
     help3(/* 862 */ "I'm unable to apply a partially specified transformation",
       /* 863 */ "except to a fully known pair or transform.",
       /* 538 */ "Proceed, and I'll omit the transformation.");
@@ -17663,13 +17657,13 @@ void do_binary (halfword p, quarterword c)
         {
           if (cur_type < 16)
           {
-            disp_err(p, 261);
+            disp_err(p, /* 261 */ "");
             help1(/* 851 */ "The quantities shown above have not been equated.");
           }
           else
             help2(/* 852 */ "Oh dear. I can't decide if the expression above is positive,",
               /* 853 */ "negative, or zero. So this comparison test won't be `true'.");
-          disp_err (0, 854);
+          disp_err (null, /* 854 */ "Unknown relation will be considered false");
           put_get_flush_error (31);
         }
         else switch (c)
@@ -17766,7 +17760,7 @@ void do_binary (halfword p, quarterword c)
         unstash_cur_exp (p);
         if (v == 0)
         {
-          disp_err (0, 784);
+          disp_err (null, /* 784 */ "Division by zero");
           help2(/* 856 */ "You're trying to divide the quantity shown above the error",
             /* 857 */ "message by zero. I'm going to divide it by one instead.");
           put_get_error ();
@@ -17973,7 +17967,7 @@ void gf_swap (void)
   if (gf_ptr > (2147483647L - gf_offset))
   {
     gf_prev_ptr = 0;
-    fatal_error (1053);
+    fatal_error (/* 1053 */ "gf length exceeds \"7FFFFFFF");
   }
   if (gf_limit == gf_buf_size)
   {
@@ -17992,115 +17986,45 @@ void gf_swap (void)
 void gf_four (integer x)
 {
   if (x >= 0)
-  {
-    gf_buf[gf_ptr] = x / 16777216L;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+    gf_out (x / three_bytes);
   else
   {
     x = x + fraction_four;
     x = x + fraction_four;
-    {
-      gf_buf[gf_ptr] = (x / 16777216L) + 128;
-      incr (gf_ptr);
-      if (gf_ptr == gf_limit)
-        gf_swap ();
-    }
+    gf_out ((x / three_bytes) + 128);
   }
-  x = x % 16777216L;
-  {
-    gf_buf[gf_ptr] = x / unity;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  x = x % three_bytes;
+  gf_out (x / unity);
   x = x % unity;
-  {
-    gf_buf[gf_ptr] = x / 256;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
-  {
-    gf_buf[gf_ptr] = x % 256;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out (x / 0400);
+  gf_out (x % 0400);
 }
 /* 1158 */
 void gf_two (integer x)
 {
-  {
-    gf_buf[gf_ptr] = x / 256;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
-  {
-    gf_buf[gf_ptr] = x % 256;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out(x / 0400);
+  gf_out(x % 0400);
 }
 /* 1158 */
 void gf_three (integer x)
 {
-  {
-    gf_buf[gf_ptr] = x / unity;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
-  {
-    gf_buf[gf_ptr] = (x % unity) / 256;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
-  {
-    gf_buf[gf_ptr] = x % 256;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out (x / unity);
+  gf_out ((x % unity) / 0400);
+  gf_out (x % 0400);
 }
 /* 1159 */
 void gf_paint (integer d)
 {
   if (d < 64)
-  {
-    gf_buf[gf_ptr] = 0 + d;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+    gf_out(paint_0 + d);
   else if (d < 256)
   {
-    {
-      gf_buf[gf_ptr] = 64;
-      incr (gf_ptr);
-      if (gf_ptr == gf_limit)
-        gf_swap ();
-    }
-    {
-      gf_buf[gf_ptr] = d;
-      incr (gf_ptr);
-      if (gf_ptr == gf_limit)
-        gf_swap ();
-    }
+    gf_out (paint1);
+    gf_out (d);
   }
   else
   {
-    {
-      gf_buf[gf_ptr] = 65;
-      incr (gf_ptr);
-      if (gf_ptr == gf_limit)
-        gf_swap ();
-    }
+    gf_out (paint1 + 1);
     gf_two (d);
   }
 }
@@ -18117,46 +18041,21 @@ void gf_string (str_number s, str_number t)
       l = l + (str_start[t + 1] - str_start[t]);
     if (l <= 255)
     {
-      {
-        gf_buf[gf_ptr] = 239;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
-      {
-        gf_buf[gf_ptr] = l;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (xxx1);
+      gf_out (l);
     }
     else
     {
-      {
-        gf_buf[gf_ptr] = 241;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (xxx3);
       gf_three (l);
     }
     for (k = str_start[s]; k <= str_start[s + 1] - 1; k++)
-    {
-      gf_buf[gf_ptr] = str_pool[k];
-      incr (gf_ptr);
-      if (gf_ptr == gf_limit)
-        gf_swap ();
-    }
+      gf_out(so(str_pool[k]));
   }
   if (t != 0)
   {
     for (k = str_start[t]; k <= str_start[t + 1] - 1; k++)
-    {
-      gf_buf[gf_ptr] = str_pool[k];
-      incr (gf_ptr);
-      if (gf_ptr == gf_limit)
-        gf_swap ();
-    }
+      gf_out(so(str_pool[k]));
   }
 }
 /* 1161 */
@@ -18188,42 +18087,12 @@ void gf_boc (integer minm, integer maxm, integer minn, integer maxn)
                     {
                       if (maxn < 256)
                       {
-                        {
-                          gf_buf[gf_ptr] = 68;
-                          incr (gf_ptr);
-                          if (gf_ptr == gf_limit)
-                            gf_swap ();
-                        }
-                        {
-                          gf_buf[gf_ptr] = boc_c;
-                          incr (gf_ptr);
-                          if (gf_ptr == gf_limit)
-                            gf_swap ();
-                        }
-                        {
-                          gf_buf[gf_ptr] = maxm - minm;
-                          incr (gf_ptr);
-                          if (gf_ptr == gf_limit)
-                            gf_swap ();
-                        }
-                        {
-                          gf_buf[gf_ptr] = maxm;
-                          incr (gf_ptr);
-                          if (gf_ptr == gf_limit)
-                            gf_swap ();
-                        }
-                        {
-                          gf_buf[gf_ptr] = maxn - minn;
-                          incr (gf_ptr);
-                          if (gf_ptr == gf_limit)
-                            gf_swap ();
-                        }
-                        {
-                          gf_buf[gf_ptr] = maxn;
-                          incr (gf_ptr);
-                          if (gf_ptr == gf_limit)
-                            gf_swap ();
-                        }
+                        gf_out (boc1);
+                        gf_out (boc_c);
+                        gf_out (maxm - minm);
+                        gf_out (maxm);
+                        gf_out (maxn - minn);
+                        gf_out (maxn);
                         goto lab_exit;
                       }
                     }
@@ -18236,12 +18105,7 @@ void gf_boc (integer minm, integer maxm, integer minn, integer maxn)
       }
     }
   }
-  {
-    gf_buf[gf_ptr] = 67;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out (boc);
   gf_four (boc_c);
   gf_four (boc_p);
   gf_four (minm);
@@ -18264,12 +18128,12 @@ void init_gf (void)
   {
     char_ptr[k] = -1;
   }
-  if (internal[27]<= 0)
+  if (internal[27] <= 0)
     gf_ext = 1055;
   else
   {
     old_setting = selector;
-    selector = 5;
+    selector = new_string;
     print_char('.');
     print_int (make_scaled (internal[27], 59429463L));
     print(1056);
@@ -18284,20 +18148,10 @@ void init_gf (void)
       prompt_file_name (756, gf_ext);
     output_file_name = b_make_name_string (gf_file);
   }
-  {
-    gf_buf[gf_ptr] = 247;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
-  {
-    gf_buf[gf_ptr] = 131;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out (pre);
+  gf_out (gf_id_byte);
   old_setting = selector;
-  selector = 5;
+  selector = new_string;
   print(1054);
   print_int (round_unscaled (internal[14]));
   print_char('.');
@@ -18309,12 +18163,7 @@ void init_gf (void)
   print_dd (t / 60);
   print_dd (t % 60);
   selector = old_setting;
-  {
-    gf_buf[gf_ptr] = (pool_ptr - str_start[str_ptr]);
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out (cur_length);
   gf_string (0, make_string ());
   decr (str_ptr);
   pool_ptr = str_start[str_ptr];
@@ -18358,23 +18207,13 @@ void ship_out (eight_bits c)
     if (xoff != 0)
     {
       gf_string (437, 0);
-      {
-        gf_buf[gf_ptr] = 243;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (yyy);
       gf_four (xoff * unity);
     }
     if (yoff != 0)
     {
       gf_string (438, 0);
-      {
-        gf_buf[gf_ptr] = 243;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (yyy);
       gf_four (yoff * unity);
     }
   }
@@ -18416,50 +18255,25 @@ void ship_out (eight_bits c)
               else if (prevn > n + 1)
               {
                 delta = prevn - n - 1;
-                if (delta < 256)
+                if (delta < 0400)
                 {
-                  {
-                    gf_buf[gf_ptr] = 71;
-                    incr (gf_ptr);
-                    if (gf_ptr == gf_limit)
-                      gf_swap ();
-                  }
-                  {
-                    gf_buf[gf_ptr] = delta;
-                    incr (gf_ptr);
-                    if (gf_ptr == gf_limit)
-                      gf_swap ();
-                  }
+                  gf_out (skip1);
+                  gf_out (delta);
                 }
                 else
                 {
-                  {
-                    gf_buf[gf_ptr] = 72;
-                    incr (gf_ptr);
-                    if (gf_ptr == gf_limit)
-                      gf_swap ();
-                  }
+                  gf_out (skip1 + 1);
                   gf_two (delta);
                 }
               }
               else
               {
                 delta = m - curminm;
-                if (delta > 164)
-                {
-                  gf_buf[gf_ptr] = 70;
-                  incr (gf_ptr);
-                  if (gf_ptr == gf_limit)
-                    gf_swap ();
-                }
+                if (delta > max_new_row)
+                  gf_out (skip0);
                 else
                 {
-                  {
-                    gf_buf[gf_ptr] = 74 + delta;
-                    incr (gf_ptr);
-                    if (gf_ptr == gf_limit)
-                      gf_swap ();
-                  }
+                  gf_out (new_row_0 + delta);
                   goto done;
                 }
               }
@@ -18500,12 +18314,7 @@ void ship_out (eight_bits c)
   }
   else if (prevn + yoff < gf_min_n)
     gf_min_n = prevn + yoff;
-  {
-    gf_buf[gf_ptr] = 69;
-    incr (gf_ptr);
-    if (gf_ptr == gf_limit)
-      gf_swap ();
-  }
+  gf_out (eoc);
   gf_prev_ptr = gf_offset + gf_ptr;
   incr (total_chars);
   print_char(']');
@@ -18755,8 +18564,8 @@ lab_restart:
       ;
       break;
   }
-  disp_err (lhs, 261);
-  disp_err (0, 891);
+  disp_err (lhs, /* 261 */ "");
+  disp_err (null, /* 891 */ "Equation cannot be performed (");
   if (mem[lhs].hh.b0 <= 14)
     print_type (mem[lhs].hh.b0);
   else
@@ -18819,7 +18628,7 @@ void do_assignment (void)
 
   if (cur_type != 20)
   {
-    disp_err (0, 883);
+    disp_err (null, /* 883 */ "Improper `:=' will be changed to `='");
     help2(/* 884 */ "I didn't find a variable name at the left of the `:=',",
       /* 885 */ "so I'm going to pretend that you said `=' instead.");
     error ();
@@ -18855,7 +18664,7 @@ void do_assignment (void)
         internal[mem[lhs].hh.lh - (9769)] = cur_exp;
       else
       {
-        disp_err (0, 887);
+        disp_err (null, /* 887 */ "Internal quantity `");
         slow_print(int_name[mem[lhs].hh.lh - (9769)]);
         print(888);
         help2(/* 889 */ "I can't set an internal quantity to anything but a known",
@@ -18958,7 +18767,7 @@ void do_random_seed (void)
   scan_expression ();
   if (cur_type != 16)
   {
-    disp_err (0, 915);
+    disp_err (null, /* 915 */ "Unknown value will be ignored");
     help2(/* 916 */ "Your expression was too random for me to handle,",
       /* 917 */ "so I won't change the random seed just now.");
     put_get_flush_error (0);
@@ -18969,7 +18778,7 @@ void do_random_seed (void)
     if (selector >= 2)
     {
       old_setting = selector;
-      selector = 2;
+      selector = log_only;
       print_nl(918);
       print_scaled(cur_exp);
       print_char('}');
@@ -19274,7 +19083,7 @@ void do_show_dependencies (void)
 /* 1051 */
 void do_show_whatever (void)
 {
-  if (interaction == 3)
+  if (interaction == error_stop_mode)
     ;
   switch (cur_mod)
   {
@@ -19297,7 +19106,7 @@ void do_show_whatever (void)
   if (internal[32] > 0)
   {
     print_err("OK");
-    if (interaction < 3)
+    if (interaction < error_stop_mode)
     {
       help_ptr = 0;
       decr(error_count);
@@ -19324,7 +19133,7 @@ boolean scan_with (void)
   result = false;
   if (cur_type != t)
   {
-    disp_err (0, 963);
+    disp_err (null, /* 963 */ "Improper type");
     help2(/* 964 */ "Next time say `withweight <known numeric expression>';",
       /* 965 */ "I'll ignore the bad `with' clause and look for another.");
     if (t == 6)
@@ -19389,7 +19198,7 @@ void do_add_to (void)
   scan_primary ();
   if (cur_type != 20)
   {
-    disp_err (0, 971);
+    disp_err (null, /* 971 */ "Not a suitable variable");
     help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
       /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
       /* 974 */ "have missed it, if it wasn't followed by the proper token.)", 
@@ -19410,7 +19219,7 @@ void do_add_to (void)
         flush_cur_exp (0);
       else if (cur_type != 11)
       {
-        disp_err (0, 975);
+        disp_err (null, /* 975 */ "Improper `addto'");
         help2(/* 976 */ "This expression should have specified a known picture.",
           /* 970 */ "So I'll not change anything just now.");
         put_get_flush_error (0);
@@ -19427,7 +19236,7 @@ void do_add_to (void)
         pair_to_path ();
       if (cur_type != 9)
       {
-        disp_err (0, 975);
+        disp_err (null, /* 975 */ "Improper `addto'");
         help2(/* 977 */ "This expression should have been a known path.", 
           /* 970 */ "So I'll not change anything just now.");
         put_get_flush_error (0);
@@ -19590,7 +19399,7 @@ void do_ship_out (void)
     else
     {
       {
-        disp_err (0, 971);
+        disp_err (null, /* 971 */ "Not a suitable variable");
         help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
           /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
           /* 974 */ "have missed it, if it wasn't followed by the proper token.)", 
@@ -19637,7 +19446,7 @@ void do_display (void)
   scan_primary ();
   if (cur_type != 20)
   {
-    disp_err (0, 971);
+    disp_err (null, /* 971 */ "Not a suitable variable");
     help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
       /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
       /* 974 */ "have missed it, if it wasn't followed by the proper token.)",
@@ -19666,7 +19475,7 @@ void do_display (void)
   not_found:
     cur_exp = cur_exp * unity;
   common_ending:
-    disp_err (0, 985);
+    disp_err (null, /* 985 */ "Bad window number");
     help1(/* 986 */ "It should be the number of an open window.");
     put_get_flush_error (0);
     flush_token_list (e);
@@ -19747,7 +19556,7 @@ void do_cull (void)
   scan_primary ();
   if (cur_type != 20)
   {
-    disp_err (0, 971);
+    disp_err (null, /* 971 */ "Not a suitable variable");
     help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
       /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
       /* 974 */ "have missed it, if it wasn't followed by the proper token.)",
@@ -19801,7 +19610,7 @@ void do_message (void)
   scan_expression ();
   if (cur_type != 4)
   {
-    disp_err (0, 700);
+    disp_err (null, /* 700 */ "Not a string");
     help1(/* 995 */ "A message should be a known string expression.");
     put_get_error ();
   }
@@ -19824,7 +19633,7 @@ void do_message (void)
             help1(/* 996 */ "(That was another `errmessage'.)");
           else
           {
-            if (interaction < 3)
+            if (interaction < error_stop_mode)
               long_help_seen = true;
             help4(/* 997 */ "This error message was generated by an `errmessage'",
               /* 998 */ "command, so I can't give any explicit help.",
@@ -19887,7 +19696,7 @@ eight_bits get_code (void)
       goto found;
     }
   }
-  disp_err (0, 1009);
+  disp_err (null, /* 1009 */ "Invalid code has been replaced by 0");
   help2(/* 1010 */ "I was looking for a number between 0 and 255, or for a",
     /* 1011 */ "string of length 1. Didn't find it; will use 0 instead.");
   put_get_flush_error (0);
@@ -20051,7 +19860,7 @@ void do_tfm_command (void)
             scan_expression ();
             if (cur_type != 16)
             {
-              disp_err (0, 1037);
+              disp_err (null, /* 1037 */ "Improper kern");
               help2(/* 1038 */ "The amount of kern should be a known numeric value.",
                 /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
               put_get_flush_error (0);
@@ -20136,7 +19945,7 @@ void do_tfm_command (void)
         scan_expression ();
         if ((cur_type != 16) || (cur_exp < half_unit))
         {
-          disp_err (0, 1019);
+          disp_err (null, /* 1019 */ "Improper location");
           help2(/* 1020 */ "I was looking for a known, positive number.",
             /* 1021 */ "For safety's sake I'll ignore the present command.");
           put_get_error ();
@@ -20170,7 +19979,7 @@ void do_tfm_command (void)
               scan_expression ();
               if (cur_type != 16)
               {
-                disp_err (0, 1040);
+                disp_err (null, /* 1040 */ "Improper font parameter");
                 help1(/* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
                 put_get_flush_error (0);
               }
@@ -20194,7 +20003,7 @@ void do_special (void)
   {
     if (cur_type != m)
     {
-      disp_err (0, 1061);
+      disp_err (null, /* 1061 */ "Unsuitable expression");
       help1(/* 1062 */ "The expression shown above has the wrong type to be output.");
       put_get_error ();
     }
@@ -20206,12 +20015,7 @@ void do_special (void)
         gf_string (cur_exp, 0);
       else
       {
-        {
-          gf_buf[gf_ptr] = 243;
-          incr (gf_ptr);
-          if (gf_ptr == gf_limit)
-            gf_swap ();
-        }
+        gf_out (yyy);
         gf_four (cur_exp);
       }
     }
@@ -20266,7 +20070,7 @@ void do_statement (void)
       }
       else if (cur_type != 1)
       {
-        disp_err (0, 879);
+        disp_err (null, /* 879 */ "Isolated expression");
         help3(/* 880 */ "I couldn't find an `=' or `:=' after the",
           /* 881 */ "expression that is shown above this error message,",
           /* 882 */ "so I guess I'll just ignore it and carry on.");
@@ -20298,14 +20102,14 @@ void do_statement (void)
         {
           print_ln ();
           interaction = cur_mod;
-          if (interaction == 0)
+          if (interaction == batch_mode)
             kpsemaketexdiscarderrors = 1;
           else
             kpsemaketexdiscarderrors = 0;
-          if (interaction == 0)
-            selector = 0;
+          if (interaction == batch_mode)
+            selector = no_print;
           else
-            selector = 1;
+            selector = term_only;
           if (log_opened)
             selector = selector + 2;
           get_x_next ();
@@ -20707,10 +20511,7 @@ lab_restart:
     if (OK_to_interrupt)
     {
       back_input ();
-      {
-        if (interrupt != 0)
-          pause_for_instructions ();
-      }
+      check_interrupt ();
       get_x_next ();
     }
   }
@@ -20734,7 +20535,7 @@ lab_restart:
           scan_expression ();
           if (cur_type < 16)
           {
-            disp_err (0, 775);
+            disp_err (null, /* 775 */ "Nonnumeric ypart has been replaced by 0");
             help4(/* 776 */ "I thought you were giving me a pair `(x,y)'; but",
               /* 777 */ "after finding a nice xpart `x' I found a ypart `y'",
               /* 778 */ "that isn't of numeric type. So I've changed y to zero.",
@@ -20878,7 +20679,7 @@ lab_restart:
         get_x_next ();
         scan_suffix ();
         old_setting = selector;
-        selector = 5;
+        selector = new_string;
         show_token_list (cur_exp, 0, 100000L, 0);
         flush_token_list (cur_exp);
         cur_exp = make_string ();
@@ -21331,7 +21132,7 @@ lab_continue:
               scan_primary ();
               if ((cur_type != 16) || (cur_exp < three_quarter_unit))
               {
-                disp_err (0, 826);
+                disp_err (null, /* 826 */ "Improper tension has been set to 1");
                 help1(/* 827 */ "The expression above should have been a number >=3/4.");
                 put_get_flush_error (unity);
               }
@@ -21347,7 +21148,7 @@ lab_continue:
                 scan_primary ();
                 if ((cur_type != 16) || (cur_exp < three_quarter_unit))
                 {
-                  disp_err (0, 826);
+                  disp_err (null, /* 826 */ "Improper tension has been set to 1");
                   help1(/* 827 */ "The expression above should have been a number >=3/4.");
                   put_get_flush_error (unity);
                 }
@@ -21578,7 +21379,7 @@ void get_boolean (void)
   scan_expression ();
   if (cur_type != 2)
   {
-    disp_err (0, 832);
+    disp_err (null, /* 832 */ "Undefined condition will be treated as `false'");
     help2(/* 833 */ "The expression shown above should have had a definite",
       /* 834 */ "true-or-false value. I'm changing it to `false'.");
     put_get_flush_error (31);
@@ -21896,22 +21697,12 @@ void close_files_and_terminate (void)
     }
     if (gf_prev_ptr > 0)
     {
-      {
-        gf_buf[gf_ptr] = 248;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (post);
       gf_four (gf_prev_ptr);
       gf_prev_ptr = gf_offset + gf_ptr - 5;
       gf_four (internal[26]* 16);
       for (k = 1; k <= 4; k++)
-      {
-        gf_buf[gf_ptr] = header_byte[k];
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+        gf_out (header_byte[k]);
       gf_four (internal[27]);
       gf_four (internal[28]);
       gf_four (gf_min_m);
@@ -21925,39 +21716,14 @@ void close_files_and_terminate (void)
           x = gf_dx[k] / unity;
           if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * unity))
           {
-            {
-              gf_buf[gf_ptr] = 246;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-                gf_swap ();
-            }
-            {
-              gf_buf[gf_ptr] = k;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-                gf_swap ();
-            }
-            {
-              gf_buf[gf_ptr] = x;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-                gf_swap ();
-            }
+            gf_out (char_loc + 1);
+            gf_out (k);
+            gf_out (x);
           }
           else
           {
-            {
-              gf_buf[gf_ptr] = 245;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-                gf_swap ();
-            }
-            {
-              gf_buf[gf_ptr] = k;
-              incr (gf_ptr);
-              if (gf_ptr == gf_limit)
-                gf_swap ();
-            }
+            gf_out (char_loc);
+            gf_out (k);
             gf_four (gf_dx[k]);
             gf_four (gf_dy[k]);
           }
@@ -21975,28 +21741,13 @@ void close_files_and_terminate (void)
           gf_four (char_ptr[k]);
         }
       }
-      {
-        gf_buf[gf_ptr] = 249;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (post_post);
       gf_four (gf_prev_ptr);
-      {
-        gf_buf[gf_ptr] = 131;
-        incr (gf_ptr);
-        if (gf_ptr == gf_limit)
-          gf_swap ();
-      }
+      gf_out (gf_id_byte);
       k = 4 + ((gf_buf_size - gf_ptr) % 4);
       while (k > 0)
       {
-        {
-          gf_buf[gf_ptr] = 223;
-          incr (gf_ptr);
-          if (gf_ptr == gf_limit)
-            gf_swap ();
-        }
+        gf_out (233);
         decr (k);
       }
       if (gf_limit == half_buf)
@@ -22004,7 +21755,7 @@ void close_files_and_terminate (void)
       if (gf_ptr > (2147483647L - gf_offset))
       {
         gf_prev_ptr = 0;
-        fatal_error (1053);
+        fatal_error (/* 1053 */ "gf length exceeds \"7FFFFFFF");
       }
       if (gf_ptr > 0)
         write_gf (0, gf_ptr - 1);
@@ -22027,7 +21778,7 @@ void close_files_and_terminate (void)
     putc ('\n', log_file);
     aclose (log_file);
     selector = selector - 2;
-    if (selector == 1)
+    if (selector == term_only)
     {
       print_nl(1076);
       print_file_name (0, texmflogname, 0);
