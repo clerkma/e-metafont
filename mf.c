@@ -132,7 +132,7 @@ void store_base_file (void)
     if (pool_ptr + 1 > max_pool_ptr)
     {
       if (pool_ptr + 1 > pool_size)
-        overflow(257, pool_size - init_pool_ptr);
+        overflow(/* 257 */ "pool size", pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + 1;
     }
   }
@@ -1860,11 +1860,8 @@ lab_continue:
             cur_mod = s2;
             cur_sym = s3;
             OK_to_interrupt = true;
-            {
-              help_ptr = 2;
-              help_line[1] = 278;
-              help_line[0] = 279;
-            }
+            help2(/* 278 */ "I have just deleted some text, as you asked.",
+              /* 279 */ "You can now delete more, or insert, or whatever.");
             show_context ();
             goto lab_continue;
           }
@@ -1909,24 +1906,18 @@ lab_continue:
           else
           {
             if (help_ptr == 0)
-            {
-              help_ptr = 2;
-              help_line[1] = 280;
-              help_line[0] = 281;
-            }
+              help2(/* 280 */ "Sorry, I don't know how to help in this situation.",
+                /* 281 */ "Maybe you should try asking a human?");
             do {
               decr (help_ptr);
               print(help_line[help_ptr]);
               print_ln ();
             } while (!(help_ptr == 0));
           }
-          {
-            help_ptr = 4;
-            help_line[3] = 282;
-            help_line[2] = 281;
-            help_line[1] = 283;
-            help_line[0] = 284;
-          }
+          help4(/* 282 */ "Sorry, I already gave what help I could...",
+            /* 281 */ "Maybe you should try asking a human?",
+            /* 283 */ "An error might have occurred before I noticed any problems.",
+            /* 284 */ "``If all else fails, read the instructions.''");
           goto lab_continue;
         }
         break;
@@ -2055,11 +2046,8 @@ void overflow (str_number s, integer n)
   print_char('=');
   print_int (n);
   print_char(']');
-  {
-    help_ptr = 2;
-    help_line[1] = 287;
-    help_line[0] = 288;
-  }
+  help2(/* 287 */ "If you really absolutely need more capacity,",
+    /* 288 */ "you can ask a wizard to enlarge me.");
   succumb ();
 }
 /* 90 */
@@ -2071,19 +2059,13 @@ void confusion (str_number s)
     print_err("This can't happen (");
     print(s);
     print_char(')');
-    {
-      help_ptr = 1;
-      help_line[0] = 290;
-    }
+    help1(/* 290 */ "I'm broken. Please show this to someone who can fix can fix");
   }
   else
   {
     print_err("I can't go on meeting you like this");
-    {
-      help_ptr = 2;
-      help_line[1] = 292;
-      help_line[0] = 293;
-    }
+    help2(/* 292 */ "One of your faux pas seems to have wounded me deeply...",
+      /* 293 */ "in fact, I'm barely conscious. Please fix it and try again.");
   }
   succumb ();
 }
@@ -2137,7 +2119,7 @@ str_number make_string (void)
   if (str_ptr == max_str_ptr)
   {
     if (str_ptr == max_strings)
-      overflow (258, max_strings - init_str_ptr);
+      overflow (/* 258 */ "number of strings", max_strings - init_str_ptr);
     incr (max_str_ptr);
   }
   str_ref[str_ptr] = 1;
@@ -2245,12 +2227,9 @@ void pause_for_instructions (void)
     if ((selector == log_only) || (selector == no_print))
       incr (selector);
     print_err("Interruption");
-    {
-      help_ptr = 3;
-      help_line[2] = 295;
-      help_line[1] = 296;
-      help_line[0] = 297;
-    }
+    help3(/* 295 */ "You rang?",
+      /* 296 */ "Try to insert some instructions for me (e.g.,`I show x'),",
+      /* 297 */ "unless you just want to quit by typing `X'.");
     deletions_allowed = false;
     error ();
     deletions_allowed = true;
@@ -2268,13 +2247,10 @@ void missing_err (str_number s)
 void clear_arith (void)
 {
   print_err("Arithmetic overflow");
-  {
-    help_ptr = 4;
-    help_line[3] = 301;
-    help_line[2] = 302;
-    help_line[1] = 303;
-    help_line[0] = 304;
-  }
+  help4(/* 301 */ "Uh, oh. A little while ago one of the quantities that I was",
+    /* 302 */ "computing got too large, so I'm afraid your answers will be",
+    /* 303 */ "somewhat askew. You'll probably have to adopt different",
+    /* 304 */ "tactics next time. But I shall try to carry on anyway.");
   error ();
   arith_error = false;
 }
@@ -2399,7 +2375,7 @@ integer take_fraction (integer q, fraction f)
     q = -q;
     negative = !negative;
   }
-  if (f < 268435456L)
+  if (f < fraction_one)
     n = 0;
   else
   {
@@ -2415,7 +2391,7 @@ integer take_fraction (integer q, fraction f)
   }
   f = f + 268435456;
   p = 134217728;
-  if (q < 1073741824L)
+  if (q < fraction_four)
     do {
       if (odd (f))
         p = half (p + q);
@@ -2464,7 +2440,7 @@ integer take_scaled (integer q, scaled f)
     q = -q;
     negative = !negative;
   }
-  if (f < 65536L)
+  if (f < unity)
     n = 0;
   else
   {
@@ -2480,7 +2456,7 @@ integer take_scaled (integer q, scaled f)
   }
   f = f + 65536;
   p = 32768;
-  if (q < 1073741824L)
+  if (q < fraction_four)
     do {
       if (odd (f))
         p = half (p + q);
@@ -2536,7 +2512,7 @@ scaled make_scaled (integer p, integer q)
   }
   n = p / q;
   p = p % q;
-  if (n >= 32768L)
+  if (n >= half_unit)
   {
     arith_error = true;
     if (negative)
@@ -2558,7 +2534,7 @@ scaled make_scaled (integer p, integer q)
         f = f + f;
         p = p + q;
       }
-    } while (!(f >= 65536L));
+    } while (!(f >= unity));
     be_careful = p - q;
     if (be_careful + p >= 0)
       incr (f);
@@ -2577,10 +2553,10 @@ fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
 
   acc = take_fraction (st - (sf / 16), sf - (st / 16));
   acc = take_fraction (acc, ct - cf);
-  num = 536870912L + take_fraction (acc, 379625062L);
-  denom = 805306368L + take_fraction (ct, 497706707L) + take_fraction (cf ,
+  num = fraction_two + take_fraction (acc, 379625062L);
+  denom = fraction_three + take_fraction (ct, 497706707L) + take_fraction (cf ,
   307599661L);
-  if (t != 65536L)
+  if (t != unity)
     num = make_scaled (num, t);
   if (num / 4 >= denom)
     Result = 1073741824;
@@ -2719,11 +2695,8 @@ scaled square_rt (scaled x)
       print_err("Square root of ");
       print_scaled(x);
       print(306);
-      {
-        help_ptr = 2;
-        help_line[1] = 307;
-        help_line[0] = 308;
-      }
+      help2(/* 307 */ "Since I don't take square roots of negative numbers,",
+        /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
       error ();
     }
     Result = 0;
@@ -2732,12 +2705,12 @@ scaled square_rt (scaled x)
   {
     k = 23;
     q = 2;
-    while (x < 536870912L)
+    while (x < fraction_two)
     {
       decr (k);
       x = x + x + x + x;
     }
-    if (x < 1073741824L)
+    if (x < fraction_four)
       y = 0;
     else
     {
@@ -2747,7 +2720,7 @@ scaled square_rt (scaled x)
     do {
       x = x + x;
       y = y + y;
-      if (x >= 1073741824L)
+      if (x >= fraction_four)
       {
         x = x - 1073741824;
         incr (y);
@@ -2755,9 +2728,9 @@ scaled square_rt (scaled x)
       x = x + x;
       y = y + y - q;
       q = q + q;
-      if (x >= 1073741824L)
+      if (x >= fraction_four)
       {
-        x = x - 1073741824L;
+        x = x - fraction_four;
         incr (y);
       }
       if (y > q)
@@ -2807,14 +2780,14 @@ integer pyth_add (integer a, integer b)
       r = take_fraction (r, r);
       if (r == 0)
         goto done;
-      r = make_fraction (r, 1073741824L + r);
+      r = make_fraction (r, fraction_four + r);
       a = a + take_fraction (a + a, r);
       b = take_fraction (b, r);
     }
     done:;
     if (big)
     {
-      if (a < 536870912L)
+      if (a < fraction_two)
         a = a + a + a + a;
       else
       {
@@ -2844,18 +2817,15 @@ integer pyth_sub (integer a, integer b)
       print(310);
       print_scaled(b);
       print(306);
-      {
-        help_ptr = 2;
-        help_line[1] = 307;
-        help_line[0] = 308;
-      }
+      help2(/* 307 */ "Since I don't take square roots of negative numbers,",
+        /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
       error ();
     }
     a = 0;
   }
   else
   {
-    if (a < 1073741824L)
+    if (a < fraction_four)
       big = false;
     else
     {
@@ -2869,7 +2839,7 @@ integer pyth_sub (integer a, integer b)
       r = take_fraction (r, r);
       if (r == 0)
         goto done;
-      r = make_fraction (r, 1073741824L - r);
+      r = make_fraction (r, fraction_four - r);
       a = a - take_fraction (a + a, r);
       b = take_fraction (b, r);
     }
@@ -2886,16 +2856,14 @@ scaled m_log (scaled x)
   scaled Result;
   integer y, z;
   integer k;
+
   if (x <= 0)
   {
     print_err("Logarithm of ");
     print_scaled(x);
     print(306);
-    {
-      help_ptr = 2;
-      help_line[1] = 312;
-      help_line[0] = 308;
-    }
+    help2(/* 312 */ "Since I don't take logs of non-positive numbers,",
+      /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
     error ();
     Result = 0;
   }
@@ -2903,18 +2871,18 @@ scaled m_log (scaled x)
   {
     y = 1302456860L;
     z = 6581195L;
-    while (x < 1073741824L)
+    while (x < fraction_four)
     {
       x = x + x;
       y = y - 93032639L;
       z = z - 48782L;
     }
-    y = y + (z / 65536L);
+    y = y + (z / unity);
     k = 2;
     while (x > 1073741828L)
     {
       z = ((x - 1) / two_to_the[k]) + 1;
-      while (x < 1073741824L + z)
+      while (x < fraction_four + z)
       {
         z = half (z + 1);
         k = k + 1;
@@ -3003,17 +2971,14 @@ angle n_arg (integer x, integer y)
   if (x == 0)
   {
     print_err("angle(0,0) is taken as zero");
-    {
-      help_ptr = 2;
-      help_line[1] = 314;
-      help_line[0] = 308;
-    }
+    help2(/* 314 */ "The `angle' between two identical points is undefined.",
+      /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed." );
     error ();
     Result = 0;
   }
   else
   {
-    while (x >= 536870912L)
+    while (x >= fraction_two)
     {
       x = half (x);
       y = half (y);
@@ -3021,7 +2986,7 @@ angle n_arg (integer x, integer y)
     z = 0;
     if (y > 0)
     {
-      while (x < 268435456L)
+      while (x < fraction_one)
       {
         x = x + x;
         y = y + y;
@@ -3054,22 +3019,22 @@ angle n_arg (integer x, integer y)
         Result = z;
         break;
       case 5:
-        Result = 94371840L - z;
+        Result = ninety_deg - z;
         break;
       case 6:
-        Result = 94371840L + z;
+        Result = ninety_deg + z;
         break;
       case 2:
-        Result = 188743680L - z;
+        Result = one_eighty_deg - z;
         break;
       case 4:
-        Result = z - 188743680L;
+        Result = z - one_eighty_deg;
         break;
       case 8:
-        Result = -z - 94371840L;
+        Result = -z - ninety_deg;
         break;
       case 7:
-        Result = z - 94371840L;
+        Result = z - ninety_deg;
         break;
       case 3:
         Result = -z;
@@ -3087,14 +3052,14 @@ void n_sin_cos(angle z)
   integer x, y, t;
   
   while (z < 0)
-    z = z + 377487360L;
-  z = z % 377487360L;
-  q = z / 47185920L;
-  z = z % 47185920L;
-  x = 268435456L;
+    z = z + three_sixty_deg;
+  z = z % three_sixty_deg;
+  q = z / forty_five_deg;
+  z = z % forty_five_deg;
+  x = fraction_one;
   y = x;
   if (!odd (q))
-    z = 47185920L - z;
+    z = forty_five_deg - z;
   k = 1;
   while (z > 0)
   {
@@ -3169,14 +3134,14 @@ void new_randoms (void)
   {
     x = randoms[k] - randoms[k + 31];
     if (x < 0)
-      x = x + 268435456L;
+      x = x + fraction_one;
     randoms[k] = x;
   }
   for (k = 24; k <= 54; k++)
   {
     x = randoms[k] - randoms[k - 24];
     if (x < 0)
-      x = x + 268435456L;
+      x = x + fraction_one;
     randoms[k] = x;
   }
   j_random = 54;
@@ -3188,7 +3153,7 @@ void init_randoms (scaled seed)
   unsigned char i;
 
   j = abs (seed);
-  while (j >= 268435456L)
+  while (j >= fraction_one)
     j = half (j);
   k = 1;
   for (i = 0; i <= 54; i++)
@@ -3197,7 +3162,7 @@ void init_randoms (scaled seed)
     k = j - k;
     j = jj;
     if (k < 0)
-      k = k + 268435456L;
+      k = k + fraction_one;
     randoms[(i * 21) % 55] = j;
   }
   new_randoms ();
@@ -3234,7 +3199,7 @@ scaled norm_rand (void)
         new_randoms ();
       else
         decr (j_random);
-      x = take_fraction (112429L, randoms[j_random] - 134217728L);
+      x = take_fraction (112429L, randoms[j_random] - fraction_half);
       if (j_random == 0)
         new_randoms ();
       else
@@ -3455,7 +3420,7 @@ halfword get_avail (void)
     if (hi_mem_min <= lo_mem_max)
     {
       runaway ();
-      overflow (315, mem_max + 1);
+      overflow (/* 315 */ "main memory size", mem_max + 1);
     }
   }
   mem[p].hh.rh = 0;
@@ -3510,7 +3475,7 @@ lab_restart:
     mem[p].hh.lh = q - p;
     p = mem[p + 1].hh.rh;
   } while (!(p == rover));
-  if (s == 1073741824L)
+  if (s == fraction_four)
   {
     Result = 268435455L;
     goto lab_exit;
@@ -3540,7 +3505,7 @@ lab_restart:
       goto lab_restart;
     }
   }
-  overflow (315, mem_max + 1);
+  overflow (/* 315 */ "main memory size", mem_max + 1);
   found: mem[r].hh.rh = 0;
   ;
 #ifdef STAT
@@ -4023,10 +3988,10 @@ void fix_date_and_time (void)
 {
   dateandtime (internal[17], internal[16], internal[15],
   internal[14]);
-  internal[17] = internal[17] * 65536L;
-  internal[16] = internal[16] * 65536L;
-  internal[15] = internal[15] * 65536L;
-  internal[14] = internal[14] * 65536L;
+  internal[17] = internal[17] * unity;
+  internal[16] = internal[16] * unity;
+  internal[15] = internal[15] * unity;
+  internal[14] = internal[14] * unity;
 }
 /* 205 */
 halfword id_lookup (integer j, integer l)
@@ -4066,7 +4031,7 @@ halfword id_lookup (integer j, integer l)
       {
         do {
           if ((hash_used == 257))
-            overflow (457, 9500);
+            overflow (/* 457 */ "hash size", 9500);
           decr (hash_used);
         } while (!(hash[hash_used].rh == 0));
         hash[p].lh = hash_used;
@@ -4076,7 +4041,7 @@ halfword id_lookup (integer j, integer l)
         if (pool_ptr + l > max_pool_ptr)
         {
           if (pool_ptr + l > pool_size)
-          overflow (257, pool_size - init_pool_ptr);
+          overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
           max_pool_ptr = pool_ptr + l;
         }
       }
@@ -4658,7 +4623,7 @@ void init_big_node (halfword p)
     s = s - 2;
     {
       if (serial_no > 2147483583L)
-        overflow (588, serial_no / 64);
+        overflow (/* 588 */ "independent variables", serial_no / 64);
       mem[q + s].hh.b0 = 19;
       serial_no = serial_no + 64;
       mem[q + s + 1].cint = serial_no;
@@ -4687,8 +4652,8 @@ halfword id_transform (void)
     mem[r].hh.b0 = 16;
     mem[r + 1].cint = 0;
   } while (!(r == q));
-  mem[q + 5].cint = 65536L;
-  mem[q + 11].cint = 65536L;
+  mem[q + 5].cint = unity;
+  mem[q + 11].cint = unity;
   Result = p;
   return Result;
 }
@@ -5075,7 +5040,7 @@ void print_path (halfword h, str_number s, boolean nuline)
     }
     if (mem[q].hh.b0 <= 1)
       print(519);
-    else if ((mem[p + 6].cint != 65536L) || (mem[q + 4].cint != 65536L))
+    else if ((mem[p + 6].cint != unity) || (mem[q + 4].cint != unity))
     {
       print(522);
       if (mem[p + 6].cint < 0)
@@ -5306,7 +5271,7 @@ void print_dependency (halfword p, small_number t)
       print_char('+');
     if (t == 17)
       v = round_fraction (v);
-    if (v != 65536L)
+    if (v != unity)
       print_scaled(v);
     if (mem[q].hh.b0 != 19)
       confusion(589);
@@ -5690,13 +5655,10 @@ void val_too_big (scaled x)
     print_err("Value is too large (");
     print_scaled(x);
     print_char(')');
-    {
-      help_ptr = 4;
-      help_line[3] = 592;
-      help_line[2] = 593;
-      help_line[1] = 594;
-      help_line[0] = 595;
-    }
+    help4(/* 592 */ "The equation I just processed has given some variable",
+      /* 593 */ "a value of 4096 or more. Continue and I'll try to cope",
+      /* 594 */ "with that big value; but it might be dangerous.",
+      /* 595 */ "(Set warningcheck:=0 to suppress this message.)");
     error ();
   }
 }
@@ -5711,7 +5673,7 @@ void make_known (halfword p, halfword q)
   mem[p].hh.b0 = 16;
   mem[p + 1].cint = mem[q + 1].cint;
   free_node (q, 2);
-  if (abs (mem[p + 1].cint) >= 268435456L)
+  if (abs (mem[p + 1].cint) >= fraction_one)
     val_too_big (mem[p + 1].cint);
   if (internal[2] > 0)
   {
@@ -5988,9 +5950,9 @@ void recycle_value (halfword p)
           pp = mem[s].hh.lh;
           v = mem[s + 1].cint;
           if (t == 17)
-            mem[s + 1].cint = -268435456L;
+            mem[s + 1].cint = -fraction_one;
           else
-            mem[s + 1].cint = -65536L;
+            mem[s + 1].cint = -unity;
           r = mem[pp + 1].hh.rh;
           mem[s].hh.rh = r;
           while (mem[r].hh.lh != 0) r = mem[r].hh.rh;
@@ -6000,7 +5962,7 @@ void recycle_value (halfword p)
           mem[mem[pp + 1].hh.lh].hh.rh = q;
           {
             if (serial_no > 2147483583L)
-              overflow (588, serial_no / 64);
+              overflow (/* 588 */ "independent variables", serial_no / 64);
             mem[pp].hh.b0 = 19;
             serial_no = serial_no + 64;
             mem[pp + 1].cint = serial_no;
@@ -6022,7 +5984,7 @@ void recycle_value (halfword p)
                 vv = round_fraction (max_c[17]);
               else
                 vv = max_c[18];
-              if (vv != 65536L)
+              if (vv != unity)
                 print_scaled(vv);
               print_variable_name(p);
               while (mem[p + 1].cint % 64 > 0)
@@ -6076,7 +6038,7 @@ void recycle_value (halfword p)
                     if (cur_type == 17)
                       cur_type = 18;
                   }
-                  mem[q + 1].hh.rh = p_over_v (mem[q + 1].hh.rh, 65536L, 17, 18);
+                  mem[q + 1].hh.rh = p_over_v (mem[q + 1].hh.rh, unity, 17, 18);
                   mem[q].hh.b0 = 18;
                   mem[r + 1].cint = round_fraction (mem[r + 1].cint);
                 }
@@ -6512,16 +6474,16 @@ fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
   fraction Result;
   fraction alpha, beta, num, denom, ff;
 
-  alpha = make_fraction (65536L, atension);
-  beta = make_fraction (65536L, btension);
+  alpha = make_fraction (unity, atension);
+  beta = make_fraction (unity, btension);
   if (alpha <= beta)
   {
     ff = make_fraction (alpha, beta);
     ff = take_fraction (ff, ff);
     gamma = take_fraction (gamma, ff);
     beta = beta / 4096;
-    denom = take_fraction (gamma, alpha) + 196608L - beta;
-    num = take_fraction (gamma, 805306368L - alpha) + beta;
+    denom = take_fraction (gamma, alpha) + three - beta;
+    num = take_fraction (gamma, fraction_three - alpha) + beta;
   }
   else
   {
@@ -6529,10 +6491,10 @@ fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
     ff = take_fraction (ff, ff);
     beta = take_fraction (beta, ff) / 4096;
     denom = take_fraction (gamma, alpha) + (ff / 1365) - beta;
-    num = take_fraction (gamma, 805306368L - alpha) + beta;
+    num = take_fraction (gamma, fraction_three - alpha) + beta;
   }
   if (num >= denom + denom + denom + denom)
-    Result = 1073741824L;
+    Result = fraction_four;
   else
     Result = make_fraction (num, denom);
   return Result;
@@ -6558,12 +6520,12 @@ void set_controls (halfword p, halfword q, integer k)
         sine = take_fraction (sine, 268500992L);
         if (mem[p + 6].cint < 0)
         {
-          if (ab_vs_cd (abs (sf), 268435456L, rr, sine) < 0)
+          if (ab_vs_cd (abs (sf), fraction_one, rr, sine) < 0)
             rr = make_fraction (abs (sf), sine);
         }
         if (mem[q + 4].cint < 0)
         {
-          if (ab_vs_cd (abs (st), 268435456L, ss, sine) < 0)
+          if (ab_vs_cd (abs (st), fraction_one, ss, sine) < 0)
             ss = make_fraction (abs (st), sine);
         }
       }
@@ -6609,12 +6571,12 @@ void solve_choices (halfword p, halfword q, halfword n)
           else
           {
             vv[0] = mem[s + 5].cint - n_arg (delta_x[0], delta_y[0]);
-            if (abs (vv[0]) > 188743680L)
+            if (abs (vv[0]) > one_eighty_deg)
             {
               if (vv[0] > 0)
-                vv[0] = vv[0] - 377487360L;
+                vv[0] = vv[0] - three_sixty_deg;
               else
-                vv[0] = vv[0]+ 377487360L;
+                vv[0] = vv[0]+ three_sixty_deg;
             }
             uu[0] = 0;
             ww[0] = 0;
@@ -6627,7 +6589,7 @@ void solve_choices (halfword p, halfword q, halfword n)
             mem[q].hh.b0 = 1;
             lt = abs (mem[q + 4].cint);
             rt = abs (mem[p + 6].cint);
-            if (rt == 65536L)
+            if (rt == unity)
             {
               if (delta_x[0] >= 0)
                 mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0]+ 1) / 3);
@@ -6640,11 +6602,11 @@ void solve_choices (halfword p, halfword q, halfword n)
             }
             else
             {
-              ff = make_fraction (65536L, 3 * rt);
+              ff = make_fraction (unity, 3 * rt);
               mem[p + 5].cint = mem[p + 1].cint + take_fraction (delta_x[0], ff);
               mem[p + 6].cint = mem[p + 2].cint + take_fraction (delta_y[0], ff);
             }
-            if (lt == 65536L)
+            if (lt == unity)
             {
               if (delta_x[0] >= 0)
                 mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0]+ 1) / 3);
@@ -6657,7 +6619,7 @@ void solve_choices (halfword p, halfword q, halfword n)
             }
             else
             {
-              ff = make_fraction (65536L, 3 * lt);
+              ff = make_fraction (unity, 3 * lt);
               mem[q + 3].cint = mem[q + 1].cint - take_fraction (delta_x[0], ff);
               mem[q + 4].cint = mem[q + 2].cint - take_fraction (delta_y[0], ff);
             }
@@ -6668,8 +6630,8 @@ void solve_choices (halfword p, halfword q, halfword n)
             cc = mem[s + 5].cint;
             lt = abs (mem[t + 4].cint);
             rt = abs (mem[s + 6].cint);
-            if ((rt == 65536L) && (lt == 65536L))
-              uu[0] = make_fraction (cc + cc + 65536L, cc + 131072L);
+            if ((rt == unity) && (lt == unity))
+              uu[0] = make_fraction (cc + cc + unity, cc + two);
             else
               uu[0] = curl_ratio (cc, rt, lt);
             vv[0] = -take_fraction (psi[1], uu[0]);
@@ -6680,7 +6642,7 @@ void solve_choices (halfword p, halfword q, halfword n)
           {
             uu[0] = 0;
             vv[0] = 0;
-            ww[0] = 268435456L;
+            ww[0] = fraction_one;
           }
           break;
     }
@@ -6690,27 +6652,27 @@ void solve_choices (halfword p, halfword q, halfword n)
         case 5:
         case 4:
           {
-            if (abs (mem[r + 6].cint) == 65536L)
+            if (abs (mem[r + 6].cint) == unity)
             {
-              aa = 134217728L;
+              aa = fraction_half;
               dd = 2 * delta[k];
             }
             else
             {
-              aa = make_fraction (65536L, 3 * abs (mem[r + 6].cint) - 65536L);
-              dd = take_fraction (delta[k], 805306368L - make_fraction (65536L, abs (mem[r + 6].cint)));
+              aa = make_fraction (unity, 3 * abs (mem[r + 6].cint) - unity);
+              dd = take_fraction (delta[k], fraction_three - make_fraction (unity, abs (mem[r + 6].cint)));
             }
-            if (abs (mem[t + 4].cint) == 65536L)
+            if (abs (mem[t + 4].cint) == unity)
             {
-              bb = 134217728L;
+              bb = fraction_half;
               ee = 2 * delta[k - 1];
             }
             else
             {
-              bb = make_fraction (65536L, 3 * abs (mem[t + 4].cint) - 65536L);
-              ee = take_fraction (delta[k - 1], 805306368L - make_fraction (65536L, abs (mem[t + 4].cint)));
+              bb = make_fraction (unity, 3 * abs (mem[t + 4].cint) - unity);
+              ee = take_fraction (delta[k - 1], fraction_three - make_fraction (unity, abs (mem[t + 4].cint)));
             }
-            cc = 268435456L - take_fraction (uu[k - 1], aa);
+            cc = fraction_one - take_fraction (uu[k - 1], aa);
             dd = take_fraction (dd, cc);
             lt = abs (mem[s + 4].cint);
             rt = abs (mem[s + 6].cint);
@@ -6735,11 +6697,11 @@ void solve_choices (halfword p, halfword q, halfword n)
             if (mem[r].hh.b1 == 3)
             {
               ww[k] = 0;
-              vv[k] = acc - take_fraction (psi[1], 268435456L - ff);
+              vv[k] = acc - take_fraction (psi[1], fraction_one - ff);
             }
             else
             {
-              ff = make_fraction (268435456L - ff, cc);
+              ff = make_fraction (fraction_one - ff, cc);
               acc = acc - take_fraction (psi[k], ff);
               ff = take_fraction (ff, aa);
               vv[k] = acc - take_fraction (vv[k - 1], ff);
@@ -6751,7 +6713,7 @@ void solve_choices (halfword p, halfword q, halfword n)
             if (mem[s].hh.b0 == 5)
             {
               aa = 0;
-              bb = 268435456L;
+              bb = fraction_one;
               do {
                 decr (k);
                 if (k == 0)
@@ -6759,7 +6721,7 @@ void solve_choices (halfword p, halfword q, halfword n)
                 aa = vv[k] - take_fraction (aa, uu[k]);
                 bb = ww[k] - take_fraction (bb, uu[k]);
               } while (!(k == n));
-              aa = make_fraction (aa, 268435456L - bb);
+              aa = make_fraction (aa, fraction_one - bb);
               theta[n] = aa;
               vv[0] = aa;
               for (k = 1; k <= n - 1; k++)
@@ -6775,23 +6737,23 @@ void solve_choices (halfword p, halfword q, halfword n)
             cc = mem[s + 3].cint;
             lt = abs (mem[s + 4].cint);
             rt = abs (mem[r + 6].cint);
-            if ((rt == 65536L) && (lt == 65536L))
-              ff = make_fraction (cc + cc + 65536L, cc + 131072L);
+            if ((rt == unity) && (lt == unity))
+              ff = make_fraction (cc + cc + unity, cc + two);
             else
               ff = curl_ratio (cc, lt, rt);
-            theta[n] = -make_fraction (take_fraction (vv[n - 1], ff), 268435456L - take_fraction (ff, uu[n - 1]));
+            theta[n] = -make_fraction (take_fraction (vv[n - 1], ff), fraction_one - take_fraction (ff, uu[n - 1]));
             goto found;
           }
           break;
         case 2:
           {
             theta[n] = mem[s + 3].cint - n_arg (delta_x[n - 1], delta_y[n - 1]);
-            if (abs (theta[n]) > 188743680L)
+            if (abs (theta[n]) > one_eighty_deg)
             {
               if (theta[n] > 0)
-                theta[n] = theta[n] - 377487360L;
+                theta[n] = theta[n] - three_sixty_deg;
               else
-                theta[n] = theta[n]+ 377487360L;
+                theta[n] = theta[n]+ three_sixty_deg;
             }
             goto found;
           }
@@ -6848,13 +6810,13 @@ void make_choices (halfword knots)
           if (mem[p].hh.b0 == 4)
           {
             mem[p].hh.b0 = 3;
-            mem[p + 3].cint = 65536L;
+            mem[p + 3].cint = unity;
           }
           mem[q].hh.b0 = 1;
           if (mem[q].hh.b1 == 4)
           {
             mem[q].hh.b1 = 3;
-            mem[q + 5].cint = 65536L;
+            mem[q + 5].cint = unity;
           }
           mem[p + 5].cint = mem[p + 1].cint;
           mem[q + 3].cint = mem[p + 1].cint;
@@ -6906,7 +6868,7 @@ void make_choices (halfword knots)
         incr (k);
         s = t;
         if (k == path_size)
-          overflow (531, path_size);
+          overflow (/* 531 */ "path size", path_size);
         if (s == q)
           n = k;
       } while (!((k >= n) && (mem[s].hh.b0 != 5)));
@@ -6921,7 +6883,7 @@ void make_choices (halfword knots)
         if ((delx == 0) && (dely == 0))
         {
           mem[q].hh.b0 = 3;
-          mem[q + 3].cint = 65536L;
+          mem[q + 3].cint = unity;
         }
         else
         {
@@ -6936,7 +6898,7 @@ void make_choices (halfword knots)
         if ((delx == 0) && (dely == 0))
         {
           mem[p].hh.b1 = 3;
-          mem[p + 5].cint = 65536L;
+          mem[p + 5].cint = unity;
         }
         else
         {
@@ -6953,11 +6915,8 @@ void make_choices (halfword knots)
   if (arith_error)
   {
     print_err("Some number got too big");
-    {
-      help_ptr = 2;
-      help_line[1] = 529;
-      help_line[0] = 530;
-    }
+    help2(/* 529 */ "The path that I just computed is out of range.",
+      /* 530 */ "So it will probably look funny. Proceed, for a laugh.");
     put_get_error ();
     arith_error = false;
   }
@@ -6976,19 +6935,19 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
   x2 = xx2 - xx1;
   x3 = xx3 - xx2;
   if (xx0 >= xicorr)
-    r = (xx0 - xicorr) % 65536L;
+    r = (xx0 - xicorr) % unity;
   else
-    r = 65535L - ((-xx0 + xicorr - 1) % 65536L);
-  m = (xx3 - xx0 + r) / 65536L;
+    r = 65535L - ((-xx0 + xicorr - 1) % unity);
+  m = (xx3 - xx0 + r) / unity;
   y1 = yy1 - yy0;
   y2 = yy2 - yy1;
   y3 = yy3 - yy2;
   if (yy0 >= etacorr)
-    s = (yy0 - etacorr) % 65536L;
+    s = (yy0 - etacorr) % unity;
   else
-    s = 65535L - ((-yy0 + etacorr - 1) % 65536L);
-  n = (yy3 - yy0 + s) / 65536L;
-  if ((xx3 - xx0 >= 268435456L) || (yy3 - yy0 >= 268435456L))
+    s = 65535L - ((-yy0 + etacorr - 1) % unity);
+  n = (yy3 - yy0 + s) / unity;
+  if ((xx3 - xx0 >= fraction_one) || (yy3 - yy0 >= fraction_one))
   {
     x1 = half (x1 + xicorr);
     x2 = half (x2 + xicorr);
@@ -7386,12 +7345,9 @@ void y_scale_edges (integer s)
   if ((s * (mem[cur_edges + 1].hh.rh - 4095) >= 4096) || (s * (mem[cur_edges + 1].hh.lh - 4096) <= -4096))
   {
     print_err("Scaled picture would be too big");
-    {
-      help_ptr = 3;
-      help_line[2] = 536;
-      help_line[1] = 537;
-      help_line[0] = 538;
-    }
+    help3(/* 536 */ "I can't yscale the picture as requested---it would",
+      /* 537 */ "make some coordinates too large or too small.",
+      /* 538 */ "Proceed, and I'll omit the transformation.");
     put_get_error ();
   }
   else
@@ -7449,12 +7405,9 @@ void x_scale_edges (integer s)
   if ((s * (mem[cur_edges + 2].hh.rh - 4096) >= 4096) || (s * (mem[cur_edges + 2].hh.lh - 4096) <= -4096))
   {
     print_err("Scaled picture would be too big");
-    {
-      help_ptr = 3;
-      help_line[2] = 539;
-      help_line[1] = 537;
-      help_line[0] = 538;
-    }
+    help3(/* 539 */ "I can't xscale the picture as requested---it would", 
+      /* 537 */ "make some coordinates too large or too small.",
+      /* 538 */ "Proceed, and I'll omit the transformation.");
     put_get_error ();
   }
   else if ((mem[cur_edges + 2].hh.rh != 4096) || (mem[cur_edges + 2].hh.lh != 4096))
@@ -7731,7 +7684,7 @@ void xy_swap_edges (void)
 
   mspread = mem[cur_edges + 2].hh.rh - mem[cur_edges + 2].hh.lh;
   if (mspread > move_size)
-    overflow (540, move_size);
+    overflow (/* 540 */ "move table size", move_size);
   for (j = 0; j <= mspread; j++)
   {
     move[j] = mem_top;
@@ -8084,7 +8037,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
     m1 = round_unscaled (x1);
     delx = x1 - x0;
     dely = y1 - y0;
-    yt = n0 * 65536L - 32768L;
+    yt = n0 * unity - half_unit;
     y0 = y0 - yt;
     y1 = y1 - yt;
     if (n0 < n1)
@@ -8109,7 +8062,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
             p = mem[p].hh.lh;
           } while (!(n == n0));
       }
-      y0 = 65536L - y0;
+      y0 = unity - y0;
       while (true)
       {
         r = get_avail ();
@@ -8119,13 +8072,13 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
         if (ab_vs_cd (delx, y0, dely, tx) < 0)
           decr (tx);
         mem[r].hh.lh = 8 * round_unscaled (x0 + tx) + base;
-        y1 = y1 - 65536L;
+        y1 = y1 - unity;
         if (internal[10] > 0)
           trace_new_edge (r, n);
-        if (y1 < 65536L)
+        if (y1 < unity)
           goto done;
         p = mem[p].hh.rh;
-        y0 = y0 + 65536L;
+        y0 = y0 + unity;
         incr (n);
       }
       done:;
@@ -8162,13 +8115,13 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
         if (ab_vs_cd (delx, y0, dely, tx) < 0)
           incr (tx);
         mem[r].hh.lh = 8 * round_unscaled (x0 - tx) + base;
-        y1 = y1 + 65536L;
+        y1 = y1 + unity;
         if (internal[10] > 0)
           trace_new_edge (r, n);
         if (y1 >= 0)
           goto done1;
         p = mem[p].hh.lh;
-        y0 = y0 + 65536L;
+        y0 = y0 + unity;
         decr (n);
       }
       done1:;
@@ -8555,7 +8508,7 @@ fraction crossing_point (integer a, integer b, integer c)
       }
       else
       {
-        Result = 268435456L;
+        Result = fraction_one;
         goto lab_exit;
       }
     }
@@ -8609,8 +8562,8 @@ fraction crossing_point (integer a, integer b, integer c)
         d = d + d + 1;
       }
     }
-  } while (!(d >= 268435456L));
-  Result = d - 268435456L;
+  } while (!(d >= fraction_one));
+  Result = d - fraction_one;
   lab_exit:;
   return Result;
 }
@@ -8826,7 +8779,7 @@ lab_continue:
         dmax = abs (del2);
       if (abs (del3) > dmax)
         dmax = abs (del3);
-      while (dmax < 134217728L)
+      while (dmax < fraction_half)
       {
         dmax = dmax + dmax;
         del1 = del1 + del1;
@@ -8851,7 +8804,7 @@ lab_continue:
         mem[p].hh.b1 = 2;
       }
       t = crossing_point (del1, del2, del3);
-      if (t < 268435456L)
+      if (t < fraction_one)
       {
         split_cubic (p, t, destx, desty);
         r = mem[p].hh.rh;
@@ -8872,7 +8825,7 @@ lab_continue:
         if (del2 > 0)
           del2 = 0;
         t = crossing_point (0, -del2, -del3);
-        if (t < 268435456L)
+        if (t < fraction_one)
         {
           split_cubic (r, t, destx, desty);
           s = mem[r].hh.rh;
@@ -8927,7 +8880,7 @@ lab_continue:
           dmax = abs (del2);
         if (abs (del3) > dmax)
           dmax = abs (del3);
-        while (dmax < 134217728L)
+        while (dmax < fraction_half)
         {
           dmax = dmax + dmax;
           del1 = del1 + del1;
@@ -8949,7 +8902,7 @@ lab_continue:
           mem[pp].hh.b1 = mem[pp].hh.b1 + 2;
         }
         t = crossing_point (del1, del2, del3);
-        if (t < 268435456L)
+        if (t < fraction_one)
         {
           split_cubic (pp, t, destx, desty);
           r = mem[pp].hh.rh;
@@ -8986,7 +8939,7 @@ lab_continue:
           if (del2 > 0)
             del2 = 0;
           t = crossing_point (0, -del2, -del3);
-          if (t < 268435456L)
+          if (t < fraction_one)
           {
             split_cubic (r, t, destx, desty);
             s = mem[r].hh.rh;
@@ -9125,7 +9078,7 @@ void octant_subdivide (void)
         dmax = abs (del2);
       if (abs (del3) > dmax)
         dmax = abs (del3);
-      while (dmax < 134217728L)
+      while (dmax < fraction_half)
       {
         dmax = dmax + dmax;
         del1 = del1 + del1;
@@ -9151,7 +9104,7 @@ void octant_subdivide (void)
         mem[p].hh.b1 = mem[p].hh.b1 + 4;
       }
       t = crossing_point (del1, del2, del3);
-      if (t < 268435456L)
+      if (t < fraction_one)
       {
         split_cubic (p, t, destx, desty);
         r = mem[p].hh.rh;
@@ -9202,7 +9155,7 @@ void octant_subdivide (void)
         if (del2 > 0)
           del2 = 0;
         t = crossing_point (0, -del2, -del3);
-        if (t < 268435456L)
+        if (t < fraction_one)
         {
           split_cubic (r, t, destx, desty);
           s = mem[r].hh.rh;
@@ -9321,7 +9274,7 @@ void before_and_after (scaled b, scaled a, halfword p)
     if (max_rounding_ptr < max_wiggle)
       incr (max_rounding_ptr);
     else
-      overflow (568, max_wiggle);
+      overflow (/* 568 */ "rounding table size", max_wiggle);
   }
   after[cur_rounding_ptr] = a;
   before[cur_rounding_ptr] = b;
@@ -9363,7 +9316,7 @@ void xy_round (void)
 
   cur_gran = abs (internal[37]);
   if (cur_gran == 0)
-    cur_gran = 65536L;
+    cur_gran = unity;
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
@@ -9418,7 +9371,7 @@ void xy_round (void)
           a = -after[cur_rounding_ptr];
         }
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
-          alpha = 268435456L;
+          alpha = fraction_one;
         else
           alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
         cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
@@ -9486,7 +9439,7 @@ void xy_round (void)
           a = -after[cur_rounding_ptr];
         }
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
-          alpha = 268435456L;
+          alpha = fraction_one;
         else
           alpha = make_fraction (after[cur_rounding_ptr + 1] - after[cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[cur_rounding_ptr]);
         do {
@@ -9710,11 +9663,11 @@ void diag_round (void)
         else
           c = d - half (a - b);
         if (b == bb)
-          alpha = 268435456L;
+          alpha = fraction_one;
         else
           alpha = make_fraction (aa - a, bb - b);
         if (d == dd)
-          beta = 268435456L;
+          beta = fraction_one;
         else
           beta = make_fraction (cc - c, dd - d);
         do {
@@ -9860,20 +9813,17 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
   if (chopped > 0)
   {
     print_err("Curve out of range");
-    {
-      help_ptr = 4;
-      help_line[3] = 564;
-      help_line[2] = 565;
-      help_line[1] = 566;
-      help_line[0] = 567;
-    }
+    help4(/* 564 */ "At least one of the coordinates in the path I'm about to",
+      /* 565 */ "digitize was really huge (potentially bigger than 4095).",
+      /* 566 */ "So I've cut it back to the maximum size.",
+      /* 567 */ "The results will probably be pretty wild.");
     put_get_error ();
   }
   quadrant_subdivide ();
   if ((internal[36] > 0) && (chopped == 0))
     xy_round ();
   octant_subdivide ();
-  if ((internal[36] > 65536L) && (chopped == 0))
+  if ((internal[36] > unity) && (chopped == 0))
     diag_round ();
   p = cur_spec;
   do {
@@ -9959,7 +9909,7 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
             dmax = abs (dx1);
             if (abs (dy1) > dmax)
               dmax = abs (dy1);
-            while (dmax < 268435456L)
+            while (dmax < fraction_one)
             {
               dmax = dmax + dmax;
               dx1 = dx1 + dx1;
@@ -9996,7 +9946,7 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
             dmax = abs (dx2);
             if (abs (dy2) > dmax)
               dmax = abs (dy2);
-            while (dmax < 268435456L)
+            while (dmax < fraction_one)
             {
               dmax = dmax + dmax;
               dx2 = dx2 + dx2;
@@ -10093,7 +10043,7 @@ done:
   {
     if ((internal[36]<= 0) || (chopped != 0))
       print_spec (560);
-    else if (internal[36] > 65536L)
+    else if (internal[36] > unity)
       print_spec (561);
     else
       print_spec (562);
@@ -10104,11 +10054,11 @@ done:
 /* 463 */
 void end_round (scaled x, scaled y)
 {
-  y = y + 32768L - y_corr[octant];
+  y = y + half_unit - y_corr[octant];
   x = x + y - x_corr[octant];
   m1 = floorunscaled (x);
   n1 = floorunscaled (y);
-  if (x - 65536L * m1 >= y - 65536L * n1 + z_corr[octant])
+  if (x - unity * m1 >= y - unity * n1 + z_corr[octant])
     d1 = 1;
   else
     d1 = 0;
@@ -10134,13 +10084,13 @@ void fill_spec (halfword h)
       d0 = d1;
       end_round (mem[q + 1].cint, mem[q + 2].cint);
       if (n1 - n0 >= move_size)
-        overflow (540, move_size);
+        overflow (/* 540 */ "move table size", move_size);
       move[0] = d0;
       move_ptr = 0;
       r = p;
       do {
         s = mem[r].hh.rh;
-        make_moves (mem[r + 1].cint, mem[r + 5].cint, mem[s + 3].cint, mem[s + 1].cint, mem[r + 2].cint + 32768L, mem[r + 6].cint + 32768L, mem[s + 4].cint + 32768L, mem[s + 2].cint + 32768L, xy_corr[octant], y_corr[octant]);
+        make_moves (mem[r + 1].cint, mem[r + 5].cint, mem[s + 3].cint, mem[s + 1].cint, mem[r + 2].cint + half_unit, mem[r + 6].cint + half_unit, mem[s + 4].cint + half_unit, mem[s + 2].cint + half_unit, xy_corr[octant], y_corr[octant]);
         r = s;
       } while (!(r == q));
       move[move_ptr] = move[move_ptr] - d1;
@@ -10312,7 +10262,7 @@ halfword make_pen (halfword h)
     else
       decr (n);
     if (n >= 255)
-      overflow (579, 255);
+      overflow (/* 579 */ "pen polygon size", 255);
     mem[h].hh.lh = n;
   }
   goto found;
@@ -10321,21 +10271,15 @@ not_found:
   if (mc >= 268402688L)
   {
     print_err("Pen too large");
-    {
-      help_ptr = 2;
-      help_line[1] = 574;
-      help_line[0] = 575;
-    }
+    help2(/* 574 */ "The cycle you specified has a coordinate of 4095.5 or more.",
+      /* 575 */ "So I've replaced it by the trivial path `(0,0)..cycle'.");
   }
   else
   {
     print_err("Pen cycle must be convex");
-    {
-      help_ptr = 3;
-      help_line[2] = 577;
-      help_line[1] = 578;
-      help_line[0] = 575;
-    }
+    help3(/* 577 */ "The cycle you specified either has consecutive equal points",
+      /* 578 */ "or turns right or turns through more than 360 degrees.",
+      /* 575 */ "So I've replaced it by the trivial path `(0,0)..cycle'.");
   }
   put_get_error ();
 found:
@@ -10531,7 +10475,7 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
       t2 = x2 - take_fraction (y2, s);
     }
     t = crossing_point (t0, t1, t2);
-    if (t >= 268435456L)
+    if (t >= fraction_one)
       goto lab_exit;
     {
       split_for_offset (p, t);
@@ -10547,7 +10491,7 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
       if (t1 > 0)
         t1 = 0;
       t = crossing_point (0, -t1, -t2);
-      if (t < 268435456L)
+      if (t < fraction_one)
       {
         split_for_offset (p, t);
         mem[mem[p].hh.rh].hh.b1 = k;
@@ -10611,7 +10555,7 @@ void offset_prep (halfword c, halfword h)
         lmax_coef = abs (y2);
       if (lmax_coef == 0)
         goto not_found;
-      while (lmax_coef < 134217728L)
+      while (lmax_coef < fraction_half)
       {
         lmax_coef = lmax_coef + lmax_coef;
         x0 = x0 + x0;
@@ -10682,7 +10626,7 @@ void offset_prep (halfword c, halfword h)
           }
           t = crossing_point (-t0, -t1, -t2);
         }
-        if (t >= 268435456L)
+        if (t >= fraction_one)
           fin_offset_prep (p, k, w, x0, x1, x2, y0, y1, y2, true, n);
         else
         {
@@ -10701,7 +10645,7 @@ void offset_prep (halfword c, halfword h)
           if (t1 < 0)
             t1 = 0;
           t = crossing_point (0, t1, t2);
-          if (t < 268435456L)
+          if (t < fraction_one)
           {
             split_for_offset (r, t);
             x1a = x1 - take_fraction (x1 - x2, t);
@@ -10764,7 +10708,7 @@ void skew_line_edges (halfword p, halfword w, halfword ww)
     unskew (x1, y1, octant);
     ;
 #ifdef STAT
-    if (internal[10] > 65536L)
+    if (internal[10] > unity)
     {
       print_nl(585);
       print_two (x0, y0);
@@ -10807,15 +10751,15 @@ void dual_moves (halfword h, halfword p, halfword q)
     while (mem[r].hh.b1 != k)
     {
       xx = mem[r + 1].cint + mem[w + 1].cint;
-      yy = mem[r + 2].cint + mem[w + 2].cint + 32768L;
+      yy = mem[r + 2].cint + mem[w + 2].cint + half_unit;
       ;
 #ifdef STAT
-      if (internal[10] > 65536L)
+      if (internal[10] > unity)
       {
         print_nl(586);
         print_int (k);
         print(587);
-        unskew (xx, yy - 32768L, octant);
+        unskew (xx, yy - half_unit, octant);
         print_two (cur_x, cur_y);
       }
 #endif /* STAT */
@@ -10824,17 +10768,17 @@ void dual_moves (halfword h, halfword p, halfword q)
         decr (k);
         w = mem[w].hh.lh;
         xp = mem[r + 1].cint + mem[w + 1].cint;
-        yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
+        yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
         if (yp != yy)
         {
           ty = floorscaled (yy - y_corr[octant]);
           dely = yp - yy;
           yy = yy - ty;
           ty = yp - y_corr[octant] - ty;
-          if (ty >= 65536L)
+          if (ty >= unity)
           {
             delx = xp - xx;
-            yy = 65536L - yy;
+            yy = unity - yy;
             while (true)
             {
               if (m < env_move[move_ptr])
@@ -10843,11 +10787,11 @@ void dual_moves (halfword h, halfword p, halfword q)
               if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] > 0)
                 decr (tx);
               m = floorunscaled (xx + tx);
-              ty = ty - 65536L;
+              ty = ty - unity;
               incr (move_ptr);
-              if (ty < 65536L)
+              if (ty < unity)
                 goto done1;
-              yy = yy + 65536L;
+              yy = yy + unity;
             }
             done1: if (m < env_move[move_ptr])
               env_move[move_ptr] = m;
@@ -10859,14 +10803,14 @@ void dual_moves (halfword h, halfword p, halfword q)
         incr (k);
         w = mem[w].hh.rh;
         xp = mem[r + 1].cint + mem[w + 1].cint;
-        yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
+        yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
       }
       ;
 #ifdef STAT
-      if (internal[10] > 65536L)
+      if (internal[10] > unity)
       {
         print(584);
-        unskew (xp, yp - 32768L, octant);
+        unskew (xp, yp - half_unit, octant);
         print_two (cur_x, cur_y);
         print_nl(261);
       }
@@ -10884,7 +10828,7 @@ void dual_moves (halfword h, halfword p, halfword q)
     n = move_ptr;
     s = mem[r].hh.rh;
     make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint ,
-    mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + 32768L, mem[r + 6].cint + mem[w + 2].cint + 32768L, mem[s + 4].cint + mem[w + 2].cint + 32768L, mem[s + 2].cint + mem[w + 2].cint + 32768L, xy_corr[octant], y_corr[octant]);
+    mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + half_unit, mem[r + 6].cint + mem[w + 2].cint + half_unit, mem[s + 4].cint + mem[w + 2].cint + half_unit, mem[s + 2].cint + mem[w + 2].cint + half_unit, xy_corr[octant], y_corr[octant]);
     do {
       if (m < env_move[n])
         env_move[n] = m;
@@ -10941,7 +10885,7 @@ void fill_envelope (halfword spechead)
       w = mem[w].hh.lh;
     ;
 #ifdef STAT
-    if (internal[10] > 65536L)
+    if (internal[10] > unity)
     {
       print_nl(580);
       print(octant_dir[octant]);
@@ -10976,7 +10920,7 @@ void fill_envelope (halfword spechead)
     d0 = d1;
     end_round (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2].cint + mem[www + 2].cint);
     if (n1 - n0 >= move_size)
-      overflow (540, move_size);
+      overflow (/* 540 */ "move table size", move_size);
     offset_prep (p, h);
     q = p;
     while (mem[q].hh.b1 != 0)
@@ -11004,15 +10948,15 @@ void fill_envelope (halfword spechead)
         while (mem[r].hh.b1 != k)
         {
           xx = mem[r + 1].cint + mem[w + 1].cint;
-          yy = mem[r + 2].cint + mem[w + 2].cint + 32768L;
+          yy = mem[r + 2].cint + mem[w + 2].cint + half_unit;
           ;
 #ifdef STAT
-          if (internal[10] > 65536L)
+          if (internal[10] > unity)
           {
             print_nl(586);
             print_int (k);
             print(587);
-            unskew (xx, yy - 32768L, octant);
+            unskew (xx, yy - half_unit, octant);
             print_two (cur_x, cur_y);
           }
 #endif /* STAT */
@@ -11021,17 +10965,17 @@ void fill_envelope (halfword spechead)
             incr (k);
             w = mem[w].hh.rh;
             xp = mem[r + 1].cint + mem[w + 1].cint;
-            yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
+            yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
             if (yp != yy)
             {
               ty = floorscaled (yy - y_corr[octant]);
               dely = yp - yy;
               yy = yy - ty;
               ty = yp - y_corr[octant] - ty;
-              if (ty >= 65536L)
+              if (ty >= unity)
               {
                 delx = xp - xx;
-                yy = 65536L - yy;
+                yy = unity - yy;
                 while (true)
                 {
                   tx = take_fraction (delx, make_fraction (yy, dely));
@@ -11040,10 +10984,10 @@ void fill_envelope (halfword spechead)
                   m = floorunscaled (xx + tx);
                   if (m > env_move[move_ptr])
                     env_move[move_ptr] = m;
-                  ty = ty - 65536L;
-                  if (ty < 65536L)
+                  ty = ty - unity;
+                  if (ty < unity)
                     goto done1;
-                  yy = yy + 65536L;
+                  yy = yy + unity;
                   incr (move_ptr);
                 }
                 done1:;
@@ -11055,14 +10999,14 @@ void fill_envelope (halfword spechead)
             decr (k);
             w = mem[w].hh.lh;
             xp = mem[r + 1].cint + mem[w + 1].cint;
-            yp = mem[r + 2].cint + mem[w + 2].cint + 32768L;
+            yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
           }
           ;
 #ifdef STAT
-          if (internal[10] > 65536L)
+          if (internal[10] > unity)
           {
             print(584);
-            unskew (xp, yp - 32768L, octant);
+            unskew (xp, yp - half_unit, octant);
             print_two (cur_x, cur_y);
             print_nl(261);
           }
@@ -11079,7 +11023,7 @@ void fill_envelope (halfword spechead)
         move[move_ptr] = 1;
         n = move_ptr;
         s = mem[r].hh.rh;
-        make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint, mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + 32768L, mem[r + 6].cint + mem[w + 2].cint + 32768L, mem[s + 4].cint + mem[w + 2].cint + 32768L, mem[s + 2].cint + mem[w + 2].cint + 32768L, xy_corr[octant], y_corr[octant]);
+        make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint, mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + half_unit, mem[r + 6].cint + mem[w + 2].cint + half_unit, mem[s + 4].cint + mem[w + 2].cint + half_unit, mem[s + 2].cint + mem[w + 2].cint + half_unit, xy_corr[octant], y_corr[octant]);
         do {
           m = m + move[n] - 1;
           if (m > env_move[n])
@@ -11129,15 +11073,15 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
   integer u, v;
   boolean symmetric;
 
-  if ((major_axis == minor_axis) || (theta % 94371840L == 0))
+  if ((major_axis == minor_axis) || (theta % ninety_deg == 0))
   {
     symmetric = true;
     alpha = 0;
-    if (odd (theta / 94371840L))
+    if (odd (theta / ninety_deg))
     {
       beta = major_axis;
       gamma = minor_axis;
-      n_sin = 268435456L;
+      n_sin = fraction_one;
       n_cos = 0;
     }
     else
@@ -11157,12 +11101,12 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     alpha = make_fraction (gamma, beta);
     alpha = take_fraction (major_axis, alpha);
     alpha = take_fraction (alpha, n_cos);
-    alpha = (alpha + 32768L) / 65536L;
+    alpha = (alpha + half_unit) / unity;
     gamma = take_fraction (minor_axis, n_sin);
     gamma = pyth_add (take_fraction (major_axis, n_cos), gamma);
   }
-  beta = (beta + 32768L) / 65536L;
-  gamma = (gamma + 32768L) / 65536L;
+  beta = (beta + half_unit) / unity;
+  gamma = (gamma + half_unit) / unity;
   p = get_node (7);
   q = get_node (7);
   r = get_node (7);
@@ -11185,14 +11129,14 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     else
       alpha = 1 - gamma;
   }
-  mem[p + 1].cint = -alpha * 32768L;
-  mem[p + 2].cint = -beta * 32768L;
-  mem[q + 1].cint = gamma * 32768L;
+  mem[p + 1].cint = -alpha * half_unit;
+  mem[p + 2].cint = -beta * half_unit;
+  mem[q + 1].cint = gamma * half_unit;
   mem[q + 2].cint = mem[p + 2].cint;
   mem[r + 1].cint = mem[q + 1].cint;
   mem[p + 5].cint = 0;
-  mem[q + 3].cint = -32768L;
-  mem[q + 5].cint = 32768L;
+  mem[q + 3].cint = -half_unit;
+  mem[q + 5].cint = half_unit;
   mem[r + 3].cint = 0;
   mem[r + 5].cint = 0;
   mem[p + 6].cint = beta;
@@ -11210,7 +11154,7 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     mem[r + 4].cint = beta + beta;
     mem[s + 1].cint = -mem[p + 1].cint;
     mem[s + 2].cint = mem[r + 2].cint;
-    mem[s + 3].cint = 32768L;
+    mem[s + 3].cint = half_unit;
     mem[s + 4].cint = gamma - alpha;
   }
   while (true)
@@ -11247,7 +11191,7 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     if (internal[38] != 0)
       d = d - take_fraction (internal[38], make_fraction (beta + beta, delta));
     d = take_fraction ((d + 4) / 8, delta);
-    alpha = alpha / 32768L;
+    alpha = alpha / half_unit;
     if (d < alpha)
       d = alpha;
     delta = c - d;
@@ -11383,9 +11327,9 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
   {
     x = make_fraction (x, abs (y));
     if (y > 0)
-      y = 268435456L;
+      y = fraction_one;
     else
-      y = -268435456L;
+      y = -fraction_one;
   }
   else if (x == 0)
   {
@@ -11396,9 +11340,9 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
   {
     y = make_fraction (y, abs (x));
     if (x > 0)
-      x = 268435456L;
+      x = fraction_one;
     else
-      x = -268435456L;
+      x = -fraction_one;
   }
   n = 0;
   p = h;
@@ -11427,7 +11371,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       max = abs (y3);
     if (max == 0)
       goto found;
-    while (max < 134217728L)
+    while (max < fraction_half)
     {
       max = max + max;
       x1 = x1 + x1;
@@ -11458,7 +11402,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       {
         if (phi <= 0)
         {
-          if (phi >= theta - 188743680L)
+          if (phi >= theta - one_eighty_deg)
           goto found;
         }
       }
@@ -11466,7 +11410,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       {
         if (phi >= 0)
         {
-          if (phi <= theta + 188743680L)
+          if (phi <= theta + one_eighty_deg)
             goto found;
         }
       }
@@ -11501,7 +11445,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
         if (y1 == 0)
         {
           t = crossing_point (-x1, -x2, -x3);
-          if (t <= 268435456L)
+          if (t <= fraction_one)
           {
             tt = (t + 2048) / 4096;
             goto found;
@@ -11517,7 +11461,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
         }
         else if (x3 >= 0)
         {
-          tt = 65536L;
+          tt = unity;
           goto found;
         }
       }
@@ -11538,7 +11482,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       }
     }
     t = crossing_point (y1, y2, y3);
-    if (t > 268435456L)
+    if (t > fraction_one)
       goto done;
     y2 = y2 - take_fraction (y2 - y3, t);
     x1 = x1 - take_fraction (x1 - x2, t);
@@ -11553,13 +11497,13 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
       y2 = 0;
     tt = t;
     t = crossing_point (0, -y2, -y3);
-    if (t > 268435456L)
+    if (t > fraction_one)
       goto done;
     x1 = x1 - take_fraction (x1 - x2, t);
     x2 = x2 - take_fraction (x2 - x3, t);
     if (x1 - take_fraction (x1 - x2, t) >= 0)
     {
-      t = tt - take_fraction (tt - 268435456L, t);
+      t = tt - take_fraction (tt - fraction_one, t);
       {
         tt = (t + 2048) / 4096;
         goto found;
@@ -11567,9 +11511,9 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
     }
     done:;
     p = q;
-    n = n + 65536L;
+    n = n + unity;
   }
-  not_found: Result = -65536L;
+  not_found: Result = -unity;
   goto lab_exit;
   found: Result = n + tt;
   lab_exit:;
@@ -11782,7 +11726,7 @@ void cubic_intersection (halfword p, halfword pp)
           {
             if (cur_t >= max_t)
             {
-              if (max_t == 131072L)
+              if (max_t == two)
               {
                 cur_t = half (cur_t + 1);
                 cur_tt = half (cur_tt + 1);
@@ -12168,7 +12112,7 @@ void cubic_intersection (halfword p, halfword pp)
       decr (time_to_go);
     else
     {
-      while (appr_t < 65536L)
+      while (appr_t < unity)
       {
         appr_t = appr_t + appr_t;
         appr_tt = appr_tt + appr_tt;
@@ -12248,12 +12192,12 @@ void path_intersection (halfword h, halfword hh)
   }
   tol_step = 0;
   do {
-    n = -65536L;
+    n = -unity;
     p = h;
     do {
       if (mem[p].hh.b1 != 0)
       {
-        nn = -65536L;
+        nn = -unity;
         pp = hh;
         do {
           if (mem[pp].hh.b1 != 0)
@@ -12266,17 +12210,17 @@ void path_intersection (halfword h, halfword hh)
               goto lab_exit;
             }
           }
-          nn = nn + 65536L;
+          nn = nn + unity;
           pp = mem[pp].hh.rh;
         } while (!(pp == hh));
       }
-      n = n + 65536L;
+      n = n + unity;
       p = mem[p].hh.rh;
     } while (!(p == h));
     tol_step = tol_step + 3;
   } while (!(tol_step > 3));
-  cur_t = -65536L;
-  cur_tt = -65536L;
+  cur_t = -unity;
+  cur_tt = -unity;
   lab_exit:;
 }
 /* 574 */
@@ -12745,7 +12689,7 @@ void linear_eq (halfword p, small_number t)
   } while (!(mem[r].hh.lh == 0));
   if (t == 18)
     mem[r + 1].cint = -make_scaled (mem[r + 1].cint, v);
-  else if (v != -268435456L)
+  else if (v != -fraction_one)
     mem[r + 1].cint = -make_fraction (mem[r + 1].cint, v);
   finalnode = r;
   p = mem[mem_top - 1].hh.rh;
@@ -12813,7 +12757,7 @@ void linear_eq (halfword p, small_number t)
   {
     mem[x].hh.b0 = 16;
     mem[x + 1].cint = mem[p + 1].cint;
-    if (abs (mem[x + 1].cint) >= 268435456L)
+    if (abs (mem[x + 1].cint) >= fraction_one)
       val_too_big (mem[x + 1].cint);
     free_node (p, 2);
     if (cur_exp == x)
@@ -12914,11 +12858,8 @@ void ring_merge (halfword p, halfword q)
     {
       {
         print_err("Redundant equation");
-        {
-          help_ptr = 2;
-          help_line[1] = 601;
-          help_line[0] = 602;
-        }
+        help2(/* 601 */ "I already knew that this equation was true.",
+          /* 602 */ "But perhaps no harm has been done; let's continue.");
         put_get_error ();
       }
       goto lab_exit;
@@ -13128,7 +13069,7 @@ void begin_token_list (halfword p, quarterword t)
     {
       max_in_stack = input_ptr;
       if (input_ptr == stack_size)
-        overflow (615, stack_size);
+        overflow (/* 615 */ "input stack size", stack_size);
     }
     input_stack[input_ptr] = cur_input;
     incr (input_ptr);
@@ -13287,7 +13228,7 @@ lab_restart:
       {
         {
           if (serial_no > 2147483583L)
-            overflow (588, serial_no / 64);
+            overflow (/* 588 */ "independent variables", serial_no / 64);
           mem[p].hh.b0 = 19;
           serial_no = serial_no + 64;
           mem[p + 1].cint = serial_no;
@@ -13399,16 +13340,16 @@ void ins_error (void)
 void begin_file_reading (void)
 {
   if (in_open == 15)
-    overflow (616, 15);
+    overflow (/* 616 */ "text input levels", 15);
   if (first == buf_size)
-    overflow (256, buf_size);
+    overflow (/* 256 */ "buffer size", buf_size);
   incr (in_open);
   {
     if (input_ptr > max_in_stack)
     {
       max_in_stack = input_ptr;
       if (input_ptr == stack_size)
-        overflow (615, stack_size);
+        overflow (/* 615 */ "input stack size", stack_size);
     }
     input_stack[input_ptr] = cur_input;
     incr (input_ptr);
@@ -13467,13 +13408,10 @@ boolean check_outer_validity (void)
         print_err("Forbidden token found");
       }
       print(625);
-      {
-        help_ptr = 4;
-        help_line[3] = 626;
-        help_line[2] = 627;
-        help_line[1] = 628;
-        help_line[0] = 629;
-      }
+      help4(/* 626 */ "I suspect you have forgotten an `enddef',",
+        /* 627 */ "causing me to read past where you wanted me to stop.",
+        /* 628 */ "I'll try to recover; but if the error is serious,",
+        /* 629 */ "you'd better type `E' or `X' now and fix your file.");
       switch (scanner_status)
       {
         case 2:
@@ -13523,12 +13461,9 @@ boolean check_outer_validity (void)
     {
       print_err("Incomplete if; all text was ignored after line ");
       print_int (warning_info);
-      {
-        help_ptr = 3;
-        help_line[2] = 619;
-        help_line[1] = 620;
-        help_line[0] = 621;
-      }
+      help3(/* 619 */ "A forbidden `outer' token occurred in skipped text.",
+        /* 620 */ "This kind of error happens when you say `if...' and forget",
+        /* 621 */ "the matching `fi'. I've inserted a `fi'; this might work.");
       if (cur_sym == 0)
         help_line[2] = 622;
       cur_sym = 9766;
@@ -13650,12 +13585,9 @@ lab25:
             {
               loc = limit;
               print_err("Incomplete string token has been flushed");
-              {
-                help_ptr = 3;
-                help_line[2] = 646;
-                help_line[1] = 647;
-                help_line[0] = 648;
-              }
+              help3(/* 646 */ "Strings should finish on the same line as they began.",
+                /* 647 */ "I've deleted the partial string; you might want to",
+                /* 648 */ "insert another by typing, e.g., `I\"new string\"'.");
               deletions_allowed = false;
               error ();
               deletions_allowed = true;
@@ -13669,7 +13601,7 @@ lab25:
                 if (pool_ptr + loc - k > max_pool_ptr)
                 {
                   if (pool_ptr + loc - k > pool_size)
-                    overflow (257, pool_size - init_pool_ptr);
+                    overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
                   max_pool_ptr = pool_ptr + loc - k;
                 }
               }
@@ -13700,11 +13632,8 @@ lab25:
       case 20:
         {
           print_err("Text line contains an invalid character");
-          {
-            help_ptr = 2;
-            help_line[1] = 643;
-            help_line[0] = 644;
-          }
+          help2(/* 643 */ "A funny symbol that I can't read has just been input.",
+            /* 644 */ "Continue, and I'll forget that it ever happened.");
           deletions_allowed = false;
           error ();
           deletions_allowed = true;
@@ -13747,22 +13676,19 @@ lab25:
       incr (loc);
     } while (!(char_class[buffer[loc]]!= 0));
     f = round_decimals (k);
-    if (f == 65536L)
+    if (f == unity)
     {
       incr (n);
       f = 0;
     }
   lab87:
     if (n < 4096)
-      cur_mod = n * 65536L + f;
+      cur_mod = n * unity + f;
     else
     {
       print_err("Enormous number has been reduced");
-      {
-        help_ptr = 2;
-        help_line[1] = 650;
-        help_line[0] = 651;
-      }
+      help2(/* 650 */ "I can't handle numbers bigger than about 4095.99998;",
+        /* 651 */ "so I've changed your constant to that maximum amount.");
       deletions_allowed = false;
       error ();
       deletions_allowed = true;
@@ -13931,12 +13857,9 @@ lab_restart:
   if ((cur_sym == 0) || (cur_sym > 9757))
   {
     print_err("Missing symbolic token inserted");
-    {
-      help_ptr = 3;
-      help_line[2] = 667;
-      help_line[1] = 668;
-      help_line[0] = 669;
-    }
+    help3(/* 667 */ "Sorry: You can't redefine a number, string, or expr.",
+      /* 668 */ "I've inserted an inaccessible symbol so that your",
+      /* 669 */ "definition will be completed without mixing me up too badly.");
     if (cur_sym > 0)
       help_line[2] = 670;
     else if (cur_cmd == 39)
@@ -13968,14 +13891,11 @@ void check_equals (void)
     if (cur_cmd != 77)
     {
       missing_err (61);
-      {
-        help_ptr = 5;
-        help_line[4] = 671;
-        help_line[3] = 672;
-        help_line[2] = 673;
-        help_line[1] = 674;
-        help_line[0] = 675;
-      }
+      help5(/* 671 */ "The next thing in this `def' should have been `=',",
+        /* 672 */ "because I've already looked at the definition heading.",
+        /* 673 */ "But don't worry; I'll pretend that an equals sign",
+        /* 674 */ "was present. Everything from here to `enddef'",
+        /* 675 */ "will be the replacement text of this macro.");
       back_error ();
     }
   }
@@ -14023,11 +13943,8 @@ void check_delimiter (halfword ldelim, halfword rdelim)
   if (cur_sym != rdelim)
   {
     missing_err (hash[rdelim].rh);
-    {
-      help_ptr = 2;
-      help_line[1] = 922;
-      help_line[0] = 923;
-    }
+    help2(/* 922 */ "I found no right delimiter to match a left one. So I've",
+      /* 923 */ "put one in, behind the scenes; this may fix the problem.");
     back_error ();
   }
   else
@@ -14035,12 +13952,9 @@ void check_delimiter (halfword ldelim, halfword rdelim)
     print_err("The token `");
     slow_print(hash[rdelim].rh);
     print(925);
-    {
-      help_ptr = 3;
-      help_line[2] = 926;
-      help_line[1] = 927;
-      help_line[0] = 928;
-    }
+    help3(/* 926 */ "Strange: This token has lost its former meaning!",
+      /* 927 */ "I'll read it as a right delimiter this time;",
+      /* 928 */ "but watch out, I'll probably miss it later.");
     error ();
   }
   lab_exit:;
@@ -14137,11 +14051,8 @@ void scan_def (void)
     if (warning_info == 0)
     {
       print_err("This variable already starts with a macro");
-      {
-        help_ptr = 2;
-        help_line[1] = 683;
-        help_line[0] = 684;
-      }
+      help2(/* 683 */ "After `vardef a' you can't say `vardef a.b'.",
+        /* 684 */ "So I'll have to discard this definition.");
       error ();
       warning_info = 21;
     }
@@ -14169,10 +14080,7 @@ void scan_def (void)
       else
       {
         print_err("Missing parameter type; `expr' will be assumed");
-        {
-          help_ptr = 1;
-          help_line[0] = 686;
-        }
+        help1(/* 686 */ "You should've had `expr' or `suffix' or `text' here.");
         back_error ();
         base = 9770;
       }
@@ -14185,7 +14093,7 @@ void scan_def (void)
         mem[p + 1].cint = base + k;
         mem[p].hh.lh = cur_sym;
         if (k == 150)
-          overflow (687, 150);
+          overflow (/* 687 */ "parameter stack size", 150);
         incr (k);
         mem[p].hh.rh = r;
         r = p;
@@ -14213,7 +14121,7 @@ void scan_def (void)
         c = 7;
     }
     if (k == 150)
-      overflow (687, 150);
+      overflow (/* 687 */ "parameter stack size", 150);
     incr (k);
     get_symbol ();
     mem[p].hh.lh = cur_sym;
@@ -14227,7 +14135,7 @@ void scan_def (void)
         c = 5;
         p = get_node (2);
         if (k == 150)
-          overflow (687, 150);
+          overflow (/* 687 */ "parameter stack size", 150);
         mem[p + 1].cint = 9770 + k;
         get_symbol ();
         mem[p].hh.lh = cur_sym;
@@ -14401,12 +14309,9 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       {
         print_err("Missing argument to ");
         print_macro_name (arg_list, macro_name);
-        {
-          help_ptr = 3;
-          help_line[2] = 710;
-          help_line[1] = 711;
-          help_line[0] = 712;
-        }
+        help3(/* 710 */ "That macro has more parameters than you thought.",
+          /* 711 */ "I'll continue by pretending that each missing argument",
+          /* 712 */ "is either zero or null.");
         if (mem[r].hh.lh >= 9920)
         {
           cur_exp = 0;
@@ -14441,23 +14346,17 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         if (mem[mem[r].hh.rh].hh.lh >= 9770)
         {
           missing_err (44);
-          {
-            help_ptr = 3;
-            help_line[2] = 713;
-            help_line[1] = 714;
-            help_line[0] = 708;
-          }
+          help3(/* 713 */ "I've finished reading a macro argument and am about to",
+            /* 714 */ "read another; the arguments weren't delimited correctly.",
+            /* 708 */ "You might want to delete some tokens before continuing.");
           back_error ();
           cur_cmd = 82;
         }
         else
         {
           missing_err (hash[rdelim].rh);
-          {
-            help_ptr = 2;
-            help_line[1] = 715;
-            help_line[0] = 708;
-          }
+          help2(/* 715 */ "I've gotten to the end of the macro parameter list.",
+            /* 708 */ "You might want to delete some tokens before continuing.");
           back_error ();
         }
       }
@@ -14492,12 +14391,9 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     print_nl(705);
     slow_print(hash[rdelim].rh);
     print(299);
-    {
-      help_ptr = 3;
-      help_line[2] = 706;
-      help_line[1] = 707;
-      help_line[0] = 708;
-    }
+    help3(/* 706 */ "I'm going to assume that the comma I just read was a",
+      /* 707 */ "right delimiter, and then I'll begin expanding the macro.",
+      /* 708 */ "You might want to delete some tokens before continuing.");
     error ();
   }
   if (mem[r].hh.lh != 0)
@@ -14547,10 +14443,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
             missing_err (479);
             print(716);
             print_macro_name (arg_list, macro_name);
-            {
-              help_ptr = 1;
-              help_line[0] = 717;
-            }
+            help1(/* 717 */ "I've got the first argument; will look now for the other.");
             back_error ();
           }
           get_x_next ();
@@ -14573,11 +14466,8 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
             if ((cur_cmd != 62) || (cur_mod != ldelim))
             {
               missing_err (hash[rdelim].rh);
-              {
-                help_ptr = 2;
-                help_line[1] = 715;
-                help_line[0] = 708;
-              }
+              help2(/* 715 */ "I've gotten to the end of the macro parameter list.", 
+                /* 708 */ "You might want to delete some tokens before continuing.");
               back_error ();
             }
             get_x_next ();
@@ -14616,7 +14506,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
   {
     max_param_stack = param_ptr + n;
     if (max_param_stack > 150)
-      overflow (687, 150);
+      overflow (/* 687 */ "parameter stack size", 150);
   }
   begin_token_list (defref, 21);
   name = macro_name;
@@ -14639,7 +14529,7 @@ void expand (void)
   integer k;
   pool_pointer j;
 
-  if (internal[7] > 65536L)
+  if (internal[7] > unity)
   {
     if (cur_cmd != 10)
       show_cmd_mod (cur_cmd, cur_mod);
@@ -14663,10 +14553,7 @@ void expand (void)
         {
           print_err("Extra ");
           print_cmd_mod (2, cur_mod);
-          {
-            help_ptr = 1;
-            help_line[0] = 725;
-          }
+          help1(/* 725 */ "I'm ignoring this; it doesn't match any if.");
           error ();
         }
       }
@@ -14693,11 +14580,8 @@ void expand (void)
       if (cur_mod == 0)
       {
         print_err("Extra `endfor'");
-        {
-          help_ptr = 2;
-          help_line[1] = 689;
-          help_line[0] = 690;
-        }
+        help2(/* 689 */ "I'm not currently working on a for loop,",
+          /* 690 */ "so I had better not try to end anything.");
         error ();
       }
       else
@@ -14710,11 +14594,8 @@ void expand (void)
         if (loop_ptr == 0)
         {
           print_err("Lost loop");
-          {
-            help_ptr = 2;
-            help_line[1] = 693;
-            help_line[0] = 694;
-          }
+          help2(/* 693 */ "I'm confused; after exiting from a loop, I still seem",
+            /* 694 */ "to want to repeat it. I'll try to forget the problem.");
           error ();
         }
         else
@@ -14724,17 +14605,14 @@ void expand (void)
     case 6:
       {
         get_boolean ();
-        if (internal[7] > 65536L)
+        if (internal[7] > unity)
           show_cmd_mod (33, cur_exp);
         if (cur_exp == 30)
         {
           if (loop_ptr == 0)
           {
             print_err("No loop is in progress");
-            {
-              help_ptr = 1;
-              help_line[0] = 696;
-            }
+            help1(/* 696 */ "Why say `exitif' when there's nothing to exit from?");
             if (cur_cmd == 83)
               error ();
             else
@@ -14761,11 +14639,8 @@ void expand (void)
         else if (cur_cmd != 83)
         {
           missing_err (59);
-          {
-            help_ptr = 2;
-            help_line[1] = 697;
-            help_line[0] = 698;
-          }
+          help2(/* 697 */ "After `exitif <boolean exp>' I expect to see a semicolon.",
+            /* 698 */ "I shall pretend that one was there.");
           back_error ();
         }
       }
@@ -14792,11 +14667,8 @@ void expand (void)
         if (cur_type != 4)
         {
           disp_err (0, 700);
-          {
-            help_ptr = 2;
-            help_line[1] = 701;
-            help_line[0] = 702;
-          }
+          help2(/* 701 */ "I'm going to flush this expression, since",
+            /* 702 */ "scantokens should be followed by a known string.");
           put_get_flush_error (0);
         }
         else
@@ -14812,7 +14684,7 @@ void expand (void)
               if (k >= buf_size)
               {
                 max_buf_stack = buf_size;
-                overflow (256, buf_size);
+                overflow (/* 256 */ "buffer size", buf_size);
               }
               max_buf_stack = k + 1;
             }
@@ -14863,7 +14735,7 @@ void stack_argument (halfword p)
   {
     incr (max_param_stack);
     if (max_param_stack > 150)
-      overflow (687, 150);
+      overflow (/* 687 */ "parameter stack size", 150);
   }
   param_stack[param_ptr] = p;
   incr (param_ptr);
@@ -14935,11 +14807,8 @@ void check_colon (void)
   if (cur_cmd != 81)
   {
     missing_err (58);
-    {
-      help_ptr = 2;
-      help_line[1] = 721;
-      help_line[0] = 698;
-    }
+    help2(/* 721 */ "There should've been a colon after the condition.",
+      /* 698 */ "I shall pretend that one was there.");
     back_error ();
   }
 }
@@ -14964,7 +14833,7 @@ void conditional (void)
   savecond_ptr = cond_ptr;
   lab_reswitch: get_boolean ();
   new_if_limit = 4;
-  if (internal[7] > 65536L)
+  if (internal[7] > unity)
   {
     begin_diagnostic ();
     if (cur_exp == 30)
@@ -15024,13 +14893,10 @@ void bad_for (str_number s)
   disp_err (0, 726);
   print(s);
   print(306);
-  {
-    help_ptr = 4;
-    help_line[3] = 727;
-    help_line[2] = 728;
-    help_line[1] = 729;
-    help_line[0] = 308;
-  }
+  help4(/* 727 */ "When you say `for x=a step b until c',",
+    /* 728 */ "the initial value `a' and the step size `b'",
+    /* 729 */ "and the final value `c' must have known numeric values.",
+    /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
   put_get_flush_error (0);
 }
 /* 755 */
@@ -15058,12 +14924,9 @@ void begin_iteration (void)
   if ((cur_cmd != 51) && (cur_cmd != 77))
   {
     missing_err (61);
-    {
-      help_ptr = 3;
-      help_line[2] = 730;
-      help_line[1] = 673;
-      help_line[0] = 731;
-    }
+    help3(/* 730 */ "The next thing in this loop should have been `=' or `:='.", 
+      /* 673 */ "But don't worry; I'll pretend that an equals sign", 
+      /* 731 */ "was present, and I'll look for the values next.");
     back_error ();
   }
   mem[s + 1].hh.lh = 0;
@@ -15097,11 +14960,8 @@ void begin_iteration (void)
           if (cur_cmd != 75)
           {
             missing_err (490);
-            {
-              help_ptr = 2;
-              help_line[1] = 739;
-              help_line[0] = 740;
-            }
+            help2(/* 739 */ "I assume you meant to say `until' after `step'.",
+              /* 740 */ "So I'll look for the final value and colon next.");
             back_error ();
           }
           get_x_next ();
@@ -15126,12 +14986,9 @@ found:
   if (cur_cmd != 81)
   {
     missing_err (58);
-    {
-      help_ptr = 3;
-      help_line[2] = 732;
-      help_line[1] = 733;
-      help_line[0] = 734;
-    }
+    help3(/* 732 */ "The next thing in this loop should have been a `:'.",
+      /* 733 */ "So I'll pretend that a colon was present;",
+      /* 734 */ "everything from here to `endfor' will be iterated.");
     back_error ();
   }
   q = get_avail ();
@@ -15182,7 +15039,7 @@ void resume_iteration (void)
   }
   begin_token_list (mem[loop_ptr].hh.lh, 17);
   stack_argument (q);
-  if (internal[7] > 65536L)
+  if (internal[7] > unity)
   {
     begin_diagnostic ();
     print_nl(736);
@@ -15271,7 +15128,7 @@ boolean more_name (ASCII_code c)
       if (pool_ptr + 1 > max_pool_ptr)
       {
         if (pool_ptr + 1 > pool_size)
-          overflow (257, pool_size - init_pool_ptr);
+          overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
         max_pool_ptr = pool_ptr + 1;
       }
     }
@@ -15292,14 +15149,14 @@ void end_name (void)
   if (str_ptr + 3 > max_str_ptr)
   {
     if (str_ptr + 3 > max_strings)
-      overflow (258, max_strings - init_str_ptr);
+      overflow (/* 258 */ "number of strings", max_strings - init_str_ptr);
     max_str_ptr = str_ptr + 3;
   }
   {
     if (pool_ptr + 6 > max_pool_ptr)
     {
       if (pool_ptr + 6 > pool_size)
-        overflow (257, pool_size - init_pool_ptr);
+        overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + 6;
     }
   }
@@ -15677,12 +15534,9 @@ void start_input (void)
   if ((index > 15))
   {
     print_err("File names can't appear within macros");
-    {
-      help_ptr = 3;
-      help_line[2] = 758;
-      help_line[1] = 759;
-      help_line[0] = 760;
-    }
+    help3(/* 758 */ "Sorry...I've converted what follows to tokens,",
+      /* 759 */ "possibly garbaging the name you gave.",
+      /* 760 */ "Please delete the tokens and insert the name again.");
     error ();
   }
   if ((index <= 15))
@@ -15742,13 +15596,10 @@ void bad_exp (str_number s)
   print(770);
   print_cmd_mod (cur_cmd, cur_mod);
   print_char('\'');
-  {
-    help_ptr = 4;
-    help_line[3] = 771;
-    help_line[2] = 772;
-    help_line[1] = 773;
-    help_line[0] = 774;
-  }
+  help4(/* 771 */ "I'm afraid I need some sort of value in order to continue,",
+    /* 772 */ "so I've tentatively inserted `0'. You may want to",
+    /* 773 */ "delete this zero and insert something else;",
+    /* 774 */ "see Chapter 27 of The METAFONTbook for an example.");
   back_input ();
   cur_sym = 0;
   cur_cmd = 42;
@@ -15807,12 +15658,9 @@ void back_expr (void)
 void bad_sub_script (void)
 {
   disp_err (0, 786);
-  {
-    help_ptr = 3;
-    help_line[2] = 787;
-    help_line[1] = 788;
-    help_line[0] = 789;
-  }
+  help3(/* 787 */ "A bracketed subscript must have a known numeric value;",
+    /* 788 */ "unfortunately, what I found was the value that appears just",
+    /* 789 */ "above this error message. So I'll try a zero subscript.");
   flush_error (0);
 }
 /* 851 */
@@ -15821,14 +15669,11 @@ void obliterated (halfword q)
   print_err("Variable ");
   show_token_list (q, 0, 1000, 0);
   print(791);
-  {
-    help_ptr = 5;
-    help_line[4] = 792;
-    help_line[3] = 793;
-    help_line[2] = 794;
-    help_line[1] = 795;
-    help_line[0] = 796;
-  }
+  help3(/* 792 */ "It seems you did a nasty thing---probably by accident,",
+    /* 793 */ "but nevertheless you nearly hornswoggled me...",
+    /* 794 */ "While I was evaluating the right-hand side of this",
+    /* 795 */ "command, something happened, and the left-hand side",
+    /* 796 */ "is no longer a variable! So I won't change anything.");
 }
 /* 863 */
 void binary_mac (halfword p, halfword c, halfword n)
@@ -15854,11 +15699,8 @@ void materialize_pen (void)
   if (mem[q].hh.b0 == 0)
   {
     print_err("Pen path must be a cycle");
-    {
-      help_ptr = 2;
-      help_line[1] = 807;
-      help_line[0] = 575;
-    }
+    help2(/* 807 */ "I can't make a pen from the given path.",
+      /* 575 */ "So I've replaced it by the trivial path `(0,0)..cycle'.");
     put_get_error ();
     cur_exp = 3;
     goto common_ending;
@@ -15903,14 +15745,11 @@ void known_pair (void)
   if (cur_type != 14)
   {
     disp_err (0, 809);
-    {
-      help_ptr = 5;
-      help_line[4] = 810;
-      help_line[3] = 811;
-      help_line[2] = 812;
-      help_line[1] = 813;
-      help_line[0] = 814;
-    }
+    help5(/* 810 */ "I need x and y numbers for this part of the path.",
+      /* 811 */ "The value I found (see above) was no good;",
+      /* 812 */ "so I'll try to keep going by using zero instead.",
+      /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
+      /* 814 */ "you might want to type `I ???' now.)");
     put_get_flush_error (0);
     cur_x = 0;
     cur_y = 0;
@@ -15923,14 +15762,11 @@ void known_pair (void)
     else
     {
       disp_err (p, 815);
-      {
-        help_ptr = 5;
-        help_line[4] = 816;
-        help_line[3] = 811;
-        help_line[2] = 812;
-        help_line[1] = 813;
-        help_line[0] = 814;
-      }
+      help5(/* 816 */ "I need a `known' x value for this part of the path.",
+        /* 811 */ "The value I found (see above) was no good;",
+        /* 812 */ "so I'll try to keep going by using zero instead.",
+        /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
+        /* 814 */ "you might want to type `I ???' now.)");
       put_get_error ();
       recycle_value (p);
       cur_x = 0;
@@ -15940,14 +15776,11 @@ void known_pair (void)
     else
     {
       disp_err (p + 2, 817);
-      {
-        help_ptr = 5;
-        help_line[4] = 818;
-        help_line[3] = 811;
-        help_line[2] = 812;
-        help_line[1] = 813;
-        help_line[0] = 814;
-      }
+      help5(/* 818 */ "I need a `known' y value for this part of the path.",
+        /* 811 */ "The value I found (see above) was no good;",
+        /* 812 */ "so I'll try to keep going by using zero instead.",
+        /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
+        /* 814 */ "you might want to type `I ???' now.)");
       put_get_error ();
       recycle_value (p + 2);
       cur_y = 0;
@@ -15986,11 +15819,8 @@ small_number scan_direction (void)
     if ((cur_type != 16) || (cur_exp < 0))
     {
       disp_err (0, 821);
-      {
-        help_ptr = 1;
-        help_line[0] = 822;
-      }
-      put_get_flush_error (65536L);
+      help1(/* 822 */ "A curl must be a known, nonnegative number.");
+      put_get_flush_error (unity);
     }
     t = 3;
   }
@@ -16002,25 +15832,19 @@ small_number scan_direction (void)
       if (cur_type != 16)
       {
         disp_err (0, 815);
-        {
-          help_ptr = 5;
-          help_line[4] = 816;
-          help_line[3] = 811;
-          help_line[2] = 812;
-          help_line[1] = 813;
-          help_line[0] = 814;
-        }
+        help5(/* 816 */ "I need a `known' x value for this part of the path.", 
+          /* 811 */ "The value I found (see above) was no good;",
+          /* 812 */ "so I'll try to keep going by using zero instead.",
+          /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
+          /* 814 */ "you might want to type `I ???' now.)");
         put_get_flush_error (0);
       }
       x = cur_exp;
       if (cur_cmd != 82)
       {
         missing_err (44);
-        {
-          help_ptr = 2;
-          help_line[1] = 823;
-          help_line[0] = 824;
-        }
+        help2(/* 823 */ "I've got the x coordinate of a path direction;",
+          /* 824 */ "will look for the y coordinate next.");
         back_error ();
       }
       get_x_next ();
@@ -16028,14 +15852,11 @@ small_number scan_direction (void)
       if (cur_type != 16)
       {
         disp_err (0, 817);
-        {
-          help_ptr = 5;
-          help_line[4] = 818;
-          help_line[3] = 811;
-          help_line[2] = 812;
-          help_line[1] = 813;
-          help_line[0] = 814;
-        }
+        help5(/* 818 */ "I need a `known' y value for this part of the path.",
+          /* 811 */ "The value I found (see above) was no good;",
+          /* 812 */ "so I'll try to keep going by using zero instead.",
+          /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
+          /* 814 */ "you might want to type `I ???' now.)");
         put_get_flush_error (0);
       }
       cur_y = cur_exp;
@@ -16054,12 +15875,9 @@ small_number scan_direction (void)
   if (cur_cmd != 65)
   {
     missing_err (125);
-    {
-      help_ptr = 3;
-      help_line[2] = 819;
-      help_line[1] = 820;
-      help_line[0] = 698;
-    }
+    help3(/* 819 */ "I've scanned a direction spec for part of a path,",
+      /* 820 */ "so a right brace should have come next.",
+      /* 698 */ "I shall pretend that one was there.");
     back_error ();
   }
   get_x_next ();
@@ -16072,7 +15890,7 @@ void do_nullary (quarterword c)
   integer k;
 
   check_arith ();
-  if (internal[7] > 131072L)
+  if (internal[7] > two)
     show_cmd_mod (33, c);
   switch (c)
   {
@@ -16111,10 +15929,10 @@ void do_nullary (quarterword c)
         mem[cur_exp].hh.rh = cur_exp;
         mem[cur_exp + 1].cint = 0;
         mem[cur_exp + 2].cint = 0;
-        mem[cur_exp + 3].cint = 65536L;
+        mem[cur_exp + 3].cint = unity;
         mem[cur_exp + 4].cint = 0;
         mem[cur_exp + 5].cint = 0;
-        mem[cur_exp + 6].cint = 65536L;
+        mem[cur_exp + 6].cint = unity;
       }
       break;
     case 34:
@@ -16136,7 +15954,7 @@ void do_nullary (quarterword c)
           if (pool_ptr + last - start > max_pool_ptr)
           {
             if (pool_ptr + last - start > pool_size)
-              overflow (257, pool_size - init_pool_ptr);
+              overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
             max_pool_ptr = pool_ptr + last - start;
           }
         }
@@ -16197,12 +16015,9 @@ void bad_unary (quarterword c)
   disp_err (0, 838);
   print_op (c);
   print_known_or_unknown_type (cur_type, cur_exp);
-  {
-    help_ptr = 3;
-    help_line[2] = 839;
-    help_line[1] = 840;
-    help_line[0] = 841;
-  }
+  help3(/* 839 */ "I'm afraid I don't know how to apply that operation to that",
+    /* 840 */ "particular type. Continue, and I'll simply return the",
+    /* 841 */ "argument (shown above) as the result of the operation.");
   put_get_error ();
 }
 /* 904 */
@@ -16279,7 +16094,7 @@ void str_to_num (quarterword c)
         badchar = true;
         m = 0;
       }
-      if (n < 32768L / b)
+      if (n < half_unit / b)
         n = n * b + m;
       else
         n = 32767;
@@ -16288,15 +16103,9 @@ void str_to_num (quarterword c)
     {
       disp_err (0, 843);
       if (c == 47)
-      {
-        help_ptr = 1;
-        help_line[0] = 844;
-      }
+        help1(/* 844 */ "I zeroed out characters that weren't in the range 0..7.");
       else
-      {
-        help_ptr = 1;
-        help_line[0] = 845;
-      }
+        help1(/* 845 */ "I zeroed out characters that weren't hex digits.");
       put_get_error ();
     }
     if (n > 4095)
@@ -16304,14 +16113,11 @@ void str_to_num (quarterword c)
       print_err("Number too large (");
       print_int (n);
       print_char(')');
-      {
-        help_ptr = 1;
-        help_line[0] = 847;
-      }
+      help1(/* 847 */ "I have trouble with numbers greater than 4095; watch out.");
       put_get_error ();
     }
   }
-  flush_cur_exp (n * 65536L);
+  flush_cur_exp (n * unity);
 }
 /* 916 */
 scaled path_length (void)
@@ -16322,12 +16128,12 @@ scaled path_length (void)
 
   p = cur_exp;
   if (mem[p].hh.b0 == 0)
-    n = -65536L;
+    n = -unity;
   else
     n = 0;
   do {
     p = mem[p].hh.rh;
-    n = n + 65536L;
+    n = n + unity;
   } while (!(p == cur_exp));
   Result = n;
   return Result;
@@ -16382,7 +16188,7 @@ void do_unary (quarterword c)
   integer x;
 
   check_arith ();
-  if (internal[7] > 131072L)
+  if (internal[7] > two)
   {
     begin_diagnostic ();
     print_nl(123);
@@ -16553,7 +16359,7 @@ void do_unary (quarterword c)
             if (pool_ptr + 1 > max_pool_ptr)
             {
               if (pool_ptr + 1 > pool_size)
-                overflow (257, pool_size - init_pool_ptr);
+                overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
               max_pool_ptr = pool_ptr + 1;
             }
           }
@@ -16588,7 +16394,7 @@ void do_unary (quarterword c)
       break;
     case 51:
       if (cur_type == 4)
-        flush_cur_exp ((str_start[cur_exp + 1] - str_start[cur_exp]) * 65536L);
+        flush_cur_exp ((str_start[cur_exp + 1] - str_start[cur_exp]) * unity);
       else if (cur_type == 9)
         flush_cur_exp (path_length ());
       else if (cur_type == 16)
@@ -16610,7 +16416,7 @@ void do_unary (quarterword c)
         cur_pen = 3;
         cur_path_type = 1;
         cur_exp = make_spec (cur_exp, -1879080960L, 0);
-        flush_cur_exp (turning_number * 65536L);
+        flush_cur_exp (turning_number * unity);
       }
       break;
     case 2:
@@ -16751,12 +16557,9 @@ void bad_binary (halfword p, quarterword c)
   else
     print_op (c);
   print_known_or_unknown_type (cur_type, cur_exp);
-  {
-    help_ptr = 3;
-    help_line[2] = 839;
-    help_line[1] = 848;
-    help_line[0] = 849;
-  }
+  help3(/* 839 */ "I'm afraid I don't know how to apply that operation to that", 
+    /* 848 */ "combination of types. Continue, and I'll return the second",
+    /* 849 */ "argument (see above) as the result of the operation.");
   put_get_error ();
 }
 /* 928 */
@@ -16887,12 +16690,12 @@ void add_or_subtract (halfword p, halfword q, quarterword c)
           }
         }
         t = 18;
-        v = p_over_v (v, 65536L, 17, 18);
+        v = p_over_v (v, unity, 17, 18);
       }
       if (s == 18)
         v = p_plus_q (v, r, 18);
       else
-        v = p_plus_fq (v, 65536L, r, 18, 17);
+        v = p_plus_fq (v, unity, r, 18, 17);
     done:
       if (q != 0)
         dep_finish (v, q, t);
@@ -16930,7 +16733,7 @@ void dep_mult (halfword p, integer v, boolean v_is_scaled)
   {
     if (v_is_scaled)
     {
-      if (ab_vs_cd (max_coef (q), abs (v), 626349396L, 65536L) >= 0)
+      if (ab_vs_cd (max_coef (q), abs (v), 626349396L, unity) >= 0)
         t = 18;
     }
   }
@@ -16983,7 +16786,7 @@ void dep_div (halfword p, scaled v)
   s = t;
   if (t == 17)
   {
-    if (ab_vs_cd (max_coef (q), 65536L, 626349396L, abs (v)) >= 0)
+    if (ab_vs_cd (max_coef (q), unity, 626349396L, abs (v)) >= 0)
       t = 18;
   }
   q = p_over_v (q, v, s, t);
@@ -17072,12 +16875,9 @@ void set_up_trans (quarterword c)
         break;
     }
     disp_err (p, 858);
-    {
-      help_ptr = 3;
-      help_line[2] = 859;
-      help_line[1] = 860;
-      help_line[0] = 538;
-    }
+    help3(/* 859 */ "The expression shown above has the wrong type,",
+      /* 860 */ "so I can't transform anything using it.",
+      /* 538 */ "Proceed, and I'll omit the transformation.");
     put_get_error ();
   done:
     recycle_value (p);
@@ -17106,17 +16906,14 @@ void set_up_known_trans (quarterword c)
   if (cur_type != 16)
   {
     disp_err (0, 861);
-    {
-      help_ptr = 3;
-      help_line[2] = 862;
-      help_line[1] = 863;
-      help_line[0] = 538;
-    }
+    help3(/* 862 */ "I'm unable to apply a partially specified transformation",
+      /* 863 */ "except to a fully known pair or transform.",
+      /* 538 */ "Proceed, and I'll omit the transformation.");
     put_get_flush_error (0);
-    txx = 65536L;
+    txx = unity;
     txy = 0;
     tyx = 0;
-    tyy = 65536L;
+    tyy = unity;
     tx = 0;
     ty = 0;
   }
@@ -17173,9 +16970,9 @@ void edges_trans (halfword p, quarterword c)
   {
     if (tyy == 0)
     {
-      if (txy % 65536L == 0)
+      if (txy % unity == 0)
       {
-        if (tyx % 65536L == 0)
+        if (tyx % unity == 0)
         {
           xy_swap_edges ();
           txx = txy;
@@ -17192,9 +16989,9 @@ void edges_trans (halfword p, quarterword c)
   {
     if (tyx == 0)
     {
-      if (txx % 65536L == 0)
+      if (txx % unity == 0)
       {
-        if (tyy % 65536L == 0)
+        if (tyy % unity == 0)
         {
           if ((txx == 0) || (tyy == 0))
           {
@@ -17214,21 +17011,18 @@ void edges_trans (halfword p, quarterword c)
               yreflect_edges ();
               tyy = -tyy;
             }
-            if (txx != 65536L)
-              x_scale_edges (txx / 65536L);
-            if (tyy != 65536L)
-              y_scale_edges (tyy / 65536L);
+            if (txx != unity)
+              x_scale_edges (txx / unity);
+            if (tyy != unity)
+              y_scale_edges (tyy / unity);
             tx = round_unscaled (tx);
             ty = round_unscaled (ty);
             if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.rh + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.rh + ty >= 8191) || (abs (tx) >= 4096) || (abs (ty) >= 4096))
             {
               print_err("Too far to shift");
-              {
-                help_ptr = 3;
-                help_line[2] = 868;
-                help_line[1] = 537;
-                help_line[0] = 538;
-              }
+              help3(/* 868 */ "I can't shift the picture as requested---it would",
+                /* 537 */ "make some coordinates too large or too small.",
+                /* 538 */ "Proceed, and I'll omit the transformation.");
               put_get_error ();
             }
             else
@@ -17257,12 +17051,9 @@ void edges_trans (halfword p, quarterword c)
     }
   }
   print_err("That transformation is too hard");
-  {
-    help_ptr = 3;
-    help_line[2] = 865;
-    help_line[1] = 866;
-    help_line[0] = 538;
-  }
+  help3(/* 865 */ "I can apply complicated transformations to paths,",
+    /* 866 */ "but I can only do integer operations on pictures.",
+    /* 538 */ "Proceed, and I'll omit the transformation.");
   put_get_error ();
   lab_exit:;
 }
@@ -17271,7 +17062,7 @@ void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
 {
   halfword r;
 
-  if (t != 65536L)
+  if (t != unity)
     dep_mult (p, t, true);
   if (u != 0)
   {
@@ -17284,7 +17075,7 @@ void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
         if (mem[p].hh.b0 == 16)
           new_dep (p, const_dependency (mem[p + 1].cint));
         else
-          mem[p + 1].hh.rh = p_times_v (mem[p + 1].hh.rh, 65536L, 17, 18, true);
+          mem[p + 1].hh.rh = p_times_v (mem[p + 1].hh.rh, unity, 17, 18, true);
         mem[p].hh.b0 = 18;
       }
       mem[p + 1].hh.rh = p_plus_fq (mem[p + 1].hh.rh, u, mem[q + 1].hh.rh, 18, mem[q].hh.b0);
@@ -17335,7 +17126,7 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
   if (v != 0)
     add_mult_dep (p, v, u);
   if (q != 0)
-    add_mult_dep (p, 65536L, q);
+    add_mult_dep (p, unity, q);
   if (mem[p + 1].hh.rh == dep_final)
   {
     vv = mem[dep_final + 1].cint;
@@ -17347,7 +17138,7 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 /* 974 */
 void bilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
 {
-  if (t != 65536L)
+  if (t != unity)
     delta = delta + take_scaled (mem[p + 1].cint, t);
   else
     delta = delta + mem[p + 1].cint;
@@ -17431,7 +17222,7 @@ void cat (halfword p)
     if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]) > max_pool_ptr)
     {
       if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]) > pool_size)
-        overflow (257, pool_size - init_pool_ptr);
+        overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]);
     }
   }
@@ -17494,7 +17285,7 @@ void chop_string (halfword p)
     if (pool_ptr + b - a > max_pool_ptr)
     {
       if (pool_ptr + b - a > pool_size)
-        overflow (257, pool_size - init_pool_ptr);
+        overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + b - a;
     }
   }
@@ -17575,11 +17366,11 @@ void chop_path (halfword p)
       }
   }
   q = cur_exp;
-  while (a >= 65536L)
+  while (a >= unity)
   {
     q = mem[q].hh.rh;
-    a = a - 65536L;
-    b = b - 65536L;
+    a = a - unity;
+    b = b - unity;
   }
   if (b == a)
   {
@@ -17601,7 +17392,7 @@ void chop_path (halfword p)
       rr = qq;
       qq = copy_knot (q);
       mem[rr].hh.rh = qq;
-      b = b - 65536L;
+      b = b - unity;
     } while (!(b <= 0));
     if (a > 0)
     {
@@ -17612,13 +17403,13 @@ void chop_path (halfword p)
       free_node (ss, 7);
       if (rr == ss)
       {
-        b = make_scaled (b, 65536L - a);
+        b = make_scaled (b, unity - a);
         rr = pp;
       }
     }
     if (b < 0)
     {
-      split_cubic (rr, (b + 65536L) * 4096, mem[qq + 1].cint, mem[qq + 2].cint);
+      split_cubic (rr, (b + unity) * 4096, mem[qq + 1].cint, mem[qq + 2].cint);
       free_node (qq, 7);
       qq = mem[rr].hh.rh;
     }
@@ -17672,12 +17463,12 @@ void find_point (scaled v, quarterword c)
 
   p = cur_exp;
   if (mem[p].hh.b0 == 0)
-    n = -65536L;
+    n = -unity;
   else
     n = 0;
   do {
     p = mem[p].hh.rh;
-    n = n + 65536L;
+    n = n + unity;
   } while (!(p == cur_exp));
   if (n == 0)
     v = 0;
@@ -17696,10 +17487,10 @@ void find_point (scaled v, quarterword c)
       v = v % n;
   }
   p = cur_exp;
-  while (v >= 65536L)
+  while (v >= unity)
   {
     p = mem[p].hh.rh;
-    v = v - 65536L;
+    v = v - unity;
   }
   if (v != 0)
   {
@@ -17734,7 +17525,7 @@ void do_binary (halfword p, quarterword c)
   integer v;
  
   check_arith ();
-  if (internal[7] > 131072L)
+  if (internal[7] > two)
   {
     begin_diagnostic ();
     print_nl(850);
@@ -17872,18 +17663,12 @@ void do_binary (halfword p, quarterword c)
         {
           if (cur_type < 16)
           {
-            disp_err (p, 261);
-            {
-              help_ptr = 1;
-              help_line[0] = 851;
-            }
+            disp_err(p, 261);
+            help1(/* 851 */ "The quantities shown above have not been equated.");
           }
           else
-          {
-            help_ptr = 2;
-            help_line[1] = 852;
-            help_line[0] = 853;
-          }
+            help2(/* 852 */ "Oh dear. I can't decide if the expression above is positive,",
+              /* 853 */ "negative, or zero. So this comparison test won't be `true'.");
           disp_err (0, 854);
           put_get_flush_error (31);
         }
@@ -17982,11 +17767,8 @@ void do_binary (halfword p, quarterword c)
         if (v == 0)
         {
           disp_err (0, 784);
-          {
-            help_ptr = 2;
-            help_line[1] = 856;
-            help_line[0] = 857;
-          }
+          help2(/* 856 */ "You're trying to divide the quantity shown above the error",
+            /* 857 */ "message by zero. I'm going to divide it by one instead.");
           put_get_error ();
         }
         else
@@ -18138,7 +17920,7 @@ void frac_mult (scaled n, scaled d)
   halfword oldexp;
   fraction v;
 
-  if (internal[7] > 131072L)
+  if (internal[7] > two)
   {
     begin_diagnostic ();
     print_nl(850);
@@ -18218,8 +18000,8 @@ void gf_four (integer x)
   }
   else
   {
-    x = x + 1073741824L;
-    x = x + 1073741824L;
+    x = x + fraction_four;
+    x = x + fraction_four;
     {
       gf_buf[gf_ptr] = (x / 16777216L) + 128;
       incr (gf_ptr);
@@ -18229,12 +18011,12 @@ void gf_four (integer x)
   }
   x = x % 16777216L;
   {
-    gf_buf[gf_ptr] = x / 65536L;
+    gf_buf[gf_ptr] = x / unity;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
       gf_swap ();
   }
-  x = x % 65536L;
+  x = x % unity;
   {
     gf_buf[gf_ptr] = x / 256;
     incr (gf_ptr);
@@ -18268,13 +18050,13 @@ void gf_two (integer x)
 void gf_three (integer x)
 {
   {
-    gf_buf[gf_ptr] = x / 65536L;
+    gf_buf[gf_ptr] = x / unity;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
       gf_swap ();
   }
   {
-    gf_buf[gf_ptr] = (x % 65536L) / 256;
+    gf_buf[gf_ptr] = (x % unity) / 256;
     incr (gf_ptr);
     if (gf_ptr == gf_limit)
       gf_swap ();
@@ -18582,7 +18364,7 @@ void ship_out (eight_bits c)
         if (gf_ptr == gf_limit)
           gf_swap ();
       }
-      gf_four (xoff * 65536L);
+      gf_four (xoff * unity);
     }
     if (yoff != 0)
     {
@@ -18593,7 +18375,7 @@ void ship_out (eight_bits c)
         if (gf_ptr == gf_limit)
           gf_swap ();
       }
-      gf_four (yoff * 65536L);
+      gf_four (yoff * unity);
     }
   }
   prevn = 4096;
@@ -18605,13 +18387,13 @@ void ship_out (eight_bits c)
       sort_edges (p);
     q = mem[p + 1].hh.rh;
     w = 0;
-    prevm = -268435456L;
+    prevm = -fraction_one;
     ww = 0;
     prevw = 0;
     m = prevm;
     do {
       if (q == mem_top)
-        mm = 268435456L;
+        mm = fraction_one;
       else
       {
         d = mem[q].hh.lh;
@@ -18624,7 +18406,7 @@ void ship_out (eight_bits c)
         {
           if (w > 0)
           {
-            if (prevm == -268435456L)
+            if (prevm == -fraction_one)
             {
               if (prevn == 4096)
               {
@@ -18700,7 +18482,7 @@ void ship_out (eight_bits c)
       }
       w = ww;
       q = mem[q].hh.rh;
-    } while (!(mm == 268435456L));
+    } while (!(mm == fraction_one));
     if (w != 0)
       print_nl(1058);
     if (prevm - mem[cur_edges + 3].hh.lh + xoff > gf_max_m)
@@ -18810,7 +18592,7 @@ void try_eq (halfword l, halfword r)
   if (t == tt)
     p = p_plus_q (p, pp, t);
   else if (t == 18)
-    p = p_plus_fq (p, 65536L, pp, 18, 17);
+    p = p_plus_fq (p, unity, pp, 18, 17);
   else
   {
     q = p;
@@ -18834,21 +18616,15 @@ void try_eq (halfword l, halfword r)
       print(899);
       print_scaled(mem[p + 1].cint);
       print_char(')');
-      {
-        help_ptr = 2;
-        help_line[1] = 898;
-        help_line[0] = 896;
-      }
+      help2(/* 898 */ "The equation I just read contradicts what was said before.",
+        /* 896 */ "But don't worry; continue and I'll just ignore it.");
       put_get_error ();
     }
     else if (r == 0)
     {
       print_err("Redundant equation");
-      {
-        help_ptr = 2;
-        help_line[1] = 601;
-        help_line[0] = 602;
-      }
+      help2(/* 601 */ "I already knew that this equation was true.",
+        /* 602 */ "But perhaps no harm has been done; let's continue.");
       put_get_error ();
     }
     free_node (p, 2);
@@ -18908,30 +18684,21 @@ lab_restart:
             goto not_found;
           {
             print_err("Redundant equation");
-            {
-              help_ptr = 2;
-              help_line[1] = 601;
-              help_line[0] = 602;
-            }
+            help2(/* 601 */ "I already knew that this equation was true.",
+              /* 602 */ "But perhaps no harm has been done; let's continue.");
             put_get_error ();
           }
           goto done;
         }
         print_err("Redundant or inconsistent equation");
-        {
-          help_ptr = 2;
-          help_line[1] = 895;
-          help_line[0] = 896;
-        }
+        help2(/* 895 */ "An equation between already-known quantities can't help.",
+          /* 896 */ "But don't worry; continue and I'll just ignore it.");
         put_get_error ();
         goto done;
       not_found:
         print_err("Inconsistent equation");
-        {
-          help_ptr = 2;
-          help_line[1] = 898;
-          help_line[0] = 896;
-        }
+        help2(/* 898 */ "The equation I just read contradicts what was said before.",
+          /* 896 */ "But don't worry; continue and I'll just ignore it.");
         put_get_error ();
         goto done;
       }
@@ -19000,11 +18767,8 @@ lab_restart:
   else
     print(340);
   print_char(')');
-  {
-    help_ptr = 2;
-    help_line[1] = 892;
-    help_line[0] = 893;
-  }
+  help2(/* 892 */ "I'm sorry, but I don't know how to make such things equal.",
+    /* 893 */ "(See the two expressions just above the error message.)");
   put_get_error ();
 done:
   check_arith ();
@@ -19025,7 +18789,7 @@ void do_equation (void)
     do_equation ();
   else if (cur_cmd == 77)
     do_assignment ();
-  if (internal[7] > 131072L)
+  if (internal[7] > two)
   {
     begin_diagnostic ();
     print_nl(850);
@@ -19056,11 +18820,8 @@ void do_assignment (void)
   if (cur_type != 20)
   {
     disp_err (0, 883);
-    {
-      help_ptr = 2;
-      help_line[1] = 884;
-      help_line[0] = 885;
-    }
+    help2(/* 884 */ "I didn't find a variable name at the left of the `:=',",
+      /* 885 */ "so I'm going to pretend that you said `=' instead.");
     error ();
     do_equation ();
   }
@@ -19075,7 +18836,7 @@ void do_assignment (void)
       do_equation ();
     else if (cur_cmd == 77)
       do_assignment ();
-    if (internal[7] > 131072L)
+    if (internal[7] > two)
     {
       begin_diagnostic ();
       print_nl(123);
@@ -19097,11 +18858,8 @@ void do_assignment (void)
         disp_err (0, 887);
         slow_print(int_name[mem[lhs].hh.lh - (9769)]);
         print(888);
-        {
-          help_ptr = 2;
-          help_line[1] = 889;
-          help_line[0] = 890;
-        }
+        help2(/* 889 */ "I can't set an internal quantity to anything but a known",
+          /* 890 */ "numeric value, so I'll have to ignore this assignment.");
         put_get_error ();
       }
     }
@@ -19152,25 +18910,19 @@ void do_type_declaration (void)
     else
     {
       print_err("Declared variable conflicts with previous vardef");
-      {
-        help_ptr = 2;
-        help_line[1] = 901;
-        help_line[0] = 902;
-      }
+      help2(/* 901 */ "You can't use, e.g., `numeric foo[]' after `vardef foo'.",
+        /* 902 */ "Proceed, and I'll ignore the illegal redeclaration.");
       put_get_error ();
     }
     flush_list (p);
     if (cur_cmd < 82)
     {
       print_err("Illegal suffix of declared variable will be flushed");
-      {
-        help_ptr = 5;
-        help_line[4] = 904;
-        help_line[3] = 905;
-        help_line[2] = 906;
-        help_line[1] = 907;
-        help_line[0] = 908;
-      }
+      help5(/* 904 */ "Variables in declarations must consist entirely of",
+        /* 905 */ "names and collective subscripts, e.g., `x[]a'.",
+        /* 906 */ "Are you trying to use a reserved word in a variable name?",
+        /* 907 */ "I'm going to discard the junk I found here,",
+        /* 908 */ "up to the next comma or the end of the declaration.");
       if (cur_cmd == 42)
         help_line[2] = 909;
       put_get_error ();
@@ -19199,10 +18951,7 @@ void do_random_seed (void)
   if (cur_cmd != 77)
   {
     missing_err (461);
-    {
-      help_ptr = 1;
-      help_line[0] = 914;
-    }
+    help1(/* 914 */ "Always say `randomseed:=<numeric expression>'.");
     back_error ();
   }
   get_x_next ();
@@ -19210,11 +18959,8 @@ void do_random_seed (void)
   if (cur_type != 16)
   {
     disp_err (0, 915);
-    {
-      help_ptr = 2;
-      help_line[1] = 916;
-      help_line[0] = 917;
-    }
+    help2(/* 916 */ "Your expression was too random for me to handle,",
+      /* 917 */ "so I won't change the random seed just now.");
     put_get_flush_error (0);
   }
   else
@@ -19279,10 +19025,7 @@ void do_interim (void)
     else
       slow_print(hash[cur_sym].rh);
     print(930);
-    {
-      help_ptr = 1;
-      help_line[0] = 931;
-    }
+    help1(/* 931 */ "Something like `tracingonline' should follow `interim'.");
     back_error ();
   }
   else
@@ -19305,12 +19048,9 @@ void do_let (void)
     if (cur_cmd != 77)
     {
       missing_err (61);
-      {
-        help_ptr = 3;
-        help_line[2] = 932;
-        help_line[1] = 673;
-        help_line[0] = 933;
-      }
+      help3(/* 932 */ "You should have said `let symbol = something'.",
+        /* 673 */ "But don't worry; I'll pretend that an equals sign",
+        /* 933 */ "was present. The next token I read will be `something'.");
       back_error ();
     }
   }
@@ -19340,7 +19080,7 @@ void do_new_internal (void)
 {
   do {
     if (int_ptr == max_internal)
-      overflow (934, max_internal);
+      overflow (/* 934 */ "number of internals", max_internal);
     get_clear_symbol ();
     incr (int_ptr);
     eqtb[cur_sym].lh = 40;
@@ -19560,13 +19300,10 @@ void do_show_whatever (void)
     if (interaction < 3)
     {
       help_ptr = 0;
-      decr (error_count);
+      decr(error_count);
     }
     else
-    {
-      help_ptr = 1;
-      help_line[0] = 955;
-    }
+      help1(/* 955 */ "This isn't an error message; I'm just showing something.");
     if (cur_cmd == 83)
       error ();
     else
@@ -19588,11 +19325,8 @@ boolean scan_with (void)
   if (cur_type != t)
   {
     disp_err (0, 963);
-    {
-      help_ptr = 2;
-      help_line[1] = 964;
-      help_line[0] = 965;
-    }
+    help2(/* 964 */ "Next time say `withweight <known numeric expression>';",
+      /* 965 */ "I'll ignore the bad `with' clause and look for another.");
     if (t == 6)
       help_line[1] = 966;
     put_get_flush_error (0);
@@ -19607,10 +19341,7 @@ boolean scan_with (void)
     else
     {
       print_err("Weight must be -3, -2, -1, +1, +2, or +3");
-      {
-        help_ptr = 1;
-        help_line[0] = 965;
-      }
+      help1(/* 965 */ "I'll ignore the bad `with' clause and look for another.");
       put_get_flush_error (0);
     }
   }
@@ -19636,11 +19367,8 @@ void find_edges_var (halfword t)
     print(968);
     print_type (mem[p].hh.b0);
     print_char(')');
-    {
-      help_ptr = 2;
-      help_line[1] = 969;
-      help_line[0] = 970;
-    }
+    help2(/* 969 */ "I was looking for a \"known\" picture variable.",
+      /* 970 */ "So I'll not change anything just now.");
     put_get_error ();
   }
   else
@@ -19662,13 +19390,10 @@ void do_add_to (void)
   if (cur_type != 20)
   {
     disp_err (0, 971);
-    {
-      help_ptr = 4;
-      help_line[3] = 972;
-      help_line[2] = 973;
-      help_line[1] = 974;
-      help_line[0] = 970;
-    }
+    help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
+      /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
+      /* 974 */ "have missed it, if it wasn't followed by the proper token.)", 
+      /* 970 */ "So I'll not change anything just now.");
     put_get_flush_error (0);
   }
   else
@@ -19686,11 +19411,8 @@ void do_add_to (void)
       else if (cur_type != 11)
       {
         disp_err (0, 975);
-        {
-          help_ptr = 2;
-          help_line[1] = 976;
-          help_line[0] = 970;
-        }
+        help2(/* 976 */ "This expression should have specified a known picture.",
+          /* 970 */ "So I'll not change anything just now.");
         put_get_flush_error (0);
       }
       else
@@ -19706,11 +19428,8 @@ void do_add_to (void)
       if (cur_type != 9)
       {
         disp_err (0, 975);
-        {
-          help_ptr = 2;
-          help_line[1] = 977;
-          help_line[0] = 970;
-        }
+        help2(/* 977 */ "This expression should have been a known path.", 
+          /* 970 */ "So I'll not change anything just now.");
         put_get_flush_error (0);
         flush_token_list (lhs);
       }
@@ -19773,11 +19492,8 @@ void do_add_to (void)
             else
             {
               print_err("Not a cycle");
-              {
-                help_ptr = 2;
-                help_line[1] = 979;
-                help_line[0] = 970;
-              }
+              help2(/* 979 */ "That contour should have ended with `..cycle' or `&cycle'.",
+                /* 970 */ "So I'll not change anything just now.");
               put_get_error ();
               toss_knot_list (rhs);
               goto not_found;
@@ -19799,19 +19515,16 @@ void do_add_to (void)
                 {
                   if (turning_number == 0)
                   {
-                    if ((internal[39]<= 65536L) && (mem[cur_pen].hh.rh == 0))
+                    if ((internal[39]<= unity) && (mem[cur_pen].hh.rh == 0))
                       goto done;
                     else
                       print_strange (980);
                   }
                   else
                     print_strange (981);
-                  {
-                    help_ptr = 3;
-                    help_line[2] = 982;
-                    help_line[1] = 983;
-                    help_line[0] = 984;
-                  }
+                  help3(/* 982 */ "The path doesn't have a counterclockwise orientation,",
+                    /* 983 */ "so I'll probably have trouble drawing it.",
+                    /* 984 */ "(See Chapter 27 of The METAFONTbook for more help.)");
                   put_get_error ();
                 }
               }
@@ -19846,15 +19559,12 @@ void do_add_to (void)
 scaled tfm_check (small_number m)
 {
   scaled Result;
-  if (abs (internal[m]) >= 134217728L)
+  if (abs (internal[m]) >= fraction_half)
   {
     print_err("Enormous ");
     print(int_name[m]);
     print(1002);
-    {
-      help_ptr = 1;
-      help_line[0] = 1003;
-    }
+    help1(/* 1003 */ "Font metric dimensions must be less than 2048pt.");
     put_get_error ();
     if (internal[m] > 0)
       Result = 134217727L;
@@ -19881,13 +19591,10 @@ void do_ship_out (void)
     {
       {
         disp_err (0, 971);
-        {
-          help_ptr = 4;
-          help_line[3] = 972;
-          help_line[2] = 973;
-          help_line[1] = 974;
-          help_line[0] = 970;
-        }
+        help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
+          /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
+          /* 974 */ "have missed it, if it wasn't followed by the proper token.)", 
+          /* 970 */ "So I'll not change anything just now.");
         put_get_flush_error (0);
       }
       goto lab_exit;
@@ -19931,13 +19638,10 @@ void do_display (void)
   if (cur_type != 20)
   {
     disp_err (0, 971);
-    {
-      help_ptr = 4;
-      help_line[3] = 972;
-      help_line[2] = 973;
-      help_line[1] = 974;
-      help_line[0] = 970;
-    }
+    help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
+      /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
+      /* 974 */ "have missed it, if it wasn't followed by the proper token.)",
+      /* 970 */ "So I'll not change anything just now.");
     put_get_flush_error (0);
   }
   else
@@ -19960,13 +19664,10 @@ void do_display (void)
       disp_edges (cur_exp);
     goto lab_exit;
   not_found:
-    cur_exp = cur_exp * 65536L;
+    cur_exp = cur_exp * unity;
   common_ending:
     disp_err (0, 985);
-    {
-      help_ptr = 1;
-      help_line[0] = 986;
-    }
+    help1(/* 986 */ "It should be the number of an open window.");
     put_get_flush_error (0);
     flush_token_list (e);
   }
@@ -20028,11 +19729,8 @@ void do_open_window (void)
   goto lab_exit;
 not_found:
   print_err("Improper `openwindow'");
-  {
-    help_ptr = 2;
-    help_line[1] = 988;
-    help_line[0] = 989;
-  }
+  help2(/* 988 */ "Say `openwindow k from (r0,c0) to (r1,c1) at (x,y)',",
+    /* 989 */ "where all quantities are known and k is between 0 and 15.");
   put_get_error ();
   lab_exit:;
 }
@@ -20050,13 +19748,10 @@ void do_cull (void)
   if (cur_type != 20)
   {
     disp_err (0, 971);
-    {
-      help_ptr = 4;
-      help_line[3] = 972;
-      help_line[2] = 973;
-      help_line[1] = 974;
-      help_line[0] = 970;
-    }
+    help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
+      /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
+      /* 974 */ "have missed it, if it wasn't followed by the proper token.)",
+      /* 970 */ "So I'll not change anything just now.");
     put_get_flush_error (0);
   }
   else
@@ -20090,10 +19785,7 @@ void do_cull (void)
     goto lab_exit;
   not_found:
     print_err("Bad culling amounts");
-    {
-      help_ptr = 1;
-      help_line[0] = 991;
-    }
+    help1(/* 991 */ "Always cull by known amounts that exclude 0.");
     put_get_error ();
     flush_token_list (e);
   }
@@ -20110,10 +19802,7 @@ void do_message (void)
   if (cur_type != 4)
   {
     disp_err (0, 700);
-    {
-      help_ptr = 1;
-      help_line[0] = 995;
-    }
+    help1(/* 995 */ "A message should be a known string expression.");
     put_get_error ();
   }
   else
@@ -20132,21 +19821,15 @@ void do_message (void)
           if (err_help != 0)
             use_err_help = true;
           else if (long_help_seen)
-          {
-            help_ptr = 1;
-            help_line[0] = 996;
-          }
+            help1(/* 996 */ "(That was another `errmessage'.)");
           else
           {
             if (interaction < 3)
               long_help_seen = true;
-            {
-              help_ptr = 4;
-              help_line[3] = 997;
-              help_line[2] = 998;
-              help_line[1] = 999;
-              help_line[0] = 1000;
-            }
+            help4(/* 997 */ "This error message was generated by an `errmessage'",
+              /* 998 */ "command, so I can't give any explicit help.",
+              /* 999 */ "Pretend that you're Miss Marple: Examine all clues,",
+              /* 1000 */ "and deduce the truth by inspired guesses.");
           }
           put_get_error ();
           use_err_help = false;
@@ -20205,11 +19888,8 @@ eight_bits get_code (void)
     }
   }
   disp_err (0, 1009);
-  {
-    help_ptr = 2;
-    help_line[1] = 1010;
-    help_line[0] = 1011;
-  }
+  help2(/* 1010 */ "I was looking for a number between 0 and 255, or for a",
+    /* 1011 */ "string of length 1. Didn't find it; will use 0 instead.");
   put_get_flush_error (0);
   c = 0;
 found:
@@ -20255,11 +19935,8 @@ void set_tag (halfword c, small_number t, halfword r)
         print(1006);
         break;
     }
-    {
-      help_ptr = 2;
-      help_line[1] = 1018;
-      help_line[0] = 970;
-    }
+    help2(/* 1018 */ "It's not legal to label a character more than once.",
+      /* 970 */ "So I'll not change anything just now.");
     put_get_error ();
   }
 }
@@ -20295,10 +19972,7 @@ void do_tfm_command (void)
           {
             {
               print_err("Too far to skip");
-              {
-                help_ptr = 1;
-                help_line[0] = 1036;
-              }
+              help1(/* 1036 */ "At most 127 lig/kern steps can separate skipto1 from 1::.");
               error ();
               ll = skip_table[c];
               do {
@@ -20345,10 +20019,7 @@ void do_tfm_command (void)
               {
                 {
                   print_err("Too far to skip");
-                  {
-                    help_ptr = 1;
-                    help_line[0] = 1036;
-                  }
+                  help1(/* 1036 */ "At most 127 lig/kern steps can separate skipto1 from 1::.");
                   error ();
                   ll = ll;
                   do {
@@ -20381,11 +20052,8 @@ void do_tfm_command (void)
             if (cur_type != 16)
             {
               disp_err (0, 1037);
-              {
-                help_ptr = 2;
-                help_line[1] = 1038;
-                help_line[0] = 308;
-              }
+              help2(/* 1038 */ "The amount of kern should be a known numeric value.",
+                /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
               put_get_flush_error (0);
             }
             kern[nk] = cur_exp;
@@ -20395,7 +20063,7 @@ void do_tfm_command (void)
             if (k == nk)
             {
               if (nk == max_kerns)
-                overflow (1034, max_kerns);
+                overflow (/* 1034 */ "kern", max_kerns);
               incr (nk);
             }
             lig_kern[nl].b2 = 128 + (k / 256);
@@ -20406,10 +20074,7 @@ void do_tfm_command (void)
         else
         {
           print_err("Illegal ligtable step");
-          {
-            help_ptr = 1;
-            help_line[0] = 1024;
-          }
+          help1(/* 1024 */ "I was looking for `=:' or `kern' here.");
           back_error ();
           lig_kern[nl].b1 = 0;
           lig_kern[nl].b2 = 0;
@@ -20417,7 +20082,7 @@ void do_tfm_command (void)
           lig_kern[nl].b0 = 129;
         }
         if (nl == lig_table_size)
-          overflow (1025, lig_table_size);
+          overflow (/* 1025 */ "ligtable size", lig_table_size);
         incr (nl);
         if (cur_cmd == 82)
           goto lab_continue;
@@ -20429,46 +20094,34 @@ void do_tfm_command (void)
     case 2:
       {
         if (ne == 256)
-          overflow (1006, 256);
+          overflow (/* 1006 */ "extensible", 256);
         c = get_code ();
         set_tag (c, 3, ne);
         if (cur_cmd != 81)
         {
           missing_err (58);
-          {
-            help_ptr = 1;
-            help_line[0] = 1039;
-          }
+          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b0 = get_code ();
         if (cur_cmd != 82)
         {
           missing_err (44);
-          {
-            help_ptr = 1;
-            help_line[0] = 1039;
-          }
+          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b1 = get_code ();
         if (cur_cmd != 82)
         {
           missing_err (44);
-          {
-            help_ptr = 1;
-            help_line[0] = 1039;
-          }
+          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b2 = get_code ();
         if (cur_cmd != 82)
         {
           missing_err (44);
-          {
-            help_ptr = 1;
-            help_line[0] = 1039;
-          }
+          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b3 = get_code ();
@@ -20481,14 +20134,11 @@ void do_tfm_command (void)
         c = cur_mod;
         get_x_next ();
         scan_expression ();
-        if ((cur_type != 16) || (cur_exp < 32768L))
+        if ((cur_type != 16) || (cur_exp < half_unit))
         {
           disp_err (0, 1019);
-          {
-            help_ptr = 2;
-            help_line[1] = 1020;
-            help_line[0] = 1021;
-          }
+          help2(/* 1020 */ "I was looking for a known, positive number.",
+            /* 1021 */ "For safety's sake I'll ignore the present command.");
           put_get_error ();
         }
         else
@@ -20497,23 +20147,20 @@ void do_tfm_command (void)
           if (cur_cmd != 81)
           {
             missing_err (58);
-            {
-              help_ptr = 1;
-              help_line[0] = 1022;
-            }
+            help1(/* 1022 */ "A colon should follow a headerbyte or fontinfo location.");
             back_error ();
           }
           if (c == 3)
             do {
               if (j > header_size)
-                overflow (1007, header_size);
+                overflow (/* 1007 */ "headerbyte", header_size);
               header_byte[j] = get_code ();
               incr (j);
             } while (!(cur_cmd != 82));
           else
             do {
               if (j > max_font_dimen)
-                overflow (1008, max_font_dimen);
+                overflow (/* 1008 */ "fontdimen", max_font_dimen);
               while (j > np)
               {
                 incr (np);
@@ -20524,10 +20171,7 @@ void do_tfm_command (void)
               if (cur_type != 16)
               {
                 disp_err (0, 1040);
-                {
-                  help_ptr = 1;
-                  help_line[0] = 308;
-                }
+                help1(/* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
                 put_get_flush_error (0);
               }
               param[j] = cur_exp;
@@ -20551,10 +20195,7 @@ void do_special (void)
     if (cur_type != m)
     {
       disp_err (0, 1061);
-      {
-        help_ptr = 1;
-        help_line[0] = 1062;
-      }
+      help1(/* 1062 */ "The expression shown above has the wrong type to be output.");
       put_get_error ();
     }
     else
@@ -20589,14 +20230,11 @@ void do_statement (void)
       print_err("A statement can't begin with `");
       print_cmd_mod (cur_cmd, cur_mod);
       print_char('\'');
-      {
-        help_ptr = 5;
-        help_line[4] = 870;
-        help_line[3] = 871;
-        help_line[2] = 872;
-        help_line[1] = 873;
-        help_line[0] = 874;
-      }
+      help5(/* 870 */ "I was looking for the beginning of a new statement.",
+        /* 871 */ "If you just proceed without changing anything, I'll ignore",
+        /* 872 */ "everything up to the next `;'. Please insert a semicolon",
+        /* 873 */ "now in front of anything that you don't want me to delete.",
+        /* 874 */ "(See Chapter 27 of The METAFONTbook for an example.)");
       back_error ();
       get_x_next ();
     }
@@ -20629,12 +20267,9 @@ void do_statement (void)
       else if (cur_type != 1)
       {
         disp_err (0, 879);
-        {
-          help_ptr = 3;
-          help_line[2] = 880;
-          help_line[1] = 881;
-          help_line[0] = 882;
-        }
+        help3(/* 880 */ "I couldn't find an `=' or `:=' after the",
+          /* 881 */ "expression that is shown above this error message,",
+          /* 882 */ "so I guess I'll just ignore it and carry on.");
         put_get_error ();
       }
       flush_cur_exp (0);
@@ -20738,15 +20373,12 @@ void do_statement (void)
   if (cur_cmd < 83)
   {
     print_err("Extra tokens will be flushed");
-    {
-      help_ptr = 6;
-      help_line[5] = 876;
-      help_line[4] = 877;
-      help_line[3] = 878;
-      help_line[2] = 872;
-      help_line[1] = 873;
-      help_line[0] = 874;
-    }
+    help6(/* 876 */ "I've just read as much of that statement as I could fathom,",
+      /* 877 */ "so a semicolon should have been next. It's very puzzling...",
+      /* 878 */ "but I'll try to get myself back together, by ignoring",
+      /* 872 */ "everything up to the next `;'. Please insert a semicolon",
+      /* 873 */ "now in front of anything that you don't want me to delete.",
+      /* 874 */ "(See Chapter 27 of The METAFONTbook for an example.)");
     back_error ();
     scanner_status = 2;
     do {
@@ -20774,11 +20406,8 @@ void main_control (void)
     if (cur_cmd == 84)
     {
       print_err("Extra `endgroup'");
-      {
-        help_ptr = 2;
-        help_line[1] = 911;
-        help_line[0] = 690;
-      }
+      help2(/* 911 */ "I'm not currently working on a `begingroup',", 
+        /* 690 */ "so I had better not try to end anything.");
       flush_error (0);
     }
   } while (!(cur_cmd == 85));
@@ -20911,7 +20540,7 @@ void fix_design_size (void)
   scaled d;
 
   d = internal[26];
-  if ((d < 65536L) || (d >= 134217728L))
+  if ((d < unity) || (d >= fraction_half))
   {
     if (d != 0)
       print_nl(1044);
@@ -20935,7 +20564,7 @@ void fix_design_size (void)
     }
   }
   max_tfm_dimen = 16 * internal[26] - 1 - internal[26]/ 2097152L;
-  if (max_tfm_dimen >= 134217728L)
+  if (max_tfm_dimen >= fraction_half)
     max_tfm_dimen = 134217727L;
 }
 /* 1129 */
@@ -21106,13 +20735,10 @@ lab_restart:
           if (cur_type < 16)
           {
             disp_err (0, 775);
-            {
-              help_ptr = 4;
-              help_line[3] = 776;
-              help_line[2] = 777;
-              help_line[1] = 778;
-              help_line[0] = 779;
-            }
+            help4(/* 776 */ "I thought you were giving me a pair `(x,y)'; but",
+              /* 777 */ "after finding a nice xpart `x' I found a ypart `y'",
+              /* 778 */ "that isn't of numeric type. So I've changed y to zero.",
+              /* 779 */ "(The y that I didn't like appears above the error message.)");
             put_get_flush_error (0);
           }
           stash_in (q + 2);
@@ -21143,11 +20769,8 @@ lab_restart:
           print_err("A group begun on line ");
           print_int (groupline);
           print(781);
-          {
-            help_ptr = 2;
-            help_line[1] = 782;
-            help_line[0] = 783;
-          }
+          help2(/* 782 */ "I saw a `begingroup' back there that hasn't been matched",
+            /* 783 */ "by `endgroup'. So I've inserted `endgroup' now.");
           back_error ();
           cur_cmd = 84;
         }
@@ -21188,10 +20811,7 @@ lab_restart:
           if (denom == 0)
           {
             print_err("Division by zero");
-            {
-              help_ptr = 1;
-              help_line[0] = 785;
-            }
+            help1(/* 785 */ "I'll pretend that you meant to divide by 1.");
             error ();
           }
           else cur_exp = make_scaled (num, denom);
@@ -21243,10 +20863,7 @@ lab_restart:
           missing_err (479);
           print(716);
           print_cmd_mod (37, c);
-          {
-            help_ptr = 1;
-            help_line[0] = 717;
-          }
+          help1(/* 717 */ "I've got the first argument; will look now for the other.");
           back_error ();
         }
         p = stash_cur_exp ();
@@ -21483,12 +21100,9 @@ done:
         if (cur_cmd != 64)
         {
           missing_err (93);
-          {
-            help_ptr = 3;
-            help_line[2] = 801;
-            help_line[1] = 802;
-            help_line[0] = 698;
-          }
+          help3(/* 801 */ "I've scanned an expression of the form `a[b,c',",
+            /* 802 */ "so a right bracket should have come next.", 
+            /* 698 */ "I shall pretend that one was there.");
           back_error ();
         }
         r = stash_cur_exp ();
@@ -21520,12 +21134,9 @@ void scan_suffix (void)
       if (cur_cmd != 64)
       {
         missing_err (93);
-        {
-          help_ptr = 3;
-          help_line[2] = 803;
-          help_line[1] = 802;
-          help_line[0] = 698;
-        }
+        help3(/* 803 */ "I've seen a `[' and a subscript value, in a suffix,",
+          /* 802 */ "so a right bracket should have come next.",
+          /* 698 */ "I shall pretend that one was there.");
         back_error ();
       }
       cur_cmd = 42;
@@ -21718,14 +21329,11 @@ lab_continue:
               if (cur_cmd == 59)
                 get_x_next ();
               scan_primary ();
-              if ((cur_type != 16) || (cur_exp < 49152L))
+              if ((cur_type != 16) || (cur_exp < three_quarter_unit))
               {
                 disp_err (0, 826);
-                {
-                  help_ptr = 1;
-                  help_line[0] = 827;
-                }
-                put_get_flush_error (65536L);
+                help1(/* 827 */ "The expression above should have been a number >=3/4.");
+                put_get_flush_error (unity);
               }
               if (y == 59)
                 cur_exp = -cur_exp;
@@ -21737,14 +21345,11 @@ lab_continue:
                 if (cur_cmd == 59)
                   get_x_next ();
                 scan_primary ();
-                if ((cur_type != 16) || (cur_exp < 49152L))
+                if ((cur_type != 16) || (cur_exp < three_quarter_unit))
                 {
                   disp_err (0, 826);
-                  {
-                    help_ptr = 1;
-                    help_line[0] = 827;
-                  }
-                  put_get_flush_error (65536L);
+                  help1(/* 827 */ "The expression above should have been a number >=3/4.");
+                  put_get_flush_error (unity);
                 }
                 if (y == 59)
                   cur_exp = -cur_exp;
@@ -21776,18 +21381,15 @@ lab_continue:
             }
             else
             {
-              mem[q + 6].cint = 65536L;
-              y = 65536L;
+              mem[q + 6].cint = unity;
+              y = unity;
               back_input ();
               goto done;
             }
             if (cur_cmd != 47)
             {
               missing_err (408);
-              {
-                help_ptr = 1;
-                help_line[0] = 825;
-              }
+              help1(/* 825 */ "A path join command should end with two dots.");
               back_error ();
             }
             done:;
@@ -21819,8 +21421,8 @@ lab_continue:
               if (p == q)
               {
                 d = 47;
-                mem[q + 6].cint = 65536L;
-                y = 65536L;
+                mem[q + 6].cint = unity;
+                y = unity;
               }
             }
           }
@@ -21851,16 +21453,13 @@ lab_continue:
               if ((mem[q + 1].cint != mem[pp + 1].cint) || (mem[q + 2].cint != mem[pp + 2].cint))
               {
                 print_err("Paths don't touch; `&' will be changed to `..'");
-                {
-                  help_ptr = 3;
-                  help_line[2] = 829;
-                  help_line[1] = 830;
-                  help_line[0] = 831;
-                }
+                help3(/* 829 */ "When you join paths `p&q', the ending point of p",
+                  /* 830 */ "must be exactly equal to the starting point of q.",
+                  /* 831 */ "So I'm going to pretend that you said `p..q' instead.");
                 put_get_error ();
                 d = 47;
-                mem[q + 6].cint = 65536L;
-                y = 65536L;
+                mem[q + 6].cint = unity;
+                y = unity;
               }
             }
             if (mem[pp].hh.b1 == 4)
@@ -21878,7 +21477,7 @@ lab_continue:
                 if (mem[q].hh.b1 == 4)
                 {
                   mem[q].hh.b0 = 3;
-                  mem[q + 3].cint = 65536L;
+                  mem[q + 3].cint = unity;
                 }
               }
               if (mem[pp].hh.b1 == 4)
@@ -21886,7 +21485,7 @@ lab_continue:
                 if (t == 4)
                 {
                   mem[pp].hh.b1 = 3;
-                  mem[pp + 5].cint = 65536L;
+                  mem[pp + 5].cint = unity;
                 }
               }
               mem[q].hh.b1 = mem[pp].hh.b1;
@@ -21937,13 +21536,13 @@ lab_continue:
             if (mem[p].hh.b1 == 4)
             {
               mem[p].hh.b1 = 3;
-              mem[p + 5].cint = 65536L;
+              mem[p + 5].cint = unity;
             }
             mem[q].hh.b1 = 0;
             if (mem[q].hh.b0 == 4)
             {
               mem[q].hh.b0 = 3;
-              mem[q + 3].cint = 65536L;
+              mem[q + 3].cint = unity;
             }
             mem[q].hh.rh = p;
           }
@@ -21980,11 +21579,8 @@ void get_boolean (void)
   if (cur_type != 2)
   {
     disp_err (0, 832);
-    {
-      help_ptr = 2;
-      help_line[1] = 833;
-      help_line[0] = 834;
-    }
+    help2(/* 833 */ "The expression shown above should have had a definite",
+      /* 834 */ "true-or-false value. I'm changing it to `false'.");
     put_get_flush_error (31);
     cur_type = 2;
   }
@@ -22256,7 +21852,7 @@ void close_files_and_terminate (void)
       {
         if (k == 1)
         {
-          if (abs (param[1]) < 134217728L)
+          if (abs (param[1]) < fraction_half)
             put4bytes (tfm_file, param[1]* 16);
           else
           {
@@ -22326,8 +21922,8 @@ void close_files_and_terminate (void)
       {
         if (char_exists[k])
         {
-          x = gf_dx[k] / 65536L;
-          if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * 65536L))
+          x = gf_dx[k] / unity;
+          if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * unity))
           {
             {
               gf_buf[gf_ptr] = 246;
