@@ -1844,7 +1844,7 @@ lab_continue:
             while (c > 0)
             {
               get_next ();
-              if (cur_cmd == 39)
+              if (cur_cmd == string_token)
               {
                 if (str_ref[cur_mod] < 127)
                 {
@@ -13264,7 +13264,7 @@ halfword cur_tok (void)
 
   if (cur_sym == 0)
   {
-    if (cur_cmd == 38)
+    if (cur_cmd == capsule_token)
     {
       save_type = cur_type;
       save_exp = cur_exp;
@@ -13279,7 +13279,7 @@ halfword cur_tok (void)
       p = get_node (2);
       mem[p + 1].cint = cur_mod;
       mem[p].hh.b1 = 12;
-      if (cur_cmd == 42)
+      if (cur_cmd == numeric_token)
         mem[p].hh.b0 = 16;
       else
         mem[p].hh.b0 = 4;
@@ -13610,7 +13610,7 @@ lab25:
             }
           }
           incr (loc);
-          cur_cmd = 39;
+          cur_cmd = string_token;
           goto lab_exit;
         }
         break;
@@ -13688,7 +13688,7 @@ lab25:
       deletions_allowed = true;
       cur_mod = 268435455L;
     }
-    cur_cmd = 42;
+    cur_cmd = numeric_token;
     goto lab_exit;
   found:
     cur_sym = id_lookup (k, loc - k);
@@ -13708,7 +13708,7 @@ lab25:
       }
       else
       {
-        cur_cmd = 38;
+        cur_cmd = capsule_token;
         cur_mod = param_stack[limit + cur_sym - (9770)];
         cur_sym = 0;
         goto lab_exit;
@@ -13721,10 +13721,10 @@ lab25:
     {
       cur_mod = mem[loc + 1].cint;
       if (mem[loc].hh.b0 == 16)
-        cur_cmd = 42;
+        cur_cmd = numeric_token;
       else
       {
-        cur_cmd = 39;
+        cur_cmd = string_token;
         {
           if (str_ref[cur_mod]< 127)
             incr (str_ref[cur_mod]);
@@ -13734,7 +13734,7 @@ lab25:
     else
     {
       cur_mod = loc;
-      cur_cmd = 38;
+      cur_cmd = capsule_token;
     }
     loc = mem[loc].hh.rh;
     goto lab_exit;
@@ -13746,10 +13746,10 @@ lab25:
   }
   cur_cmd = eqtb[cur_sym].lh;
   cur_mod = eqtb[cur_sym].rh;
-  if (cur_cmd >= 86)
+  if (cur_cmd >= outer_tag)
   {
     if (check_outer_validity ())
-      cur_cmd = cur_cmd - 86;
+      cur_cmd = cur_cmd - outer_tag;
     else
       goto lab_restart;
   }
@@ -13808,7 +13808,7 @@ halfword scan_toks (command_code terminator, halfword substlist, halfword tailen
           if (mem[q].hh.lh == cur_sym)
           {
             cur_sym = mem[q + 1].cint;
-            cur_cmd = 7;
+            cur_cmd = relax;
             goto found;
           }
           q = mem[q].hh.rh;
@@ -13826,7 +13826,7 @@ halfword scan_toks (command_code terminator, halfword substlist, halfword tailen
             goto done;
         }
       }
-      else if (cur_cmd == 61)
+      else if (cur_cmd == macro_special)
       {
         if (cur_mod == 0)
           get_next ();
@@ -13856,7 +13856,7 @@ lab_restart:
       /* 669 */ "definition will be completed without mixing me up too badly.");
     if (cur_sym > 0)
       help_line[2] = 670;
-    else if (cur_cmd == 39)
+    else if (cur_cmd == string_token)
     {
       if (str_ref[cur_mod] < 127)
       {
@@ -13880,9 +13880,9 @@ void get_clear_symbol (void)
 /* 693 */
 void check_equals (void)
 {
-  if (cur_cmd != 51)
+  if (cur_cmd != equals)
   {
-    if (cur_cmd != 77)
+    if (cur_cmd != assignment)
     {
       missing_err (61);
       help5(/* 671 */ "The next thing in this `def' should have been `=',",
@@ -13929,7 +13929,7 @@ void make_op_def (void)
 /* 1032 */
 void check_delimiter (halfword ldelim, halfword rdelim)
 {
-  if (cur_cmd == 62)
+  if (cur_cmd == right_delimiter)
   {
     if (cur_mod == ldelim)
       goto lab_exit;
@@ -13963,7 +13963,7 @@ halfword scan_declared_variable (void)
 
   get_symbol ();
   x = cur_sym;
-  if (cur_cmd != 41)
+  if (cur_cmd != tag_token)
     clear_symbol (x, false);
   h = get_avail ();
   mem[h].hh.lh = x;
@@ -13973,19 +13973,19 @@ halfword scan_declared_variable (void)
     get_x_next ();
     if (cur_sym == 0)
       goto done;
-    if (cur_cmd != 41)
+    if (cur_cmd != tag_token)
     {
-      if (cur_cmd != 40)
+      if (cur_cmd != internal_quantity)
       {
-        if (cur_cmd == 63)
+        if (cur_cmd == left_bracket)
         {
           l = cur_sym;
           get_x_next ();
-          if (cur_cmd != 64)
+          if (cur_cmd != right_bracket)
           {
             back_input ();
             cur_sym = l;
-            cur_cmd = 63;
+            cur_cmd = left_bracket;
             goto done;
           }
           else
@@ -14052,7 +14052,7 @@ void scan_def (void)
     }
     scanner_status = 4;
     n = 2;
-    if (cur_cmd == 61)
+    if (cur_cmd == macro_special)
     {
       if (cur_mod == 3)
       {
@@ -14064,12 +14064,12 @@ void scan_def (void)
     mem[warning_info + 1].cint = q;
   }
   k = n;
-  if (cur_cmd == 31)
+  if (cur_cmd == left_delimiter)
     do {
       ldelim = cur_sym;
       rdelim = cur_mod;
       get_next ();
-      if ((cur_cmd == 56) && (cur_mod >= 9770))
+      if ((cur_cmd == param_type) && (cur_mod >= 9770))
         base = cur_mod;
       else
       {
@@ -14092,11 +14092,11 @@ void scan_def (void)
         mem[p].hh.rh = r;
         r = p;
         get_next ();
-      } while (!(cur_cmd != 82));
+      } while (!(cur_cmd != comma));
       check_delimiter (ldelim, rdelim);
       get_next ();
-    } while (!(cur_cmd != 31));
-  if (cur_cmd == 56)
+    } while (!(cur_cmd != left_delimiter));
+  if (cur_cmd == param_type)
   {
     p = get_node (2);
     if (cur_mod < 9770)
@@ -14124,7 +14124,7 @@ void scan_def (void)
     get_next ();
     if (c == 4)
     {
-      if (cur_cmd == 69)
+      if (cur_cmd == of_token)
       {
         c = 5;
         p = get_node (2);
@@ -14214,19 +14214,19 @@ void scan_text_arg (halfword ldelim, halfword rdelim)
     get_next ();
     if (ldelim == 0)
     {
-      if (cur_cmd > 82)
+      if (cur_cmd > comma)
       {
         if (balance == 1)
           goto done;
-        else if (cur_cmd == 84)
+        else if (cur_cmd == end_group)
           decr (balance);
       }
-      else if (cur_cmd == 32)
+      else if (cur_cmd == begin_group)
         incr (balance);
     }
     else
     {
-      if (cur_cmd == 62)
+      if (cur_cmd == right_delimiter)
       {
         if (cur_mod == ldelim)
         {
@@ -14235,7 +14235,7 @@ void scan_text_arg (halfword ldelim, halfword rdelim)
             goto done;
         }
       }
-      else if (cur_cmd == 31)
+      else if (cur_cmd == left_delimiter)
       {
         if (cur_mod == rdelim)
           incr (balance);
@@ -14293,13 +14293,13 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     }
     end_diagnostic (false);
   }
-  cur_cmd = 83;
+  cur_cmd = semicolon;
   while (mem[r].hh.lh >= 9770)
   {
-    if (cur_cmd != 82)
+    if (cur_cmd != comma)
     {
       get_x_next ();
-      if (cur_cmd != 31)
+      if (cur_cmd != left_delimiter)
       {
         print_err("Missing argument to ");
         print_macro_name (arg_list, macro_name);
@@ -14317,7 +14317,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
           cur_type = 16;
         }
         back_error ();
-        cur_cmd = 62;
+        cur_cmd = right_delimiter;
         goto found;
       }
       ldelim = cur_sym;
@@ -14333,9 +14333,9 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       else
         scan_expression ();
     }
-    if (cur_cmd != 82)
+    if (cur_cmd != comma)
     {
-      if ((cur_cmd != 62) || (cur_mod != ldelim))
+      if ((cur_cmd != right_delimiter) || (cur_mod != ldelim))
       {
         if (mem[mem[r].hh.rh].hh.lh >= 9770)
         {
@@ -14344,7 +14344,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
             /* 714 */ "read another; the arguments weren't delimited correctly.",
             /* 708 */ "You might want to delete some tokens before continuing.");
           back_error ();
-          cur_cmd = 82;
+          cur_cmd = comma;
         }
         else
         {
@@ -14377,7 +14377,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     }
     r = mem[r].hh.rh;
   }
-  if (cur_cmd == 82)
+  if (cur_cmd == comma)
   {
     print_err("Too many arguments to ");
     print_macro_name (arg_list, macro_name);
@@ -14397,7 +14397,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       get_x_next ();
       if (mem[r].hh.lh != 6)
       {
-        if ((cur_cmd == 51) || (cur_cmd == 77))
+        if ((cur_cmd == equals) || (cur_cmd == assignment))
           get_x_next ();
       }
     }
@@ -14432,7 +14432,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
             mem[tail].hh.rh = p;
           tail = p;
           incr (n);
-          if (cur_cmd != 69)
+          if (cur_cmd != of_token)
           {
             missing_err (479);
             print(716);
@@ -14446,7 +14446,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         break;
       case 6:
         {
-          if (cur_cmd != 31)
+          if (cur_cmd != left_delimiter)
             ldelim = 0;
           else
           {
@@ -14457,7 +14457,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
           scan_suffix ();
           if (ldelim != 0)
           {
-            if ((cur_cmd != 62) || (cur_mod != ldelim))
+            if ((cur_cmd != right_delimiter) || (cur_mod != ldelim))
             {
               missing_err (hash[rdelim].rh);
               help2(/* 715 */ "I've gotten to the end of the macro parameter list.", 
@@ -14525,15 +14525,15 @@ void expand (void)
 
   if (internal[7] > unity)
   {
-    if (cur_cmd != 10)
+    if (cur_cmd != defined_macro)
       show_cmd_mod (cur_cmd, cur_mod);
   }
   switch (cur_cmd)
   {
-    case 1:
+    case if_test:
       conditional ();
       break;
-    case 2:
+    case fi_or_else:
       if (cur_mod > if_limit)
       {
         if (if_limit == 1)
@@ -14564,13 +14564,13 @@ void expand (void)
         }
       }
       break;
-    case 3:
+    case input:
       if (cur_mod > 0)
         force_eof = true;
       else
         start_input ();
       break;
-    case 4:
+    case iteration:
       if (cur_mod == 0)
       {
         print_err("Extra `endfor'");
@@ -14581,7 +14581,7 @@ void expand (void)
       else
         begin_iteration ();
       break;
-    case 5:
+    case repeat_loop:
       {
         while ((index > 15) && (loc == 0))
           end_token_list ();
@@ -14596,7 +14596,7 @@ void expand (void)
           resume_iteration ();
       }
       break;
-    case 6:
+    case exit_test:
       {
         get_boolean ();
         if (internal[7] > unity)
@@ -14607,7 +14607,7 @@ void expand (void)
           {
             print_err("No loop is in progress");
             help1(/* 696 */ "Why say `exitif' when there's nothing to exit from?");
-            if (cur_cmd == 83)
+            if (cur_cmd == semicolon)
               error ();
             else
               back_error ();
@@ -14630,7 +14630,7 @@ void expand (void)
             stop_iteration ();
           }
         }
-        else if (cur_cmd != 83)
+        else if (cur_cmd != semicolon)
         {
           missing_err (59);
           help2(/* 697 */ "After `exitif <boolean exp>' I expect to see a semicolon.",
@@ -14639,22 +14639,22 @@ void expand (void)
         }
       }
       break;
-    case 7:
-      ;
+    case relax:
+      do_nothing ();
       break;
-    case 9:
+    case expand_after:
       {
         get_next ();
         p = cur_tok ();
         get_next ();
-        if (cur_cmd < 11)
+        if (cur_cmd < display_command)
           expand ();
         else
           back_input ();
         begin_token_list (p, 19);
       }
       break;
-    case 8:
+    case scan_tokens:
       {
         get_x_next ();
         scan_primary ();
@@ -14698,7 +14698,7 @@ void expand (void)
         }
       }
       break;
-    case 10:
+    case defined_macro:
       macro_call (cur_mod, 0, cur_sym);
       break;
   }
@@ -14709,16 +14709,16 @@ void get_x_next (void)
   halfword save_exp;
 
   get_next ();
-  if (cur_cmd < 11)
+  if (cur_cmd < display_command)
   {
     save_exp = stash_cur_exp ();
     do {
-      if (cur_cmd == 10)
+      if (cur_cmd == defined_macro)
         macro_call (cur_mod, 0, cur_sym);
       else
         expand ();
       get_next ();
-    } while (!(cur_cmd >= 11));
+    } while (!(cur_cmd >= display_command));
     unstash_cur_exp (save_exp);
   }
 }
@@ -14745,9 +14745,9 @@ void pass_text (void)
   while (true)
   {
     get_next ();
-    if (cur_cmd <= 2)
+    if (cur_cmd <= fi_or_else)
     {
-      if (cur_cmd < 2)
+      if (cur_cmd < fi_or_else)
         incr (l);
       else
       {
@@ -14757,7 +14757,7 @@ void pass_text (void)
           decr (l);
       }
     }
-    else if (cur_cmd == 39)
+    else if (cur_cmd == string_token)
     {
       if (str_ref[cur_mod] < 127)
       {
@@ -14798,7 +14798,7 @@ void change_if_limit (small_number l, halfword p)
 /* 747 */
 void check_colon (void)
 {
-  if (cur_cmd != 81)
+  if (cur_cmd != colon)
   {
     missing_err (58);
     help2(/* 721 */ "There should've been a colon after the condition.",
@@ -14915,7 +14915,7 @@ void begin_iteration (void)
   mem[p].hh.lh = cur_sym;
   mem[p + 1].cint = m;
   get_x_next ();
-  if ((cur_cmd != 51) && (cur_cmd != 77))
+  if ((cur_cmd != equals) && (cur_cmd != assignment))
   {
     missing_err (61);
     help3(/* 730 */ "The next thing in this loop should have been `=' or `:='.", 
@@ -14932,13 +14932,13 @@ void begin_iteration (void)
       scan_suffix ();
     else
     {
-      if (cur_cmd >= 81)
+      if (cur_cmd >= colon)
       {
-        if (cur_cmd <= 82)
+        if (cur_cmd <= comma)
           goto lab_continue;
       }
       scan_expression ();
-      if (cur_cmd == 74)
+      if (cur_cmd == step_token)
       {
         if (q == s + 1)
         {
@@ -14951,7 +14951,7 @@ void begin_iteration (void)
           if (cur_type != 16)
             bad_for (738);
           mem[pp + 2].cint = cur_exp;
-          if (cur_cmd != 75)
+          if (cur_cmd != until_token)
           {
             missing_err (490);
             help2(/* 739 */ "I assume you meant to say `until' after `step'.",
@@ -14974,10 +14974,10 @@ void begin_iteration (void)
     mem[q].hh.lh = cur_exp;
     cur_type = 1;
     lab_continue:;
-  } while (!(cur_cmd != 82));
+  } while (!(cur_cmd != comma));
 done:;
 found:
-  if (cur_cmd != 81)
+  if (cur_cmd != colon)
   {
     missing_err (58);
     help3(/* 732 */ "The next thing in this loop should have been a `:'.",
@@ -15596,7 +15596,7 @@ void bad_exp (str_number s)
     /* 774 */ "see Chapter 27 of The METAFONTbook for an example.");
   back_input ();
   cur_sym = 0;
-  cur_cmd = 42;
+  cur_cmd = numeric_token;
   cur_mod = 0;
   ins_error ();
   saveflag = var_flag;
@@ -15806,7 +15806,7 @@ small_number scan_direction (void)
   scaled x;
 
   get_x_next ();
-  if (cur_cmd == 60)
+  if (cur_cmd == curl_command)
   {
     get_x_next ();
     scan_expression ();
@@ -15834,7 +15834,7 @@ small_number scan_direction (void)
         put_get_flush_error (0);
       }
       x = cur_exp;
-      if (cur_cmd != 82)
+      if (cur_cmd != comma)
       {
         missing_err (44);
         help2(/* 823 */ "I've got the x coordinate of a path direction;",
@@ -15866,7 +15866,7 @@ small_number scan_direction (void)
       cur_exp = n_arg (cur_x, cur_y);
     }
   }
-  if (cur_cmd != 65)
+  if (cur_cmd != right_brace)
   {
     missing_err (125);
     help3(/* 819 */ "I've scanned a direction spec for part of a path,",
@@ -18594,9 +18594,9 @@ void do_equation (void)
   get_x_next ();
   var_flag = 77;
   scan_expression ();
-  if (cur_cmd == 51)
+  if (cur_cmd == equals)
     do_equation ();
-  else if (cur_cmd == 77)
+  else if (cur_cmd == assignment)
     do_assignment ();
   if (internal[7] > two)
   {
@@ -18641,9 +18641,9 @@ void do_assignment (void)
     get_x_next ();
     var_flag = 77;
     scan_expression ();
-    if (cur_cmd == 51)
+    if (cur_cmd == equals)
       do_equation ();
-    else if (cur_cmd == 77)
+    else if (cur_cmd == assignment)
       do_assignment ();
     if (internal[7] > two)
     {
@@ -18724,7 +18724,7 @@ void do_type_declaration (void)
       put_get_error ();
     }
     flush_list (p);
-    if (cur_cmd < 82)
+    if (cur_cmd < comma)
     {
       print_err("Illegal suffix of declared variable will be flushed");
       help5(/* 904 */ "Variables in declarations must consist entirely of",
@@ -18732,13 +18732,13 @@ void do_type_declaration (void)
         /* 906 */ "Are you trying to use a reserved word in a variable name?",
         /* 907 */ "I'm going to discard the junk I found here,",
         /* 908 */ "up to the next comma or the end of the declaration.");
-      if (cur_cmd == 42)
+      if (cur_cmd == numeric_token)
         help_line[2] = 909;
       put_get_error ();
       scanner_status = 2;
       do {
         get_next ();
-        if (cur_cmd == 39)
+        if (cur_cmd == string_token)
         {
           if (str_ref[cur_mod]< 127)
           {
@@ -18748,16 +18748,16 @@ void do_type_declaration (void)
               flush_string (cur_mod);
           }
         }
-      } while (!(cur_cmd >= 82));
+      } while (!(cur_cmd >= comma));
       scanner_status = 0;
     }
-  } while (!(cur_cmd > 82));
+  } while (!(cur_cmd > comma));
 }
 /* 1021 */
 void do_random_seed (void)
 {
   get_x_next ();
-  if (cur_cmd != 77)
+  if (cur_cmd != assignment)
   {
     missing_err (461);
     help1(/* 914 */ "Always say `randomseed:=<numeric expression>'.");
@@ -18805,7 +18805,7 @@ void do_protection (void)
     else if (t < 86)
       eqtb[cur_sym].lh = t + 86;
     get_x_next ();
-  } while (!(cur_cmd != 82));
+  } while (!(cur_cmd != comma));
 }
 /* 1031 */
 void def_delims (void)
@@ -18826,7 +18826,7 @@ void def_delims (void)
 void do_interim (void)
 {
   get_x_next ();
-  if (cur_cmd != 40)
+  if (cur_cmd != internal_quantity)
   {
     print_err("The token `");
     if (cur_sym == 0)
@@ -18852,9 +18852,9 @@ void do_let (void)
   get_symbol ();
   l = cur_sym;
   get_x_next ();
-  if (cur_cmd != 51)
+  if (cur_cmd != equals)
   {
-    if (cur_cmd != 77)
+    if (cur_cmd != assignment)
     {
       missing_err (61);
       help3(/* 932 */ "You should have said `let symbol = something'.",
@@ -18866,19 +18866,19 @@ void do_let (void)
   get_symbol ();
   switch (cur_cmd)
   {
-    case 10:
-    case 53:
-    case 44:
-    case 49:
+    case defined_macro:
+    case secondary_primary_macro:
+    case tertiary_secondary_macro:
+    case expression_tertiary_macro:
       incr (mem[cur_mod].hh.lh);
       break;
     default:
-      ;
+      do_nothing ();
       break;
   }
   clear_symbol (l, false);
   eqtb[l].lh = cur_cmd;
-  if (cur_cmd == 41)
+  if (cur_cmd == tag_token)
     eqtb[l].rh = 0;
   else
     eqtb[l].rh = cur_mod;
@@ -18897,7 +18897,7 @@ void do_new_internal (void)
     int_name[int_ptr] = hash[cur_sym].rh;
     internal[int_ptr] = 0;
     get_x_next ();
-  } while (!(cur_cmd != 82));
+  } while (!(cur_cmd != comma));
 }
 /* 1040 */
 void do_show (void)
@@ -18908,7 +18908,7 @@ void do_show (void)
     print_nl(765);
     print_exp (0, 2);
     flush_cur_exp (0);
-  } while (!(cur_cmd != 82));
+  } while (!(cur_cmd != comma));
 }
 /* 1041 */
 void disp_token (void)
@@ -18916,9 +18916,9 @@ void disp_token (void)
   print_nl(940);
   if (cur_sym == 0)
   {
-    if (cur_cmd == 42)
+    if (cur_cmd == numeric_token)
       print_scaled(cur_mod);
-    else if (cur_cmd == 38)
+    else if (cur_cmd == capsule_token)
     {
       g_pointer = cur_mod;
       print_capsule ();
@@ -18946,7 +18946,7 @@ void disp_token (void)
     if (eqtb[cur_sym].lh >= 86)
       print(941);
     print_cmd_mod (cur_cmd, cur_mod);
-    if (cur_cmd == 10)
+    if (cur_cmd == defined_macro)
     {
       print_ln ();
       show_macro (cur_mod, 0, 100000L);
@@ -18960,7 +18960,7 @@ void do_show_token (void)
     get_next ();
     disp_token ();
     get_x_next ();
-  } while (!(cur_cmd != 82));
+  } while (!(cur_cmd != comma));
 }
 /* 1045 */
 void do_show_stats (void)
@@ -19040,7 +19040,7 @@ void do_show_var (void)
     {
       if (cur_sym <= 9769)
       {
-        if (cur_cmd == 41)
+        if (cur_cmd == tag_token)
         {
           if (cur_mod != 0)
           {
@@ -19053,7 +19053,7 @@ void do_show_var (void)
     disp_token ();
   done:
     get_x_next ();
-  } while (!(cur_cmd != 82));
+  } while (!(cur_cmd != comma));
 }
 /* 1050 */
 void do_show_dependencies (void)
@@ -19113,7 +19113,7 @@ void do_show_whatever (void)
     }
     else
       help1(/* 955 */ "This isn't an error message; I'm just showing something.");
-    if (cur_cmd == 83)
+    if (cur_cmd == semicolon)
       error ();
     else
       put_get_error ();
@@ -19247,7 +19247,7 @@ void do_add_to (void)
         rhs = cur_exp;
         w = 1;
         cur_pen = 3;
-        while (cur_cmd == 66)
+        while (cur_cmd == with_option)
           if (scan_with ())
           {
             if (cur_type == 16)
@@ -19570,8 +19570,9 @@ void do_cull (void)
     keeping = cur_mod;
     if (!get_pair (67))
       goto not_found;
-    while ((cur_cmd == 66) && (cur_mod == 16)) if (scan_with ())
-      w = cur_exp;
+    while ((cur_cmd == with_option) && (cur_mod == 16))
+      if (scan_with ())
+        w = cur_exp;
     if (cur_x > cur_y)
       goto not_found;
     if (keeping == 0)
@@ -19761,7 +19762,7 @@ void do_tfm_command (void)
     case 0:
       {
         c = get_code ();
-        while (cur_cmd == 81)
+        while (cur_cmd == colon)
         {
           cc = get_code ();
           set_tag (c, 2, cc);
@@ -19774,7 +19775,7 @@ void do_tfm_command (void)
         lk_started = false;
       lab_continue:
         get_x_next ();
-        if ((cur_cmd == 78) && lk_started)
+        if ((cur_cmd == skip_to) && lk_started)
         {
           c = get_code ();
           if (nl - skip_table[c] > 128)
@@ -19799,7 +19800,7 @@ void do_tfm_command (void)
           skip_table[c] = nl - 1;
           goto done;
         }
-        if (cur_cmd == 79)
+        if (cur_cmd == bchar_label)
         {
           c = 256;
           cur_cmd = 81;
@@ -19809,9 +19810,9 @@ void do_tfm_command (void)
           back_input ();
           c = get_code ();
         }
-        if ((cur_cmd == 81) || (cur_cmd == 80))
+        if ((cur_cmd == colon) || (cur_cmd == double_colon))
         {
-          if (cur_cmd == 81)
+          if (cur_cmd == colon)
           {
             if (c == 256)
               bch_label = nl;
@@ -19845,7 +19846,7 @@ void do_tfm_command (void)
           }
           goto lab_continue;
         }
-        if (cur_cmd == 76)
+        if (cur_cmd == lig_kern_token)
         {
           lig_kern[nl].b1 = c;
           lig_kern[nl].b0 = 0;
@@ -19893,7 +19894,7 @@ void do_tfm_command (void)
         if (nl == lig_table_size)
           overflow (/* 1025 */ "ligtable size", lig_table_size);
         incr (nl);
-        if (cur_cmd == 82)
+        if (cur_cmd == comma)
           goto lab_continue;
         if (lig_kern[nl - 1].b0 < 128)
           lig_kern[nl - 1].b0 = 128;
@@ -19906,28 +19907,28 @@ void do_tfm_command (void)
           overflow (/* 1006 */ "extensible", 256);
         c = get_code ();
         set_tag (c, 3, ne);
-        if (cur_cmd != 81)
+        if (cur_cmd != colon)
         {
           missing_err (58);
           help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b0 = get_code ();
-        if (cur_cmd != 82)
+        if (cur_cmd != comma)
         {
           missing_err (44);
           help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b1 = get_code ();
-        if (cur_cmd != 82)
+        if (cur_cmd != comma)
         {
           missing_err (44);
           help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
           back_error ();
         }
         exten[ne].b2 = get_code ();
-        if (cur_cmd != 82)
+        if (cur_cmd != comma)
         {
           missing_err (44);
           help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
@@ -19953,7 +19954,7 @@ void do_tfm_command (void)
         else
         {
           j = round_unscaled (cur_exp);
-          if (cur_cmd != 81)
+          if (cur_cmd != colon)
           {
             missing_err (58);
             help1(/* 1022 */ "A colon should follow a headerbyte or fontinfo location.");
@@ -19965,7 +19966,7 @@ void do_tfm_command (void)
                 overflow (/* 1007 */ "headerbyte", header_size);
               header_byte[j] = get_code ();
               incr (j);
-            } while (!(cur_cmd != 82));
+            } while (!(cur_cmd != comma));
           else
             do {
               if (j > max_font_dimen)
@@ -19985,7 +19986,7 @@ void do_tfm_command (void)
               }
               param[j] = cur_exp;
               incr (j);
-            } while (!(cur_cmd != 82));
+            } while (!(cur_cmd != comma));
       }
       }
       break;
@@ -20027,9 +20028,9 @@ void do_statement (void)
 {
   cur_type = 1;
   get_x_next ();
-  if (cur_cmd > 43)
+  if (cur_cmd > plus_or_minus)
   {
-    if (cur_cmd < 83)
+    if (cur_cmd < semicolon)
     {
       print_err("A statement can't begin with `");
       print_cmd_mod (cur_cmd, cur_mod);
@@ -20043,15 +20044,15 @@ void do_statement (void)
       get_x_next ();
     }
   }
-  else if (cur_cmd > 30)
+  else if (cur_cmd > type_name)
   {
     var_flag = 77;
     scan_expression ();
-    if (cur_cmd < 84)
+    if (cur_cmd < end_group)
     {
-      if (cur_cmd == 51)
+      if (cur_cmd == equals)
         do_equation ();
-      else if (cur_cmd == 77)
+      else if (cur_cmd == assignment)
         do_assignment ();
       else if (cur_type == 4)
       {
@@ -20086,19 +20087,19 @@ void do_statement (void)
       show_cmd_mod (cur_cmd, cur_mod);
     switch (cur_cmd)
     {
-      case 30:
+      case type_name:
         do_type_declaration ();
         break;
-      case 16:
+      case macro_def:
         if (cur_mod > 2)
           make_op_def ();
         else if (cur_mod > 0)
           scan_def ();
         break;
-      case 24 :
+      case random_seed:
         do_random_seed ();
         break;
-      case 23 :
+      case mode_command:
         {
           print_ln ();
           interaction = cur_mod;
@@ -20115,66 +20116,66 @@ void do_statement (void)
           get_x_next ();
         }
         break;
-      case 21:
+      case protection_command:
         do_protection ();
         break;
-      case 27:
+      case delimiters:
         def_delims ();
         break;
-      case 12:
+      case save_command:
         do {
           get_symbol ();
           save_variable (cur_sym);
           get_x_next ();
-        } while (!(cur_cmd != 82));
+        } while (!(cur_cmd != comma));
         break;
-      case 13:
+      case interim_command:
         do_interim ();
         break;
-      case 14:
+      case let_command:
         do_let ();
         break;
-      case 15:
+      case new_internal:
         do_new_internal ();
         break;
-      case 22:
+      case show_command:
         do_show_whatever ();
         break;
-      case 18:
+      case add_to_command:
         do_add_to ();
         break;
-      case 17:
+      case ship_out_command:
         do_ship_out ();
         break;
-      case 11:
+      case display_command:
         do_display ();
         break;
-      case 28:
+      case open_window:
         doopen_window ();
         break;
-      case 19:
+      case cull_command:
         do_cull ();
         break;
-      case 26:
+      case every_job_command:
         {
           get_symbol ();
           start_sym = cur_sym;
           get_x_next ();
         }
         break;
-      case 25:
+      case message_command:
         do_message ();
         break;
-      case 20:
+      case tfm_command:
         do_tfm_command ();
         break;
-      case 29:
+      case special_command:
         do_special ();
         break;
     }
     cur_type = 1;
   }
-  if (cur_cmd < 83)
+  if (cur_cmd < semicolon)
   {
     print_err("Extra tokens will be flushed");
     help6(/* 876 */ "I've just read as much of that statement as I could fathom,",
@@ -20187,7 +20188,7 @@ void do_statement (void)
     scanner_status = 2;
     do {
       get_next ();
-      if (cur_cmd == 39)
+      if (cur_cmd == string_token)
       {
         if (str_ref[cur_mod]< 127)
         {
@@ -20197,7 +20198,7 @@ void do_statement (void)
             flush_string (cur_mod);
         }
       }
-    } while (!(cur_cmd > 82));
+    } while (!(cur_cmd > comma));
     scanner_status = 0;
   }
   error_count = 0;
@@ -20207,14 +20208,14 @@ void main_control (void)
 {
   do {
     do_statement ();
-    if (cur_cmd == 84)
+    if (cur_cmd == end_group)
     {
       print_err("Extra `endgroup'");
       help2(/* 911 */ "I'm not currently working on a `begingroup',", 
         /* 690 */ "so I had better not try to end anything.");
       flush_error (0);
     }
-  } while (!(cur_cmd == 85));
+  } while (!(cur_cmd == stop));
 }
 /* 1117 */
 halfword sort_in (scaled v)
@@ -20517,13 +20518,13 @@ lab_restart:
   }
   switch (cur_cmd)
   {
-    case 31:
+    case left_delimiter:
       {
         ldelim = cur_sym;
         rdelim = cur_mod;
         get_x_next ();
         scan_expression ();
-        if ((cur_cmd == 82) && (cur_type >= 16))
+        if ((cur_cmd == comma) && (cur_type >= 16))
         {
           p = get_node (2);
           mem[p].hh.b0 = 14;
@@ -20551,7 +20552,7 @@ lab_restart:
           check_delimiter (ldelim, rdelim);
       }
       break;
-    case 32:
+    case begin_group:
       {
         groupline = line;
         if (internal[7] > 0)
@@ -20564,8 +20565,8 @@ lab_restart:
         }
         do {
           do_statement ();
-        } while (!(cur_cmd != 83));
-        if (cur_cmd != 84)
+        } while (!(cur_cmd != semicolon));
+        if (cur_cmd != end_group)
         {
           print_err("A group begun on line ");
           print_int (groupline);
@@ -20573,25 +20574,25 @@ lab_restart:
           help2(/* 782 */ "I saw a `begingroup' back there that hasn't been matched",
             /* 783 */ "by `endgroup'. So I've inserted `endgroup' now.");
           back_error ();
-          cur_cmd = 84;
+          cur_cmd = end_group;
         }
         unsave ();
         if (internal[7] > 0)
           show_cmd_mod (cur_cmd, cur_mod);
       }
       break;
-    case 39:
+    case string_token:
       {
         cur_type = 4;
         cur_exp = cur_mod;
       }
       break;
-    case 42:
+    case numeric_token:
       {
         cur_exp = cur_mod;
         cur_type = 16;
         get_x_next ();
-        if (cur_cmd != 54)
+        if (cur_cmd != slash)
         {
           num = 0;
           denom = 0;
@@ -20599,10 +20600,10 @@ lab_restart:
         else
         {
           get_x_next ();
-          if (cur_cmd != 42)
+          if (cur_cmd != numeric_token)
           {
             back_input ();
-            cur_cmd = 54;
+            cur_cmd = slash;
             cur_mod = 72;
             cur_sym = 9761;
             goto done;
@@ -20621,9 +20622,9 @@ lab_restart:
           }
           get_x_next ();
         }
-        if (cur_cmd >= 30)
+        if (cur_cmd >= type_name)
         {
-          if (cur_cmd < 42)
+          if (cur_cmd < numeric_token)
           {
             p = stash_cur_exp ();
             scan_primary ();
@@ -20639,13 +20640,13 @@ lab_restart:
         goto done;
       }
       break;
-    case 33:
+    case nullary:
       do_nullary (cur_mod);
       break;
-    case 34:
-    case 30:
-    case 36:
-    case 43:
+    case unary:
+    case type_name:
+    case cycle:
+    case plus_or_minus:
       {
         c = cur_mod;
         get_x_next ();
@@ -20654,12 +20655,12 @@ lab_restart:
         goto done;
       }
       break;
-    case 37:
+    case primary_binary:
       {
         c = cur_mod;
         get_x_next ();
         scan_expression ();
-        if (cur_cmd != 69)
+        if (cur_cmd != of_token)
         {
           missing_err (479);
           print(716);
@@ -20674,7 +20675,7 @@ lab_restart:
         goto done;
       }
       break;
-    case 35:
+    case str_op:
       {
         get_x_next ();
         scan_suffix ();
@@ -20688,13 +20689,13 @@ lab_restart:
         goto done;
       }
       break;
-    case 40:
+    case internal_quantity:
       {
         q = cur_mod;
         if (myvar_flag == 77)
         {
           get_x_next ();
-          if (cur_cmd == 77)
+          if (cur_cmd == assignment)
           {
             cur_exp = get_avail ();
             mem[cur_exp].hh.lh = q + 9769;
@@ -20707,10 +20708,10 @@ lab_restart:
         cur_exp = internal[q];
       }
       break;
-    case 38:
+    case capsule_token:
       make_exp_copy (cur_mod);
       break;
-    case 41:
+    case tag_token:
       {
         {
           prehead = avail;
@@ -20793,15 +20794,15 @@ lab_restart:
           }
           get_x_next ();
           tail = t;
-          if (cur_cmd == 63)
+          if (cur_cmd == left_bracket)
           {
             get_x_next ();
             scan_expression ();
-            if (cur_cmd != 64)
+            if (cur_cmd != right_bracket)
             {
               back_input ();
               back_expr ();
-              cur_cmd = 63;
+              cur_cmd = left_bracket;
               cur_mod = 0;
               cur_sym = 9760;
             }
@@ -20809,14 +20810,14 @@ lab_restart:
             {
               if (cur_type != 16)
                 bad_sub_script ();
-              cur_cmd = 42;
+              cur_cmd = numeric_token;
               cur_mod = cur_exp;
               cur_sym = 0;
             }
           }
-          if (cur_cmd > 42)
+          if (cur_cmd > numeric_token)
             goto done1;
-          if (cur_cmd < 40)
+          if (cur_cmd < internal_quantity)
             goto done1;
         }
       done1:
@@ -20875,19 +20876,19 @@ lab_restart:
   }
   get_x_next ();
 done:
-  if (cur_cmd == 63)
+  if (cur_cmd == left_bracket)
   {
     if (cur_type >= 16)
     {
       p = stash_cur_exp ();
       get_x_next ();
       scan_expression ();
-      if (cur_cmd != 82)
+      if (cur_cmd != comma)
       {
         {
           back_input ();
           back_expr ();
-          cur_cmd = 63;
+          cur_cmd = left_bracket;
           cur_mod = 0;
           cur_sym = 9760;
         }
@@ -20898,7 +20899,7 @@ done:
         q = stash_cur_exp ();
         get_x_next ();
         scan_expression ();
-        if (cur_cmd != 64)
+        if (cur_cmd != right_bracket)
         {
           missing_err (93);
           help3(/* 801 */ "I've scanned an expression of the form `a[b,c',",
@@ -20926,13 +20927,13 @@ void scan_suffix (void)
   t = h;
   while (true)
   {
-    if (cur_cmd == 63)
+    if (cur_cmd == left_bracket)
     {
       get_x_next ();
       scan_expression ();
       if (cur_type != 16)
         bad_sub_script ();
-      if (cur_cmd != 64)
+      if (cur_cmd != right_bracket)
       {
         missing_err (93);
         help3(/* 803 */ "I've seen a `[' and a subscript value, in a suffix,",
@@ -20940,12 +20941,12 @@ void scan_suffix (void)
           /* 698 */ "I shall pretend that one was there.");
         back_error ();
       }
-      cur_cmd = 42;
+      cur_cmd = numeric_token;
       cur_mod = cur_exp;
     }
-    if (cur_cmd == 42)
+    if (cur_cmd == numeric_token)
       p = new_num_tok (cur_mod);
-    else if ((cur_cmd == 41) || (cur_cmd == 40))
+    else if ((cur_cmd == tag_token) || (cur_cmd == internal_quantity))
     {
       p = get_avail ();
       mem[p].hh.lh = cur_sym;
@@ -20976,13 +20977,13 @@ void scan_secondary (void)
   halfword macname;
 
 lab_restart:
-  if ((cur_cmd < 30) || (cur_cmd > 43))
+  if ((cur_cmd < type_name) || (cur_cmd > plus_or_minus))
     bad_exp (804);
   scan_primary ();
 lab_continue:
-  if (cur_cmd <= 55)
+  if (cur_cmd <= secondary_binary)
   {
-    if (cur_cmd >= 52)
+    if (cur_cmd >= and_command)
     {
       p = stash_cur_exp ();
       c = cur_mod;
@@ -21016,15 +21017,15 @@ void scan_tertiary (void)
   halfword macname;
 
 lab_restart:
-  if ((cur_cmd < 30) || (cur_cmd > 43))
+  if ((cur_cmd < type_name) || (cur_cmd > plus_or_minus))
     bad_exp (805);
   scan_secondary ();
   if (cur_type == 8)
     materialize_pen ();
 lab_continue:
-  if (cur_cmd <= 45)
+  if (cur_cmd <= tertiary_binary)
   {
-    if (cur_cmd >= 43)
+    if (cur_cmd >= plus_or_minus)
     {
       p = stash_cur_exp ();
       c = cur_mod;
@@ -21063,15 +21064,15 @@ void scan_expression (void)
 
   myvar_flag = var_flag;
 lab_restart:
-  if ((cur_cmd < 30) || (cur_cmd > 43))
+  if ((cur_cmd < type_name) || (cur_cmd > plus_or_minus))
     bad_exp (808);
   scan_tertiary ();
 lab_continue:
-  if (cur_cmd <= 51)
+  if (cur_cmd <= equals)
   {
-    if (cur_cmd >= 46)
+    if (cur_cmd >= left_brace)
     {
-      if ((cur_cmd != 51) || (myvar_flag != 77))
+      if ((cur_cmd != equals) || (myvar_flag != 77))
       {
         p = stash_cur_exp ();
         c = cur_mod;
@@ -21105,7 +21106,7 @@ lab_continue:
             mem[q].hh.b1 = 4;
           }
         lab25:
-          if (cur_cmd == 46)
+          if (cur_cmd == left_brace)
           {
             t = scan_direction ();
             if (t != 4)
@@ -21123,11 +21124,11 @@ lab_continue:
           if (d == 47)
           {
             get_x_next ();
-            if (cur_cmd == 58)
+            if (cur_cmd == tension)
             {
               get_x_next ();
               y = cur_cmd;
-              if (cur_cmd == 59)
+              if (cur_cmd == at_least)
                 get_x_next ();
               scan_primary ();
               if ((cur_type != 16) || (cur_exp < three_quarter_unit))
@@ -21139,11 +21140,11 @@ lab_continue:
               if (y == 59)
                 cur_exp = -cur_exp;
               mem[q + 6].cint = cur_exp;
-              if (cur_cmd == 52)
+              if (cur_cmd == and_command)
               {
                 get_x_next ();
                 y = cur_cmd;
-                if (cur_cmd == 59)
+                if (cur_cmd == at_least)
                   get_x_next ();
                 scan_primary ();
                 if ((cur_type != 16) || (cur_exp < three_quarter_unit))
@@ -21157,7 +21158,7 @@ lab_continue:
               }
               y = cur_exp;
             }
-            else if (cur_cmd == 57)
+            else if (cur_cmd == controls)
             {
               mem[q].hh.b1 = 1;
               t = 1;
@@ -21166,7 +21167,7 @@ lab_continue:
               known_pair ();
               mem[q + 5].cint = cur_x;
               mem[q + 6].cint = cur_y;
-              if (cur_cmd != 52)
+              if (cur_cmd != and_command)
               {
                 x = mem[q + 5].cint;
                 y = mem[q + 6].cint;
@@ -21187,7 +21188,7 @@ lab_continue:
               back_input ();
               goto done;
             }
-            if (cur_cmd != 47)
+            if (cur_cmd != path_join)
             {
               missing_err (408);
               help1(/* 825 */ "A path join command should end with two dots.");
@@ -21198,7 +21199,7 @@ lab_continue:
           else if (d != 48)
             goto lab26;
           get_x_next ();
-          if (cur_cmd == 46)
+          if (cur_cmd == left_brace)
           {
             t = scan_direction ();
             if (mem[q].hh.b1 != 1)
@@ -21211,7 +21212,7 @@ lab_continue:
             t = 4;
             x = 0;
           }
-          if (cur_cmd == 36)
+          if (cur_cmd == cycle)
           {
             cyclehit = true;
             get_x_next ();
@@ -21317,9 +21318,9 @@ lab_continue:
             }
             q = qq;
           }
-          if (cur_cmd >= 46)
+          if (cur_cmd >= left_brace)
           {
-            if (cur_cmd <= 48)
+            if (cur_cmd <= ampersand)
             {
               if (!cyclehit)
                 goto lab25;
