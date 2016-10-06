@@ -1015,6 +1015,10 @@ do { if (interrupt != 0) pause_for_instructions(); } while (0)
 #define edge_header_size 6
 #define valid_range(a) (abs(a - 4096) < 4096)
 #define empty_edges(a) link(a)==a
+/* 403 */
+#define double_path_code 0 //{command modifier for `\&{doublepath}'}
+#define contour_code 1 //{command modifier for `\&{contour}'}
+#define also_code 2 //{command modifier for `\&{also}'}
 /* 553 */
 #define stack_1(a) bisect_stack[a] //{$U_1$, $V_1$, $X_1$, or $Y_1$}
 #define stack_2(a) bisect_stack[a+1] //{$U_2$, $V_2$, $X_2$, or $Y_2$}

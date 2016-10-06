@@ -118,11 +118,11 @@ void store_base_file (void)
   print(1073);
   print(job_name);
   print_char(' ');
-  print_int(round_unscaled(internal[14]));
+  print_int(round_unscaled(internal[year]));
   print_char('.');
-  print_int(round_unscaled(internal[15]));
+  print_int(round_unscaled(internal[month]));
   print_char('.');
-  print_int(round_unscaled(internal[16]));
+  print_int(round_unscaled(internal[day]));
   print_char(')');
   if (interaction == batch_mode)
     selector = log_only;
@@ -271,7 +271,7 @@ void store_base_file (void)
   dump_int(eg_loc);
   dump_int(serial_no);
   dump_int(69069L);
-  internal[12] = 0;
+  internal[tracing_stats] = 0;
   wclose(base_file);
 }
 /* 1187 */
@@ -500,8 +500,6 @@ boolean load_base_file (void)
     else
       interaction = x;
   }
-  if (interactionoption != 4)
-    interaction = interactionoption;
   {
     undump_int(x);
     if ((x < 0) || (x > str_ptr))
@@ -860,47 +858,47 @@ void init_tab (void)
   hi_mem_min = mem_top - 2;
   var_used = 23;
   dyn_used = mem_top + 1 - hi_mem_min;
-  int_name[1] = 409;
-  int_name[2] = 410;
-  int_name[3] = 411;
-  int_name[4] = 412;
-  int_name[5] = 413;
-  int_name[6] = 414;
-  int_name[7] = 415;
-  int_name[8] = 416;
-  int_name[9] = 417;
-  int_name[10] = 418;
-  int_name[11] = 419;
-  int_name[12] = 420;
-  int_name[13] = 421;
-  int_name[14] = 422;
-  int_name[15] = 423;
-  int_name[16] = 424;
-  int_name[17] = 425;
-  int_name[18] = 426;
-  int_name[19] = 427;
-  int_name[20] = 428;
-  int_name[21] = 429;
-  int_name[22] = 430;
-  int_name[23] = 431;
-  int_name[24] = 432;
-  int_name[25] = 433;
-  int_name[26] = 434;
-  int_name[27] = 435;
-  int_name[28] = 436;
-  int_name[29] = 437;
-  int_name[30] = 438;
-  int_name[31] = 439;
-  int_name[32] = 440;
-  int_name[33] = 441;
-  int_name[34] = 442;
-  int_name[35] = 443;
-  int_name[36] = 444;
-  int_name[37] = 445;
-  int_name[38] = 446;
-  int_name[39] = 447;
-  int_name[40] = 448;
-  int_name[41] = 449;
+  int_name[tracing_titles] = 409;
+  int_name[tracing_equations] = 410;
+  int_name[tracing_capsules] = 411;
+  int_name[tracing_choices] = 412;
+  int_name[tracing_specs] = 413;
+  int_name[tracing_pens] = 414;
+  int_name[tracing_commands] = 415;
+  int_name[tracing_restores] = 416;
+  int_name[tracing_macros] = 417;
+  int_name[tracing_edges] = 418;
+  int_name[tracing_output] = 419;
+  int_name[tracing_stats] = 420;
+  int_name[tracing_online] = 421;
+  int_name[year] = 422;
+  int_name[month] = 423;
+  int_name[day] = 424;
+  int_name[time] = 425;
+  int_name[char_code] = 426;
+  int_name[char_ext] = 427;
+  int_name[char_wd] = 428;
+  int_name[char_ht] = 429;
+  int_name[char_dp] = 430;
+  int_name[char_ic] = 431;
+  int_name[char_dx] = 432;
+  int_name[char_dy] = 433;
+  int_name[design_size] = 434;
+  int_name[hppp] = 435;
+  int_name[vppp] = 436;
+  int_name[x_offset] = 437;
+  int_name[y_offset] = 438;
+  int_name[pausing] = 439;
+  int_name[showstopping] = 440;
+  int_name[fontmaking] = 441;
+  int_name[proofing] = 442;
+  int_name[smoothing] = 443;
+  int_name[autorounding] = 444;
+  int_name[granularity] = 445;
+  int_name[fillin] = 446;
+  int_name[turning_check] = 447;
+  int_name[warning_check] = 448;
+  int_name[boundary_char] = 449;
   hash_used = 9757;
   st_count = 0;
   hash[9768].rh = 451;
@@ -1076,7 +1074,7 @@ lab_start_of_MF:
     }
     buffer[limit] = 37;
     fix_date_and_time();
-    ini_trandoms((internal[17] / 65536) + internal[16]);
+    ini_trandoms((internal[time] / 65536) + internal[day]);
     if (interaction == batch_mode)
       selector = no_print;
     else
@@ -1437,7 +1435,7 @@ void initialize (void)
   nk = 0;
   ne = 0;
   np = 0;
-  internal[41] = -65536;
+  internal[boundary_char] = -65536;
   bch_label = lig_table_size;
   label_loc[0] = -1;
   label_ptr = 0;
@@ -1878,6 +1876,11 @@ lab_continue:
         case 69:
           if (file_ptr > 0)
           {
+            print_nl("You want to edit file ");
+            slow_print(input_stack[file_ptr].name_field);
+            print(" at line ");
+            print_int(line);
+            interaction = scroll_mode;
             jump_out ();
           }
           break;
@@ -3986,12 +3989,11 @@ void print_op (quarterword c)
 /* 194 */
 void fix_date_and_time (void)
 {
-  dateandtime (internal[17], internal[16], internal[15],
-  internal[14]);
-  internal[17] = internal[17] * unity;
-  internal[16] = internal[16] * unity;
-  internal[15] = internal[15] * unity;
-  internal[14] = internal[14] * unity;
+  dateandtime (internal[time], internal[day], internal[month], internal[year]);
+  internal[time] = internal[time] * unity;
+  internal[day] = internal[day] * unity;
+  internal[month] = internal[month] * unity;
+  internal[year] = internal[year] * unity;
 }
 /* 205 */
 halfword id_lookup (integer j, integer l)
@@ -4748,7 +4750,7 @@ boolean interesting (halfword p)
   boolean Result;
   small_number t;
 
-  if (internal[3] > 0)
+  if (internal[tracing_online] > 0)
     Result = true;
   else
   {
@@ -5422,7 +5424,7 @@ void print_exp (halfword p, small_number verbosity)
       {
         if (selector == term_and_log)
         {
-          if (internal[13] <= 0)
+          if (internal[tracing_online] <= 0)
           {
             selector = term_only;
             print_type (t);
@@ -5650,7 +5652,7 @@ halfword p_over_v (halfword p, scaled v, small_number t0, small_number t1)
 /* 602 */
 void val_too_big (scaled x)
 {
-  if (internal[40] > 0)
+  if (internal[warning_check] > 0)
   {
     print_err("Value is too large (");
     print_scaled(x);
@@ -5675,7 +5677,7 @@ void make_known (halfword p, halfword q)
   free_node (q, 2);
   if (abs (mem[p + 1].cint) >= fraction_one)
     val_too_big (mem[p + 1].cint);
-  if (internal[2] > 0)
+  if (internal[tracing_equations] > 0)
   {
     if (interesting (p))
     {
@@ -5972,7 +5974,7 @@ void recycle_value (halfword p)
             if (cur_type == t)
               cur_type = 19;
           }
-          if (internal[2] > 0)
+          if (internal[tracing_online] > 0)
           {
             if (interesting (p))
             {
@@ -6341,7 +6343,7 @@ void unsave (void)
     q = mem[save_ptr].hh.lh;
     if (q > 9769)
     {
-      if (internal[8] > 0)
+      if (internal[tracing_restores] > 0)
       {
         begin_diagnostic ();
         print_nl(516);
@@ -6355,7 +6357,7 @@ void unsave (void)
     }
     else
     {
-      if (internal[8] > 0)
+      if (internal[tracing_restores] > 0)
       {
         begin_diagnostic ();
         print_nl(516);
@@ -6795,7 +6797,7 @@ void make_choices (halfword knots)
   fraction sine, cosine;
 
   check_arith ();
-  if (internal[4] > 0)
+  if (internal[tracing_choices] > 0)
     print_path (knots, 526, true);
   p = knots;
   do {
@@ -6910,7 +6912,7 @@ void make_choices (halfword knots)
     }
     p = q;
   } while (!(p == h));
-  if (internal[4] > 0)
+  if (internal[tracing_choices] > 0)
     print_path (knots, 527, true);
   if (arith_error)
   {
@@ -8073,7 +8075,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
           decr (tx);
         mem[r].hh.lh = 8 * round_unscaled (x0 + tx) + base;
         y1 = y1 - unity;
-        if (internal[10] > 0)
+        if (internal[tracing_edges] > 0)
           trace_new_edge (r, n);
         if (y1 < unity)
           goto done;
@@ -8116,7 +8118,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
           incr (tx);
         mem[r].hh.lh = 8 * round_unscaled (x0 - tx) + base;
         y1 = y1 + unity;
-        if (internal[10] > 0)
+        if (internal[tracing_edges] > 0)
           trace_new_edge (r, n);
         if (y1 >= 0)
           goto done1;
@@ -8255,7 +8257,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
       }
       mem[r].hh.rh = mem[p + 1].hh.lh;
       mem[r].hh.lh = edgeandweight;
-      if (internal[10] > 0)
+      if (internal[tracing_edges] > 0)
         trace_new_edge (r, n);
       mem[p + 1].hh.lh = r;
       p = mem[p].hh.rh;
@@ -8302,7 +8304,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
       }
       mem[r].hh.rh = mem[p + 1].hh.lh;
       mem[r].hh.lh = edgeandweight;
-      if (internal[10] > 0)
+      if (internal[tracing_edges] > 0)
         trace_new_edge (r, n);
       mem[p + 1].hh.lh = r;
       p = mem[p].hh.lh;
@@ -8350,7 +8352,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
       }
       mem[r].hh.rh = mem[p + 1].hh.lh;
       mem[r].hh.lh = edgeandweight;
-      if (internal[10] > 0)
+      if (internal[tracing_edges] > 0)
         trace_new_edge (r, n);
       mem[p + 1].hh.lh = r;
       p = mem[p].hh.rh;
@@ -8399,7 +8401,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
       }
       mem[r].hh.rh = mem[p + 1].hh.lh;
       mem[r].hh.lh = edgeandweight;
-      if (internal[10] > 0)
+      if (internal[tracing_edges] > 0)
         trace_new_edge (r, n);
       mem[p + 1].hh.lh = r;
       p = mem[p].hh.lh;
@@ -9314,7 +9316,7 @@ void xy_round (void)
   scaled penedge;
   fraction alpha;
 
-  cur_gran = abs (internal[37]);
+  cur_gran = abs (internal[granularity]);
   if (cur_gran == 0)
     cur_gran = unity;
   p = cur_spec;
@@ -9331,7 +9333,7 @@ void xy_round (void)
       {
         if (cur_pen == 3)
           penedge = 0;
-        else if (cur_path_type == 0)
+        else if (cur_path_type == double_path_code)
          penedge = compromise (mem[mem[cur_pen + 5].hh.rh + 2].cint, mem[mem[cur_pen + 7].hh.rh + 2].cint);
         else if (odd (mem[q].hh.b1))
           penedge = mem[mem[cur_pen + 7].hh.rh + 2].cint;
@@ -9399,7 +9401,7 @@ void xy_round (void)
       {
         if (cur_pen == 3)
           penedge = 0;
-        else if (cur_path_type == 0)
+        else if (cur_path_type == double_path_code)
           penedge = compromise (mem[mem[cur_pen + 2].hh.rh + 2].cint, mem[mem[cur_pen + 1].hh.rh + 2].cint);
         else if (mem[q].hh.b1 <= 2)
           penedge = mem[mem[cur_pen + 1].hh.rh + 2].cint;
@@ -9480,7 +9482,7 @@ void diag_round (void)
         {
           if (cur_pen == 3)
             penedge = 0;
-          else if (cur_path_type == 0)
+          else if (cur_path_type == double_path_code)
             switch (mem[q].hh.b1)
             {
               case 1:
@@ -9820,10 +9822,10 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
     put_get_error ();
   }
   quadrant_subdivide ();
-  if ((internal[36] > 0) && (chopped == 0))
+  if ((internal[autorounding] > 0) && (chopped == 0))
     xy_round ();
   octant_subdivide ();
-  if ((internal[36] > unity) && (chopped == 0))
+  if ((internal[autorounding] > unity) && (chopped == 0))
     diag_round ();
   p = cur_spec;
   do {
@@ -10041,9 +10043,9 @@ done:
     cur_spec = mem[cur_spec].hh.rh;
   if (tracing > 0)
   {
-    if ((internal[36]<= 0) || (chopped != 0))
+    if ((internal[autorounding] <= 0) || (chopped != 0))
       print_spec (560);
-    else if (internal[36] > unity)
+    else if (internal[autorounding] > unity)
       print_spec (561);
     else
       print_spec (562);
@@ -10068,7 +10070,7 @@ void fill_spec (halfword h)
 {
   halfword p, q, r, s;
 
-  if (internal[10] > 0)
+  if (internal[tracing_edges] > 0)
     begin_edge_tracing ();
   p = h;
   do {
@@ -10094,14 +10096,14 @@ void fill_spec (halfword h)
         r = s;
       } while (!(r == q));
       move[move_ptr] = move[move_ptr] - d1;
-      if (internal[35] > 0)
+      if (internal[smoothing] > 0)
         smooth_moves (0, move_ptr);
       move_to_edges (m0, n0, m1, n1);
     }
     p = mem[q].hh.rh;
   } while (!(p == h));
   toss_knot_list (h);
-  if (internal[10] > 0)
+  if (internal[tracing_edges] > 0)
     end_edge_tracing ();
 }
 /* 476 */
@@ -10283,7 +10285,7 @@ not_found:
   }
   put_get_error ();
 found:
-  if (internal[6] > 0)
+  if (internal[tracing_pens] > 0)
     print_pen (p, 572, true);
   Result = p;
   return Result;
@@ -10708,7 +10710,7 @@ void skew_line_edges (halfword p, halfword w, halfword ww)
     unskew (x1, y1, octant);
     ;
 #ifdef STAT
-    if (internal[10] > unity)
+    if (internal[tracing_edges] > unity)
     {
       print_nl(585);
       print_two (x0, y0);
@@ -10754,7 +10756,7 @@ void dual_moves (halfword h, halfword p, halfword q)
       yy = mem[r + 2].cint + mem[w + 2].cint + half_unit;
       ;
 #ifdef STAT
-      if (internal[10] > unity)
+      if (internal[tracing_edges] > unity)
       {
         print_nl(586);
         print_int (k);
@@ -10807,7 +10809,7 @@ void dual_moves (halfword h, halfword p, halfword q)
       }
       ;
 #ifdef STAT
-      if (internal[10] > unity)
+      if (internal[tracing_edges] > unity)
       {
         print(584);
         unskew (xp, yp - half_unit, octant);
@@ -10849,7 +10851,7 @@ void dual_moves (halfword h, halfword p, halfword q)
     move[n] = env_move[n + 1] - env_move[n]+ 1;
   }
   move[move_ptr] = move[move_ptr] - d1;
-  if (internal[35] > 0)
+  if (internal[smoothing] > 0)
     smooth_moves (smoothbot, smoothtop);
   move_to_edges (m0, n0, m1, n1);
   if (mem[q + 6].cint == 1)
@@ -10871,7 +10873,7 @@ void fill_envelope (halfword spechead)
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
 
-  if (internal[10] > 0)
+  if (internal[tracing_edges] > 0)
     begin_edge_tracing ();
   p = spechead;
   do {
@@ -10885,7 +10887,7 @@ void fill_envelope (halfword spechead)
       w = mem[w].hh.lh;
     ;
 #ifdef STAT
-    if (internal[10] > unity)
+    if (internal[tracing_edges] > unity)
     {
       print_nl(580);
       print(octant_dir[octant]);
@@ -10951,7 +10953,7 @@ void fill_envelope (halfword spechead)
           yy = mem[r + 2].cint + mem[w + 2].cint + half_unit;
           ;
 #ifdef STAT
-          if (internal[10] > unity)
+          if (internal[tracing_edges] > unity)
           {
             print_nl(586);
             print_int (k);
@@ -11003,7 +11005,7 @@ void fill_envelope (halfword spechead)
           }
           ;
 #ifdef STAT
-          if (internal[10] > unity)
+          if (internal[tracing_edges] > unity)
           {
             print(584);
             unskew (xp, yp - half_unit, octant);
@@ -11044,7 +11046,7 @@ void fill_envelope (halfword spechead)
         move[n] = env_move[n] - env_move[n - 1]+ 1;
       }
       move[move_ptr] = move[move_ptr] - d1;
-      if (internal[35] > 0)
+      if (internal[smoothing] > 0)
         smooth_moves (smoothbot, smoothtop);
       move_to_edges (m0, n0, m1, n1);
       if (mem[q + 6].cint == 0)
@@ -11058,7 +11060,7 @@ void fill_envelope (halfword spechead)
     mem[q].hh.b1 = 0;
     p = mem[q].hh.rh;
   } while (!(p == spechead));
-  if (internal[10] > 0)
+  if (internal[tracing_edges] > 0)
     end_edge_tracing ();
   toss_knot_list (spechead);
 }
@@ -11188,8 +11190,8 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
       alpha = abs (v);
       beta = abs (u);
     }
-    if (internal[38] != 0)
-      d = d - take_fraction (internal[38], make_fraction (beta + beta, delta));
+    if (internal[fillin] != 0)
+      d = d - take_fraction (internal[fillin], make_fraction (beta + beta, delta));
     d = take_fraction ((d + 4) / 8, delta);
     alpha = alpha / half_unit;
     if (d < alpha)
@@ -12693,7 +12695,7 @@ void linear_eq (halfword p, small_number t)
     mem[r + 1].cint = -make_fraction (mem[r + 1].cint, v);
   finalnode = r;
   p = mem[mem_top - 1].hh.rh;
-  if (internal[2] > 0)
+  if (internal[tracing_equations] > 0)
   {
     if (interesting (x))
     {
@@ -13761,7 +13763,7 @@ void firm_up_the_line (void)
   integer k;
 
   limit = last;
-  if (internal[31] > 0)
+  if (internal[pausing] > 0)
   {
     if (interaction > nonstop_mode)
     {
@@ -14272,7 +14274,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       tail = mem[tail].hh.rh;
     }
   }
-  if (internal[9] > 0)
+  if (internal[tracing_macros] > 0)
   {
     begin_diagnostic ();
     print_ln ();
@@ -14362,7 +14364,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         mem[p].hh.lh = cur_exp;
       else
         mem[p].hh.lh = stash_cur_exp ();
-      if (internal[9] > 0)
+      if (internal[tracing_macros] > 0)
       {
         begin_diagnostic ();
         print_arg (mem[p].hh.lh, n, mem[r].hh.lh);
@@ -14420,7 +14422,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
           scan_expression ();
           p = get_avail ();
           mem[p].hh.lh = stash_cur_exp ();
-          if (internal[9] > 0)
+          if (internal[tracing_macros] > 0)
           {
             begin_diagnostic ();
             print_arg (mem[p].hh.lh, n, 0);
@@ -14479,7 +14481,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         mem[p].hh.lh = cur_exp;
       else
         mem[p].hh.lh = stash_cur_exp ();
-      if (internal[9] > 0)
+      if (internal[tracing_macros] > 0)
       {
         begin_diagnostic ();
         print_arg (mem[p].hh.lh, n, mem[r].hh.lh);
@@ -14523,7 +14525,7 @@ void expand (void)
   integer k;
   pool_pointer j;
 
-  if (internal[7] > unity)
+  if (internal[tracing_commands] > unity)
   {
     if (cur_cmd != defined_macro)
       show_cmd_mod (cur_cmd, cur_mod);
@@ -14599,7 +14601,7 @@ void expand (void)
     case exit_test:
       {
         get_boolean ();
-        if (internal[7] > unity)
+        if (internal[tracing_commands] > unity)
           show_cmd_mod (33, cur_exp);
         if (cur_exp == 30)
         {
@@ -14827,7 +14829,7 @@ void conditional (void)
   savecond_ptr = cond_ptr;
   lab_reswitch: get_boolean ();
   new_if_limit = 4;
-  if (internal[7] > unity)
+  if (internal[tracing_commands] > unity)
   {
     begin_diagnostic ();
     if (cur_exp == 30)
@@ -15033,7 +15035,7 @@ void resume_iteration (void)
   }
   begin_token_list (mem[loop_ptr].hh.lh, 17);
   stack_argument (q);
-  if (internal[7] > unity)
+  if (internal[tracing_commands] > unity)
   {
     begin_diagnostic ();
     print_nl(736);
@@ -15487,18 +15489,18 @@ void open_log_file (void)
     Fputs (log_file,  versionstring);
     slow_print(base_ident);
     print(755);
-    print_int (round_unscaled (internal[16]));
+    print_int (round_unscaled (internal[day]));
     print_char(' ');
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
-    m = round_unscaled (internal[15]);
+    m = round_unscaled (internal[month]);
     for (k = 3 * m - 2; k <= 3 * m; k++)
     {
       putc (months[k], log_file);
     }
     print_char(' ');
-    print_int (round_unscaled (internal[14]));
+    print_int (round_unscaled (internal[year]));
     print_char(' ');
-    m = round_unscaled (internal[17]);
+    m = round_unscaled (internal[time]);
     print_dd (m / 60);
     print_char(':');
     print_dd (m % 60);
@@ -15884,7 +15886,7 @@ void do_nullary (quarterword c)
   integer k;
 
   check_arith ();
-  if (internal[7] > two)
+  if (internal[tracing_commands] > two)
     show_cmd_mod (33, c);
   switch (c)
   {
@@ -16182,7 +16184,7 @@ void do_unary (quarterword c)
   integer x;
 
   check_arith ();
-  if (internal[7] > two)
+  if (internal[tracing_commands] > two)
   {
     begin_diagnostic ();
     print_nl(123);
@@ -16408,7 +16410,7 @@ void do_unary (quarterword c)
       else
       {
         cur_pen = 3;
-        cur_path_type = 1;
+        cur_path_type = contour_code;
         cur_exp = make_spec (cur_exp, -1879080960L, 0);
         flush_cur_exp (turning_number * unity);
       }
@@ -17519,7 +17521,7 @@ void do_binary (halfword p, quarterword c)
   integer v;
  
   check_arith ();
-  if (internal[7] > two)
+  if (internal[tracing_commands] > two)
   {
     begin_diagnostic ();
     print_nl(850);
@@ -17914,7 +17916,7 @@ void frac_mult (scaled n, scaled d)
   halfword oldexp;
   fraction v;
 
-  if (internal[7] > two)
+  if (internal[tracing_commands] > two)
   {
     begin_diagnostic ();
     print_nl(850);
@@ -18128,14 +18130,14 @@ void init_gf (void)
   {
     char_ptr[k] = -1;
   }
-  if (internal[27] <= 0)
+  if (internal[hppp] <= 0)
     gf_ext = 1055;
   else
   {
     old_setting = selector;
     selector = new_string;
     print_char('.');
-    print_int (make_scaled (internal[27], 59429463L));
+    print_int (make_scaled (internal[hppp], 59429463L));
     print(1056);
     gf_ext = make_string ();
     selector = old_setting;
@@ -18153,13 +18155,13 @@ void init_gf (void)
   old_setting = selector;
   selector = new_string;
   print(1054);
-  print_int (round_unscaled (internal[14]));
+  print_int (round_unscaled (internal[year]));
   print_char('.');
-  print_dd (round_unscaled (internal[15]));
+  print_dd (round_unscaled (internal[month]));
   print_char('.');
-  print_dd (round_unscaled (internal[16]));
+  print_dd (round_unscaled (internal[day]));
   print_char(':');
-  t = round_unscaled (internal[17]);
+  t = round_unscaled (internal[time]);
   print_dd (t / 60);
   print_dd (t % 60);
   selector = old_setting;
@@ -18184,9 +18186,9 @@ void ship_out (eight_bits c)
 
   if (output_file_name == 0)
     init_gf ();
-  f = round_unscaled (internal[19]);
-  xoff = round_unscaled (internal[29]);
-  yoff = round_unscaled (internal[30]);
+  f = round_unscaled (internal[char_ext]);
+  xoff = round_unscaled (internal[x_offset]);
+  yoff = round_unscaled (internal[y_offset]);
   if (term_offset > max_print_line - 9)
     print_ln ();
   else if ((term_offset > 0) || (file_offset > 0))
@@ -18202,7 +18204,7 @@ void ship_out (eight_bits c)
   boc_c = 256 * f + c;
   boc_p = char_ptr[c];
   char_ptr[c] = gf_prev_ptr;
-  if (internal[34] > 0)
+  if (internal[proofing] > 0)
   {
     if (xoff != 0)
     {
@@ -18319,7 +18321,7 @@ void ship_out (eight_bits c)
   incr (total_chars);
   print_char(']');
   fflush (stdout);
-  if (internal[11] > 0)
+  if (internal[tracing_output] > 0)
     print_edges (1057, true, xoff, yoff);
 }
 /* 1006 */
@@ -18598,7 +18600,7 @@ void do_equation (void)
     do_equation ();
   else if (cur_cmd == assignment)
     do_assignment ();
-  if (internal[7] > two)
+  if (internal[tracing_commands] > two)
   {
     begin_diagnostic ();
     print_nl(850);
@@ -18645,7 +18647,7 @@ void do_assignment (void)
       do_equation ();
     else if (cur_cmd == assignment)
       do_assignment ();
-    if (internal[7] > two)
+    if (internal[tracing_commands] > two)
     {
       begin_diagnostic ();
       print_nl(123);
@@ -19103,7 +19105,7 @@ void do_show_whatever (void)
       do_show_dependencies ();
       break;
   }
-  if (internal[32] > 0)
+  if (internal[showstopping] > 0)
   {
     print_err("OK");
     if (interaction < error_stop_mode)
@@ -19270,7 +19272,7 @@ void do_add_to (void)
           cur_path_type = addtotype;
           if (mem[rhs].hh.b0 == 0)
           {
-            if (cur_path_type == 0)
+            if (cur_path_type == double_path_code)
             {
               if (mem[rhs].hh.rh == rhs)
               {
@@ -19308,15 +19310,15 @@ void do_add_to (void)
               goto not_found;
             }
           }
-          else if (cur_path_type == 0)
+          else if (cur_path_type == double_path_code)
             lhs = htap_ypoc (rhs);
           cur_wt = w;
-          rhs = make_spec (rhs, mem[cur_pen + 9].cint, internal[5]);
+          rhs = make_spec (rhs, mem[cur_pen + 9].cint, internal[tracing_specs]);
           if (turning_number <= 0)
           {
-            if (cur_path_type != 0)
+            if (cur_path_type != double_path_code)
             {
-              if (internal[39] > 0)
+              if (internal[turning_check] > 0)
               {
                 if ((turning_number < 0) && (mem[cur_pen].hh.rh == 0))
                   cur_wt = -cur_wt;
@@ -19324,7 +19326,7 @@ void do_add_to (void)
                 {
                   if (turning_number == 0)
                   {
-                    if ((internal[39]<= unity) && (mem[cur_pen].hh.rh == 0))
+                    if ((internal[turning_check] <= unity) && (mem[cur_pen].hh.rh == 0))
                       goto done;
                     else
                       print_strange (980);
@@ -19347,7 +19349,7 @@ void do_add_to (void)
           if (lhs != 0)
           {
             rev_turns = true;
-            lhs = make_spec (lhs, mem[cur_pen + 9].cint, internal[5]);
+            lhs = make_spec (lhs, mem[cur_pen + 9].cint, internal[tracing_specs]);
             rev_turns = false;
             if (mem[cur_pen + 9].cint == 0)
               fill_spec (lhs);
@@ -19416,7 +19418,7 @@ void do_ship_out (void)
   }
   if (cur_edges != 0)
   {
-    c = round_unscaled (internal[18]) % 256;
+    c = round_unscaled (internal[char_code]) % 256;
     if (c < 0)
       c = c + 256;
     if (c < bc)
@@ -19424,13 +19426,13 @@ void do_ship_out (void)
     if (c > ec)
       ec = c;
     char_exists[c] = true;
-    gf_dx[c] = internal[24];
-    gf_dy[c] = internal[25];
+    gf_dx[c] = internal[char_dx];
+    gf_dy[c] = internal[char_dy];
     tfm_width[c] = tfm_check (20);
     tfm_height[c] = tfm_check (21);
     tfm_depth[c] = tfm_check (22);
     tfm_ital_corr[c] = tfm_check (23);
-    if (internal[34] >= 0)
+    if (internal[proofing] >= 0)
       ship_out (c);
   }
   flush_cur_exp (0);
@@ -20000,7 +20002,7 @@ void do_special (void)
   m = cur_mod;
   get_x_next ();
   scan_expression ();
-  if (internal[34] >= 0)
+  if (internal[proofing] >= 0)
   {
     if (cur_type != m)
     {
@@ -20056,13 +20058,13 @@ void do_statement (void)
         do_assignment ();
       else if (cur_type == 4)
       {
-        if (internal[1] > 0)
+        if (internal[tracing_titles] > 0)
         {
           print_nl(261);
           slow_print(cur_exp);
           fflush (stdout);
         }
-        if (internal[34] > 0)
+        if (internal[proofing] > 0)
         {
           if (output_file_name == 0)
             init_gf ();
@@ -20083,7 +20085,7 @@ void do_statement (void)
   }
   else
   {
-    if (internal[7] > 0)
+    if (internal[tracing_commands] > 0)
       show_cmd_mod (cur_cmd, cur_mod);
     switch (cur_cmd)
     {
@@ -20344,13 +20346,13 @@ void fix_design_size (void)
 {
   scaled d;
 
-  d = internal[26];
+  d = internal[design_size];
   if ((d < unity) || (d >= fraction_half))
   {
     if (d != 0)
       print_nl(1044);
     d = 8388608L;
-    internal[26] = d;
+    internal[design_size] = d;
   }
   if (header_byte[5] < 0)
   {
@@ -20368,7 +20370,7 @@ void fix_design_size (void)
       }
     }
   }
-  max_tfm_dimen = 16 * internal[26] - 1 - internal[26]/ 2097152L;
+  max_tfm_dimen = 16 * internal[design_size] - 1 - internal[design_size] / 2097152L;
   if (max_tfm_dimen >= fraction_half)
     max_tfm_dimen = 134217727L;
 }
@@ -20385,7 +20387,7 @@ integer dimen_out (scaled x)
     else
       x = -max_tfm_dimen;
   }
-  x = make_scaled (x * 16, internal[26]);
+  x = make_scaled (x * 16, internal[design_size]);
   Result = x;
   return Result;
 }
@@ -20555,7 +20557,7 @@ lab_restart:
     case begin_group:
       {
         groupline = line;
-        if (internal[7] > 0)
+        if (internal[tracing_commands] > 0)
           show_cmd_mod (cur_cmd, cur_mod);
         {
           p = get_avail ();
@@ -20577,7 +20579,7 @@ lab_restart:
           cur_cmd = end_group;
         }
         unsave ();
-        if (internal[7] > 0)
+        if (internal[tracing_commands] > 0)
           show_cmd_mod (cur_cmd, cur_mod);
       }
       break;
@@ -21410,7 +21412,7 @@ void close_files_and_terminate (void)
 
   ;
 #ifdef STAT
-  if (internal[12] > 0)
+  if (internal[tracing_stats] > 0)
   {
     if (log_opened)
     {
@@ -21427,7 +21429,7 @@ void close_files_and_terminate (void)
     }
   }
 #endif /* STAT */
-  if ((gf_prev_ptr > 0) || (internal[33] > 0))
+  if ((gf_prev_ptr > 0) || (internal[fontmaking] > 0))
   {
     rover = 23;
     mem[rover].hh.rh = 268435455L;
@@ -21451,7 +21453,7 @@ void close_files_and_terminate (void)
       tfm_warning (20);
     fix_design_size ();
     fix_check_sum ();
-    if (internal[33] > 0)
+    if (internal[fontmaking] > 0)
     {
       mem[mem_top - 1].hh.rh = 19;
       for (k = bc; k <= ec; k++)
@@ -21511,7 +21513,7 @@ void close_files_and_terminate (void)
       lh = (k + 3) / 4;
       if (bc > ec)
         bc = 1;
-      bchar = round_unscaled (internal[41]);
+      bchar = round_unscaled (internal[boundary_char]);
       if ((bchar < 0) || (bchar > 255))
       {
         bchar = -1;
@@ -21682,7 +21684,7 @@ void close_files_and_terminate (void)
       }
       ;
 #ifdef STAT
-      if (internal[12] > 0)
+      if (internal[tracing_stats] > 0)
       {
         { putc (' ', log_file);  putc ('\n', log_file); }
         if (bch_label < lig_table_size)
@@ -21701,11 +21703,11 @@ void close_files_and_terminate (void)
       gf_out (post);
       gf_four (gf_prev_ptr);
       gf_prev_ptr = gf_offset + gf_ptr - 5;
-      gf_four (internal[26]* 16);
+      gf_four (internal[design_size] * 16);
       for (k = 1; k <= 4; k++)
         gf_out (header_byte[k]);
-      gf_four (internal[27]);
-      gf_four (internal[28]);
+      gf_four (internal[hppp]);
+      gf_four (internal[vppp]);
       gf_four (gf_min_m);
       gf_four (gf_max_m);
       gf_four (gf_min_n);
@@ -21737,7 +21739,7 @@ void close_files_and_terminate (void)
               x = -16777215L;
           }
           else
-            x = make_scaled (x * 16, internal[26]);
+            x = make_scaled (x * 16, internal[design_size]);
           gf_four (x);
           gf_four (char_ptr[k]);
         }
