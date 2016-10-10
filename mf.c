@@ -54,36 +54,36 @@ void sort_avail (void)
   halfword p, q, r;
   halfword old_rover;
 
-  p = get_node(1073741824);
-  p = mem[rover + 1].hh.rh;
-  mem[rover + 1].hh.rh = 268435455;
+  p = get_node(010000000000);
+  p = rlink(rover);
+  rlink(rover) = max_halfword;
   old_rover = rover;
   while (p != old_rover)
     if (p < rover)
     {
       q = p;
-      p = mem[q + 1].hh.rh;
-      mem[q + 1].hh.rh = rover;
+      p = rlink(q);
+      rlink(q) = rover;
       rover = q;
     }
     else
     {
       q = rover;
-      while (mem[q + 1].hh.rh < p)
-        q = mem[q + 1].hh.rh;
-      r = mem[p + 1].hh.rh;
-      mem[p + 1].hh.rh = mem[q + 1].hh.rh;
-      mem[q + 1].hh.rh = p;
+      while (rlink(q) < p)
+        q = rlink(q);;
+      r = rlink(p);
+      rlink(p) = rlink(q);
+      rlink(q) = p;
       p = r;
     }
   p = rover;
-  while (mem[p + 1].hh.rh != 268435455L)
+  while (rlink(p) != max_halfword)
   {
-    mem[mem[p + 1].hh.rh + 1].hh.lh = p;
-    p = mem[p + 1].hh.rh;
+    llink(rlink(p)) = p;
+    p = rlink(p);
   }
-  mem[p + 1].hh.rh = rover;
-  mem[rover + 1].hh.lh = p;
+  rlink(p) = rover;
+  llink(rover) = p;
 }
 /* 210 */
 void primitive (str_number s, halfword c, halfword o)
@@ -100,10 +100,10 @@ void primitive (str_number s, halfword c, halfword o)
   if (s >= 256)
   {
     flush_string(str_ptr - 1);
-    hash[cur_sym].rh = s;
+    text(cur_sym) = s;
   }
-  eqtb[cur_sym].lh = c;
-  eqtb[cur_sym].rh = o;
+  eq_type(cur_sym) = c;
+  equiv(cur_sym) = o;
 }
 /* 1186 */
 void store_base_file (void)
@@ -128,23 +128,16 @@ void store_base_file (void)
     selector = log_only;
   else
     selector = term_and_log;
-  {
-    if (pool_ptr + 1 > max_pool_ptr)
-    {
-      if (pool_ptr + 1 > pool_size)
-        overflow(/* 257 */ "pool size", pool_size - init_pool_ptr);
-      max_pool_ptr = pool_ptr + 1;
-    }
-  }
+  str_room(1);
   base_ident = make_string();
-  str_ref[base_ident] = 127;
+  str_ref[base_ident] = max_str_ref;
   pack_job_name(742);
   while (!w_open_out(base_file))
     prompt_file_name(1074, 742);
-  print_nl(1075);
+  print_nl(/* 1075 */ "Beginning to dump on file ");
   slow_print(w_make_name_string(base_file));
   flush_string(str_ptr - 1);
-  print_nl(261);
+  print_nl(/* 261 */ "");
   slow_print(base_ident);
   dump_int(1462914374L);
   x = strlen(enginename);
@@ -555,7 +548,7 @@ void final_cleanup (void)
   }
   while (cond_ptr != 0)
   {
-    print_nl(1078);
+    print_nl(/* 1078 */ "(end occurred when ");
     print_cmd_mod(2, cur_if);
     if (if_line != 0)
     {
@@ -576,7 +569,7 @@ void final_cleanup (void)
       if (selector == term_and_log)
       {
         selector = term_only;
-        print_nl(1081);
+        print_nl(/* 1081 */ "(see the transcript file for additional information)");
         selector = term_and_log;
       }
     }
@@ -591,7 +584,7 @@ void final_cleanup (void)
       goto lab_exit;
     }
 #endif /* INIMF */
-    print_nl(1082);
+    print_nl(/* 1082 */ "(dump is performed only by INIMF)");
     goto lab_exit;
   }
 lab_exit:;
@@ -1750,7 +1743,7 @@ void begin_diagnostic (void)
 /* 195 */
 void end_diagnostic (boolean blank_line)
 {
-  print_nl(261);
+  print_nl(/* 261 */ "");
   if (blank_line)
     print_ln ();
   selector = old_setting;
@@ -1807,51 +1800,39 @@ void error (void)
     {
 lab_continue:
       clear_for_error_prompt ();
-      {
-        do_nothing();
-        print(265);
-        term_input ();
-      }
+      prompt_input("? ");
       if (last == first)
         goto lab_exit;
       c = buffer[first];
-      if (c >= 97)
-        c = c - 32;
+      if (c >= 'a')
+        c = c + 'A' - 'a';
       switch (c)
       {
-        case 48:
-        case 49:
-        case 50:
-        case 51:
-        case 52:
-        case 53:
-        case 54:
-        case 55:
-        case 56:
-        case 57:
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
           if (deletions_allowed)
           {
             s1 = cur_cmd;
             s2 = cur_mod;
             s3 = cur_sym;
             OK_to_interrupt = false;
-            if ((last > first + 1) && (buffer[first + 1] >= 48) && (buffer[first + 1] <= 57))
-              c = c * 10 + buffer[first + 1] - 48 * 11;
+            if ((last > first + 1) && (buffer[first + 1] >= '0') && (buffer[first + 1] <= '9'))
+              c = c * 10 + buffer[first + 1] - '0' * 11;
             else
-              c = c - 48;
+              c = c - '0';
             while (c > 0)
             {
               get_next ();
               if (cur_cmd == string_token)
-              {
-                if (str_ref[cur_mod] < 127)
-                {
-                  if (str_ref[cur_mod] > 1)
-                    decr (str_ref[cur_mod]);
-                  else
-                    flush_string (cur_mod);
-                }
-              }
+                delete_str_ref(cur_mod);
               decr (c);
             }
             cur_cmd = s1;
@@ -1866,14 +1847,14 @@ lab_continue:
           break;
 ;
 #ifdef TEXMF_DEBUG
-        case 68:
+        case 'D':
         {
           debug_help ();
           goto lab_continue;
         }
         break;
 #endif /* TEXMF_DEBUG */
-        case 69:
+        case 'E':
           if (file_ptr > 0)
           {
             print_nl("You want to edit file ");
@@ -1884,111 +1865,111 @@ lab_continue:
             jump_out ();
           }
           break;
-        case 72:
-        {
-          if (use_err_help)
+        case 'H':
           {
-            j = str_start[err_help];
-            while (j < str_start[err_help + 1])
+            if (use_err_help)
             {
-              if (str_pool[j]!= 37)
-                print(str_pool[j]);
-              else if (j + 1 == str_start[err_help + 1])
-                print_ln ();
-              else if (str_pool[j + 1] != 37)
-                print_ln ();
-              else
+              j = str_start[err_help];
+              while (j < str_start[err_help + 1])
               {
+                if (str_pool[j] != si('%'))
+                  print(so(str_pool[j]));
+                else if (j + 1 == str_start[err_help + 1])
+                  print_ln ();
+                else if (str_pool[j + 1] != 37)
+                  print_ln ();
+                else
+                {
+                  incr (j);
+                  print_char('%');
+                }
                 incr (j);
-                print_char('%');
               }
-              incr (j);
+              use_err_help = false;
             }
-            use_err_help = false;
+            else
+            {
+              if (help_ptr == 0)
+                help2(/* 280 */ "Sorry, I don't know how to help in this situation.",
+                  /* 281 */ "Maybe you should try asking a human?");
+              do {
+                decr (help_ptr);
+                print(help_line[help_ptr]);
+                print_ln ();
+              } while (!(help_ptr == 0));
+            }
+            help4(/* 282 */ "Sorry, I already gave what help I could...",
+              /* 281 */ "Maybe you should try asking a human?",
+              /* 283 */ "An error might have occurred before I noticed any problems.",
+              /* 284 */ "``If all else fails, read the instructions.''");
+            goto lab_continue;
           }
-          else
+          break;
+        case 'I':
           {
-            if (help_ptr == 0)
-              help2(/* 280 */ "Sorry, I don't know how to help in this situation.",
-                /* 281 */ "Maybe you should try asking a human?");
-            do {
-              decr (help_ptr);
-              print(help_line[help_ptr]);
-              print_ln ();
-            } while (!(help_ptr == 0));
+            begin_file_reading ();
+            if (last > first + 1)
+            {
+              loc = first + 1;
+              buffer[first] = ' ';
+            }
+            else
+            {
+              prompt_input("insert>");
+              loc = first;
+            }
+            first = last + 1;
+            cur_input.limit_field = last;
+            goto lab_exit;
           }
-          help4(/* 282 */ "Sorry, I already gave what help I could...",
-            /* 281 */ "Maybe you should try asking a human?",
-            /* 283 */ "An error might have occurred before I noticed any problems.",
-            /* 284 */ "``If all else fails, read the instructions.''");
-          goto lab_continue;
-        }
-        break;
-      case 73:
-        {
-          begin_file_reading ();
-          if (last > first + 1)
+          break;
+        case 'Q':
+        case 'R':
+        case 'S':
           {
-            loc = first + 1;
-            buffer[first] = 32;
+            error_count = 0;
+            interaction = 0 + c - 'Q';
+            print(272);
+            switch (c)
+            {
+              case 'Q':
+                {
+                  print(273);
+                  decr (selector);
+                }
+                break;
+              case 'R':
+                print(274);
+                break;
+              case 'S':
+                print(275);
+                break;
+            }
+            print(276);
+            print_ln ();
+            fflush (stdout);
+            goto lab_exit;
           }
-          else
+          break;
+        case 'X':
           {
-            prompt_input("insert>");
-            loc = first;
+            interaction = scroll_mode;
+            jump_out ();
           }
-          first = last + 1;
-          cur_input.limit_field = last;
-          goto lab_exit;
-        }
-        break;
-      case 81:
-      case 82:
-      case 83:
-        {
-          error_count = 0;
-          interaction = 0 + c - 81;
-          print(272);
-          switch (c)
-          {
-            case 81:
-              {
-                print(273);
-                decr (selector);
-              }
-              break;
-            case 82:
-              print(274);
-              break;
-            case 83:
-              print(275);
-              break;
-          }
-          print(276);
-          print_ln ();
-          fflush (stdout);
-          goto lab_exit;
-        }
-        break;
-      case 88:
-        {
-          interaction = scroll_mode;
-          jump_out ();
-        }
-        break;
-      default:
-        do_nothing();
-        break;
-    }
+          break;
+        default:
+          do_nothing();
+          break;
+      }
       {
-        print(266);
-        print_nl(267);
-        print_nl(268);
+        print(/* 266 */ "Type <return> to proceed, S to scroll future error messages,");
+        print_nl(/* 267 */ "R to run without stopping, Q to run quietly,");
+        print_nl(/* 268 */ "I to insert something, ");
         if (file_ptr > 0)
-          print(269);
+          print(/* 269 */ "E to edit your file,");
         if (deletions_allowed)
-          print_nl(270);
-        print_nl(271);
+          print_nl(/* 270 */ "1 or ... or 9 to ignore the next 1 to 9 tokens of input,");
+        print_nl(/* 271 */ "H for help, X to quit.");
       }
     }
   incr (error_count);
