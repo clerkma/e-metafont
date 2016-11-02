@@ -4657,73 +4657,74 @@ void print_variable_name (halfword p)
   halfword q;
   halfword r;
 
-  while (mem[p].hh.b1 >= 5)
+  while (name_type(p) >= x_part_sector)
   {
-    switch (mem[p].hh.b1)
+    switch (name_type(p))
     {
-      case 5:
+      case x_part_sector:
         print_char('x');
         break;
-      case 6:
+      case y_part_sector:
         print_char('y');
         break;
-      case 7:
-        print(509);
+      case xx_part_sector:
+        print("xx");
         break;
-      case 8:
-        print(510);
+      case xy_part_sector:
+        print("xy");
         break;
-      case 9:
-        print(511);
+      case yx_part_sector:
+        print("yx");
         break;
-      case 10:
-        print(512);
+      case yy_part_sector:
+        print("yy");
         break;
-      case 11:
+      case capsule:
         {
-          print(513);
-          print_int (p - 0);
+          print("%CAPSULE");
+          print_int(p - 0);
           goto lab_exit;
         }
         break;
     }
-    print(514);
-    p = mem[p - 2 * (mem[p].hh.b1 - 5)].hh.rh;
+    print("part ");
+    p = link(p - 2 * (name_type(p) - x_part_sector));
   }
-  q = 0;
-  while (mem[p].hh.b1 > 1)
+  q = null;
+  while (name_type(p) > saved_root)
   {
-    if (mem[p].hh.b1 == 3)
+    if (name_type(p) == subscr)
     {
-      r = new_num_tok (mem[p + 2].cint);
+      r = new_num_tok (subscript(p));
       do {
-        p = mem[p].hh.rh;
-      } while (!(mem[p].hh.b1 == 4));
+        p = link(p);
+      } while (!(name_type(p) == attr));
     }
-    else if (mem[p].hh.b1 == 2)
+    else if (name_type(p) == structured_root)
     {
-      p = mem[p].hh.rh;
+      p = link(p);
       goto found;
     }
     else
     {
-      if (mem[p].hh.b1 != 4)
+      if (name_type(p) != attr)
         confusion(/* 508 */ "var");
-      r = get_avail ();
-      mem[r].hh.lh = mem[p + 2].hh.lh;
+      r = get_avail();
+      info(r) = attr_loc(p);
     }
-    mem[r].hh.rh = q;
+    link(r) = q;
     q = r;
-    found: p = mem[p + 2].hh.rh;
+found:
+	 	p = parent(p);
   }
-  r = get_avail ();
-  mem[r].hh.lh = mem[p].hh.rh;
-  mem[r].hh.rh = q;
-  if (mem[p].hh.b1 == 1)
-    print(507);
-  show_token_list (r, 0, 2147483647L, tally);
-  flush_token_list (r);
-  lab_exit:;
+  r = get_avail();
+  info(r) = link(p);
+  link(r) = q;
+  if (name_type(p) == saved_root)
+    print("(SAVED)");
+  show_token_list(r, null, el_gordo, tally);
+  flush_token_list(r);
+lab_exit:;
 }
 /* 238 */
 boolean interesting (halfword p)
@@ -4735,13 +4736,13 @@ boolean interesting (halfword p)
     Result = true;
   else
   {
-    t = mem[p].hh.b1;
-    if (t >= 5)
+    t = name_type(p);
+    if (t >= x_part_sector)
     {
-      if (t != 11)
-        t = mem[mem[p - 2 * (t - 5)].hh.rh].hh.b1;
+      if (t != capsule)
+        t = name_type(link(p - 2 * (t - x_part_sector)));
     }
-    Result = (t != 11);
+    Result = (t != capsule);
   }
   return Result;
 }
@@ -4751,69 +4752,69 @@ halfword new_structure (halfword p)
   halfword Result;
   halfword q, r;
   
-  switch (mem[p].hh.b1)
+  switch (name_type(p))
   {
-    case 0:
+    case root:
       {
-        q = mem[p].hh.rh;
-        r = get_node (2);
-        eqtb[q].rh = r;
+        q = link(p);
+        r = get_node(value_node_size);
+        equiv(q) = r;
       }
       break;
-    case 3:
+    case subscr:
       {
         q = p;
         do {
-          q = mem[q].hh.rh;
-        } while (!(mem[q].hh.b1 == 4));
-        q = mem[q + 2].hh.rh;
-        r = q + 1;
+          q = link(q);
+        } while (!(name_type(q) == attr));
+        q = parent(q);
+        r = subscr_head_loc(q);
         do {
           q = r;
-          r = mem[r].hh.rh;
+          r = link(r);
         } while (!(r == p));
-        r = get_node (3);
-        mem[q].hh.rh = r;
-        mem[r + 2].cint = mem[p + 2].cint;
+        r = get_node(subscr_node_size);
+        link(q) = r;
+        subscript(r) = subscript(p);
       }
       break;
-    case 4:
+    case attr:
       {
-        q = mem[p + 2].hh.rh;
-        r = mem[q + 1].hh.lh;
+        q = parent(p);
+        r = attr_head(q);
         do {
           q = r;
-          r = mem[r].hh.rh;
+          r = link(r);
         } while (!(r == p));
-        r = get_node (3);
-        mem[q].hh.rh = r;
-        mem[r + 2] = mem[p + 2];
-        if (mem[p + 2].hh.lh == 0)
+        r = get_node(attr_node_size);
+        link(q) = r;
+        mem[attr_loc_loc(r)] = mem[attr_loc_loc(p)];
+        if (attr_loc(p) == collective_subscript)
         {
-          q = mem[p + 2].hh.rh + 1;
-          while (mem[q].hh.rh != p)
-            q = mem[q].hh.rh;
-          mem[q].hh.rh = r;
+          q = subscr_head_loc(parent(p));
+          while (link(q) != p)
+            q = link(q);
+          link(q) = r;
         }
       }
       break;
     default:
-      confusion(/* 515 */ "struct");
+      confusion("struct");
       break;
   }
-  mem[r].hh.rh = mem[p].hh.rh;
-  mem[r].hh.b0 = 21;
-  mem[r].hh.b1 = mem[p].hh.b1;
-  mem[r + 1].hh.lh = p;
-  mem[p].hh.b1 = 2;
-  q = get_node (3);
-  mem[p].hh.rh = q;
-  mem[r + 1].hh.rh = q;
-  mem[q + 2].hh.rh = r;
-  mem[q].hh.b0 = 0;
-  mem[q].hh.b1 = 4;
-  mem[q].hh.rh = 17;
-  mem[q + 2].hh.lh = 0;
+  link(r) = link(p);
+  type(r) = structured;
+  name_type(r) = name_type(p);
+  attr_head(r) = p;
+  name_type(p) = structured_root;
+  q = get_node(attr_node_size);
+  link(p) = q;
+  subscr_head(r) = q;
+  parent(q) = r;
+  type(q) = undefined;
+  name_type(q) = attr;
+  link(q) = end_attr;
+  attr_loc(q) = collective_subscript;
   Result = r;
   return Result;
 }
@@ -5064,7 +5065,7 @@ void print_path (halfword h, str_number s, boolean nuline)
   done: end_diagnostic (true);
 }
 /* 333 */
-void print_weight (halfword q, integer xoff)
+void print_weight (halfword q, integer x_off)
 {
   integer w, m;
   integer d;
@@ -5076,7 +5077,7 @@ void print_weight (halfword q, integer xoff)
     print_nl(32);
   else
     print_char(' ');
-  print_int (m + xoff);
+  print_int (m + x_off);
   while (w > 4)
   {
     print_char('+');
@@ -5089,7 +5090,7 @@ void print_weight (halfword q, integer xoff)
   }
 }
 /* 332 */
-void print_edges (str_number s, boolean nuline, integer xoff, integer yoff)
+void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
 {
   halfword p, q, r;
   integer n;
@@ -5104,17 +5105,17 @@ void print_edges (str_number s, boolean nuline, integer xoff, integer yoff)
     if ((q > 1) || (r != mem_top))
     {
       print_nl(533);
-      print_int (n + yoff);
+      print_int (n + y_off);
       print_char(':');
       while (q > 1)
       {
-        print_weight (q, xoff);
+        print_weight (q, x_off);
         q = mem[q].hh.rh;
       }
       print(534);
       while (r != mem_top)
       {
-        print_weight (r, xoff);
+        print_weight (r, x_off);
         r = mem[r].hh.rh;
       }
     }
@@ -7527,14 +7528,14 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
   integer m;
   integer mm;
   integer ww;
-  integer prevw;
-  halfword n, minn, maxn;
+  integer prev_w;
+  halfword n, min_n, max_n;
   halfword mind, maxd;
 
   mind = 268435455L;
   maxd = 0;
-  minn = 268435455L;
-  maxn = 0;
+  min_n = 268435455L;
+  max_n = 0;
   p = mem[cur_edges].hh.rh;
   n = mem[cur_edges + 1].hh.lh;
   while (p != cur_edges)
@@ -7547,7 +7548,7 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
       q = mem[p + 1].hh.rh;
       ww = 0;
       m = 1000000L;
-      prevw = 0;
+      prev_w = 0;
       while (true)
       {
         if (q == mem_top)
@@ -7560,13 +7561,13 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
         }
         if (mm > m)
         {
-          if (w != prevw)
+          if (w != prev_w)
           {
             s = get_avail ();
             mem[r].hh.rh = s;
-            mem[s].hh.lh = 8 * m + 4 + w - prevw;
+            mem[s].hh.lh = 8 * m + 4 + w - prev_w;
             r = s;
-            prevw = w;
+            prev_w = w;
           }
           if (q == mem_top)
             goto done;
@@ -7596,9 +7597,9 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
       mem[p + 1].hh.rh = mem[mem_top - 1].hh.rh;
       if (r != mem_top - 1)
       {
-        if (minn == 268435455L)
-          minn = n;
-        maxn = n;
+        if (min_n == 268435455L)
+          min_n = n;
+        max_n = n;
         if (mind > mem[mem[mem_top - 1].hh.rh].hh.lh)
           mind = mem[mem[mem_top - 1].hh.rh].hh.lh;
         if (maxd < mem[r].hh.lh)
@@ -7608,7 +7609,7 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
     p = mem[p].hh.rh;
     incr (n);
   }
-  if (minn > maxn)
+  if (min_n > max_n)
   {
     p = mem[cur_edges].hh.rh;
     while (p != cur_edges)
@@ -7622,8 +7623,8 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
   else
   {
     n = mem[cur_edges + 1].hh.lh;
-    mem[cur_edges + 1].hh.lh = minn;
-    while (minn > n)
+    mem[cur_edges + 1].hh.lh = min_n;
+    while (min_n > n)
     {
       p = mem[cur_edges].hh.rh;
       mem[cur_edges].hh.rh = mem[p].hh.rh;
@@ -7632,10 +7633,10 @@ void cull_edges (integer wlo, integer whi, integer wout, integer win)
       incr (n);
     }
     n = mem[cur_edges + 1].hh.rh;
-    mem[cur_edges + 1].hh.rh = maxn;
-    mem[cur_edges + 5].hh.lh = maxn + 1;
+    mem[cur_edges + 1].hh.rh = max_n;
+    mem[cur_edges + 5].hh.lh = max_n + 1;
     mem[cur_edges + 5].hh.rh = cur_edges;
-    while (maxn < n)
+    while (max_n < n)
     {
       p = mem[cur_edges].hh.lh;
       mem[cur_edges].hh.lh = mem[p].hh.lh;
@@ -17095,8 +17096,8 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 {
   scaled vv;
 
-  vv = mem[p + 1].cint;
-  mem[p].hh.b0 = 18;
+  vv = value(p);
+  type(p) = 18;
   new_dep (p, const_dependency (0));
   if (vv != 0)
     add_mult_dep (p, vv, t);
@@ -17116,13 +17117,13 @@ void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
 void bilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
 {
   if (t != unity)
-    delta = delta + take_scaled (mem[p + 1].cint, t);
+    delta = delta + take_scaled (value(p), t);
   else
-    delta = delta + mem[p + 1].cint;
+    delta = delta + value(p);
   if (u != 0)
-    mem[p + 1].cint = delta + take_scaled (v, u);
+    value(p) = delta + take_scaled (v, u);
   else
-    mem[p + 1].cint = delta;
+    value(p) = delta;
 }
 /* 966 */
 void big_trans (halfword p, quarterword c)
@@ -17944,6 +17945,13 @@ void frac_mult (scaled n, scaled d)
     free_node (oldexp, 2);
   }
 }
+/* 1154 */
+void write_gf (gf_index a, gf_index b)
+{
+  gf_index k;
+  for (k = a; k <= b; k++)
+    write(gf_file, gf_buf[k]);
+}
 /* 1155 */
 void gf_swap (void)
 {
@@ -18019,9 +18027,9 @@ void gf_string (str_number s, str_number t)
 
   if (s != 0)
   {
-    l = (str_start[s + 1] - str_start[s]);
+    l = length(s);
     if (t != 0)
-      l = l + (str_start[t + 1] - str_start[t]);
+      l = l + length(t);
     if (l <= 255)
     {
       gf_out (xxx1);
@@ -18041,60 +18049,46 @@ void gf_string (str_number s, str_number t)
       gf_out(so(str_pool[k]));
   }
 }
+#define one_byte(a) ((a) >= 0) && ((a) < 256)
 /* 1161 */
-void gf_boc (integer minm, integer maxm, integer minn, integer maxn)
+void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
 {
-  if (minm < gf_min_m)
-    gf_min_m = minm;
-  if (maxn > gf_max_n)
-    gf_max_n = maxn;
+  if (min_m < gf_min_m)
+    gf_min_m = min_m;
+  if (max_n > gf_max_n)
+    gf_max_n = max_n;
   if (boc_p == -1)
   {
-    if (boc_c >= 0)
+    if (one_byte(boc_c))
     {
-      if (boc_c < 256)
+      if (one_byte(max_m - min_m))
       {
-        if (maxm - minm >= 0)
+        if (one_byte(max_m))
         {
-          if (maxm - minm < 256)
+          if (one_byte(max_n - min_n))
           {
-            if (maxm >= 0)
+            if (one_byte(max_n))
             {
-              if (maxm < 256)
-              {
-                if (maxn - minn >= 0)
-                {
-                  if (maxn - minn < 256)
-                  {
-                    if (maxn >= 0)
-                    {
-                      if (maxn < 256)
-                      {
-                        gf_out (boc1);
-                        gf_out (boc_c);
-                        gf_out (maxm - minm);
-                        gf_out (maxm);
-                        gf_out (maxn - minn);
-                        gf_out (maxn);
-                        goto lab_exit;
-                      }
-                    }
-                  }
-                }
-              }
+              gf_out (boc1);
+              gf_out (boc_c);
+              gf_out (max_m - min_m);
+              gf_out (max_m);
+              gf_out (max_n - min_n);
+              gf_out (max_n);
+              goto lab_exit;
             }
           }
-        }
-      }
+        } 
+      } 
     }
   }
   gf_out (boc);
   gf_four (boc_c);
   gf_four (boc_p);
-  gf_four (minm);
-  gf_four (maxm);
-  gf_four (minn);
-  gf_four (maxn);
+  gf_four (min_m);
+  gf_four (max_m);
+  gf_four (min_n);
+  gf_four (max_n);
   lab_exit:;
 }
 /* 1163 */
@@ -18118,19 +18112,12 @@ void init_gf (void)
     old_setting = selector;
     selector = new_string;
     print_char('.');
-    print_int (make_scaled (internal[hppp], 59429463L));
+    print_int (make_scaled (internal[hppp], 59429463));
     print(1056);
     gf_ext = make_string ();
     selector = old_setting;
   }
-  {
-    if (job_name == 0)
-      open_log_file ();
-    pack_job_name (gf_ext);
-    while (!bopenout (gf_file))
-      prompt_file_name (756, gf_ext);
-    output_file_name = b_make_name_string (gf_file);
-  }
+  set_output_file_name ();
   gf_out (pre);
   gf_out (gf_id_byte);
   old_setting = selector;
@@ -18156,20 +18143,20 @@ void init_gf (void)
 void ship_out (eight_bits c)
 {
   integer f;
-  integer prevm, m, mm;
-  integer prevn, n;
+  integer prev_m, m, mm;
+  integer prev_n, n;
   halfword p, q;
-  integer prevw, w, ww;
+  integer prev_w, w, ww;
   integer d;
   integer delta;
-  integer curminm;
-  integer xoff, yoff;
+  integer cur_min_m;
+  integer x_off, y_off;
 
   if (output_file_name == 0)
     init_gf ();
   f = round_unscaled (internal[char_ext]);
-  xoff = round_unscaled (internal[x_offset]);
-  yoff = round_unscaled (internal[y_offset]);
+  x_off = round_unscaled (internal[x_offset]);
+  y_off = round_unscaled (internal[y_offset]);
   if (term_offset > max_print_line - 9)
     print_ln ();
   else if ((term_offset > 0) || (file_offset > 0))
@@ -18181,38 +18168,38 @@ void ship_out (eight_bits c)
     print_char('.');
     print_int (f);
   }
-  fflush (stdout);
+  update_terminal ();
   boc_c = 256 * f + c;
   boc_p = char_ptr[c];
   char_ptr[c] = gf_prev_ptr;
   if (internal[proofing] > 0)
   {
-    if (xoff != 0)
+    if (x_off != 0)
     {
       gf_string (437, 0);
       gf_out (yyy);
-      gf_four (xoff * unity);
+      gf_four (x_off * unity);
     }
-    if (yoff != 0)
+    if (y_off != 0)
     {
       gf_string (438, 0);
       gf_out (yyy);
-      gf_four (yoff * unity);
+      gf_four (y_off * unity);
     }
   }
-  prevn = 4096;
-  p = mem[cur_edges].hh.lh;
-  n = mem[cur_edges + 1].hh.rh - 4096;
+  prev_n = 4096;
+  p = knil(cur_edges);
+  n = n_max(cur_edges) - zero_field;
   while (p != cur_edges)
   {
     if (mem[p + 1].hh.lh > 1)
       sort_edges (p);
     q = mem[p + 1].hh.rh;
     w = 0;
-    prevm = -fraction_one;
+    prev_m = -fraction_one;
     ww = 0;
-    prevw = 0;
-    m = prevm;
+    prev_w = 0;
+    m = prev_m;
     do {
       if (q == mem_top)
         mm = fraction_one;
@@ -18224,20 +18211,20 @@ void ship_out (eight_bits c)
       }
       if (mm != m)
       {
-        if (prevw <= 0)
+        if (prev_w <= 0)
         {
           if (w > 0)
           {
-            if (prevm == -fraction_one)
+            if (prev_m == -fraction_one)
             {
-              if (prevn == 4096)
+              if (prev_n == 4096)
               {
-                gf_boc (mem[cur_edges + 2].hh.lh + xoff - 4096, mem[cur_edges + 2].hh.rh + xoff - 4096, mem[cur_edges + 1].hh.lh + yoff - 4096, n + yoff);
-                curminm = mem[cur_edges + 2].hh.lh - 4096 + mem[cur_edges + 3].hh.lh;
+                gf_boc (mem[cur_edges + 2].hh.lh + x_off - 4096, mem[cur_edges + 2].hh.rh + x_off - 4096, mem[cur_edges + 1].hh.lh + y_off - 4096, n + y_off);
+                cur_min_m = mem[cur_edges + 2].hh.lh - 4096 + mem[cur_edges + 3].hh.lh;
               }
-              else if (prevn > n + 1)
+              else if (prev_n > n + 1)
               {
-                delta = prevn - n - 1;
+                delta = prev_n - n - 1;
                 if (delta < 0400)
                 {
                   gf_out (skip1);
@@ -18251,7 +18238,7 @@ void ship_out (eight_bits c)
               }
               else
               {
-                delta = m - curminm;
+                delta = m - cur_min_m;
                 if (delta > max_new_row)
                   gf_out (skip0);
                 else
@@ -18260,20 +18247,20 @@ void ship_out (eight_bits c)
                   goto done;
                 }
               }
-              gf_paint (m - curminm);
-              done: prevn = n;
+              gf_paint (m - cur_min_m);
+              done: prev_n = n;
             }
             else
-              gf_paint (m - prevm);
-            prevm = m;
-            prevw = w;
+              gf_paint (m - prev_m);
+            prev_m = m;
+            prev_w = w;
           }
         }
         else if (w <= 0)
         {
-          gf_paint (m - prevm);
-          prevm = m;
-          prevw = w;
+          gf_paint (m - prev_m);
+          prev_m = m;
+          prev_w = w;
         }
         m = mm;
       }
@@ -18282,12 +18269,12 @@ void ship_out (eight_bits c)
     } while (!(mm == fraction_one));
     if (w != 0)
       print_nl(1058);
-    if (prevm - mem[cur_edges + 3].hh.lh + xoff > gf_max_m)
-      gf_max_m = prevm - mem[cur_edges + 3].hh.lh + xoff;
+    if (prev_m - mem[cur_edges + 3].hh.lh + x_off > gf_max_m)
+      gf_max_m = prev_m - mem[cur_edges + 3].hh.lh + x_off;
     p = mem[p].hh.lh;
     decr (n);
   }
-  if (prevn == 4096)
+  if (prev_n == 4096)
   {
     gf_boc (0, 0, 0, 0);
     if (gf_max_m < 0)
@@ -18295,15 +18282,15 @@ void ship_out (eight_bits c)
     if (gf_min_n > 0)
       gf_min_n = 0;
   }
-  else if (prevn + yoff < gf_min_n)
-    gf_min_n = prevn + yoff;
+  else if (prev_n + y_off < gf_min_n)
+    gf_min_n = prev_n + y_off;
   gf_out (eoc);
   gf_prev_ptr = gf_offset + gf_ptr;
   incr (total_chars);
   print_char(']');
   fflush (stdout);
   if (internal[tracing_output] > 0)
-    print_edges (1057, true, xoff, yoff);
+    print_edges (1057, true, x_off, y_off);
 }
 /* 1006 */
 void try_eq (halfword l, halfword r)

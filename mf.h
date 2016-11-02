@@ -1136,6 +1136,15 @@ do { if (interrupt != 0) pause_for_instructions(); } while (0)
 #define progression_node_size 4 //{the number of words in a progression node}
 #define step_size(a) mem[a+2].sc //{the step size in an arithmetic progression}
 #define final_value(a) mem[a+3].sc //{the final value in an arithmetic progression}
+#define set_output_file_name()                      \
+  {                                                 \
+    if (job_name == 0)                              \
+      open_log_file();                              \
+    pack_job_name(gf_ext);                          \
+    while (!bopenout(gf_file))                      \
+      prompt_file_name(756, gf_ext);                \
+    output_file_name = b_make_name_string(gf_file); \
+  }
 /* 1037 */
 #define show_token_code 0 //{show the meaning of a single token}
 #define show_stats_code 1 //{show current memory and string usage}
@@ -1281,8 +1290,8 @@ boolean interesting(halfword p);
 halfword new_structure(halfword p);
 halfword find_variable(halfword t);
 void print_path(halfword h, str_number s, boolean nuline);
-void print_weight(halfword q, integer xoff);
-void print_edges(str_number s, boolean nuline, integer xoff, integer yoff);
+void print_weight(halfword q, integer x_off);
+void print_edges(str_number s, boolean nuline, integer x_off, integer y_off);
 void unskew(scaled x, scaled y, small_number octant);
 void print_pen(halfword p, str_number s, boolean nuline);
 void print_dependency(halfword p, small_number t);
@@ -1496,7 +1505,7 @@ void gf_two(integer x);
 void gf_three(integer x);
 void gf_paint(integer d);
 void gf_string(str_number s, str_number t);
-void gf_boc(integer minm, integer maxm, integer minn, integer maxn);
+void gf_boc(integer min_m, integer max_m, integer min_n, integer max_n);
 void init_gf(void);
 void ship_out(eight_bits c);
 void try_eq(halfword l, halfword r);
