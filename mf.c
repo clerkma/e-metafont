@@ -3491,7 +3491,7 @@ lab_restart:
   }
   overflow (/* 315 */ "main memory size", mem_max + 1);
   found: mem[r].hh.rh = 0;
-  ;
+  do_nothing();
 #ifdef STAT
   var_used = var_used + s;
 #endif /* STAT */
@@ -3500,67 +3500,59 @@ lab_restart:
   return Result;
 }
 /* 172 */
-void free_node (halfword p, halfword s)
+void free_node (pointer p, halfword s)
 {
-  halfword q;
+  pointer q;
 
-  mem[p].hh.lh = s;
-  mem[p].hh.rh = 268435455L;
-  q = mem[rover + 1].hh.lh;
-  mem[p + 1].hh.lh = q;
-  mem[p + 1].hh.rh = rover;
-  mem[rover + 1].hh.lh = p;
-  mem[q + 1].hh.rh = p;
-  ;
+  node_size(p) = s;
+  link(p) = empty_flag;
+  q = llink(rover);
+  llink(p) = q;
+  rlink(p) = rover;
+  llink(rover) = p;
+  rlink(q) = p;
 #ifdef STAT
   var_used = var_used - s;
 #endif /* STAT */
 }
 /* 177 */
-void flush_list (halfword p)
+void flush_list (pointer p)
 {
-  halfword q, r;
+  pointer q, r;
 
   if (p >= hi_mem_min)
   {
-    if (p != mem_top)
+    if (p != sentinel)
     {
       r = p;
       do {
         q = r;
-        r = mem[r].hh.rh;
-        ;
+        r = link(r);
 #ifdef STAT
         decr (dyn_used);
 #endif /* STAT */
         if (r < hi_mem_min)
           goto done;
-      } while (!(r == mem_top));
-      done: mem[q].hh.rh = avail;
+      } while (!(r == sentinel));
+    done:
+      link(q) = avail;
       avail = p;
     }
   }
 }
 /* 177 */
-void flush_node_list (halfword p)
+void flush_node_list (pointer p)
 {
-  halfword q;
+  pointer q;
 
-  while (p != 0)
+  while (p != null)
   {
     q = p;
-    p = mem[p].hh.rh;
+    p = link(p);
     if (q < hi_mem_min)
       free_node (q, 2);
     else
-    {
-      mem[q].hh.rh = avail;
-      avail = q;
-      ;
-#ifdef STAT
-      decr (dyn_used);
-#endif /* STAT */
-    }
+      free_avail (q);
   }
 }
 /* 180 */
@@ -3977,141 +3969,112 @@ void fix_date_and_time (void)
   internal[year] = internal[year] * unity;
 }
 /* 205 */
-halfword id_lookup (integer j, integer l)
+pointer id_lookup (integer j, integer l)
 {
   halfword Result;
   integer h;
-  halfword p;
-  halfword k;
+  pointer p;
+  pointer k;
   
   if (l == 1)
   {
-    p = buffer[j]+ 1;
-    hash[p].rh = p - 1;
+    p = buffer[j] + 1;
+    text(p) = p - 1;
     goto found;
   }
   h = buffer[j];
   for (k = j + 1; k <= j + l - 1; k++)
   {
     h = h + h + buffer[k];
-    while (h >= 7919)
-      h = h - 7919;
+    while (h >= hash_prime)
+      h = h - hash_prime;
   }
-  p = h + 257;
+  p = h + hash_base;
   while (true)
   {
-    if (hash[p].rh > 0)
+    if (text(p) > 0)
     {
-      if ((str_start[hash[p].rh + 1] - str_start[hash[p].rh]) == l)
+      if (length(text(p)) == l)
       {
-        if (str_eq_buf (hash[p].rh, j))
+        if (str_eq_buf (text(p), j))
           goto found;
       }
     }
-    if (hash[p].lh == 0)
+    if (next(p) == 0)
     {
-      if (hash[p].rh > 0)
+      if (text(p) > 0)
       {
         do {
-          if ((hash_used == 257))
+          if (hash_is_full)
             overflow (/* 457 */ "hash size", 9500);
           decr (hash_used);
         } while (!(hash[hash_used].rh == 0));
-        hash[p].lh = hash_used;
+        next(p) = hash_used;
         p = hash_used;
       }
-      {
-        if (pool_ptr + l > max_pool_ptr)
-        {
-          if (pool_ptr + l > pool_size)
-          overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
-          max_pool_ptr = pool_ptr + l;
-        }
-      }
+      str_room(l);
       for (k = j; k <= j + l - 1; k++)
-      {
-        str_pool[pool_ptr] = buffer[k];
-        incr (pool_ptr);
-      }
-      hash[p].rh = make_string ();
-      str_ref[hash[p].rh] = 127;
-      ;
+        append_char (buffer[k]);
+      text(p) = make_string ();
+      str_ref[hash[p].rh] = max_str_ref;
 #ifdef STAT
       incr (st_count);
 #endif /* STAT */
       goto found;
     }
-    p = hash[p].lh;
+    p = next(p);
   }
 found:
   Result = p;
   return Result;
 }
 /* 215 */
-halfword new_num_tok (scaled v)
+pointer new_num_tok (scaled v)
 {
-  halfword Result;
-  halfword p;
+  pointer Result;
+  pointer p;
 
-  p = get_node (2);
-  mem[p + 1].cint = v;
-  mem[p].hh.b0 = 16;
-  mem[p].hh.b1 = 12;
+  p = get_node(token_node_size);
+  value(p) = v;
+  type(p) = known;
+  name_type(p) = token;
   Result = p;
   return Result;
 }
 /* 216 */
-void flush_token_list (halfword p)
+void token_recycle(void);
+void flush_token_list (pointer p)
 {
-  halfword q;
+  pointer q;
 
-  while (p != 0)
+  while (p != null)
   {
     q = p;
-    p = mem[p].hh.rh;
+    p = link(p);
     if (q >= hi_mem_min)
-    {
-      mem[q].hh.rh = avail;
-      avail = q;
-      ;
-#ifdef STAT
-      decr (dyn_used);
-#endif /* STAT */
-    }
+      free_avail(q);
     else
     {
-      switch (mem[q].hh.b0)
+      switch (type(q))
       {
-        case 1:
-        case 2:
-        case 16:
-          ;
+        case vacuous:
+        case boolean_type:
+        case known:
+          do_nothing();
           break;
-        case 4:
-          {
-            if (str_ref[mem[q + 1].cint]< 127)
-            {
-              if (str_ref[mem[q + 1].cint] > 1)
-                decr (str_ref[mem[q + 1].cint]);
-              else
-                flush_string (mem[q + 1].cint);
-            }
-          }
+        case string_type:
+          delete_str_ref(value(q));
           break;
-        case 3:
-        case 5:
-        case 7:
-        case 12:
-        case 10:
-        case 6:
-        case 9:
-        case 8:
-        case 11:
-        case 14:
-        case 13:
-        case 17:
-        case 18:
-        case 19:
+        case unknown_types:
+        case pen_type:
+        case path_type:
+        case future_pen:
+        case picture_type:
+        case pair_type:
+        case transform_type:
+        case dependent:
+        case proto_dependent:
+        case independent:
           {
             g_pointer = q;
             token_recycle ();
@@ -4121,24 +4084,24 @@ void flush_token_list (halfword p)
           confusion(/* 491 */ "token");
           break;
       }
-      free_node (q, 2);
+      free_node (q, token_node_size);
     }
   }
 }
 /* 226 */
-void delete_mac_ref (halfword p)
+void delete_mac_ref (pointer p)
 {
-  if (mem[p].hh.lh == 0)
+  if (ref_count(p) == null)
     flush_token_list (p);
   else
-    decr (mem[p].hh.lh);
+    decr (ref_count(p));
 }
 /* 625 */
 void print_cmd_mod (integer c, integer m)
 {
   switch (c)
   {
-    case 18:
+    case add_to_command:
       print(462);
       break;
     case 77:
@@ -4595,67 +4558,61 @@ void show_macro (halfword p, integer q, integer l)
 lab_exit:;
 }
 /* 232 */
-void init_big_node (halfword p)
+void init_big_node (pointer p)
 {
-  halfword q;
+  pointer q;
   small_number s;
 
-  s = big_node_size[mem[p].hh.b0];
+  s = big_node_size[type(p)];
   q = get_node (s);
   do {
     s = s - 2;
-    {
-      if (serial_no > 2147483583L)
-        overflow (/* 588 */ "independent variables", serial_no / 64);
-      mem[q + s].hh.b0 = 19;
-      serial_no = serial_no + 64;
-      mem[q + s + 1].cint = serial_no;
-    }
-    mem[q + s].hh.b1 = half (s) + 5;
-    mem[q + s].hh.rh = 0;
+    new_index(q + s);
+    name_type(q + s) = half (s) + x_part_sector;
+    link(q + s) = null;
   } while (!(s == 0));
-  mem[q].hh.rh = p;
-  mem[p + 1].cint = q;
+  link(q) = p;
+  value(p) = q;
 }
 /* 233 */
-halfword id_transform (void)
+pointer id_transform (void)
 {
-  halfword Result;
-  halfword p, q, r;
+  pointer Result;
+  pointer p, q, r;
   
-  p = get_node (2);
-  mem[p].hh.b0 = 13;
-  mem[p].hh.b1 = 11;
-  mem[p + 1].cint = 0;
+  p = get_node (value_node_size);
+  type(p) = transform_type;
+  name_type(p) = capsule;
+  value(p) = null;
   init_big_node (p);
-  q = mem[p + 1].cint;
-  r = q + 12;
+  q = value(p);
+  r = q + transform_node_size;
   do {
     r = r - 2;
-    mem[r].hh.b0 = 16;
-    mem[r + 1].cint = 0;
+    type(r) = known;
+    value(r) = 0;
   } while (!(r == q));
-  mem[q + 5].cint = unity;
-  mem[q + 11].cint = unity;
+  value(xx_part_loc(q)) = unity;
+  value(yy_part_loc(q)) = unity;
   Result = p;
   return Result;
 }
 /* 234 */
-void new_root (halfword x)
+void new_root (pointer x)
 {
-  halfword p;
+  pointer p;
 
-  p = get_node (2);
-  mem[p].hh.b0 = 0;
-  mem[p].hh.b1 = 0;
-  mem[p].hh.rh = x;
-  eqtb[x].rh = p;
+  p = get_node (value_node_size);
+  type(p) = undefined;
+  name_type(p) = root;
+  link(p) = x;
+  equiv(x) = p;
 }
 /* 235 */
-void print_variable_name (halfword p)
+void print_variable_name (pointer p)
 {
-  halfword q;
-  halfword r;
+  pointer q;
+  pointer r;
 
   while (name_type(p) >= x_part_sector)
   {
@@ -4727,7 +4684,7 @@ found:
 lab_exit:;
 }
 /* 238 */
-boolean interesting (halfword p)
+boolean interesting (pointer p)
 {
   boolean Result;
   small_number t;
@@ -4747,10 +4704,10 @@ boolean interesting (halfword p)
   return Result;
 }
 /* 239 */
-halfword new_structure (halfword p)
+pointer new_structure (pointer p)
 {
-  halfword Result;
-  halfword q, r;
+  pointer Result;
+  pointer q, r;
   
   switch (name_type(p))
   {
@@ -4819,30 +4776,30 @@ halfword new_structure (halfword p)
   return Result;
 }
 /* 242 */
-halfword find_variable (halfword t)
+pointer find_variable (pointer t)
 {
-  halfword Result;
-  halfword p, q, r, s;
-  halfword pp, qq, rr, ss;
+  pointer Result;
+  pointer p, q, r, s;
+  pointer pp, qq, rr, ss;
   integer n;
-  memory_word saveword;
+  memory_word save_word;
   
-  p = mem[t].hh.lh;
-  t = mem[t].hh.rh;
-  if (eqtb[p].lh % 86 != 41)
+  p = info(t);
+  t = link(t);
+  if (eq_type(p) % outer_tag != tag_token)
   {
     Result = 0;
     goto lab_exit;
   }
-  if (eqtb[p].rh == 0)
+  if (eq_type(p) == null)
     new_root (p);
-  p = eqtb[p].rh;
+  p = equiv(p);
   pp = p;
-  while (t != 0)
+  while (t != null)
   {
-    if (mem[pp].hh.b0 != 21)
+    if (type(pp) != structured)
     {
-      if (mem[pp].hh.b0 > 21)
+      if (type(pp) > structured)
       {
         Result = 0;
         goto lab_exit;
@@ -4852,50 +4809,50 @@ halfword find_variable (halfword t)
         p = ss;
       pp = ss;
     }
-    if (mem[p].hh.b0 != 21)
+    if (type(p) != structured)
       p = new_structure (p);
     if (t < hi_mem_min)
     {
-      n = mem[t + 1].cint;
-      pp = mem[mem[pp + 1].hh.lh].hh.rh;
-      q = mem[mem[p + 1].hh.lh].hh.rh;
-      saveword = mem[q + 2];
-      mem[q + 2].cint = 2147483647L;
-      s = p + 1;
+      n = value(t);
+      pp = link(attr_head(pp));
+      q = link(attr_head(p));
+      save_word = mem[subscript_loc(q)];
+      subscript(q) = el_gordo;
+      s = subscr_head_loc(p);
       do {
         r = s;
-        s = mem[s].hh.rh;
-      } while (!(n <= mem[s + 2].cint));
-      if (n == mem[s + 2].cint)
+        s = link(s);
+      } while (!(n <= subscript(s)));
+      if (n == subscript(s))
         p = s;
       else
       {
-        p = get_node (3);
-        mem[r].hh.rh = p;
-        mem[p].hh.rh = s;
-        mem[p + 2].cint = n;
-        mem[p].hh.b1 = 3;
-        mem[p].hh.b0 = 0;
+        p = get_node (subscr_node_size);
+        link(r) = p;
+        link(p) = s;
+        subscript(p) = n;
+        name_type(p) = subscr;
+        type(p) = undefined;
       }
-      mem[q + 2] = saveword;
+      mem[subscript_loc(q)] = save_word;
     }
     else
     {
-      n = mem[t].hh.lh;
-      ss = mem[pp + 1].hh.lh;
+      n = info(t);
+      ss = attr_head(pp);
       do {
         rr = ss;
-        ss = mem[ss].hh.rh;
-      } while (!(n <= mem[ss + 2].hh.lh));
-      if (n < mem[ss + 2].hh.lh)
+        ss = link(ss);
+      } while (!(n <= attr_loc(ss)));
+      if (n < attr_loc(ss))
       {
-        qq = get_node (3);
-        mem[rr].hh.rh = qq;
-        mem[qq].hh.rh = ss;
-        mem[qq + 2].hh.lh = n;
-        mem[qq].hh.b1 = 4;
-        mem[qq].hh.b0 = 0;
-        mem[qq + 2].hh.rh = pp;
+        qq = get_node (attr_node_size);
+        link(rr) = qq;
+        link(qq) = ss;
+        attr_loc(qq) = n;
+        name_type(qq) = attr;
+        type(qq) = undefined;
+        parent(qq) = pp;
         ss = qq;
       }
       if (p == pp)
@@ -4906,110 +4863,109 @@ halfword find_variable (halfword t)
       else
       {
         pp = ss;
-        s = mem[p + 1].hh.lh;
+        s = attr_head(p);
         do {
           r = s;
-          s = mem[s].hh.rh;
-        } while (!(n <= mem[s + 2].hh.lh));
-        if (n == mem[s + 2].hh.lh)
+          s = link(s);
+        } while (!(n <= attr_loc(s)));
+        if (n == attr_loc(s))
           p = s;
         else
         {
-          q = get_node (3);
-          mem[r].hh.rh = q;
-          mem[q].hh.rh = s;
-          mem[q + 2].hh.lh = n;
-          mem[q].hh.b1 = 4;
-          mem[q].hh.b0 = 0;
-          mem[q + 2].hh.rh = p;
+          q = get_node (attr_node_size);
+          link(r) = q;
+          link(q) = s;
+          attr_loc(q) = n;
+          name_type(q) = attr;
+          type(q) = undefined;
+          parent(q) = p;
           p = q;
         }
       }
     }
-    t = mem[t].hh.rh;
+    t = link(t);
   }
-  if (mem[pp].hh.b0 >= 21)
+  if (type(pp) >= structured)
   {
-    if (mem[pp].hh.b0 == 21)
-      pp = mem[pp + 1].hh.lh;
+    if (type(pp) == structured)
+      pp = attr_head(pp);
     else
     {
-      Result = 0;
-      goto lab_exit;
+      abort_find();
     }
   }
-  if (mem[p].hh.b0 == 21)
-    p = mem[p + 1].hh.lh;
-  if (mem[p].hh.b0 == 0)
+  if (type(p) == structured)
+    p = attr_head(p);
+  if (type(p) == undefined)
   {
-    if (mem[pp].hh.b0 == 0)
+    if (type(pp) == undefined)
     {
-      mem[pp].hh.b0 = 15;
-      mem[pp + 1].cint = 0;
+      type(pp) = numeric_type;
+      value(pp) = null;
     }
-    mem[p].hh.b0 = mem[pp].hh.b0;
-    mem[p + 1].cint = 0;
+    type(p) = type(pp);
+    value(p) = null;
   }
   Result = p;
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 257 */
-void print_path (halfword h, str_number s, boolean nuline)
+void print_path (pointer h, str_number s, boolean nuline)
 {
-  halfword p, q;
+  pointer p, q;
 
-  print_diagnostic(517, s, nuline);
+  print_diagnostic("Path", s, nuline);
   print_ln ();
   p = h;
   do {
-    q = mem[p].hh.rh;
-    if ((p == 0) || (q == 0))
+    q = link(p);
+    if ((p == null) || (q == null))
     {
-      print_nl(259);
+      print_nl("???");
       goto done;
     }
-    print_two (mem[p + 1].cint, mem[p + 2].cint);
-    switch (mem[p].hh.b1)
+    print_two (x_coord(p), y_coord(p));
+    switch (right_type(p))
     {
-      case 0:
+      case endpoint:
         {
-          if (mem[p].hh.b0 == 4)
-            print(518);
-          if ((mem[q].hh.b0 != 0) || (q != h))
-            q = 0;
+          if (left_type(p) == open)
+            print("{open?}");
+          if ((left_type(q) != endpoint) || (q != h))
+            q = null;
           goto done1;
         }
         break;
-      case 1:
+      case explicit:
         {
-          print(524);
-          print_two (mem[p + 5].cint, mem[p + 6].cint);
-          print(523);
-          if (mem[q].hh.b0 != 1)
-            print(525);
+          print("..controls ");
+          print_two (right_x(p), right_y(p));
+          print(" and ");
+          if (left_type(q) != explicit)
+            print("??");
           else
-            print_two (mem[q + 3].cint, mem[q + 4].cint);
+            print_two (left_x(q), left_y(q));
           goto done1;
         }
         break;
-      case 4:
-        if ((mem[p].hh.b0 != 1) && (mem[p].hh.b0 != 4))
-          print(518);
+      case open:
+        if ((left_type(p) != explicit) && (left_type(p) != open))
+          print("{open?}");
         break;
-      case 3:
-      case 2:
+      case curl:
+      case given:
         {
-          if (mem[p].hh.b0 == 4)
-            print(525);
-          if (mem[p].hh.b1 == 3)
+          if (left_type(p) == open)
+            print("??");
+          if (right_type(p) == curl)
           {
-            print(521);
-            print_scaled(mem[p + 5].cint);
+            print("{curl ");
+            print_scaled(right_curl(p));
           }
           else
           {
-            n_sin_cos(mem[p + 5].cint);
+            n_sin_cos(right_given(p));
             print_char('{');
             print_scaled(n_cos);
             print_char(',');
@@ -5019,71 +4975,72 @@ void print_path (halfword h, str_number s, boolean nuline)
         }
         break;
       default:
-        print(259);
+        print("???");
         break;
     }
-    if (mem[q].hh.b0 <= 1)
-      print(519);
-    else if ((mem[p + 6].cint != unity) || (mem[q + 4].cint != unity))
+    if (left_type(q) <= explicit)
+      print("..control?");
+    else if ((right_tension(p) != unity) || (left_tension(q) != unity))
     {
-      print(522);
-      if (mem[p + 6].cint < 0)
-        print(464);
-      print_scaled(abs (mem[p + 6].cint));
-      if (mem[p + 6].cint != mem[q + 4].cint)
+      print("..tension ");
+      if (right_tension(p) < 0)
+        print("atleast");
+      print_scaled(abs (right_tension(p)));
+      if (right_tension(p) != left_tension(q))
       {
-        print(523);
-        if (mem[q + 4].cint < 0)
-          print(464);
-        print_scaled(abs (mem[q + 4].cint));
+        print(" and ");
+        if (left_tension(q) < 0)
+          print("atleast");
+        print_scaled(abs (left_tension(q)));
       }
     }
-    done1:;
+done1:
     p = q;
-    if ((p != h) || (mem[h].hh.b0 != 0))
+    if ((p != h) || (left_type(h) != endpoint))
     {
-      print_nl(520);
-      if (mem[p].hh.b0 == 2)
+      print_nl(" ..");
+      if (left_type(p) == given)
       {
-        n_sin_cos(mem[p + 3].cint);
+        n_sin_cos(left_given(p));
         print_char('{');
         print_scaled(n_cos);
         print_char(',');
         print_scaled(n_sin);
         print_char('}');
       }
-      else if (mem[p].hh.b0 == 3)
+      else if (left_type(p) == curl)
       {
-        print(521);
-        print_scaled(mem[p + 3].cint);
+        print("{curl ");
+        print_scaled(left_curl(p));
         print_char('}');
       }
     }
   } while (!(p == h));
-  if (mem[h].hh.b0 != 0)
-    print(385);
-  done: end_diagnostic (true);
+  if (left_type(h) != endpoint)
+    print("cycle");
+done:
+  end_diagnostic (true);
 }
 /* 333 */
-void print_weight (halfword q, integer x_off)
+void print_weight (pointer q, integer x_off)
 {
   integer w, m;
   integer d;
 
-  d = mem[q].hh.lh;
+  d = info(q);
   w = d % 8;
-  m = (d / 8) - mem[cur_edges + 3].hh.lh;
+  m = (d / 8) - m_offset(cur_edges);
   if (file_offset > max_print_line - 9)
-    print_nl(32);
+    print_nl(' ');
   else
     print_char(' ');
   print_int (m + x_off);
-  while (w > 4)
+  while (w > zero_w)
   {
     print_char('+');
     decr (w);
   }
-  while (w < 4)
+  while (w < zero_w)
   {
     print_char('-');
     incr (w);
