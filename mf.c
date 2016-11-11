@@ -7558,122 +7558,104 @@ void xy_swap_edges (void)
 /* 366 */
 void merge_edges (halfword h)
 {
-  halfword p, q, r, pp, qq, rr;
+  pointer p, q, r, pp, qq, rr;
   integer n;
   halfword k;
   integer delta;
 
-  if (mem[h].hh.rh != h)
+  if (link(h) != h)
   {
-    if ((mem[h + 2].hh.lh < mem[cur_edges + 2].hh.lh) ||
-      (mem[h + 2].hh.rh > mem[cur_edges + 2].hh.rh) ||
-      (mem[h + 1].hh.lh < mem[cur_edges + 1].hh.lh) ||
-      (mem[h + 1].hh.rh > mem[cur_edges + 1].hh.rh))
-      edge_prep (mem[h + 2].hh.lh - 4096, mem[h + 2].hh.rh - 4096, mem[h + 1].hh.lh - 4096, mem[h + 1].hh.rh - 4095);
-    if (mem[h + 3].hh.lh != mem[cur_edges + 3].hh.lh)
+    if ((m_min(h)<m_min(cur_edges)) || (m_max(h)>m_max(cur_edges)) ||
+      (n_min(h)<n_min(cur_edges)) || (n_max(h)>n_max(cur_edges)))
+      edge_prep(m_min(h) - zero_field, m_max(h) - zero_field,
+        n_min(h) - zero_field, n_max(h) - zero_field + 1);
+    if (m_offset(h) != m_offset(cur_edges))
     {
-      pp = mem[h].hh.rh;
-      delta = 8 * (mem[cur_edges + 3].hh.lh - mem[h + 3].hh.lh);
+      pp = link(h); delta = 8 * (m_offset(cur_edges) - m_offset(h));
       do {
-        qq = mem[pp + 1].hh.rh;
-        while (qq != mem_top)
+        qq = sorted(pp);
+        while (qq != sentinel)
         {
-          mem[qq].hh.lh = mem[qq].hh.lh + delta;
-          qq = mem[qq].hh.rh;
+          info(qq) = info(qq) + delta; qq = link(qq);
         }
-        qq = mem[pp + 1].hh.lh;
-        while (qq > 1)
+        qq = unsorted(pp);
+        while (qq > _void)
         {
-          mem[qq].hh.lh = mem[qq].hh.lh + delta;
-          qq = mem[qq].hh.rh;
+          info(qq) = info(qq) + delta; qq = link(qq);
         }
-        pp = mem[pp].hh.rh;
+        pp = link(pp);
       } while (!(pp == h));
     }
-    n = mem[cur_edges + 1].hh.lh;
-    p = mem[cur_edges].hh.rh;
-    pp = mem[h].hh.rh;
-    while (n < mem[h + 1].hh.lh)
+    n = n_min(cur_edges); p = link(cur_edges); pp = link(h);
+    while (n < n_min(h))
     {
-      incr (n);
-      p = mem[p].hh.rh;
+      incr(n); p = link(p);
     }
     do {
-      qq = mem[pp + 1].hh.lh;
-      if (qq > 1)
+      qq = unsorted(pp);
+      if (qq > _void)
       {
-        if (mem[p + 1].hh.lh <= 1)
-          mem[p + 1].hh.lh = qq;
+        if (unsorted(p) <= _void)
+          unsorted(p) = qq;
         else
         {
-          while (mem[qq].hh.rh > 1)
-            qq = mem[qq].hh.rh;
-          mem[qq].hh.rh = mem[p + 1].hh.lh;
-          mem[p + 1].hh.lh = mem[pp + 1].hh.lh;
+          while (link(qq) > _void)
+            qq = link(qq);
+          link(qq) = unsorted(p); unsorted(p) = unsorted(pp);
         }
       }
-      mem[pp + 1].hh.lh = 0;
-      qq = mem[pp + 1].hh.rh;
-      if (qq != mem_top)
+      unsorted(pp) = null; qq = sorted(pp);
+      if (qq != sentinel)
       {
-        if (mem[p + 1].hh.lh == 1)
-          mem[p + 1].hh.lh = 0;
-        mem[pp + 1].hh.rh = mem_top;
-        r = p + 1;
-        q = mem[r].hh.rh;
-        if (q == mem_top)
-          mem[p + 1].hh.rh = qq;
+        if (unsorted(p) == _void)
+          unsorted(p) = null;
+        sorted(pp) = sentinel; r = sorted_loc(p); q = link(r);
+        if (q == sentinel)
+          sorted(p) = qq;
         else
           while (true)
           {
-            k = mem[qq].hh.lh;
-            while (k > mem[q].hh.lh)
+            k = info(qq);
+            while (k > info(q))
             {
-              r = q;
-              q = mem[r].hh.rh;
+              r = q; q = link(r);
             }
-            mem[r].hh.rh = qq;
-            rr = mem[qq].hh.rh;
-            mem[qq].hh.rh = q;
-            if (rr == mem_top)
+            link(r) = qq; rr = link(qq); link(qq) = q;
+            if (rr == sentinel)
               goto done;
             r = qq;
             qq = rr;
           }
       }
-      done:;
-      pp = mem[pp].hh.rh;
-      p = mem[p].hh.rh;
+    done:;
+      pp = link(pp); p = link(p);
     } while (!(pp == h));
   }
 }
 /* 369 */
-integer total_weight (halfword h)
+integer total_weight (pointer h)
 {
   integer Result;
-  halfword p, q;
+  pointer p, q;
   integer n;
   unsigned short m;
 
-  n = 0;
-  p = mem[h].hh.rh;
+  n = 0; p = link(h);
   while (p != h)
   {
-    q = mem[p + 1].hh.rh;
-    while (q != mem_top)
+    q = sorted(p);
+    while (q != sentinel)
     {
-      m = mem[q].hh.lh;
-      n = n - ((m % 8) - 4) * (m / 8);
-      q = mem[q].hh.rh;
+      m = ho(info(q)); n = n - ((m % 8) - zero_w)*(m / 8);
+      q = link(q);
     }
-    q = mem[p + 1].hh.lh;
+    q = unsorted(p);
     while (q > 1)
     {
-      m = mem[q].hh.lh;
-      n = n - ((m % 8) - 4) * (m / 8);
-      q = mem[q].hh.rh;
+      m = ho(info(q)); n = n - ((m % 8) - zero_w)*(m / 8);
+      q = link(q);
     }
-    p = mem[p].hh.rh;
+    p = link(p);
   }
   Result = n;
   return Result;
@@ -7681,9 +7663,9 @@ integer total_weight (halfword h)
 /* 654 */
 void begin_edge_tracing (void)
 {
-  print_diagnostic(541, 261, true);
-  print(542);
-  print_int (cur_wt);
+  print_diagnostic("Tracing edges", "", true);
+  print(" (weight ");
+  print_int(cur_wt);
   print_char(')');
   trace_x = -4096;
 }
@@ -7693,9 +7675,9 @@ void trace_a_corner (void)
   if (file_offset > max_print_line - 13)
     print_nl(261);
   print_char('(');
-  print_int (trace_x);
+  print_int(trace_x);
   print_char(',');
-  print_int (trace_yy);
+  print_int(trace_yy);
   print_char(')');
   trace_y = trace_yy;
 }
@@ -7703,24 +7685,22 @@ void trace_a_corner (void)
 void end_edge_tracing (void)
 {
   if (trace_x == -4096)
-    print_nl(543);
+    print_nl("(No new edges added.)");
   else
   {
-    trace_a_corner ();
+    trace_a_corner();
     print_char('.');
   }
-  end_diagnostic (true);
+  end_diagnostic(true);
 }
 /* 273 */
-void trace_new_edge (halfword r, integer n)
+void trace_new_edge (pointer r, integer n)
 {
   integer d;
-  schar w;
+  int8_t w;
   integer m, n0, n1;
 
-  d = mem[r].hh.lh;
-  w = (d % 8) - 4;
-  m = (d / 8) - mem[cur_edges + 3].hh.lh;
+  d = ho(info(r)); w = (d % 8) - zero_w; m = (d / 8) - m_offset(cur_edges);
   if (w == cur_wt)
   {
     n0 = n + 1;
@@ -7735,22 +7715,22 @@ void trace_new_edge (halfword r, integer n)
   {
     if (trace_x == -4096)
     {
-      print_nl(261);
+      print_nl("");
       trace_yy = n0;
     }
     else if (trace_yy != n0)
       print_char('?');
     else
-      trace_a_corner ();
+      trace_a_corner();
     trace_x = m;
-    trace_a_corner ();
+    trace_a_corner();
   }
   else
   {
     if (n0 != trace_yy)
       print_char('!');
     if (((n0 < n1) && (trace_y > trace_yy)) || ((n0 > n1) && (trace_y < trace_yy)))
-      trace_a_corner ();
+      trace_a_corner();
   }
   trace_yy = n1;
 }
@@ -7761,16 +7741,16 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
   scaled delx, dely;
   scaled yt;
   scaled tx;
-  halfword p, r;
+  pointer p, r;
   integer base;
   integer n;
 
-  n0 = round_unscaled (y0);
-  n1 = round_unscaled (y1);
+  n0 = round_unscaled(y0);
+  n1 = round_unscaled(y1);
   if (n0 != n1)
   {
-    m0 = round_unscaled (x0);
-    m1 = round_unscaled (x1);
+    m0 = round_unscaled(x0);
+    m1 = round_unscaled(x1);
     delx = x1 - x0;
     dely = y1 - y0;
     yt = n0 * unity - half_unit;
@@ -7778,92 +7758,90 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
     y1 = y1 - yt;
     if (n0 < n1)
     {
-      base = 8 * mem[cur_edges + 3].hh.lh + 4 - cur_wt;
+      base = 8 * m_offset(cur_edges) + min_halfword + zero_w - cur_wt;
       if (m0 <= m1)
-        edge_prep (m0, m1, n0, n1);
+        edge_prep(m0, m1, n0, n1);
       else
-        edge_prep (m1, m0, n0, n1);
-      n = mem[cur_edges + 5].hh.lh - 4096;
-      p = mem[cur_edges + 5].hh.rh;
+        edge_prep(m1, m0, n0, n1);
+      n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
       if (n != n0)
       {
         if (n < n0)
+        {
           do {
-            incr (n);
-            p = mem[p].hh.rh;
+            incr(n);
+            p = link(p);
           } while (!(n == n0));
+        }
         else
+        {
           do {
-            decr (n);
-            p = mem[p].hh.lh;
+            decr(n);
+            p = knil(p);
           } while (!(n == n0));
+        }
       }
       y0 = unity - y0;
       while (true)
       {
-        r = get_avail ();
-        mem[r].hh.rh = mem[p + 1].hh.lh;
-        mem[p + 1].hh.lh = r;
-        tx = take_fraction (delx, make_fraction (y0, dely));
-        if (ab_vs_cd (delx, y0, dely, tx) < 0)
-          decr (tx);
-        mem[r].hh.lh = 8 * round_unscaled (x0 + tx) + base;
+        r = get_avail; link(r) = unsorted(p); unsorted(p) = r;
+        tx = take_fraction(delx, make_fraction(y0, dely));
+        if (ab_vs_cd(delx, y0, dely, tx) < 0)
+          decr(tx);
+        info(r) = 8 * round_unscaled(x0 + tx) + base;
         y1 = y1 - unity;
         if (internal[tracing_edges] > 0)
-          trace_new_edge (r, n);
+          trace_new_edge(r, n);
         if (y1 < unity)
           goto done;
-        p = mem[p].hh.rh;
-        y0 = y0 + unity;
-        incr (n);
+        p = link(p); y0 = y0 + unity; incr(n);
       }
       done:;
     }
     else
     {
-      base = 8 * mem[cur_edges + 3].hh.lh + 4 + cur_wt;
+      base = 8 * m_offset(cur_edges) + min_halfword + zero_w + cur_wt;
       if (m0 <= m1)
-        edge_prep (m0, m1, n1, n0);
+        edge_prep(m0, m1, n1, n0);
       else
-        edge_prep (m1, m0, n1, n0);
-      decr (n0);
+        edge_prep(m1, m0, n1, n0);
+      decr(n0);
       n = mem[cur_edges + 5].hh.lh - 4096;
       p = mem[cur_edges + 5].hh.rh;
       if (n != n0)
       {
         if (n < n0)
+        {
           do {
-            incr (n);
-            p = mem[p].hh.rh;
+            incr(n);
+            p = link(p);
           } while (!(n == n0));
+        }
         else
+        {
           do {
-            decr (n);
-            p = mem[p].hh.lh;
+            decr(n);
+            p = knil(p);
           } while (!(n == n0));
+        }
       }
       while (true)
       {
-        r = get_avail ();
-        mem[r].hh.rh = mem[p + 1].hh.lh;
-        mem[p + 1].hh.lh = r;
-        tx = take_fraction (delx, make_fraction (y0, dely));
-        if (ab_vs_cd (delx, y0, dely, tx) < 0)
-          incr (tx);
-        mem[r].hh.lh = 8 * round_unscaled (x0 - tx) + base;
+        r = get_avail; link(r) = unsorted(p); unsorted(p) = r;
+        tx = take_fraction(delx, make_fraction(y0, dely));
+        if (ab_vs_cd(delx, y0, dely, tx) < 0)
+          incr(tx);
+        info(r) = 8 * round_unscaled(x0 - tx) + base;
         y1 = y1 + unity;
         if (internal[tracing_edges] > 0)
-          trace_new_edge (r, n);
+          trace_new_edge(r, n);
         if (y1 >= 0)
           goto done1;
-        p = mem[p].hh.lh;
-        y0 = y0 + unity;
-        decr (n);
+        p = knil(p); y0 = y0 + unity; decr(n);
       }
       done1:;
     }
-    mem[cur_edges + 5].hh.rh = p;
-    mem[cur_edges + 5].hh.lh = n + 4096;
+    n_rover(cur_edges) = p; n_pos(cur_edges) = n + zero_field;
   }
 }
 /* 378 */
@@ -7871,9 +7849,9 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
 {
   integer delta;
   integer k;
-  halfword p, r;
+  pointer p, r;
   integer dx;
-  integer edgeandweight;
+  integer edge_and_weight;
   integer j;
   integer n;
 #ifdef TEXMF_DEBUG
@@ -7881,7 +7859,6 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
 #endif /* TEXMF_DEBUG */
 
   delta = n1 - n0;
-  ;
 #ifdef TEXMF_DEBUG
   sum = move[0];
   for (k = 1; k <= delta; k++)
@@ -7893,325 +7870,208 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
 #endif /* TEXMF_DEBUG */
   switch (octant)
   {
-    case 1:
+    case first_octant:
       {
-        dx = 8;
-        edge_prep (m0, m1, n0, n1);
-        goto lab60;
+        dx = 8; edge_prep(m0, m1, n0, n1); goto fast_case_up;
       }
       break;
-    case 5:
+    case second_octant:
       {
-        dx = 8;
-        edge_prep (n0, n1, m0, m1);
-        goto lab62;
+        dx = 8; edge_prep(n0, n1, m0, m1); goto slow_case_up;
       }
       break;
-    case 6:
+    case third_octant:
       {
-        dx = -8;
-        edge_prep (-n1, -n0, m0, m1);
-        n0 = -n0;
-        goto lab62;
+        dx = -8; edge_prep(-n1, -n0, m0, m1); negate(n0);
+        goto slow_case_up;
       }
       break;
-    case 2:
+    case fourth_octant:
       {
-        dx = -8;
-        edge_prep (-m1, -m0, n0, n1);
-        m0 = -m0;
-        goto lab60;
+        dx = -8; edge_prep(-m1, -m0, n0, n1); negate(m0);
+        goto fast_case_up;
       }
       break;
-    case 4:
+    case fifth_octant:
       {
-        dx = -8;
-        edge_prep (-m1, -m0, -n1, -n0);
-        m0 = -m0;
-        goto lab61;
+        dx = -8; edge_prep(-m1, -m0, -n1, -n0); negate(m0);
+        goto fast_case_down;
       }
       break;
-    case 8:
+    case sixth_octant:
       {
-        dx = -8;
-        edge_prep (-n1, -n0, -m1, -m0);
-        n0 = -n0;
-        goto lab63;
+        dx = -8; edge_prep(-n1, -n0, -m1, -m0); negate(n0);
+        goto slow_case_down;
       }
       break;
-    case 7:
+    case seventh_octant:
       {
-        dx = 8;
-        edge_prep (n0, n1, -m1, -m0);
-        goto lab63;
+        dx = 8; edge_prep(n0, n1, -m1, -m0); goto slow_case_down;
       }
       break;
-    case 3:
+    case eighth_octant:
       {
-        dx = 8;
-        edge_prep (m0, m1, -n1, -n0);
-        goto lab61;
+        dx = 8; edge_prep(m0, m1, -n1, -n0); goto fast_case_down;
       }
       break;
   }
-  lab60: n = mem[cur_edges + 5].hh.lh - 4096;
-  p = mem[cur_edges + 5].hh.rh;
+fast_case_up:
+  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
+    {
       do {
-        incr (n);
-        p = mem[p].hh.rh;
+        incr(n);
+        p = link(p);
       } while (!(n == n0));
+    }
     else
+    {
       do {
-        decr (n);
-        p = mem[p].hh.lh;
+        decr(n);
+        p = knil(p);
       } while (!(n == n0));
+    }
   }
   if (delta > 0)
   {
     k = 0;
-    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hh.lh) + 4 - cur_wt;
+    edge_and_weight = 8 * (m0 + m_offset(cur_edges)) + min_halfword + zero_w - cur_wt;
     do {
-      edgeandweight = edgeandweight + dx * move[k];
-      {
-        r = avail;
-        if (r == 0)
-          r = get_avail ();
-        else
-        {
-          avail = mem[r].hh.rh;
-          mem[r].hh.rh = 0;
-          ;
-#ifdef STAT
-          incr (dyn_used);
-#endif /* STAT */
-        }
-      }
-      mem[r].hh.rh = mem[p + 1].hh.lh;
-      mem[r].hh.lh = edgeandweight;
+      edge_and_weight = edge_and_weight + dx*move[k];
+      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
-        trace_new_edge (r, n);
-      mem[p + 1].hh.lh = r;
-      p = mem[p].hh.rh;
-      incr (k);
-      incr (n);
+        trace_new_edge(r, n);
+      unsorted(p) = r; p = link(p); incr(k); incr(n);
     } while (!(k == delta));
   }
   goto done;
-  lab61: n0 = -n0 - 1;
-  n = mem[cur_edges + 5].hh.lh - 4096;
-  p = mem[cur_edges + 5].hh.rh;
+fast_case_down:
+  n0 = -n0 - 1;
+  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
+    {
       do {
-        incr (n);
-        p = mem[p].hh.rh;
+        incr(n);
+        p = link(p);
       } while (!(n == n0));
+    }
     else
+    {
       do {
-        decr (n);
-        p = mem[p].hh.lh;
+        decr(n);
+        p = knil(p);
       } while (!(n == n0));
+    }
   }
   if (delta > 0)
   {
     k = 0;
-    edgeandweight = 8 * (m0 + mem[cur_edges + 3].hh.lh) + 4 + cur_wt;
+    edge_and_weight = 8 * (m0 + m_offset(cur_edges)) + min_halfword + zero_w + cur_wt;
     do {
-      edgeandweight = edgeandweight + dx * move[k];
-      {
-        r = avail;
-        if (r == 0)
-          r = get_avail ();
-        else
-        {
-          avail = mem[r].hh.rh;
-          mem[r].hh.rh = 0;
-          ;
-#ifdef STAT
-          incr (dyn_used);
-#endif /* STAT */
-        }
-      }
-      mem[r].hh.rh = mem[p + 1].hh.lh;
-      mem[r].hh.lh = edgeandweight;
+      edge_and_weight = edge_and_weight + dx*move[k];
+      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
-        trace_new_edge (r, n);
-      mem[p + 1].hh.lh = r;
-      p = mem[p].hh.lh;
-      incr (k);
-      decr (n);
+        trace_new_edge(r, n);
+      unsorted(p) = r; p = knil(p); incr(k); decr(n);
     } while (!(k == delta));
   }
   goto done;
-  lab62: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hh.lh) +
-  4 - cur_wt;
-  n0 = m0;
-  k = 0;
-  n = mem[cur_edges + 5].hh.lh - 4096;
-  p = mem[cur_edges + 5].hh.rh;
+slow_case_up:
+  edge_and_weight = 8 * (n0 + m_offset(cur_edges)) + min_halfword + zero_w - cur_wt;
+  n0 = m0; k = 0;
+  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
+    {
       do {
-        incr (n);
-        p = mem[p].hh.rh;
+        incr(n);
+        p = link(p);
       } while (!(n == n0));
+    }
     else
+    {
       do {
-        decr (n);
-        p = mem[p].hh.lh;
+        decr(n);
+        p = knil(p);
       } while (!(n == n0));
+    }
   }
   do {
     j = move[k];
     while (j > 0)
     {
-      {
-        r = avail;
-        if (r == 0)
-          r = get_avail ();
-        else
-        {
-          avail = mem[r].hh.rh;
-          mem[r].hh.rh = 0;
-          ;
-#ifdef STAT
-          incr (dyn_used);
-#endif /* STAT */
-        }
-      }
-      mem[r].hh.rh = mem[p + 1].hh.lh;
-      mem[r].hh.lh = edgeandweight;
+      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
-        trace_new_edge (r, n);
-      mem[p + 1].hh.lh = r;
-      p = mem[p].hh.rh;
-      decr (j);
-      incr (n);
+        trace_new_edge(r, n);
+      unsorted(p) = r; p = link(p); decr(j); incr(n);
     }
-    edgeandweight = edgeandweight + dx;
-    incr (k);
+    edge_and_weight = edge_and_weight + dx; incr(k);
   } while (!(k > delta));
   goto done;
-  lab63: edgeandweight = 8 * (n0 + mem[cur_edges + 3].hh.lh) + 4 + cur_wt;
-  n0 = -m0 - 1;
-  k = 0;
-  n = mem[cur_edges + 5].hh.lh - 4096;
-  p = mem[cur_edges + 5].hh.rh;
+slow_case_down:
+  edge_and_weight = 8 * (n0 + m_offset(cur_edges)) + min_halfword + zero_w + cur_wt;
+  n0 = -m0 - 1; k = 0;
+  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
+    {
       do {
-        incr (n);
-        p = mem[p].hh.rh;
+        incr(n);
+        p = link(p);
       } while (!(n == n0));
+    }
     else
+    {
       do {
-        decr (n);
-        p = mem[p].hh.lh;
+        decr(n);
+        p = knil(p);
       } while (!(n == n0));
+    }
   }
   do {
     j = move[k];
     while (j > 0)
     {
-      {
-        r = avail;
-        if (r == 0)
-          r = get_avail ();
-        else
-        {
-          avail = mem[r].hh.rh;
-          mem[r].hh.rh = 0;
-          ;
-#ifdef STAT
-          incr (dyn_used);
-#endif /* STAT */
-        }
-      }
-      mem[r].hh.rh = mem[p + 1].hh.lh;
-      mem[r].hh.lh = edgeandweight;
+      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
-        trace_new_edge (r, n);
-      mem[p + 1].hh.lh = r;
-      p = mem[p].hh.lh;
-      decr (j);
-      decr (n);
+        trace_new_edge(r, n);
+      unsorted(p) = r; p = knil(p); decr(j); decr(n);
     }
-    edgeandweight = edgeandweight + dx;
-    incr (k);
+    edge_and_weight = edge_and_weight + dx; incr(k);
   } while (!(k > delta));
   goto done;
-  done: mem[cur_edges + 5].hh.lh = n + 4096;
-  mem[cur_edges + 5].hh.rh = p;
+done:
+  n_pos(cur_edges) = n + zero_field; n_rover(cur_edges) = p;
 }
 /* 387 */
 void skew (scaled x, scaled y, small_number octant)
 {
   switch (octant)
   {
-    case 1:
-      {
-        cur_x = x - y;
-        cur_y = y;
-      }
-      break;
-    case 5:
-      {
-        cur_x = y - x;
-        cur_y = x;
-      }
-      break;
-    case 6:
-      {
-        cur_x = y + x;
-        cur_y = -x;
-      }
-      break;
-    case 2:
-      {
-        cur_x = -x - y;
-        cur_y = y;
-      }
-      break;
-    case 4:
-      {
-        cur_x = -x + y;
-        cur_y = -y;
-      }
-      break;
-    case 8:
-      {
-        cur_x = -y + x;
-        cur_y = -x;
-      }
-      break;
-    case 7:
-      {
-        cur_x = -y - x;
-        cur_y = x;
-      }
-      break;
-    case 3:
-      {
-        cur_x = x + y;
-        cur_y = -y;
-      }
-      break;
+    case first_octant: set_two(x - y, y); break;
+    case second_octant: set_two(y - x, x); break;
+    case third_octant: set_two(y + x, -x); break;
+    case fourth_octant: set_two(-x - y, y); break;
+    case fifth_octant: set_two(-x + y, -y); break;
+    case sixth_octant: set_two(-y + x, -x); break;
+    case seventh_octant: set_two(-y - x, x); break;
+    case eighth_octant: set_two(x + y, -y); break;
   }
 }
 /* 390 */
-void abnegate (scaled x, scaled y, small_number octantbefore, small_number octantafter)
+void abnegate (scaled x, scaled y, small_number octant_before, small_number octant_after)
 {
-  if (odd (octantbefore) == odd (octantafter))
+  if (odd(octant_before) == odd(octant_after))
     cur_x = x;
   else
     cur_x = -x;
-  if ((octantbefore > 2) == (octantafter > 2))
+  if ((octant_before > negate_y) == (octant_after > negate_y))
     cur_y = y;
   else
     cur_y = -y;
@@ -8224,64 +8084,39 @@ fraction crossing_point (integer a, integer b, integer c)
   integer x, xx, x0, x1, x2;
 
   if (a < 0)
-  {
-    Result = 0;
-    goto lab_exit;
-  }
+    zero_crossing();
   if (c >= 0)
   {
     if (b >= 0)
     {
       if (c > 0)
-      {
-        Result = 268435457L;
-        goto lab_exit;
-      }
+        no_crossing();
       else if ((a == 0) && (b == 0))
-      {
-        Result = 268435457L;
-        goto lab_exit;
-      }
+        no_crossing();
       else
-      {
-        Result = fraction_one;
-        goto lab_exit;
-      }
+        one_crossing();
     }
     if (a == 0)
-    {
-      Result = 0;
-      goto lab_exit;
-    }
+      zero_crossing();
   }
   else if (a == 0)
   {
     if (b <= 0)
-    {
-      Result = 0;
-      goto lab_exit;
-    }
+      zero_crossing();
   }
-  d = 1;
-  x0 = a;
-  x1 = a - b;
-  x2 = b - c;
+  d = 1; x0 = a; x1 = a - b; x2 = b - c;
   do {
-    x = half (x1 + x2);
+    x = half(x1 + x2);
     if (x1 - x0 > x0)
     {
-      x2 = x;
-      x0 = x0 + x0;
-      d = d + d;
+      x2 = x; _double(x0); _double(d);
     }
     else
     {
       xx = x1 + x - x0;
       if (xx > x0)
       {
-        x2 = x;
-        x0 = x0 + x0;
-        d = d + d;
+        x2 = x; _double(x0); _double(d);
       }
       else
       {
@@ -8289,10 +8124,7 @@ fraction crossing_point (integer a, integer b, integer c)
         if (x <= x0)
         {
           if (x + x2 <= x0)
-          {
-            Result = 268435457L;
-            goto lab_exit;
-          }
+            no_crossing();
         }
         x1 = x;
         d = d + d + 1;
@@ -8300,134 +8132,109 @@ fraction crossing_point (integer a, integer b, integer c)
     }
   } while (!(d >= fraction_one));
   Result = d - fraction_one;
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 394 */
 void print_spec (str_number s)
 {
-  halfword p, q;
+  pointer p, q;
   small_number octant;
 
-  print_diagnostic(544, s, true);
-  p = cur_spec;
-  octant = mem[p + 3].cint;
-  print_ln ();
-  unskew (mem[cur_spec + 1].cint, mem[cur_spec + 2].cint, octant);
-  print_two (cur_x, cur_y);
-  print(545);
+  print_diagnostic("Cycle spec", s, true);
+  p = cur_spec; octant = left_octant(p); print_ln();
+  print_two_true(x_coord(cur_spec), y_coord(cur_spec));
+  print(" % beginning in octant `");
   while (true)
   {
     print(octant_dir[octant]);
     print_char('\'');
     while (true)
     {
-      q = mem[p].hh.rh;
-      if (mem[p].hh.b1 == 0)
+      q = link(p);
+      if (right_type(p) == endpoint)
         goto not_found;
       {
-        print_nl(556);
-        unskew (mem[p + 5].cint, mem[p + 6].cint, octant);
-        print_two (cur_x, cur_y);
-        print(523);
-        unskew (mem[q + 3].cint, mem[q + 4].cint, octant);
-        print_two (cur_x, cur_y);
-        print_nl(520);
-        unskew (mem[q + 1].cint, mem[q + 2].cint, octant);
-        print_two (cur_x, cur_y);
-        print(557);
-        print_int (mem[q].hh.b0 - 1);
+        print_nl("   ..controls ");
+        print_two_true(right_x(p), right_y(p));
+        print(" and ");
+        print_two_true(left_x(q), left_y(q));
+        print_nl(" ..");
+        print_two_true(x_coord(q), y_coord(q));
+        print(" % segment "); print_int(left_type(q) - 1);
       }
       p = q;
     }
   not_found:
     if (q == cur_spec)
       goto done;
-    p = q;
-    octant = mem[p + 3].cint;
-    print_nl(546);
+    p = q; octant = left_octant(p); print_nl("% entering octant `");
   }
 done:
-  print_nl(547);
-  end_diagnostic (true);
+  print_nl(" & cycle"); end_diagnostic(true);
 }
 /* 398 */
 void print_strange (str_number s)
 {
-  halfword p;
-  halfword f;
-  halfword q;
+  pointer p;
+  pointer f;
+  pointer q;
   integer t;
 
   if (interaction == error_stop_mode)
-    ;
-  print_nl(62);
-  p = cur_spec;
-  t = 256;
+    wake_up_terminal();
+  print_nl(">");
+  p = cur_spec; t = max_quarterword + 1;
   do {
-    p = mem[p].hh.rh;
-    if (mem[p].hh.b0 != 0)
+    p = link(p);
+    if (left_type(p) != endpoint)
     {
-      if (mem[p].hh.b0 < t)
+      if (left_type(p) < t)
         f = p;
-      t = mem[p].hh.b0;
+      t = left_type(p);
     }
   } while (!(p == cur_spec));
-  p = cur_spec;
-  q = p;
+  p = cur_spec; q = p;
   do {
-    p = mem[p].hh.rh;
-    if (mem[p].hh.b0 == 0)
+    p = link(p);
+    if (left_type(p) == endpoint)
       q = p;
   } while (!(p == f));
   t = 0;
   do {
-    if (mem[p].hh.b0 != 0)
+    if (left_type(p) != endpoint)
     {
-      if (mem[p].hh.b0 != t)
+      if (left_type(p) != t)
       {
-        t = mem[p].hh.b0;
-        print_char(' ');
-        print_int (t - 1);
+        t = left_type(p); print_char(" "); print_int(t - 1);
       }
-      if (q != 0)
+      if (q != null)
       {
-        if (mem[mem[q].hh.rh].hh.b0 == 0)
+        if (left_type(link(q)) == endpoint)
         {
-          print(558);
-          print(octant_dir[mem[q + 3].cint]);
-          q = mem[q].hh.rh;
-          while (mem[mem[q].hh.rh].hh.b0 == 0)
+          print(" ("); print(octant_dir[left_octant(q)]); q = link(q);
+          while (left_type(link(q)) == endpoint)
           {
-            print_char(' ');
-            print(octant_dir[mem[q + 3].cint]);
-            q = mem[q].hh.rh;
+            print_char(" "); print(octant_dir[left_octant(q)]); q = link(q);
           }
           print_char(')');
         }
-        print_char(' ');
-        print(octant_dir[mem[q + 3].cint]);
-        q = 0;
+        print_char(" "); print(octant_dir[left_octant(q)]); q = null;
       }
     }
-    else if (q == 0)
-    q = p;
-    p = mem[p].hh.rh;
+    else if (q == null)
+      q = p;
+    p = link(p);
   } while (!(p == f));
-  print_char(' ');
-  print_int (mem[p].hh.b0 - 1);
-  if (q != 0)
+  print_char(" "); print_int(left_type(p) - 1);
+  if (q != null)
   {
-    if (mem[mem[q].hh.rh].hh.b0 == 0)
+    if (left_type(link(q)) == endpoint)
     {
-      print(558);
-      print(octant_dir[mem[q + 3].cint]);
-      q = mem[q].hh.rh;
-      while (mem[mem[q].hh.rh].hh.b0 == 0)
+      print(" ("); print(octant_dir[left_octant(q)]); q = link(q);
+      while (left_type(link(q)) == endpoint)
       {
-        print_char(' ');
-        print(octant_dir[mem[q + 3].cint]);
-        q = mem[q].hh.rh;
+        print_char(" "); print(octant_dir[left_octant(q)]); q = link(q);
       }
       print_char(')');
     }
@@ -8435,43 +8242,35 @@ void print_strange (str_number s)
   print_err(s);
 }
 /* 405 */
-void remove_cubic (halfword p)
+void remove_cubic (pointer p)
 {
-  halfword q;
+  pointer q;
 
-  q = mem[p].hh.rh;
-  mem[p].hh.b1 = mem[q].hh.b1;
-  mem[p].hh.rh = mem[q].hh.rh;
-  mem[p + 1].cint = mem[q + 1].cint;
-  mem[p + 2].cint = mem[q + 2].cint;
-  mem[p + 5].cint = mem[q + 5].cint;
-  mem[p + 6].cint = mem[q + 6].cint;
-  free_node (q, 7);
+  q = link(p); right_type(p) = right_type(q); link(p) = link(q);
+  x_coord(p) = x_coord(q); y_coord(p) = y_coord(q);
+  right_x(p) = right_x(q); right_y(p) = right_y(q);
+  free_node(q, knot_node_size);
 }
 /* 410 */
-void split_cubic (halfword p, fraction t, scaled xq, scaled yq)
+void split_cubic (pointer p, fraction t, scaled xq, scaled yq)
 {
   scaled v;
-  halfword q, r;
+  pointer q, r;
 
-  q = mem[p].hh.rh;
-  r = get_node (7);
-  mem[p].hh.rh = r;
-  mem[r].hh.rh = q;
-  mem[r].hh.b0 = mem[q].hh.b0;
-  mem[r].hh.b1 = mem[p].hh.b1;
-  v = mem[p + 5].cint - take_fraction (mem[p + 5].cint - mem[q + 3].cint, t);
-  mem[p + 5].cint = mem[p + 1].cint - take_fraction (mem[p + 1].cint - mem[p + 5].cint, t);
-  mem[q + 3].cint = mem[q + 3].cint - take_fraction (mem[q + 3].cint - xq, t);
-  mem[r + 3].cint = mem[p + 5].cint - take_fraction (mem[p + 5].cint - v, t);
-  mem[r + 5].cint = v - take_fraction (v - mem[q + 3].cint, t);
-  mem[r + 1].cint = mem[r + 3].cint - take_fraction (mem[r + 3].cint - mem[r + 5].cint, t);
-  v = mem[p + 6].cint - take_fraction (mem[p + 6].cint - mem[q + 4].cint, t);
-  mem[p + 6].cint = mem[p + 2].cint - take_fraction (mem[p + 2].cint - mem[p + 6].cint, t);
-  mem[q + 4].cint = mem[q + 4].cint - take_fraction (mem[q + 4].cint - yq, t);
-  mem[r + 4].cint = mem[p + 6].cint - take_fraction (mem[p + 6].cint - v, t);
-  mem[r + 6].cint = v - take_fraction (v - mem[q + 4].cint, t);
-  mem[r + 2].cint = mem[r + 4].cint - take_fraction (mem[r + 4].cint - mem[r + 6].cint, t);
+  q = link(p); r = get_node(knot_node_size); link(p) = r; link(r) = q;
+  left_type(r) = left_type(q); right_type(r) = right_type(p);
+  v = t_of_the_way(right_x(p), left_x(q));
+  right_x(p) = t_of_the_way(x_coord(p), right_x(p));
+  left_x(q) = t_of_the_way(left_x(q), xq);
+  left_x(r) = t_of_the_way(right_x(p), v);
+  right_x(r) = t_of_the_way(v, left_x(q));
+  x_coord(r) = t_of_the_way(left_x(r), right_x(r));
+  v = t_of_the_way(right_y(p), left_y(q));
+  right_y(p) = t_of_the_way(y_coord(p), right_y(p));
+  left_y(q) = t_of_the_way(left_y(q), yq);
+  left_y(r) = t_of_the_way(right_y(p), v);
+  right_y(r) = t_of_the_way(v, left_y(q));
+  y_coord(r) = t_of_the_way(left_y(r), right_y(r));
 }
 /* 406 */
 void quadrant_subdivide (void)

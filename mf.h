@@ -592,6 +592,8 @@ do { if (interrupt != 0) pause_for_instructions(); } while (0)
 #define seventh_octant (first_octant+switch_x_and_y+negate_y)
 #define eighth_octant (first_octant+negate_y)
 /* 153 */
+#define min_quarterword 0
+#define max_quarterword 255
 #define min_halfword 0
 #define max_halfword 65536
 /* 156 */
