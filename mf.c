@@ -5606,183 +5606,162 @@ void make_known (halfword p, halfword q)
 /* 604 */
 void fix_dependencies (void)
 {
-  halfword p, q, r, s, t;
-  halfword x;
+  pointer p, q, r, s, t;
+  pointer x;
 
-  r = mem[13].hh.rh;
-  s = 0;
-  while (r != 13)
+  r = link(dep_head);
+  s = null;
+  while (r != dep_head)
   {
     t = r;
-    r = t + 1;
+    r = value_loc(t);
     while (true)
     {
-      q = mem[r].hh.rh;
-      x = mem[q].hh.lh;
-      if (x == 0)
+      q = link(r);
+      x = info(q);
+      if (x == null)
         goto done;
-      if (mem[x].hh.b0 <= 1)
+      if (type(x) <= independent_being_fixed)
       {
-        if (mem[x].hh.b0 < 1)
+        if (type(x) < independent_being_fixed)
         {
           p = get_avail ();
-          mem[p].hh.rh = s;
+          link(p) = s;
           s = p;
-          mem[s].hh.lh = x;
-          mem[x].hh.b0 = 1;
+          info(s) = x;
+          type(x) = independent_being_fixed;
         }
-        mem[q + 1].cint = mem[q + 1].cint / 4;
-        if (mem[q + 1].cint == 0)
+        value(q) = value(q) / 4;
+        if (value(q) == 0)
         {
-          mem[r].hh.rh = mem[q].hh.rh;
-          free_node (q, 2);
+          link(r) = link(q);
+          free_node (q, dep_node_size);
           q = r;
         }
       }
       r = q;
     }
 done:;
-    r = mem[q].hh.rh;
-    if (q == mem[t + 1].hh.rh)
+    r = link(q);
+    if (q == dep_list(t))
       make_known (t, q);
   }
-  while (s != 0)
+  while (s != null)
   {
-    p = mem[s].hh.rh;
-    x = mem[s].hh.lh;
-    {
-      mem[s].hh.rh = avail;
-      avail = s;
-#ifdef STAT
-      decr (dyn_used);
-#endif /* STAT */
-    }
+    p = link(s);
+    x = info(s);
+    free_avail(s);
     s = p;
-    mem[x].hh.b0 = 19;
-    mem[x + 1].cint = mem[x + 1].cint + 2;
+    type(x) = independent;
+    value(x) = value(x) + 2;
   }
   fix_needed = false;
 }
 /* 268 */
-void toss_knot_list (halfword p)
+void toss_knot_list (pointer p)
 {
-  halfword q;
-  halfword r;
+  pointer q;
+  pointer r;
 
   q = p;
   do {
-    r = mem[q].hh.rh;
-    free_node (q, 7);
+    r = link(q);
+    free_node(q, knot_node_size);
     q = r;
   } while (!(q == p));
 }
 /* 385 */
-void toss_edges (halfword h)
+void toss_edges (pointer h)
 {
-  halfword p, q;
+  pointer p, q;
 
-  q = mem[h].hh.rh;
+  q = link(h);
   while (q != h)
   {
-    flush_list (mem[q + 1].hh.rh);
-    if (mem[q + 1].hh.lh > 1)
-      flush_list (mem[q + 1].hh.lh);
+    flush_list(sorted(q));
+    if (unsorted(q) > _void)
+      flush_list(unsorted(q));
     p = q;
-    q = mem[q].hh.rh;
-    free_node (p, 2);
+    q = link(q);
+    free_node(p, row_node_size);
   }
-  free_node (h, 6);
+  free_node(h, edge_header_size);
 }
 /* 487 */
-void toss_pen (halfword p)
+void toss_pen (pointer p)
 {
   unsigned char k;
-  halfword w, ww;
+  pointer w, ww;
 
-  if (p != 3)
+  if (p != null_pen)
   {
     for (k = 1; k <= 8; k++)
     {
-      w = mem[p + k].hh.rh;
+      w = link(p + k);
       do {
-        ww = mem[w].hh.rh;
-        free_node (w, 3);
+        ww = link(w);
+        free_node(w, coord_node_size);
         w = ww;
-      } while (!(w == mem[p + k].hh.rh));
+      } while (!(w == link(p + k)));
     }
-    free_node (p, 10);
+    free_node(p, pen_node_size);
   }
 }
 /* 620 */
-void ring_delete (halfword p)
+void ring_delete (pointer p)
 {
-  halfword q;
+  pointer q;
 
-  q = mem[p + 1].cint;
-  if (q != 0)
+  q = value(p);
+  if (q != null)
   {
     if (q != p)
     {
-      while (mem[q + 1].cint != p)
-        q = mem[q + 1].cint;
-      mem[q + 1].cint = mem[p + 1].cint;
+      while (value(q) != p)
+        q = value(q);
+      value(q) = value(p);
     }
   }
 }
 /* 809 */
-void recycle_value (halfword p)
+void recycle_value (pointer p)
 {
   small_number t;
   integer v;
   integer vv;
-  halfword q, r, s, pp;
+  pointer q, r, s, pp;
 
-  t = mem[p].hh.b0;
-  if (t < 17)
-    v = mem[p + 1].cint;
+  t = type(p);
+  if (t < dependent)
+    v = value(p);
   switch (t)
   {
-    case 0:
-    case 1:
-    case 2:
-    case 16:
-    case 15:
-      ;
+    case undefined:
+    case vacuous:
+    case boolean_type:
+    case known:
+    case numeric_type:
+      do_nothing();
       break;
-    case 3:
-    case 5:
-    case 7:
-    case 12:
-    case 10:
-      ring_delete (p);
+    case unknown_type:
+      ring_delete(p);
       break;
-    case 4:
-      {
-        if (str_ref[v]< 127)
-        {
-          if (str_ref[v] > 1)
-            decr (str_ref[v]);
-          else
-            flush_string (v);
-        }
-      }
+    case string_type:
+      delete_str_ref(v);
       break;
-    case 6:
-      if (mem[v].hh.lh == 0)
-        toss_pen (v);
-      else
-        decr (mem[v].hh.lh);
+    case pen_type:
+      delete_pen_ref(v);
       break;
-    case 9:
-    case 8:
-      toss_knot_list (v);
+    case path_type:
+    case future_pen:
+      toss_knot_list(v);
       break;
-    case 11:
-      toss_edges (v);
+    case picture_type:
+      toss_edges(v);
       break;
-    case 14:
-    case 13:
-      if (v != 0)
+    case pair_type:
+    case transform_type:
+      if (v != null)
       {
         q = v + big_node_size[t];
         do {
@@ -5792,515 +5771,489 @@ void recycle_value (halfword p)
         free_node (v, big_node_size[t]);
       }
       break;
-    case 17:
-    case 18:
+    case dependent:
+    case proto_dependent:
       {
-        q = mem[p + 1].hh.rh;
-        while (mem[q].hh.lh != 0)
-          q = mem[q].hh.rh;
-        mem[mem[p + 1].hh.lh].hh.rh = mem[q].hh.rh;
-        mem[mem[q].hh.rh + 1].hh.lh = mem[p + 1].hh.lh;
-        mem[q].hh.rh = 0;
-        flush_node_list (mem[p + 1].hh.rh);
+        q = dep_list(p);
+        while (info(q) != null)
+          q = link(q);
+        link(prev_dep(p)) = link(q);
+        prev_dep(link(q)) = prev_dep(link(p));
+        link(q) = null;
+        flush_node_list(dep_list(p));
       }
       break;
-    case 19:
+    case independent:
       {
-        max_c[17] = 0;
-        max_c[18] = 0;
-        max_link[17] = 0;
-        max_link[18] = 0;
-        q = mem[13].hh.rh;
-        while (q != 13)
+        max_c[dependent] = 0;
+        max_c[proto_dependent] = 0;
+        max_link[dependent] = 0;
+        max_link[proto_dependent] = 0;
+        q = link(dep_head);
+        while (q != dep_head)
         {
-          s = q + 1;
+          s = value(q);
           while (true)
           {
-            r = mem[s].hh.rh;
-            if (mem[r].hh.lh == 0)
+            r = link(s);
+            if (info(r) == null)
               goto done;
-            if (mem[r].hh.lh != p)
+            if (info(r) != p)
               s = r;
             else
             {
-              t = mem[q].hh.b0;
-              mem[s].hh.rh = mem[r].hh.rh;
-              mem[r].hh.lh = q;
-              if (abs (mem[r + 1].cint) > max_c[t])
+              t = type(q);
+              link(s) = link(r);
+              info(r) = q;
+              if (abs(value(r)) > max_c[t])
               {
                 if (max_c[t] > 0)
                 {
-                  mem[max_ptr[t]].hh.rh = max_link[t];
+                  link(max_ptr[t]) = max_link[t];
                   max_link[t] = max_ptr[t];
                 }
-                max_c[t] = abs (mem[r + 1].cint);
+                max_c[t] = abs(value(r));
                 max_ptr[t] = r;
               }
               else
               {
-                mem[r].hh.rh = max_link[t];
+                link(r) = max_link[t];
                 max_link[t] = r;
               }
             }
           }
-          done: q = mem[r].hh.rh;
+        done:
+          q = link(r);
         }
-        if ((max_c[17] > 0) || (max_c[18] > 0))
+        if ((max_c[dependent] > 0) || (max_c[proto_dependent] > 0))
         {
-          if ((max_c[17]/ 4096 >= max_c[18]))
-            t = 17;
+          if ((max_c[dependent] / 010000 >= max_c[proto_dependent]))
+            t = dependent;
           else
-            t = 18;
+            t = proto_dependent;
           s = max_ptr[t];
-          pp = mem[s].hh.lh;
-          v = mem[s + 1].cint;
-          if (t == 17)
-            mem[s + 1].cint = -fraction_one;
+          pp = info(s);
+          v = value(s);
+          if (t == dependent)
+            value(s) = -fraction_one;
           else
-            mem[s + 1].cint = -unity;
-          r = mem[pp + 1].hh.rh;
-          mem[s].hh.rh = r;
-          while (mem[r].hh.lh != 0) r = mem[r].hh.rh;
-          q = mem[r].hh.rh;
-          mem[r].hh.rh = 0;
-          mem[q + 1].hh.lh = mem[pp + 1].hh.lh;
-          mem[mem[pp + 1].hh.lh].hh.rh = q;
-          {
-            if (serial_no > 2147483583L)
-              overflow (/* 588 */ "independent variables", serial_no / 64);
-            mem[pp].hh.b0 = 19;
-            serial_no = serial_no + 64;
-            mem[pp + 1].cint = serial_no;
-          }
+            value(s) = -unity;
+          r = dep_list(pp);
+          link(s) = r;
+          while (info(r) != null)
+            r = link(r);
+          q = link(r);
+          link(r) = s;
+          prev_dep(q) = prev_dep(pp);
+          link(prev_dep(pp)) = q;
+          new_indep(pp);
           if (cur_exp == pp)
           {
             if (cur_type == t)
-              cur_type = 19;
+              cur_type = independent;
           }
           if (internal[tracing_online] > 0)
           {
-            if (interesting (p))
+            if (interesting(p))
             {
-              begin_diagnostic ();
-              print_nl(767);
+              begin_diagnostic();
+              print_nl("### ");
               if (v > 0)
                 print_char('-');
-              if (t == 17)
-                vv = round_fraction (max_c[17]);
+              if (t == dependent)
+                vv = round_fraction(max_c[dependent]);
               else
-                vv = max_c[18];
+                vv = max_c[proto_dependent];
               if (vv != unity)
                 print_scaled(vv);
               print_variable_name(p);
-              while (mem[p + 1].cint % 64 > 0)
+              while (value(p) % s_scale > 0)
               {
-                print(590);
-                mem[p + 1].cint = mem[p + 1].cint - 2;
+                print("*4");
+                value(p) = value(p) - 2;
               }
-              if (t == 17)
+              if (t == dependent)
                 print_char('=');
               else
-                print(768);
+                print(" = ");
               print_dependency(s, t);
-              end_diagnostic (false);
+              end_diagnostic(false);
             }
           }
-          t = 35 - t;
+          t = dependent + proto_dependent - t;
           if (max_c[t] > 0)
           {
-            mem[max_ptr[t]].hh.rh = max_link[t];
+            link(max_ptr[t]) = max_link[t];
             max_link[t] = max_ptr[t];
           }
-          if (t != 17)
+          if (t != dependent)
           {
-            for (t = 17; t <= 18; t++)
+            for (t = dependent; t <= proto_dependent; t++)
             {
               r = max_link[t];
-              while (r != 0)
+              while (r != null)
               {
-                q = mem[r].hh.lh;
-                mem[q + 1].hh.rh = p_plus_fq (mem[q + 1].hh.rh, make_fraction (mem[r + 1].cint, -v), s, t, 17);
-                if (mem[q + 1].hh.rh == dep_final)
-                  make_known (q, dep_final);
+                q = info(r);
+                dep_list(q) = p_plus_fq(dep_list(q), make_fraction(value(r), -v), s, t, dependent);
+                if (dep_list(q) == dep_final)
+                  make_known(q, dep_final);
                 q = r;
-                r = mem[r].hh.rh;
-                free_node (q, 2);
+                r = link(r);
+                free_node(q, dep_node_size);
               }
             }
           }
           else
           {
-            for (t = 17; t <= 18; t++)
+            for (t = dependent; t <= proto_dependent; t++)
             {
               r = max_link[t];
-              while (r != 0)
+              while (r != null)
               {
-                q = mem[r].hh.lh;
-                if (t == 17)
+                q = info(r);
+                if (t == dependent)
                 {
                   if (cur_exp == q)
                   {
-                    if (cur_type == 17)
-                      cur_type = 18;
+                    if (cur_type == dependent)
+                      cur_type = proto_dependent;
                   }
-                  mem[q + 1].hh.rh = p_over_v (mem[q + 1].hh.rh, unity, 17, 18);
-                  mem[q].hh.b0 = 18;
-                  mem[r + 1].cint = round_fraction (mem[r + 1].cint);
+                  dep_list(q) = p_over_v(dep_list(q), unity, dependent, proto_dependent);
+                  type(q) = proto_dependent;
+                  value(r) = round_fraction(value(r));
                 }
-                mem[q + 1].hh.rh = p_plus_fq (mem[q + 1].hh.rh, make_scaled (mem[r + 1].cint, -v), s , 18, 18);
-                if (mem[q + 1].hh.rh == dep_final)
-                  make_known (q, dep_final);
+                dep_list(r) = p_plus_fq(dep_list(q), make_scaled(value(r), -v), s, proto_dependent, proto_dependent);
+                if (dep_list(q) == dep_final)
+                  make_known(q, dep_final);
                 q = r;
-                r = mem[r].hh.rh;
-                free_node (q, 2);
+                r = link(r);
+                free_node(q, dep_node_size);
               }
             }
           }
-          flush_node_list (s);
+          flush_node_list(s);
           if (fix_needed)
-            fix_dependencies ();
+            fix_dependencies();
           check_arith ();
         }
       }
       break;
-    case 20:
-    case 21:
-      confusion(/* 766 */ "recycle");
+    case token_list:
+    case structured:
+      confusion("recycle");
       break;
-    case 22:
-    case 23:
-      delete_mac_ref (mem[p + 1].cint);
+    case unsuffixed_macro:
+    case suffixed_macro:
+      delete_mac_ref(value(p));
       break;
   }
-  mem[p].hh.b0 = 0;
+  type(p) = undefined;
 }
 /* 808 */
 void flush_cur_exp (scaled v)
 {
   switch (cur_type)
   {
-    case 3:
-    case 5:
-    case 7:
-    case 12:
-    case 10:
-    case 13:
-    case 14:
-    case 17:
-    case 18:
-    case 19:
+    case unknown_type:
+    case transform_type:
+    case pair_type:
+    case dependent:
+    case proto_dependent:
+    case independent:
       {
-        recycle_value (cur_exp);
-        free_node (cur_exp, 2);
+        recycle_value(cur_exp);
+        free_node(cur_exp, value_node_size);
       }
       break;
-    case 6:
-      if (mem[cur_exp].hh.lh == 0)
-        toss_pen (cur_exp);
-      else
-        decr (mem[cur_exp].hh.lh);
+    case pen_type:
+      delete_pen_ref(cur_exp);
       break;
-    case 4:
-      {
-        if (str_ref[cur_exp]< 127)
-        {
-          if (str_ref[cur_exp] > 1)
-            decr (str_ref[cur_exp]);
-          else
-            flush_string (cur_exp);
-        }
-      }
+    case string_type:
+      delete_str_ref(cur_exp);
       break;
-    case 8:
-    case 9:
-      toss_knot_list (cur_exp);
+    case future_pen:
+    case path_type:
+      toss_knot_list(cur_exp);
       break;
-    case 11:
-      toss_edges (cur_exp);
+    case picture_type:
+      toss_edges(cur_exp);
       break;
     default:
-      ;
+      do_nothing();
       break;
   }
-  cur_type = 16;
+  cur_type = known;
   cur_exp = v;
 }
 /* 820 */
 void flush_error (scaled v)
 {
-  error ();
-  flush_cur_exp (v);
+  error();
+  flush_cur_exp(v);
 }
 /* 820 */
 void put_get_error (void)
 {
-  back_error ();
-  get_x_next ();
+  back_error();
+  get_x_next();
 }
 /* 820 */
 void put_get_flush_error (scaled v)
 {
-  put_get_error ();
-  flush_cur_exp (v);
+  put_get_error();
+  flush_cur_exp(v);
 }
 /* 247 */
-void flush_below_variable (halfword p)
+void flush_below_variable (pointer p)
 {
-  halfword q, r;
+  pointer q, r;
 
-  if (mem[p].hh.b0 != 21)
-    recycle_value (p);
+  if (type(p) != structured)
+    recycle_value(p);
   else
   {
-    q = mem[p + 1].hh.rh;
-    while (mem[q].hh.b1 == 3)
+    q = subscr_head(p);
+    while (name_type(q) == subscr)
     {
-      flush_below_variable (q);
+      flush_below_variable(q);
       r = q;
-      q = mem[q].hh.rh;
-      free_node (r, 3);
+      q = link(q);
+      free_node(r, subscr_node_size);
     }
-    r = mem[p + 1].hh.lh;
-    q = mem[r].hh.rh;
-    recycle_value (r);
-    if (mem[p].hh.b1 <= 1)
-      free_node (r, 2);
+    r = attr_head(p);
+    q = link(r);
+    recycle_value(r);
+    if (name_type(p) <= saved_root)
+      free_node(r, value_node_size);
     else
-      free_node (r, 3);
+      free_node(r, subscr_node_size);
     do {
-      flush_below_variable (q);
+      flush_below_variable(q);
       r = q;
-      q = mem[q].hh.rh;
-      free_node (r, 3);
-    } while (!(q == 17));
-    mem[p].hh.b0 = 0;
+      q = link(q);
+      free_node(r, attr_node_size);
+    } while (!(q == end_attr));
+    type(p) = undefined;
   }
 }
 /* 246 */
-void flush_variable (halfword p, halfword t, boolean discardsuffixes)
+void flush_variable (pointer p, pointer t, boolean discard_suffixes)
 {
-  halfword q, r;
-  halfword n;
+  pointer q, r;
+  pointer n;
 
-  while (t != 0)
+  while (t != null)
   {
-    if (mem[p].hh.b0 != 21)
+    if (type(p) != structured)
       goto lab_exit;
-    n = mem[t].hh.lh;
-    t = mem[t].hh.rh;
-    if (n == 0)
+    n = info(t);
+    t = link(t);
+    if (n == collective_subscript)
     {
-      r = p + 1;
-      q = mem[r].hh.rh;
-      while (mem[q].hh.b1 == 3)
+      r = subscr_head_loc(p);
+      q = link(r);
+      while (name_type(q) == subscr)
       {
-        flush_variable (q, t, discardsuffixes);
-        if (t == 0)
+        flush_variable(q, t, discard_suffixes);
+        if (t == null)
         {
-          if (mem[q].hh.b0 == 21)
+          if (type(q) == structured)
             r = q;
           else
           {
-            mem[r].hh.rh = mem[q].hh.rh;
-            free_node (q, 3);
+            link(r) = link(q);
+            free_node(q, subscr_node_size);
           }
         }
         else
           r = q;
-        q = mem[r].hh.rh;
+        q = link(r);
       }
     }
-    p = mem[p + 1].hh.lh;
+    p = attr_head(p);
     do {
       r = p;
-      p = mem[p].hh.rh;
-    } while (!(mem[p + 2].hh.lh >= n));
-    if (mem[p + 2].hh.lh != n)
+      p = link(p);
+    } while (!(attr_loc(p) >= n));
+    if (attr_loc(p) != n)
       goto lab_exit;
   }
-  if (discardsuffixes)
-    flush_below_variable (p);
+  if (discard_suffixes)
+    flush_below_variable(p);
   else
   {
-    if (mem[p].hh.b0 == 21)
-      p = mem[p + 1].hh.lh;
-    recycle_value (p);
+    if (type(p) == structured)
+      p = attr_head(p);
+    recycle_value(p);
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 248 */
-small_number und_type (halfword p)
+small_number und_type (pointer p)
 {
   small_number Result;
-  switch (mem[p].hh.b0)
+  switch (type(p))
   {
-    case 0:
-    case 1:
-      Result = 0;
+    case undefined:
+    case vacuous:
+      Result = undefined;
       break;
-    case 2:
-    case 3:
-      Result = 3;
+    case boolean_type:
+    case unknown_boolean:
+      Result = unknown_boolean;
       break;
-    case 4:
-    case 5:
-      Result = 5;
+    case string_type:
+    case unknown_string:
+      Result = unknown_string;
       break;
-    case 6:
-    case 7:
-    case 8:
-      Result = 7;
+    case pen_type:
+    case unknown_pen:
+    case future_pen:
+      Result = unknown_pen;
       break;
-    case 9:
-    case 10:
-      Result = 10;
+    case path_type:
+    case unknown_path:
+      Result = unknown_path;
       break;
-    case 11:
-    case 12:
-      Result = 12;
+    case picture_type:
+    case unknown_picture:
+      Result = unknown_picture;
       break;
-    case 13:
-    case 14:
-    case 15:
-      Result = mem[p].hh.b0;
+    case transform_type:
+    case pair_type:
+    case numeric_type:
+      Result = type(p);
       break;
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-      Result = 15;
+    case known:
+    case dependent:
+    case proto_dependent:
+    case independent:
+      Result = numeric_type;
       break;
   }
   return Result;
 }
 /* 249 */
-void clear_symbol (halfword p, boolean saving)
+void clear_symbol (pointer p, boolean saving)
 {
-  halfword q;
+  pointer q;
 
-  q = eqtb[p].rh;
-  switch (eqtb[p].lh % 86)
+  q = equiv(p);
+  switch (eq_type(p) % outer_tag)
   {
-    case 10:
-    case 53:
-    case 44:
-    case 49:
+    case defined_macro:
+    case secondary_primary_macro:
+    case tertiary_secondary_macro:
+    case expression_tertiary_macro:
       if (!saving)
-        delete_mac_ref (q);
+        delete_mac_ref(q);
       break;
-    case 41:
-      if (q != 0)
+    case tag_token:
+      if (q != null)
       {
         if (saving)
-          mem[q].hh.b1 = 1;
+          name_type(q) = saved_root;
         else
         {
-          flush_below_variable (q);
-          free_node (q, 2);
+          flush_below_variable(q);
+          free_node(q, value_node_size);
         }
       }
       break;
     default:
-      ;
+      do_nothing();
       break;
   }
-  eqtb[p] = eqtb[9769];
+  eqtb[p] = eqtb[frozen_undefined];
 }
 /* 252 */
-void save_variable (halfword q)
+void save_variable (pointer q)
 {
-  halfword p;
+  pointer p;
 
-  if (save_ptr != 0)
+  if (save_ptr != null)
   {
-    p = get_node (2);
-    mem[p].hh.lh = q;
-    mem[p].hh.rh = save_ptr;
-    mem[p + 1].hh = eqtb[q];
+    p = get_node(save_node_size);
+    info(p) = q;
+    link(p) = save_ptr;
+    saved_equiv(p) = eqtb[q];
     save_ptr = p;
   }
-  clear_symbol (q, (save_ptr != 0));
+  clear_symbol(q, (save_ptr != null));
 }
 /* 253 */
 void save_internal (halfword q)
 {
-  halfword p;
+  pointer p;
 
-  if (save_ptr != 0)
+  if (save_ptr != null)
   {
-    p = get_node (2);
-    mem[p].hh.lh = 9769 + q;
-    mem[p].hh.rh = save_ptr;
-    mem[p + 1].cint = internal[q];
+    p = get_node(save_node_size);
+    info(p) = hash_end + q;
+    link(p) = save_ptr;
+    value(p) = internal[q];
     save_ptr = p;
   }
 }
 /* 254 */
 void unsave (void)
 {
-  halfword q;
-  halfword p;
+  pointer q;
+  pointer p;
 
-  while (mem[save_ptr].hh.lh != 0)
+  while (info(save_ptr) != 0)
   {
-    q = mem[save_ptr].hh.lh;
-    if (q > 9769)
+    q = info(save_ptr);
+    if (q > hash_end)
     {
       if (internal[tracing_restores] > 0)
       {
-        begin_diagnostic ();
-        print_nl(516);
-        slow_print(int_name[q - (9769)]);
+        begin_diagnostic();
+        print_nl("{restoring ");
+        slow_print(int_name[q - (hash_end)]);
         print_char('=');
-        print_scaled(mem[save_ptr + 1].cint);
+        print_scaled(value(save_ptr));
         print_char('}');
-        end_diagnostic (false);
+        end_diagnostic(false);
       }
-      internal[q - (9769)] = mem[save_ptr + 1].cint;
+      internal[q - (hash_end)] = value(save_ptr);
     }
     else
     {
       if (internal[tracing_restores] > 0)
       {
-        begin_diagnostic ();
-        print_nl(516);
-        slow_print(hash[q].rh);
+        begin_diagnostic();
+        print_nl("restoring");
+        slow_print(text(q));
         print_char('}');
-        end_diagnostic (false);
+        end_diagnostic(false);
       }
-      clear_symbol (q, false);
-      eqtb[q] = mem[save_ptr + 1].hh;
-      if (eqtb[q].lh % 86 == 41)
+      clear_symbol(q, false);
+      eqtb[q] = saved_equiv(save_ptr);
+      if (eq_type(q) % outer_tag == tag_token)
       {
-        p = eqtb[q].rh;
-        if (p != 0)
-        mem[p].hh.b1 = 0;
+        p = equiv(q);
+        if (p != null)
+          name_type(q) = root;
       }
     }
-    p = mem[save_ptr].hh.rh;
-    free_node (save_ptr, 2);
+    p = link(save_ptr);
+    free_node(save_ptr, save_node_size);
     save_ptr = p;
   }
-  p = mem[save_ptr].hh.rh;
-  {
-    mem[save_ptr].hh.rh = avail;
-    avail = save_ptr;
-    ;
-#ifdef STAT
-    decr (dyn_used);
-#endif /* STAT */
-  }
+  p = link(save_ptr);
+  free_avail(save_ptr);
   save_ptr = p;
 }
 /* 264 */
-halfword copy_knot (halfword p)
+pointer copy_knot (pointer p)
 {
-  halfword Result;
-  halfword q;
+  pointer Result;
+  pointer q;
   unsigned char k;
 
-  q = get_node (7);
-  for (k = 0; k <= 6; k++)
+  q = get_node(knot_node_size);
+  for (k = 0; k <= knot_node_size - 1; k++)
   {
     mem[q + k] = mem[p + k];
   }
@@ -6308,140 +6261,140 @@ halfword copy_knot (halfword p)
   return Result;
 }
 /* 265 */
-halfword copy_path (halfword p)
+pointer copy_path (pointer p)
 {
-  halfword Result;
-  halfword q, pp, qq;
+  pointer Result;
+  pointer q, pp, qq;
 
-  q = get_node (7);
+  q = get_node(knot_node_size);
   qq = q;
   pp = p;
   while (true)
   {
-    mem[qq].hh.b0 = mem[pp].hh.b0;
-    mem[qq].hh.b1 = mem[pp].hh.b1;
-    mem[qq + 1].cint = mem[pp + 1].cint;
-    mem[qq + 2].cint = mem[pp + 2].cint;
-    mem[qq + 3].cint = mem[pp + 3].cint;
-    mem[qq + 4].cint = mem[pp + 4].cint;
-    mem[qq + 5].cint = mem[pp + 5].cint;
-    mem[qq + 6].cint = mem[pp + 6].cint;
-    if (mem[pp].hh.rh == p)
+    left_type(qq) = left_type(pp);
+    right_type(qq) = right_type(pp);
+    x_coord(qq) = x_coord(pp);
+    y_coord(qq) = y_coord(pp);
+    left_x(qq) = left_x(pp);
+    left_y(qq) = left_y(pp);
+    right_x(qq) = right_x(pp);
+    right_y(qq) = right_y(pp);
+    if (link(pp) == p)
     {
-      mem[qq].hh.rh = q;
+      link(qq) = q;
       Result = q;
       goto lab_exit;
     }
-    mem[qq].hh.rh = get_node (7);
-    qq = mem[qq].hh.rh;
-    pp = mem[pp].hh.rh;
+    link(qq) = get_node(knot_node_size);
+    qq = link(qq);
+    pp = link(pp);
   }
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 266 */
-halfword htap_ypoc (halfword p)
+pointer htap_ypoc (pointer p)
 {
-  halfword Result;
-  halfword q, pp, qq, rr;
+  pointer Result;
+  pointer q, pp, qq, rr;
 
-  q = get_node (7);
+  q = get_node(knot_node_size);
   qq = q;
   pp = p;
   while (true)
   {
-    mem[qq].hh.b1 = mem[pp].hh.b0;
-    mem[qq].hh.b0 = mem[pp].hh.b1;
-    mem[qq + 1].cint = mem[pp + 1].cint;
-    mem[qq + 2].cint = mem[pp + 2].cint;
-    mem[qq + 5].cint = mem[pp + 3].cint;
-    mem[qq + 6].cint = mem[pp + 4].cint;
-    mem[qq + 3].cint = mem[pp + 5].cint;
-    mem[qq + 4].cint = mem[pp + 6].cint;
-    if (mem[pp].hh.rh == p)
+    right_type(qq) = left_type(pp);
+    left_type(qq) = right_type(pp);
+    x_coord(qq) = x_coord(pp);
+    y_coord(qq) = y_coord(pp);
+    right_x(qq) = left_x(pp);
+    right_y(qq) = left_y(pp);
+    left_x(qq) = right_x(pp);
+    left_y(qq) = right_y(pp);
+    if (link(pp) == p)
     {
-      mem[q].hh.rh = qq;
+      link(q) = qq;
       path_tail = pp;
       Result = q;
       goto lab_exit;
     }
-    rr = get_node (7);
-    mem[rr].hh.rh = qq;
+    rr = get_node(knot_node_size);
+    link(rr) = qq;
     qq = rr;
-    pp = mem[pp].hh.rh;
+    pp = link(pp);
   }
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 296 */
-fraction curl_ratio (scaled gamma, scaled atension, scaled btension)
+fraction curl_ratio (scaled gamma, scaled a_tension, scaled b_tension)
 {
   fraction Result;
   fraction alpha, beta, num, denom, ff;
 
-  alpha = make_fraction (unity, atension);
-  beta = make_fraction (unity, btension);
+  alpha = make_fraction(unity, a_tension);
+  beta = make_fraction(unity, b_tension);
   if (alpha <= beta)
   {
-    ff = make_fraction (alpha, beta);
-    ff = take_fraction (ff, ff);
-    gamma = take_fraction (gamma, ff);
-    beta = beta / 4096;
-    denom = take_fraction (gamma, alpha) + three - beta;
-    num = take_fraction (gamma, fraction_three - alpha) + beta;
+    ff = make_fraction(alpha, beta);
+    ff = take_fraction(ff, ff);
+    gamma = take_fraction(gamma, ff);
+    beta = beta / 010000;
+    denom = take_fraction(gamma, alpha) + three - beta;
+    num = take_fraction(gamma, fraction_three - alpha) + beta;
   }
   else
   {
-    ff = make_fraction (beta, alpha);
-    ff = take_fraction (ff, ff);
-    beta = take_fraction (beta, ff) / 4096;
-    denom = take_fraction (gamma, alpha) + (ff / 1365) - beta;
-    num = take_fraction (gamma, fraction_three - alpha) + beta;
+    ff = make_fraction(beta, alpha);
+    ff = take_fraction(ff, ff);
+    beta = take_fraction(beta, ff) / 010000;
+    denom = take_fraction(gamma, alpha) + (ff / 1365) - beta;
+    num = take_fraction(gamma, fraction_three - alpha) + beta;
   }
   if (num >= denom + denom + denom + denom)
     Result = fraction_four;
   else
-    Result = make_fraction (num, denom);
+    Result = make_fraction(num, denom);
   return Result;
 }
 /* 299 */
-void set_controls (halfword p, halfword q, integer k)
+void set_controls (pointer p, pointer q, integer k)
 {
   fraction rr, ss;
   scaled lt, rt;
   fraction sine;
 
-  lt = abs (mem[q + 4].cint);
-  rt = abs (mem[p + 6].cint);
-  rr = velocity (st, ct, sf, cf, rt);
-  ss = velocity (sf, cf, st, ct, lt);
-  if ((mem[p + 6].cint < 0) || (mem[q + 4].cint < 0))
+  lt = abs(left_tension(q));
+  rt = abs(right_tension(p));
+  rr = velocity(st, ct, sf, cf, rt);
+  ss = velocity(sf, cf, st, ct, lt);
+  if ((right_tension(p) < 0) || (left_tension(q) < 0))
   {
     if (((st >= 0) && (sf >= 0)) || ((st <= 0) && (sf <= 0)))
     {
-      sine = take_fraction (abs (st), cf) + take_fraction (abs (sf), ct);
+      sine = take_fraction(abs(st), cf) + take_fraction(abs(sf), ct);
       if (sine > 0)
       {
-        sine = take_fraction (sine, 268500992L);
-        if (mem[p + 6].cint < 0)
+        sine = take_fraction(sine, fraction_one + unity);
+        if (right_tension(p) < 0)
         {
-          if (ab_vs_cd (abs (sf), fraction_one, rr, sine) < 0)
-            rr = make_fraction (abs (sf), sine);
+          if (ab_vs_cd(abs(sf), fraction_one, rr, sine) < 0)
+            rr = make_fraction(abs(sf), sine);
         }
-        if (mem[q + 4].cint < 0)
+        if (left_tension(q) < 0)
         {
-          if (ab_vs_cd (abs (st), fraction_one, ss, sine) < 0)
-            ss = make_fraction (abs (st), sine);
+          if (ab_vs_cd(abs(st), fraction_one, ss, sine) < 0)
+            ss = make_fraction(abs(st), sine);
         }
       }
     }
   }
-  mem[p + 5].cint = mem[p + 1].cint + take_fraction (take_fraction (delta_x[k], ct) - take_fraction (delta_y[k], st), rr);
-  mem[p + 6].cint = mem[p + 2].cint + take_fraction (take_fraction (delta_y[k], ct) + take_fraction (delta_x[k], st), rr);
-  mem[q + 3].cint = mem[q + 1].cint - take_fraction (take_fraction (delta_x[k], cf) + take_fraction (delta_y[k], sf), ss);
-  mem[q + 4].cint = mem[q + 2].cint - take_fraction (take_fraction (delta_y[k], cf) - take_fraction (delta_x[k], sf), ss);
-  mem[p].hh.b1 = 1;
-  mem[q].hh.b0 = 1;
+  right_x(p) = x_coord(p) + take_fraction(take_fraction(delta_x[k], ct) - take_fraction(delta_y[k], st), rr);
+  right_y(p) = y_coord(p) + take_fraction(take_fraction(delta_y[k], ct) + take_fraction(delta_x[k], st), rr);
+  left_x(q) = x_coord(q) - take_fraction(take_fraction(delta_x[k], cf) + take_fraction(delta_y[k], sf), ss);
+  left_y(q) = y_coord(q) - take_fraction(take_fraction(delta_y[k], cf) - take_fraction(delta_x[k], sf), ss);
+  right_type(p) = explicit;
+  left_type(q) = explicit;
 }
 /* 284 */
 void solve_choices (halfword p, halfword q, halfword n)
