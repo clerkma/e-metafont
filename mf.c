@@ -6981,44 +6981,44 @@ void smooth_moves (integer b, integer t)
   }
 }
 /* 326 */
-void init_edges (halfword h)
+void init_edges (pointer h)
 {
-  mem[h].hh.lh = h;
-  mem[h].hh.rh = h;
-  mem[h + 1].hh.lh = 8191;
-  mem[h + 1].hh.rh = 1;
-  mem[h + 2].hh.lh = 8191;
-  mem[h + 2].hh.rh = 1;
-  mem[h + 3].hh.lh = 4096;
-  mem[h + 3].hh.rh = 0;
-  mem[h + 4].cint = 0;
-  mem[h + 5].hh.rh = h;
-  mem[h + 5].hh.lh = 0;
+  knil(h) = h;
+  link(h) = h;
+  n_min(h) = zero_field + 4095;
+  n_max(h) = zero_field - 4095;
+  m_min(h) = zero_field + 4095;
+  m_max(h) = zero_field - 4095;
+  m_offset(h) = zero_field;
+  last_window(h) = 0;
+  last_window_time(h) = 0;
+  n_rover(h) = h;
+  n_pos(h) = 0;
 }
 /* 328 */
 void fix_offset (void)
 {
-  halfword p, q;
+  pointer p, q;
   integer delta;
 
-  delta = 8 * (mem[cur_edges + 3].hh.lh - 4096);
-  mem[cur_edges + 3].hh.lh = 4096;
-  q = mem[cur_edges].hh.rh;
+  delta = 8 * (m_offset(cur_edges) - zero_field);
+  m_offset(cur_edges) = zero_field;
+  q = link(cur_edges);
   while (q != cur_edges)
   {
-    p = mem[q + 1].hh.rh;
-    while (p != mem_top)
+    p = sorted(q);
+    while (p != sentinel)
     {
-      mem[p].hh.lh = mem[p].hh.lh - delta;
-      p = mem[p].hh.rh;
+      info(p) = info(p) - delta;
+      p = link(p);
     }
-    p = mem[q + 1].hh.lh;
-    while (p > 1)
+    p = unsorted(q);
+    while (p > _void)
     {
-      mem[p].hh.lh = mem[p].hh.lh - delta;
-      p = mem[p].hh.rh;
+      info(p) = info(p) - delta;
+      p = link(p);
     }
-    q = mem[q].hh.rh;
+    q = link(q);
   }
 }
 /* 329 */
@@ -7026,362 +7026,312 @@ void edge_prep (integer ml, integer mr, integer nl, integer nr)
 {
   halfword delta;
   integer temp;
-  halfword p, q;
+  pointer p, q;
 
-  ml = ml + 4096;
-  mr = mr + 4096;
-  nl = nl + 4096;
-  nr = nr + 4095;
-  if (ml < mem[cur_edges + 2].hh.lh)
-    mem[cur_edges + 2].hh.lh = ml;
-  if (mr > mem[cur_edges + 2].hh.rh)
-    mem[cur_edges + 2].hh.rh = mr;
-  temp = mem[cur_edges + 3].hh.lh - 4096;
-  if (!(abs (mem[cur_edges + 2].hh.lh + temp - 4096) < 4096) || !(abs (mem[cur_edges + 2].hh.rh + temp - 4096) < 4096))
-    fix_offset ();
-  if (mem[cur_edges].hh.rh == cur_edges)
+  ml = ml + zero_field;
+  mr = mr + zero_field;
+  nl = nl + zero_field;
+  nr = nr + zero_field;
+  if (ml < m_min(cur_edges))
+    m_min(cur_edges) = ml;
+  if (mr > m_max(cur_edges))
+    m_max(cur_edges) = mr;
+  temp = m_offset(cur_edges) - zero_field;
+  if (!valid_range(m_min(cur_edges) + m_offset(cur_edges) - zero_field) ||
+    !valid_range(m_max(cur_edges) + m_offset(cur_edges) - zero_field))
+    fix_offset();
+  if (empty_edges(cur_edges))
   {
-    mem[cur_edges + 1].hh.lh = nr + 1;
-    mem[cur_edges + 1].hh.rh = nr;
+    n_min(cur_edges) = nr + 1;
+    n_max(cur_edges) = nr;
   }
-  if (nl < mem[cur_edges + 1].hh.lh)
+  if (nl < n_min(cur_edges))
   {
-    delta = mem[cur_edges + 1].hh.lh - nl;
-    mem[cur_edges + 1].hh.lh = nl;
-    p = mem[cur_edges].hh.rh;
+    delta = n_min(cur_edges) - nl;
+    n_min(cur_edges) = nl;
+    p = link(cur_edges);
     do {
-      q = get_node (2);
-      mem[q + 1].hh.rh = mem_top;
-      mem[q + 1].hh.lh = 1;
-      mem[p].hh.lh = q;
-      mem[q].hh.rh = p;
+      q = get_node(row_node_size);
+      sorted(q) = sentinel;
+      unsorted(q) = _void;
+      knil(p) = q;
+      link(q) = p;
       p = q;
       decr (delta);
     } while (!(delta == 0));
-    mem[p].hh.lh = cur_edges;
-    mem[cur_edges].hh.rh = p;
-    if (mem[cur_edges + 5].hh.rh == cur_edges)
-      mem[cur_edges + 5].hh.lh = nl - 1;
+    knil(p) = cur_edges;
+    link(cur_edges) = p;
+    if (n_rover(cur_edges) == cur_edges)
+      n_pos(cur_edges) = nl - 1;
   }
-  if (nr > mem[cur_edges + 1].hh.rh)
+  if (nr > n_max(cur_edges))
   {
-    delta = nr - mem[cur_edges + 1].hh.rh;
-    mem[cur_edges + 1].hh.rh = nr;
-    p = mem[cur_edges].hh.lh;
+    delta = nr - n_max(cur_edges);
+    n_max(cur_edges) = nr;
+    p = knil(cur_edges);
     do {
-      q = get_node (2);
-      mem[q + 1].hh.rh = mem_top;
-      mem[q + 1].hh.lh = 1;
-      mem[p].hh.rh = q;
-      mem[q].hh.lh = p;
+      q = get_node(row_node_size);
+      sorted(q) = sentinel;
+      unsorted(q) = _void;
+      link(p) = q;
+      knil(q) = p;
       p = q;
-      decr (delta);
+      decr(delta);
     } while (!(delta == 0));
-    mem[p].hh.rh = cur_edges;
-    mem[cur_edges].hh.lh = p;
-    if (mem[cur_edges + 5].hh.rh == cur_edges)
-      mem[cur_edges + 5].hh.lh = nr + 1;
+    link(p) = cur_edges;
+    knil(cur_edges) = p;
+    if (n_rover(cur_edges) == cur_edges)
+      n_pos(cur_edges) = nr + 1;
   }
 }
 /* 334 */
-halfword copy_edges (halfword h)
+halfword copy_edges (pointer h)
 {
-  halfword Result;
-  halfword p, r;
-  halfword hh, pp, qq, rr, ss;
+  pointer Result;
+  pointer p, r;
+  pointer hh, pp, qq, rr, ss;
 
-  hh = get_node (6);
+  hh = get_node(edge_header_size);
   mem[hh + 1] = mem[h + 1];
   mem[hh + 2] = mem[h + 2];
   mem[hh + 3] = mem[h + 3];
   mem[hh + 4] = mem[h + 4];
-  mem[hh + 5].hh.lh = mem[hh + 1].hh.rh + 1;
-  mem[hh + 5].hh.rh = hh;
-  p = mem[h].hh.rh;
+  n_pos(hh) = n_max(hh) + 1;
+  n_rover(hh) = hh;
+  p = link(h);
   qq = hh;
-
   while (p != h)
   {
-    pp = get_node (2);
-    mem[qq].hh.rh = pp;
-    mem[pp].hh.lh = qq;
-    r = mem[p + 1].hh.rh;
-    rr = pp + 1;
-    while (r != mem_top)
+    pp = get_node(row_node_size);
+    link(qq) = pp;
+    knil(pp) = qq;
+    r = sorted(p);
+    rr = sorted_loc(pp);
+    while (r != sentinel)
     {
-      ss = get_avail ();
-      mem[rr].hh.rh = ss;
+      ss = get_avail();
+      link(rr) = ss;
       rr = ss;
-      mem[rr].hh.lh = mem[r].hh.lh;
-      r = mem[r].hh.rh;
+      info(rr) = info(r);
+      r = link(r);
     }
-    mem[rr].hh.rh = mem_top;
-    r = mem[p + 1].hh.lh;
-    rr = mem_top - 1;
-    while (r > 1)
+    link(rr) = sentinel;
+    r = unsorted(p);
+    rr = temp_head;
+    while (r > _void)
     {
-      ss = get_avail ();
-      mem[rr].hh.rh = ss;
+      ss = get_avail();
+      link(rr) = ss;
       rr = ss;
-      mem[rr].hh.lh = mem[r].hh.lh;
-      r = mem[r].hh.rh;
+      info(rr) = info(r);
+      r = link(r);
     }
-    mem[rr].hh.rh = r;
-    mem[pp + 1].hh.lh = mem[mem_top - 1].hh.rh;
-    p = mem[p].hh.rh;
+    link(rr) = r;
+    unsorted(pp) = link(temp_head);
+    p = link(p);
     qq = pp;
   }
-  mem[qq].hh.rh = hh;
-  mem[hh].hh.lh = qq;
+  link(qq) = hh;
+  knil(hh) = qq;
   Result = hh;
   return Result;
 }
 /* 336 */
 void y_reflect_edges (void)
 {
-  halfword p, q, r;
+  pointer p, q, r;
 
-  p = mem[cur_edges + 1].hh.lh;
-  mem[cur_edges + 1].hh.lh = 8191 - mem[cur_edges + 1].hh.rh;
-  mem[cur_edges + 1].hh.rh = 8191 - p;
-  mem[cur_edges + 5].hh.lh = 8191 - mem[cur_edges + 5].hh.lh;
-  p = mem[cur_edges].hh.rh;
-  q = cur_edges;
+  p = n_min(cur_edges);
+  n_min(cur_edges) = zero_field + zero_field - 1 - n_max(cur_edges);
+  n_max(cur_edges) = zero_field + zero_field - 1 - p;
+  n_pos(cur_edges) = zero_field + zero_field - 1 - n_pos(cur_edges);
+  p = link(cur_edges); q = cur_edges; //{we assume that |p<>q|}
   do {
-    r = mem[p].hh.rh;
-    mem[p].hh.rh = q;
-    mem[q].hh.lh = p;
-    q = p;
-    p = r;
+    r = link(p); link(p) = q; knil(q) = p; q = p; p = r;
   } while (!(q == cur_edges));
-  mem[cur_edges + 4].cint = 0;
+  last_window_time(cur_edges) = 0;
 }
 /* 337 */
 void x_reflect_edges (void)
 {
-  halfword p, q, r, s;
+  pointer p, q, r, s;
   integer m;
 
-  p = mem[cur_edges + 2].hh.lh;
-  mem[cur_edges + 2].hh.lh = 8192 - mem[cur_edges + 2].hh.rh;
-  mem[cur_edges + 2].hh.rh = 8192 - p;
-  m = (4096 + mem[cur_edges + 3].hh.lh) * 8 + 8;
-  mem[cur_edges + 3].hh.lh = 4096;
-  p = mem[cur_edges].hh.rh;
+  p = m_min(cur_edges);
+  m_min(cur_edges) = zero_field + zero_field - m_max(cur_edges);
+  m_max(cur_edges) = zero_field + zero_field - p;
+  m = (zero_field + m_offset(cur_edges)) * 8 + zero_w + min_halfword + zero_w + min_halfword;
+  m_offset(cur_edges) = zero_field;
+  p = link(cur_edges);
   do {
-    q = mem[p + 1].hh.rh;
-    r = mem_top;
-    while (q != mem_top)
+    q = sorted(p); r = sentinel;
+    while (q != sentinel)
     {
-      s = mem[q].hh.rh;
-      mem[q].hh.rh = r;
-      r = q;
-      mem[r].hh.lh = m - mem[q].hh.lh;
-      q = s;
+      s = link(q); link(q) = r; r = q; info(r) = m - info(q); q = s;
     }
-    mem[p + 1].hh.rh = r;
-    q = mem[p + 1].hh.lh;
-    while (q > 1)
+    sorted(p) = r;
+    q = unsorted(p);
+    while (q > _void)
     {
-      mem[q].hh.lh = m - mem[q].hh.lh;
-      q = mem[q].hh.rh;
+      info(q) = m - info(q); q = link(q);
     }
-    p = mem[p].hh.rh;
+    p = link(p);
   } while (!(p == cur_edges));
-  mem[cur_edges + 4].cint = 0;
+  last_window_time(cur_edges) = 0;
 }
 /* 340 */
 void y_scale_edges (integer s)
 {
-  halfword p, q, pp, r, rr, ss;
+  pointer p, q, pp, r, rr, ss;
   integer t;
 
-  if ((s * (mem[cur_edges + 1].hh.rh - 4095) >= 4096) || (s * (mem[cur_edges + 1].hh.lh - 4096) <= -4096))
+  if ((s*(n_max(cur_edges) + 1 - zero_field) >= 4096) ||
+    (s*(n_min(cur_edges) - zero_field) <= -4096))
   {
     print_err("Scaled picture would be too big");
-    help3(/* 536 */ "I can't yscale the picture as requested---it would",
-      /* 537 */ "make some coordinates too large or too small.",
-      /* 538 */ "Proceed, and I'll omit the transformation.");
-    put_get_error ();
+    help3("I can't yscale the picture as requested---it would",
+      "make some coordinates too large or too small.",
+      "Proceed, and I'll omit the transformation.");
+    put_get_error();
   }
   else
   {
-    mem[cur_edges + 1].hh.rh = s * (mem[cur_edges + 1].hh.rh - 4095) + 4095;
-    mem[cur_edges + 1].hh.lh = s * (mem[cur_edges + 1].hh.lh - 4096) + 4096;
+    n_max(cur_edges) = s*(n_max(cur_edges) + 1 - zero_field) - 1 + zero_field;
+    n_min(cur_edges) = s*(n_min(cur_edges) - zero_field) + zero_field;
     p = cur_edges;
     do {
-      q = p;
-      p = mem[p].hh.rh;
+      q = p; p = link(p);
       for (t = 2; t <= s; t++)
       {
-        pp = get_node (2);
-        mem[q].hh.rh = pp;
-        mem[p].hh.lh = pp;
-        mem[pp].hh.rh = p;
-        mem[pp].hh.lh = q;
-        q = pp;
-        r = mem[p + 1].hh.rh;
-        rr = pp + 1;
-        while (r != mem_top)
+        pp = get_node(row_node_size); link(q) = pp; knil(p) = pp;
+        link(pp) = p; knil(pp) = q; q = pp;
+        r = sorted(p); rr = sorted_loc(pp);
+        while (r != sentinel)
         {
-          ss = get_avail ();
-          mem[rr].hh.rh = ss;
-          rr = ss;
-          mem[rr].hh.lh = mem[r].hh.lh;
-          r = mem[r].hh.rh;
+          ss = get_avail(); link(rr) = ss; rr = ss; info(rr) = info(r);
+          r = link(r);
         }
-        mem[rr].hh.rh = mem_top;
-        r = mem[p + 1].hh.lh;
-        rr = mem_top - 1;
-        while (r > 1)
+        link(rr) = sentinel;
+        r = unsorted(p); rr = temp_head;
+        while (r > _void)
         {
-          ss = get_avail ();
-          mem[rr].hh.rh = ss;
-          rr = ss;
-          mem[rr].hh.lh = mem[r].hh.lh;
-          r = mem[r].hh.rh;
+          ss = get_avail; link(rr) = ss; rr = ss; info(rr) = info(r);
+          r = link(r);
         }
-        mem[rr].hh.rh = r;
-        mem[pp + 1].hh.lh = mem[mem_top - 1].hh.rh;
+        link(rr) = r; unsorted(pp) = link(temp_head);
       }
-    } while (!(mem[p].hh.rh == cur_edges));
-    mem[cur_edges + 4].cint = 0;
+    } while (!(link(p) == cur_edges));
+    last_window_time(cur_edges) = 0;
   }
 }
 /* 342 */
 void x_scale_edges (integer s)
 {
-  halfword p, q;
+  pointer p, q;
   unsigned short t;
   unsigned char w;
   integer delta;
 
-  if ((s * (mem[cur_edges + 2].hh.rh - 4096) >= 4096) || (s * (mem[cur_edges + 2].hh.lh - 4096) <= -4096))
+  if ((s * (m_max(cur_edges) - zero_field) >= 4096) ||
+    (s * (m_min(cur_edges) - zero_field) <= -4096))
   {
     print_err("Scaled picture would be too big");
-    help3(/* 539 */ "I can't xscale the picture as requested---it would", 
-      /* 537 */ "make some coordinates too large or too small.",
-      /* 538 */ "Proceed, and I'll omit the transformation.");
-    put_get_error ();
+    help3("I can't xscale the picture as requested---it would", 
+      "make some coordinates too large or too small.",
+      "Proceed, and I'll omit the transformation.");
+    put_get_error();
   }
-  else if ((mem[cur_edges + 2].hh.rh != 4096) || (mem[cur_edges + 2].hh.lh != 4096))
+  else if ((m_max(cur_edges) != zero_field) || (m_min(cur_edges) != zero_field))
   {
-    mem[cur_edges + 2].hh.rh = s * (mem[cur_edges + 2].hh.rh - 4096) + 4096;
-    mem[cur_edges + 2].hh.lh = s * (mem[cur_edges + 2].hh.lh - 4096) + 4096;
-    delta = 8 * (4096 - s * mem[cur_edges + 3].hh.lh) + 0;
-    mem[cur_edges + 3].hh.lh = 4096;
-    q = mem[cur_edges].hh.rh;
+    m_max(cur_edges) = s*(m_max(cur_edges) - zero_field) + zero_field;
+    m_min(cur_edges) = s*(m_min(cur_edges) - zero_field) + zero_field;
+    delta = 8 * (zero_field - s*m_offset(cur_edges)) + min_halfword;
+    m_offset(cur_edges) = zero_field;
+    q = link(cur_edges);
     do {
-      p = mem[q + 1].hh.rh;
-      while (p != mem_top)
+      p = sorted(q);
+      while (p != sentinel)
       {
-        t = mem[p].hh.lh;
-        w = t % 8;
-        mem[p].hh.lh = (t - w) * s + w + delta;
-        p = mem[p].hh.rh;
+        t = ho(info(p)); w = t % 8; info(p) = (t - w) * s + w + delta; p = link(p);
       }
-      p = mem[q + 1].hh.lh;
-      while (p > 1)
+      p = unsorted(q);
+      while (p > _void)
       {
-        t = mem[p].hh.lh;
-        w = t % 8;
-        mem[p].hh.lh = (t - w) * s + w + delta;
-        p = mem[p].hh.rh;
+        t = ho(info(p)); w = t % 8; info(p) = (t - w) * s + w + delta; p = link(p);
       }
-      q = mem[q].hh.rh;
+      q = link(q);
     } while (!(q == cur_edges));
-    mem[cur_edges + 4].cint = 0;
+    last_window_time(cur_edges) = 0;
   }
 }
 /* 344 */
-void negate_edges (halfword h)
+void negate_edges (pointer h)
 {
-  halfword p, q, r, s, t, u;
+  pointer p, q, r, s, t, u;
 
-  p = mem[h].hh.rh;
+  p = link(h);
   while (p != h)
   {
-    q = mem[p + 1].hh.lh;
-    while (q > 1)
+    q = unsorted(p);
+    while (q > _void)
     {
-      mem[q].hh.lh = 8 - 2 * ((mem[q].hh.lh) % 8) + mem[q].hh.lh;
-      q = mem[q].hh.rh;
+      info(q) = 8 - 2 * ((ho(info(q))) % 8) + info(q); q = link(q);
     }
-    q = mem[p + 1].hh.rh;
-    if (q != mem_top)
+    q = sorted(p);
+    if (q != sentinel)
     {
       do {
-        mem[q].hh.lh = 8 - 2 * ((mem[q].hh.lh) % 8) + mem[q].hh.lh;
-        q = mem[q].hh.rh;
-      } while (!(q == mem_top));
-      u = p + 1;
-      q = mem[u].hh.rh;
-      r = q;
-      s = mem[r].hh.rh;
+        info(q) = 8 - 2 * ((ho(info(q))) % 8) + info(q); q = link(q);
+      } while (!(q == sentinel));
+      u = sorted_loc(p); q = link(u); r = q; s = link(r);
       while (true)
-        if (mem[s].hh.lh > mem[r].hh.lh)
+      {
+        if (info(s) > info(r))
         {
-          mem[u].hh.rh = q;
-          if (s == mem_top)
+          link(u) = q;
+          if (s == sentinel)
             goto done;
-          u = r;
-          q = s;
-          r = q;
-          s = mem[r].hh.rh;
+          u = r; q = s; r = q; s = link(r);
         }
         else
         {
-          t = s;
-          s = mem[t].hh.rh;
-          mem[t].hh.rh = q;
-          q = t;
+          t = s; s = link(t); link(t) = q; q = t;
         }
-        done: mem[r].hh.rh = mem_top;
+      }
+    done:
+      link(r) = sentinel;
     }
-    p = mem[p].hh.rh;
+    p = link(p);
   }
-  mem[h + 4].cint = 0;
+  last_window_time(h) = 0;
 }
 /* 346 */
-void sort_edges (halfword h)
+void sort_edges (pointer h)
 {
   halfword k;
-  halfword p, q, r, s;
+  pointer p, q, r, s;
 
-  r = mem[h + 1].hh.lh;
-  mem[h + 1].hh.lh = 0;
-  p = mem[r].hh.rh;
-  mem[r].hh.rh = mem_top;
-  mem[mem_top - 1].hh.rh = r;
-  while (p > 1)
+  r = unsorted(h); unsorted(h) = null;
+  p = link(r); link(r) = sentinel; link(temp_head) = r;
+  while (p > _void)
   {
-    k = mem[p].hh.lh;
-    q = mem_top - 1;
+    k = info(p); q = temp_head;
     do {
-      r = q;
-      q = mem[r].hh.rh;
-    } while (!(k <= mem[q].hh.lh));
-    mem[r].hh.rh = p;
-    r = mem[p].hh.rh;
-    mem[p].hh.rh = q;
-    p = r;
+      r = q; q = link(r);
+    } while (!(k <= info(q)));
+    link(r) = p; r = link(p); link(p) = q; p = r;
   }
   {
-    r = h + 1;
-    q = mem[r].hh.rh;
-    p = mem[mem_top - 1].hh.rh;
+    r = sorted_loc(h); q = link(r); p = link(temp_head);
     while (true)
     {
-      k = mem[p].hh.lh;
-      while (k > mem[q].hh.lh)
+      k = info(p);
+      while (k > info(q))
       {
-        r = q;
-        q = mem[r].hh.rh;
+        r = q; q = link(r);
       }
-      mem[r].hh.rh = p;
-      s = mem[p].hh.rh;
-      mem[p].hh.rh = q;
-      if (s == mem_top)
+      link(r) = p; s = link(p); link(p) = q;
+      if (s == sentinel)
         goto done;
       r = p;
       p = s;
@@ -7390,141 +7340,111 @@ void sort_edges (halfword h)
   }
 }
 /* 348 */
-void cull_edges (integer wlo, integer whi, integer wout, integer win)
+void cull_edges (integer w_lo, integer w_hi, integer w_out, integer w_in)
 {
-  halfword p, q, r, s;
+  pointer p, q, r, s;
   integer w;
   integer d;
   integer m;
   integer mm;
   integer ww;
   integer prev_w;
-  halfword n, min_n, max_n;
-  halfword mind, maxd;
+  pointer n, min_n, max_n;
+  pointer min_d, max_d;
 
-  mind = 268435455L;
-  maxd = 0;
-  min_n = 268435455L;
-  max_n = 0;
-  p = mem[cur_edges].hh.rh;
-  n = mem[cur_edges + 1].hh.lh;
+  min_d = max_halfword; max_d = min_halfword;
+  min_n = max_halfword; max_n = min_halfword;
+  p = link(cur_edges); n = n_min(cur_edges);
   while (p != cur_edges)
   {
-    if (mem[p + 1].hh.lh > 1)
-      sort_edges (p);
-    if (mem[p + 1].hh.rh != mem_top)
+    if (unsorted(p) > _void)
+      sort_edges(p);
+    if (sorted(p) != sentinel)
     {
-      r = mem_top - 1;
-      q = mem[p + 1].hh.rh;
-      ww = 0;
-      m = 1000000L;
-      prev_w = 0;
+      r = temp_head; q = sorted(p); ww = 0; m = 1000000; prev_w = 0;
       while (true)
       {
-        if (q == mem_top)
-          mm = 1000000L;
+        if (q == sentinel)
+          mm = 1000000;
         else
         {
-          d = mem[q].hh.lh;
-          mm = d / 8;
-          ww = ww + (d % 8) - 4;
+          d = ho(info(q)); mm = d / 8; ww = ww + (d % 8) - zero_w;
         }
         if (mm > m)
         {
           if (w != prev_w)
           {
-            s = get_avail ();
-            mem[r].hh.rh = s;
-            mem[s].hh.lh = 8 * m + 4 + w - prev_w;
-            r = s;
-            prev_w = w;
+            s = get_avail(); link(r) = s;
+            info(s) = 8 * m + min_halfword + zero_w + w - prev_w;
+            r = s; prev_w = w;
           }
-          if (q == mem_top)
+          if (q == sentinel)
             goto done;
         }
         m = mm;
-        if (ww >= wlo)
+        if (ww >= w_lo)
         {
-          if (ww <= whi)
-            w = win;
+          if (ww <= w_hi)
+            w = w_in;
           else
-            w = wout;
+            w = w_out;
         }
         else
-          w = wout;
-        s = mem[q].hh.rh;
-        {
-          mem[q].hh.rh = avail;
-          avail = q;
-          ;
-#ifdef STAT
-          decr (dyn_used);
-#endif /* STAT */
-        }
-        q = s;
+          w = w_out;
+        s = link(q); free_avail(q); q = s;
       }
-      done: mem[r].hh.rh = mem_top;
-      mem[p + 1].hh.rh = mem[mem_top - 1].hh.rh;
-      if (r != mem_top - 1)
+    done:
+      link(r) = sentinel; sorted(p) = link(temp_head);
+      if (r != temp_head)
       {
-        if (min_n == 268435455L)
+        if (min_n == max_halfword)
           min_n = n;
         max_n = n;
-        if (mind > mem[mem[mem_top - 1].hh.rh].hh.lh)
-          mind = mem[mem[mem_top - 1].hh.rh].hh.lh;
-        if (maxd < mem[r].hh.lh)
-          maxd = mem[r].hh.lh;
+        if (min_d > info(link(temp_head)))
+          min_d = info(link(temp_head));
+        if (max_d < info(r))
+          max_d = info(r);
       }
     }
-    p = mem[p].hh.rh;
-    incr (n);
+    p = link(p); incr(n);
   }
   if (min_n > max_n)
   {
-    p = mem[cur_edges].hh.rh;
+    p = link(cur_edges);
     while (p != cur_edges)
     {
-      q = mem[p].hh.rh;
-      free_node (p, 2);
-      p = q;
+      q = link(p); free_node(p, row_node_size); p = q;
     }
-    init_edges (cur_edges);
+    init_edges(cur_edges);
   }
   else
   {
-    n = mem[cur_edges + 1].hh.lh;
-    mem[cur_edges + 1].hh.lh = min_n;
+    n = n_min(cur_edges); n_min(cur_edges) = min_n;
     while (min_n > n)
     {
-      p = mem[cur_edges].hh.rh;
-      mem[cur_edges].hh.rh = mem[p].hh.rh;
-      mem[mem[p].hh.rh].hh.lh = cur_edges;
-      free_node (p, 2);
-      incr (n);
+      p = link(cur_edges); link(cur_edges) = link(p);
+      knil(link(p)) = cur_edges;
+      free_node(p, row_node_size); incr(n);
     }
-    n = mem[cur_edges + 1].hh.rh;
-    mem[cur_edges + 1].hh.rh = max_n;
-    mem[cur_edges + 5].hh.lh = max_n + 1;
-    mem[cur_edges + 5].hh.rh = cur_edges;
+    n = n_max(cur_edges); n_max(cur_edges) = max_n;
+    n_pos(cur_edges) = max_n + 1; n_rover(cur_edges) = cur_edges;
     while (max_n < n)
     {
-      p = mem[cur_edges].hh.lh;
-      mem[cur_edges].hh.lh = mem[p].hh.lh;
-      mem[mem[p].hh.lh].hh.rh = cur_edges;
-      free_node (p, 2);
-      decr (n);
+      p = knil(cur_edges); knil(cur_edges) = knil(p);
+      link(knil(p)) = cur_edges;
+      free_node(p, row_node_size); decr(n);
     }
-    mem[cur_edges + 2].hh.lh = ((mind) / 8) - mem[cur_edges + 3].hh.lh + 4096;
-    mem[cur_edges + 2].hh.rh = ((maxd) / 8) - mem[cur_edges + 3].hh.lh + 4096;
+    m_min(cur_edges) = ((ho(min_d)) / 8) - m_offset(cur_edges) + zero_field;
+    m_max(cur_edges) = ((ho(max_d)) / 8) - m_offset(cur_edges) + zero_field;
   }
-  mem[cur_edges + 4].cint = 0;
+  last_window_time(cur_edges) = 0;
 }
 /* 354 */
 void xy_swap_edges (void)
 {
-  integer mmagic, nmagic;
-  halfword p, q, r, s;
-  integer mspread;
+  integer m_magic, n_magic;
+  pointer p, q, r, s;
+  integer m_spread;
   integer j, jj;
   integer m, mm;
   integer pd, rd;
@@ -7536,36 +7456,26 @@ void xy_swap_edges (void)
   int8_t xw;
   integer k;
 
-  mspread = mem[cur_edges + 2].hh.rh - mem[cur_edges + 2].hh.lh;
-  if (mspread > move_size)
-    overflow (/* 540 */ "move table size", move_size);
-  for (j = 0; j <= mspread; j++)
+  m_spread = m_max(cur_edges) - m_min(cur_edges);
+  if (m_spread > move_size)
+    overflow ("move table size", move_size);
+  for (j = 0; j <= m_spread; j++)
   {
     move[j] = mem_top;
   }
-  p = get_node (2);
-  mem[p + 1].hh.rh = mem_top;
-  mem[p + 1].hh.lh = 0;
-  mem[p].hh.lh = cur_edges;
-  mem[mem[cur_edges].hh.rh].hh.lh = p;
-  p = get_node (2);
-  mem[p + 1].hh.rh = mem_top;
-  mem[p].hh.lh = mem[cur_edges].hh.lh;
-  mmagic = mem[cur_edges + 2].hh.lh + mem[cur_edges + 3].hh.lh - 4096;
-  nmagic = 8 * mem[cur_edges + 1].hh.rh + 12;
+  p = get_node(row_node_size); sorted(p) = sentinel; unsorted(p) = null;
+  knil(p) = cur_edges; knil(link(cur_edges)) = p; //{the new bottom row}
+  p = get_node(row_node_size); sorted(p) = sentinel;
+  knil(p) = knil(cur_edges); //{the new top row}
+  m_magic = m_min(cur_edges) + m_offset(cur_edges) - zero_field;
+  n_magic = 8 * n_max(cur_edges) + 8 + zero_w + min_halfword;
   do {
-    q = mem[p].hh.lh;
-    if (mem[q + 1].hh.lh > 1)
-     sort_edges (q);
-    r = mem[p + 1].hh.rh;
-    free_node (p, 2);
-    p = r;
-    pd = mem[p].hh.lh;
-    pm = pd / 8;
-    r = mem[q + 1].hh.rh;
-    rd = mem[r].hh.lh;
-    rm = rd / 8;
-    w = 0;
+    q = knil(p);
+    if (unsorted(q) > _void)
+     sort_edges(q);
+    r = sorted(p); free_node(p, row_node_size); p = r;
+    pd = ho(info(p)); pm = pd / 8;
+    r = sorted(q); rd = ho(info(r)); rm = rd / 8; w = 0;
     while (true)
     {
       if (pm < rm)
@@ -7576,9 +7486,9 @@ void xy_swap_edges (void)
       {
         if (m != mm)
         {
-          if (mm - mmagic >= move_size)
-            confusion(/* 510 */ "xy");
-          extras = (abs (w) - 1) / 3;
+          if (mm - m_magic >= move_size)
+            confusion("xy");
+          extras = (abs(w) - 1) / 3;
           if (extras > 0)
           {
             if (w > 0)
@@ -7590,87 +7500,59 @@ void xy_swap_edges (void)
           else
             ww = w;
           do {
-            j = m - mmagic;
+            j = m - m_magic;
             for (k = 1; k <= extras; k++)
             {
-              s = get_avail ();
-              mem[s].hh.lh = nmagic + xw;
-              mem[s].hh.rh = move[j];
-              move[j] = s;
+              s = get_avail; info(s) = n_magic + xw;
+              link(s) = move[j]; move[j] = s;
             }
-            s = get_avail ();
-            mem[s].hh.lh = nmagic + ww;
-            mem[s].hh.rh = move[j];
-            move[j] = s;
-            incr (m);
+            s = get_avail; info(s) = n_magic + ww;
+            link(s) = move[j]; move[j] = s;
+            incr(m);
           } while (!(m == mm));
         }
       }
       if (pd < rd)
       {
-        dw = (pd % 8) - 4;
-        s = mem[p].hh.rh;
-        {
-          mem[p].hh.rh = avail;
-          avail = p;
-          ;
-#ifdef STAT
-          decr (dyn_used);
-#endif /* STAT */
-        }
-        p = s;
-        pd = mem[p].hh.lh;
-        pm = pd / 8;
+        s = link(p); free_avail(p); p = s; pd = ho(info(p)); pm = pd / 8;
       }
       else
       {
-        if (r == mem_top)
+        if (r == sentinel)
           goto done;
-        dw = -((rd % 8) - 4);
-        r = mem[r].hh.rh;
-        rd = mem[r].hh.lh;
-        rm = rd / 8;
+        dw = -((rd % 8) - zero_w);
+        r = link(r); rd = ho(info(r)); rm = rd / 8;
       }
       m = mm;
       w = w + dw;
     }
     done:;
     p = q;
-    nmagic = nmagic - 8;
-  } while (!(mem[p].hh.lh == cur_edges));
-  free_node (p, 2);
-  move[mspread] = 0;
-  j = 0;
-  while (move[j] == mem_top)
+    n_magic = n_magic - 8;
+  } while (!(knil(p) == cur_edges));
+  free_node(p, row_node_size);
+  move[m_spread] = 0; j = 0;
+  while (move[j] == sentinel)
     incr (j);
-  if (j == mspread)
-    init_edges (cur_edges);
+  if (j == m_spread)
+    init_edges(cur_edges);
   else
   {
-    mm = mem[cur_edges + 2].hh.lh;
-    mem[cur_edges + 2].hh.lh = mem[cur_edges + 1].hh.lh;
-    mem[cur_edges + 2].hh.rh = mem[cur_edges + 1].hh.rh + 1;
-    mem[cur_edges + 3].hh.lh = 4096;
-    jj = mspread - 1;
-    while (move[jj] == mem_top)
-      decr (jj);
-    mem[cur_edges + 1].hh.lh = j + mm;
-    mem[cur_edges + 1].hh.rh = jj + mm;
-    q = cur_edges;
+    mm = m_min(cur_edges);
+    m_min(cur_edges) = n_min(cur_edges);
+    m_max(cur_edges) = n_max(cur_edges) + 1;
+    m_offset(cur_edges) = zero_field;
+    jj = m_spread - 1;
+    while (move[jj] == sentinel)
+      decr(jj);
+    n_min(cur_edges) = j + mm; n_max(cur_edges) = jj + mm; q = cur_edges;
     do {
-      p = get_node (2);
-      mem[q].hh.rh = p;
-      mem[p].hh.lh = q;
-      mem[p + 1].hh.rh = move[j];
-      mem[p + 1].hh.lh = 0;
-      incr (j);
-      q = p;
+      p = get_node(row_node_size); link(q) = p; knil(p) = q;
+      sorted(p) = move[j]; unsorted(p) = null; incr(j); q = p;
     } while (!(j > jj));
-    mem[q].hh.rh = cur_edges;
-    mem[cur_edges].hh.lh = q;
-    mem[cur_edges + 5].hh.lh = mem[cur_edges + 1].hh.rh + 1;
-    mem[cur_edges + 5].hh.rh = cur_edges;
-    mem[cur_edges + 4].cint = 0;
+    link(q) = cur_edges; knil(cur_edges) = q;
+    n_pos(cur_edges) = n_max(cur_edges) + 1; n_rover(cur_edges) = cur_edges;
+    last_window_time(cur_edges) = 0;
   }
 }
 /* 366 */
