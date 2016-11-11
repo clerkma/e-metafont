@@ -6635,43 +6635,43 @@ found:
 lab_exit:;
 }
 /* 269 */
-void make_choices (halfword knots)
+void make_choices (pointer knots)
 {
-  halfword h;
-  halfword p, q;
+  pointer h;
+  pointer p, q;
   integer k, n;
-  halfword s, t;
+  pointer s, t;
   scaled delx, dely;
   fraction sine, cosine;
 
-  check_arith ();
+  check_arith();
   if (internal[tracing_choices] > 0)
-    print_path (knots, 526, true);
+    print_path (knots, ", before choices", true);
   p = knots;
   do {
-    q = mem[p].hh.rh;
-    if (mem[p + 1].cint == mem[q + 1].cint)
+    q = link(p);
+    if (x_coord(p) == x_coord(q))
     {
-      if (mem[p + 2].cint == mem[q + 2].cint)
+      if (y_coord(p) == y_coord(q))
       {
-        if (mem[p].hh.b1 > 1)
+        if (right_type(p) > explicit)
         {
-          mem[p].hh.b1 = 1;
-          if (mem[p].hh.b0 == 4)
+          right_type(p) = explicit;
+          if (left_type(p) == open)
           {
-            mem[p].hh.b0 = 3;
-            mem[p + 3].cint = unity;
+            left_type(p) = curl;
+            left_curl(p) = unity;
           }
-          mem[q].hh.b0 = 1;
-          if (mem[q].hh.b1 == 4)
+          left_type(q) = 1;
+          if (right_type(q) == open)
           {
-            mem[q].hh.b1 = 3;
-            mem[q + 5].cint = unity;
+            right_type(q) = curl;
+            right_curl(q) = unity;
           }
-          mem[p + 5].cint = mem[p + 1].cint;
-          mem[q + 3].cint = mem[p + 1].cint;
-          mem[p + 6].cint = mem[p + 2].cint;
-          mem[q + 4].cint = mem[p + 2].cint;
+          right_x(p) = x_coord(p);
+          left_x(q) = x_coord(p);
+          right_y(p) = y_coord(p);
+          left_y(q) = y_coord(p);
         }
       }
     }
@@ -6680,99 +6680,98 @@ void make_choices (halfword knots)
   h = knots;
   while (true)
   {
-    if (mem[h].hh.b0 != 4)
+    if (left_type(h) != open)
       goto done;
-    if (mem[h].hh.b1 != 4)
+    if (right_type(h) != open)
       goto done;
-    h = mem[h].hh.rh;
+    h = link(h);
     if (h == knots)
     {
-      mem[h].hh.b0 = 5;
+      left_type(h) = end_cycle;
       goto done;
     }
   }
-  done:;
+done:;
   p = h;
   do {
-    q = mem[p].hh.rh;
-    if (mem[p].hh.b1 >= 2)
+    q = link(p);
+    if (right_type(p) >= given)
     {
-      while ((mem[q].hh.b0 == 4) && (mem[q].hh.b1 == 4))
-        q = mem[q].hh.rh;
+      while ((left_type(q) == open) && (right_type(q) == open))
+        q = link(q);
       k = 0;
       s = p;
       n = path_size;
       do {
-        t = mem[s].hh.rh;
-        delta_x[k] = mem[t + 1].cint - mem[s + 1].cint;
-        delta_y[k] = mem[t + 2].cint - mem[s + 2].cint;
-        delta[k] = pyth_add (delta_x[k], delta_y[k]);
+        t = link(s);
+        delta_x[k] = x_coord(t) - x_coord(s);
+        delta_y[k] = y_coord(t) - y_coord(s);
+        delta[k] = pyth_add(delta_x[k], delta_y[k]);
         if (k > 0)
         {
-          sine = make_fraction (delta_y[k - 1], delta[k - 1]);
-          cosine = make_fraction (delta_x[k - 1], delta[k - 1]);
-          psi[k] = n_arg (take_fraction (delta_x[k], cosine) +
-          take_fraction (delta_y[k], sine), take_fraction (delta_y[k],
-          cosine) - take_fraction (delta_x[k], sine));
+          sine = make_fraction(delta_y[k - 1], delta[k - 1]);
+          cosine = make_fraction(delta_x[k - 1], delta[k - 1]);
+          psi[k] = n_arg(take_fraction (delta_x[k], cosine) +
+            take_fraction(delta_y[k], sine), take_fraction(delta_y[k], cosine) - take_fraction (delta_x[k], sine));
         }
-        incr (k);
+        incr(k);
         s = t;
         if (k == path_size)
-          overflow (/* 531 */ "path size", path_size);
+          overflow ("path size", path_size);
         if (s == q)
           n = k;
-      } while (!((k >= n) && (mem[s].hh.b0 != 5)));
+      } while (!((k >= n) && (left_type(s) != end_cycle)));
       if (k == n)
         psi[n] = 0;
       else
         psi[k] = psi[1];
-      if (mem[q].hh.b0 == 4)
+      if (left_type(q) == open)
       {
-        delx = mem[q + 5].cint - mem[q + 1].cint;
-        dely = mem[q + 6].cint - mem[q + 2].cint;
+        delx = right_x(q) - x_coord(q);
+        dely = right_y(q) - y_coord(q);
         if ((delx == 0) && (dely == 0))
         {
-          mem[q].hh.b0 = 3;
-          mem[q + 3].cint = unity;
+          left_type(q) = curl;
+          left_curl(q) = unity;
         }
         else
         {
-          mem[q].hh.b0 = 2;
-          mem[q + 3].cint = n_arg (delx, dely);
+          left_type(q) = given;
+          left_given(q) = n_arg(delx, dely);
         }
       }
-      if ((mem[p].hh.b1 == 4) && (mem[p].hh.b0 == 1))
+      if ((right_type(p) == open) && (left_type(p) == explicit))
       {
-        delx = mem[p + 1].cint - mem[p + 3].cint;
-        dely = mem[p + 2].cint - mem[p + 4].cint;
+        delx = x_coord(p) - left_x(p);
+        dely = y_coord(p) - left_y(p);
         if ((delx == 0) && (dely == 0))
         {
-          mem[p].hh.b1 = 3;
-          mem[p + 5].cint = unity;
+          right_type(p) = curl;
+          right_curl(p) = unity;
         }
         else
         {
-          mem[p].hh.b1 = 2;
-          mem[p + 5].cint = n_arg (delx, dely);
+          right_type(p) = given;
+          right_given(p) = n_arg(delx, dely);
         }
       }
-      solve_choices (p, q, n);
+      solve_choices(p, q, n);
     }
     p = q;
   } while (!(p == h));
   if (internal[tracing_choices] > 0)
-    print_path (knots, 527, true);
+    print_path (knots, ", after choices", true);
   if (arith_error)
   {
     print_err("Some number got too big");
-    help2(/* 529 */ "The path that I just computed is out of range.",
-      /* 530 */ "So it will probably look funny. Proceed, for a laugh.");
+    help2("The path that I just computed is out of range.",
+      "So it will probably look funny. Proceed, for a laugh.");
     put_get_error ();
     arith_error = false;
   }
 }
 /* 311 */
-void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, scaled yy1, scaled yy2, scaled yy3, small_number xicorr, small_number etacorr)
+void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, scaled yy1, scaled yy2, scaled yy3, small_number xi_corr, small_number eta_corr)
 {
   integer x1, x2, x3, m, r, y1, y2, y3, n, s, l;
   integer q, t, u, x2a, x3a, y2a, y3a;
@@ -6784,42 +6783,47 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
   x1 = xx1 - xx0;
   x2 = xx2 - xx1;
   x3 = xx3 - xx2;
-  if (xx0 >= xicorr)
-    r = (xx0 - xicorr) % unity;
+  if (xx0 >= xi_corr)
+    r = (xx0 - xi_corr) % unity;
   else
-    r = 65535L - ((-xx0 + xicorr - 1) % unity);
+    r = unity - 1 - ((-xx0 + xi_corr - 1) % unity);
   m = (xx3 - xx0 + r) / unity;
   y1 = yy1 - yy0;
   y2 = yy2 - yy1;
   y3 = yy3 - yy2;
-  if (yy0 >= etacorr)
-    s = (yy0 - etacorr) % unity;
+  if (yy0 >= eta_corr)
+    s = (yy0 - eta_corr) % unity;
   else
-    s = 65535L - ((-yy0 + etacorr - 1) % unity);
+    s = unity - 1 - ((-yy0 + eta_corr - 1) % unity);
   n = (yy3 - yy0 + s) / unity;
   if ((xx3 - xx0 >= fraction_one) || (yy3 - yy0 >= fraction_one))
   {
-    x1 = half (x1 + xicorr);
-    x2 = half (x2 + xicorr);
-    x3 = half (x3 + xicorr);
-    r = half (r + xicorr);
-    y1 = half (y1 + etacorr);
-    y2 = half (y2 + etacorr);
-    y3 = half (y3 + etacorr);
-    s = half (s + etacorr);
+    x1 = half(x1 + xi_corr);
+    x2 = half(x2 + xi_corr);
+    x3 = half(x3 + xi_corr);
+    r = half(r + xi_corr);
+    y1 = half(y1 + eta_corr);
+    y2 = half(y2 + eta_corr);
+    y3 = half(y3 + eta_corr);
+    s = half(s + eta_corr);
     l = 15;
   }
   while (true)
   {
-    lab_continue: if (m == 0)
-    while (n > 0)
+  lab_continue:
+    if (m == 0)
     {
-      incr (move_ptr);
-      move[move_ptr] = 1;
-      decr (n);
+      while (n > 0)
+      {
+        incr(move_ptr);
+        move[move_ptr] = 1;
+        decr(n);
+      }
     }
     else if (n == 0)
-      move[move_ptr] = move[move_ptr]+ m;
+    {
+      move[move_ptr] = move[move_ptr] + m;
+    }
     else if (m + n == 2)
     {
       r = two_to_the[l] - r;
@@ -6827,17 +6831,17 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
       while (l < 30)
       {
         x3a = x3;
-        x2a = half (x2 + x3 + xicorr);
-        x2 = half (x1 + x2 + xicorr);
-        x3 = half (x2 + x2a + xicorr);
+        x2a = half(x2 + x3 + xi_corr);
+        x2 = half(x1 + x2 + xi_corr);
+        x3 = half(x2 + x2a + xi_corr);
         t = x1 + x2 + x3;
-        r = r + r - xicorr;
+        r = r + r - xi_corr;
         y3a = y3;
-        y2a = half (y2 + y3 + etacorr);
-        y2 = half (y1 + y2 + etacorr);
-        y3 = half (y2 + y2a + etacorr);
+        y2a = half(y2 + y3 + eta_corr);
+        y2 = half(y1 + y2 + eta_corr);
+        y3 = half(y2 + y2a + eta_corr);
         u = y1 + y2 + y3;
-        s = s + s - etacorr;
+        s = s + s - eta_corr;
         if (t < r)
         {
           if (u < s)
@@ -6854,7 +6858,7 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
           else
           {
             {
-              incr (move_ptr);
+              incr(move_ptr);
               move[move_ptr] = 2;
             }
             goto done;
@@ -6863,20 +6867,20 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
         else if (u < s)
         {
           {
-            incr (move[move_ptr]);
-            incr (move_ptr);
+            incr(move[move_ptr]);
+            incr(move_ptr);
             move[move_ptr] = 1;
           }
           goto done;
         }
-        incr (l);
+        incr(l);
       }
-      r = r - xicorr;
-      s = s - etacorr;
-      if (ab_vs_cd (x1 + x2 + x3, s, y1 + y2 + y3, r) - xicorr >= 0)
+      r = r - xi_corr;
+      s = s - eta_corr;
+      if (ab_vs_cd(x1 + x2 + x3, s, y1 + y2 + y3, r) - xi_corr >= 0)
       {
-        incr (move[move_ptr]);
-        incr (move_ptr);
+        incr(move[move_ptr]);
+        incr(move_ptr);
         move[move_ptr] = 1;
       }
       else
@@ -6888,51 +6892,51 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
     }
     else
     {
-      incr (l);
-      bisect_stack[bisect_ptr + 10] = l;
-      bisect_stack[bisect_ptr + 2] = x3;
-      bisect_stack[bisect_ptr + 1] = half (x2 + x3 + xicorr);
-      x2 = half (x1 + x2 + xicorr);
-      x3 = half (x2 + bisect_stack[bisect_ptr + 1]+ xicorr);
-      bisect_stack[bisect_ptr] = x3;
-      r = r + r + xicorr;
+      incr(l);
+      stack_l = l;
+      stack_x3 = x3;
+      stack_x2 = half(x2 + x3 + xi_corr);
+      x2 = half(x1 + x2 + xi_corr);
+      x3 = half(x2 + stack_x2 + xi_corr);
+      stack_x1 = x3;
+      r = r + r + xi_corr;
       t = x1 + x2 + x3 + r;
       q = t / two_to_the[l];
-      bisect_stack[bisect_ptr + 3] = t % two_to_the[l];
-      bisect_stack[bisect_ptr + 4] = m - q;
+      stack_r = t % two_to_the[l];
+      stack_m = m - q;
       m = q;
-      bisect_stack[bisect_ptr + 7] = y3;
-      bisect_stack[bisect_ptr + 6] = half (y2 + y3 + etacorr);
-      y2 = half (y1 + y2 + etacorr);
-      y3 = half (y2 + bisect_stack[bisect_ptr + 6]+ etacorr);
-      bisect_stack[bisect_ptr + 5] = y3;
-      s = s + s + etacorr;
+      stack_y3 = y3;
+      stack_y2 = half(y2 + y3 + eta_corr);
+      y2 = half(y1 + y2 + eta_corr);
+      y3 = half(y2 + stack_y2 + eta_corr);
+      stack_y1 = y3;
+      s = s + s + eta_corr;
       u = y1 + y2 + y3 + s;
       q = u / two_to_the[l];
-      bisect_stack[bisect_ptr + 8] = u % two_to_the[l];
-      bisect_stack[bisect_ptr + 9] = n - q;
+      stack_s = u % two_to_the[l];
+      stack_n = n - q;
       n = q;
-      bisect_ptr = bisect_ptr + 11;
+      bisect_ptr = bisect_ptr + move_increment;
       goto lab_continue;
     }
     if (bisect_ptr == 0)
       goto lab_exit;
-    bisect_ptr = bisect_ptr - 11;
-    x1 = bisect_stack[bisect_ptr];
-    x2 = bisect_stack[bisect_ptr + 1];
-    x3 = bisect_stack[bisect_ptr + 2];
-    r = bisect_stack[bisect_ptr + 3];
-    m = bisect_stack[bisect_ptr + 4];
-    y1 = bisect_stack[bisect_ptr + 5];
-    y2 = bisect_stack[bisect_ptr + 6];
-    y3 = bisect_stack[bisect_ptr + 7];
-    s = bisect_stack[bisect_ptr + 8];
-    n = bisect_stack[bisect_ptr + 9];
-    l = bisect_stack[bisect_ptr + 10];
+    bisect_ptr = bisect_ptr - move_increment;
+    x1 = stack_x1;
+    x2 = stack_x2;
+    x3 = stack_x3;
+    r = stack_r;
+    m = stack_m;
+    y1 = stack_y1;
+    y2 = stack_y2;
+    y3 = stack_y3;
+    s = stack_s;
+    n = stack_n;
+    l = stack_l;
   }
-  lab_exit:;
+lab_exit:;
 }
-/* 511 */
+/* 321 */
 void smooth_moves (integer b, integer t)
 {
   integer k;
@@ -6945,7 +6949,7 @@ void smooth_moves (integer b, integer t)
     aaa = move[k - 2];
     do {
       a = move[k];
-      if (abs (a - aa) > 1)
+      if (abs(a - aa) > 1)
       {
         if (a > aa)
         {
@@ -6953,7 +6957,7 @@ void smooth_moves (integer b, integer t)
           {
             if (a >= move[k + 1])
             {
-              incr (move[k - 1]);
+              incr(move[k - 1]);
               move[k] = a - 1;
             }
           }
@@ -6964,13 +6968,13 @@ void smooth_moves (integer b, integer t)
           {
             if (a <= move[k + 1])
             {
-              decr (move[k - 1]);
+              decr(move[k - 1]);
               move[k] = a + 1;
             }
           }
         }
       }
-      incr (k);
+      incr(k);
       aaa = aa;
       aa = a;
     } while (!(k == t));
