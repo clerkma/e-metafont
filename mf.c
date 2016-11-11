@@ -6397,10 +6397,10 @@ void set_controls (pointer p, pointer q, integer k)
   left_type(q) = explicit;
 }
 /* 284 */
-void solve_choices (halfword p, halfword q, halfword n)
+void solve_choices (pointer p, pointer q, halfword n)
 {
   integer k;
-  halfword r, s, t;
+  pointer r, s, t;
   fraction aa, bb, cc, ff, acc;
   scaled dd, ee;
   scaled lt, rt;
@@ -6409,217 +6409,209 @@ void solve_choices (halfword p, halfword q, halfword n)
   s = p;
   while (true)
   {
-    t = mem[s].hh.rh;
+    t = link(s);
     if (k == 0)
-      switch (mem[s].hh.b1)
+    {
+      switch (right_type(s))
       {
-        case 2:
-          if (mem[t].hh.b0 == 2)
+        case given:
+          if (left_type(p) == given)
           {
-            aa = n_arg (delta_x[0], delta_y[0]);
-            n_sin_cos(mem[p + 5].cint - aa);
+            aa = n_arg(delta_x[0], delta_y[0]);
+            n_sin_cos(right_given(p) - aa);
             ct = n_cos;
             st = n_sin;
-            n_sin_cos(mem[q + 3].cint - aa);
+            n_sin_cos(left_given(q) - aa);
             cf = n_cos;
             sf = -n_sin;
-            set_controls (p, q, 0);
+            set_controls(p, q, 0);
             goto lab_exit;
           }
           else
           {
-            vv[0] = mem[s + 5].cint - n_arg (delta_x[0], delta_y[0]);
-            if (abs (vv[0]) > one_eighty_deg)
-            {
-              if (vv[0] > 0)
-                vv[0] = vv[0] - three_sixty_deg;
-              else
-                vv[0] = vv[0]+ three_sixty_deg;
-            }
+            vv[0] = right_given(s) - n_arg(delta_x[0], delta_y[0]);
+            reduce_angle(vv[0]);
             uu[0] = 0;
             ww[0] = 0;
           }
           break;
-        case 3:
-          if (mem[t].hh.b0 == 3)
+        case curl:
+          if (left_type(t) == curl)
           {
-            mem[p].hh.b1 = 1;
-            mem[q].hh.b0 = 1;
-            lt = abs (mem[q + 4].cint);
-            rt = abs (mem[p + 6].cint);
+            right_type(p) = explicit;
+            left_type(q) = explicit;
+            lt = abs(left_tension(q));
+            rt = abs(right_tension(p));
             if (rt == unity)
             {
               if (delta_x[0] >= 0)
-                mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0]+ 1) / 3);
+                right_x(p) = x_coord(p) + ((delta_x[0] + 1) / 3);
               else
-                mem[p + 5].cint = mem[p + 1].cint + ((delta_x[0] - 1) / 3);
+                right_x(p) = x_coord(p) + ((delta_x[0] - 1) / 3);
               if (delta_y[0] >= 0)
-                mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0]+ 1) / 3);
+                right_y(p) = y_coord(p) + ((delta_y[0] + 1) / 3);
               else
-                mem[p + 6].cint = mem[p + 2].cint + ((delta_y[0] - 1) / 3);
+                right_y(p) = y_coord(p) + ((delta_y[0] - 1) / 3);
             }
             else
             {
-              ff = make_fraction (unity, 3 * rt);
-              mem[p + 5].cint = mem[p + 1].cint + take_fraction (delta_x[0], ff);
-              mem[p + 6].cint = mem[p + 2].cint + take_fraction (delta_y[0], ff);
+              ff = make_fraction(unity, 3 * rt);
+              mem[p + 5].cint = x_coord(p) + take_fraction(delta_x[0], ff);
+              mem[p + 6].cint = y_coord(p) + take_fraction(delta_y[0], ff);
             }
             if (lt == unity)
             {
               if (delta_x[0] >= 0)
-                mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0]+ 1) / 3);
+                left_x(q) = x_coord(q) - ((delta_x[0] + 1) / 3);
               else
-                mem[q + 3].cint = mem[q + 1].cint - ((delta_x[0] - 1) / 3);
+                left_x(q) = x_coord(q) - ((delta_x[0] - 1) / 3);
               if (delta_y[0] >= 0)
-                mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0]+ 1) / 3);
+                left_y(q) = y_coord(q) - ((delta_y[0] + 1) / 3);
               else
-                mem[q + 4].cint = mem[q + 2].cint - ((delta_y[0] - 1) / 3);
+                left_y(q) = y_coord(q) - ((delta_y[0] - 1) / 3);
             }
             else
             {
-              ff = make_fraction (unity, 3 * lt);
-              mem[q + 3].cint = mem[q + 1].cint - take_fraction (delta_x[0], ff);
-              mem[q + 4].cint = mem[q + 2].cint - take_fraction (delta_y[0], ff);
+              ff = make_fraction(unity, 3 * lt);
+              left_x(q) = x_coord(q) - take_fraction(delta_x[0], ff);
+              left_y(q) = y_coord(q) - take_fraction(delta_y[0], ff);
             }
             goto lab_exit;
           }
           else
           {
-            cc = mem[s + 5].cint;
-            lt = abs (mem[t + 4].cint);
-            rt = abs (mem[s + 6].cint);
+            cc = right_curl(s);
+            lt = abs(left_tension(t));
+            rt = abs(right_tension(s));
             if ((rt == unity) && (lt == unity))
-              uu[0] = make_fraction (cc + cc + unity, cc + two);
+              uu[0] = make_fraction(cc + cc + unity, cc + two);
             else
-              uu[0] = curl_ratio (cc, rt, lt);
-            vv[0] = -take_fraction (psi[1], uu[0]);
+              uu[0] = curl_ratio(cc, rt, lt);
+            vv[0] = -take_fraction(psi[1], uu[0]);
             ww[0] = 0;
           }
           break;
-        case 4:
+        case open:
           {
             uu[0] = 0;
             vv[0] = 0;
             ww[0] = fraction_one;
           }
           break;
+      }
     }
     else
-      switch (mem[s].hh.b0)
+    {
+      switch (left_type(s))
       {
-        case 5:
-        case 4:
+        case end_cycle:
+        case open:
           {
-            if (abs (mem[r + 6].cint) == unity)
+            if (abs(right_tension(r)) == unity)
             {
               aa = fraction_half;
               dd = 2 * delta[k];
             }
             else
             {
-              aa = make_fraction (unity, 3 * abs (mem[r + 6].cint) - unity);
-              dd = take_fraction (delta[k], fraction_three - make_fraction (unity, abs (mem[r + 6].cint)));
+              aa = make_fraction(unity, 3 * abs(right_tension(r)) - unity);
+              dd = take_fraction(delta[k], fraction_three - make_fraction(unity, abs(right_tension(r))));
             }
-            if (abs (mem[t + 4].cint) == unity)
+            if (left_tension(t) == unity)
             {
               bb = fraction_half;
               ee = 2 * delta[k - 1];
             }
             else
             {
-              bb = make_fraction (unity, 3 * abs (mem[t + 4].cint) - unity);
-              ee = take_fraction (delta[k - 1], fraction_three - make_fraction (unity, abs (mem[t + 4].cint)));
+              bb = make_fraction(unity, 3 * abs(left_tension(t)) - unity);
+              ee = take_fraction(delta[k - 1], fraction_three - make_fraction(unity, abs(left_tension(t))));
             }
-            cc = fraction_one - take_fraction (uu[k - 1], aa);
-            dd = take_fraction (dd, cc);
-            lt = abs (mem[s + 4].cint);
-            rt = abs (mem[s + 6].cint);
+            cc = fraction_one - take_fraction(uu[k - 1], aa);
+            dd = take_fraction(dd, cc);
+            lt = abs(left_tension(s));
+            rt = abs(right_tension(s));
             if (lt != rt)
             {
               if (lt < rt)
               {
-                ff = make_fraction (lt, rt);
-                ff = take_fraction (ff, ff);
-                dd = take_fraction (dd, ff);
+                ff = make_fraction(lt, rt);
+                ff = take_fraction(ff, ff);
+                dd = take_fraction(dd, ff);
               }
               else
               {
-                ff = make_fraction (rt, lt);
-                ff = take_fraction (ff, ff);
-                ee = take_fraction (ee, ff);
+                ff = make_fraction(rt, lt);
+                ff = take_fraction(ff, ff);
+                ee = take_fraction(ee, ff);
               }
             }
-            ff = make_fraction (ee, ee + dd);
-            uu[k] = take_fraction (ff, bb);
-            acc = -take_fraction (psi[k + 1], uu[k]);
-            if (mem[r].hh.b1 == 3)
+            ff = make_fraction(ee, ee + dd);
+            uu[k] = take_fraction(ff, bb);
+            acc = -take_fraction(psi[k + 1], uu[k]);
+            if (right_type(r) == curl)
             {
               ww[k] = 0;
-              vv[k] = acc - take_fraction (psi[1], fraction_one - ff);
+              vv[k] = acc - take_fraction(psi[1], fraction_one - ff);
             }
             else
             {
-              ff = make_fraction (fraction_one - ff, cc);
-              acc = acc - take_fraction (psi[k], ff);
-              ff = take_fraction (ff, aa);
-              vv[k] = acc - take_fraction (vv[k - 1], ff);
+              ff = make_fraction(fraction_one - ff, cc);
+              acc = acc - take_fraction(psi[k], ff);
+              ff = take_fraction(ff, aa);
+              vv[k] = acc - take_fraction(vv[k - 1], ff);
               if (ww[k - 1] == 0)
                 ww[k] = 0;
               else
-                ww[k] = -take_fraction (ww[k - 1], ff);
+                ww[k] = -take_fraction(ww[k - 1], ff);
             }
-            if (mem[s].hh.b0 == 5)
+            if (left_type(s) == end_cycle)
             {
               aa = 0;
               bb = fraction_one;
               do {
-                decr (k);
+                decr(k);
                 if (k == 0)
                   k = n;
-                aa = vv[k] - take_fraction (aa, uu[k]);
-                bb = ww[k] - take_fraction (bb, uu[k]);
+                aa = vv[k] - take_fraction(aa, uu[k]);
+                bb = ww[k] - take_fraction(bb, uu[k]);
               } while (!(k == n));
-              aa = make_fraction (aa, fraction_one - bb);
+              aa = make_fraction(aa, fraction_one - bb);
               theta[n] = aa;
               vv[0] = aa;
               for (k = 1; k <= n - 1; k++)
               {
-                vv[k] = vv[k]+ take_fraction (aa, ww[k]);
+                vv[k] = vv[k] + take_fraction(aa, ww[k]);
               }
               goto found;
             }
           }
           break;
-        case 3 :
+        case curl:
           {
-            cc = mem[s + 3].cint;
-            lt = abs (mem[s + 4].cint);
-            rt = abs (mem[r + 6].cint);
+            cc = left_curl(s);
+            lt = abs(left_tension(s));
+            rt = abs(right_tension(r));
             if ((rt == unity) && (lt == unity))
-              ff = make_fraction (cc + cc + unity, cc + two);
+              ff = make_fraction(cc + cc + unity, cc + two);
             else
-              ff = curl_ratio (cc, lt, rt);
-            theta[n] = -make_fraction (take_fraction (vv[n - 1], ff), fraction_one - take_fraction (ff, uu[n - 1]));
+              ff = curl_ratio(cc, lt, rt);
+            theta[n] = -make_fraction(take_fraction(vv[n - 1], ff), fraction_one - take_fraction(ff, uu[n - 1]));
             goto found;
           }
           break;
-        case 2:
+        case given:
           {
-            theta[n] = mem[s + 3].cint - n_arg (delta_x[n - 1], delta_y[n - 1]);
-            if (abs (theta[n]) > one_eighty_deg)
-            {
-              if (theta[n] > 0)
-                theta[n] = theta[n] - three_sixty_deg;
-              else
-                theta[n] = theta[n]+ three_sixty_deg;
-            }
+            theta[n] = left_given(s) - n_arg(delta_x[n - 1], delta_y[n - 1]);
+            reduce_angle(theta[n]);
             goto found;
           }
           break;
       }
+    }
     r = s;
     s = t;
-    incr (k);
+    incr(k);
   }
 found:
   for (k = n - 1; k <= 0; k--)
@@ -6629,18 +6621,18 @@ found:
   s = p;
   k = 0;
   do {
-    t = mem[s].hh.rh;
+    t = link(s);
     n_sin_cos(theta[k]);
     st = n_sin;
     ct = n_cos;
     n_sin_cos(-psi[k + 1] - theta[k + 1]);
     sf = n_sin;
     cf = n_cos;
-    set_controls (s, t, k);
-    incr (k);
+    set_controls(s, t, k);
+    incr(k);
     s = t;
   } while (!(k == n));
-  lab_exit:;
+lab_exit:;
 }
 /* 269 */
 void make_choices (halfword knots)
