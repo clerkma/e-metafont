@@ -1,7 +1,7 @@
 #include "mf.h"
 
 /* main */
-void mainbody (void)
+void main_program (void)
 {
   history = fatal_error_stop;
   if (ready_already == 314159)
@@ -629,7 +629,7 @@ void slow_print (integer s)
 /* 62 */
 void print_nl (str_number s)
 {
-  if (((term_offset > 0) && (odd (selector))) || ((file_offset > 0) && (selector >= log_only)))
+  if (((term_offset > 0) && (odd(selector))) || ((file_offset > 0) && (selector >= log_only)))
     print_ln();
   print(s);
 }
@@ -1104,13 +1104,13 @@ void confusion (str_number s)
     print_err("This can't happen (");
     print(s);
     print_char(')');
-    help1(/* 290 */ "I'm broken. Please show this to someone who can fix can fix");
+    help1("I'm broken. Please show this to someone who can fix can fix");
   }
   else
   {
     print_err("I can't go on meeting you like this");
-    help2(/* 292 */ "One of your faux pas seems to have wounded me deeply...",
-      /* 293 */ "in fact, I'm barely conscious. Please fix it and try again.");
+    help2("One of your faux pas seems to have wounded me deeply...",
+      "in fact, I'm barely conscious. Please fix it and try again.");
   }
   succumb();
 }
@@ -1119,7 +1119,7 @@ boolean init_terminal (void)
 {
   boolean Result;
 
-  topenin();
+  t_open_in();
   if (last > first)
   {
     loc = first;
@@ -1133,13 +1133,12 @@ boolean init_terminal (void)
   }
   while (true)
   {
-    ;
-    Fputs (stdout,  "**");
-    fflush (stdout);
-    if (!inputln (stdin, true))
+    Fputs(stdout, "**");
+    fflush(stdout);
+    if (!input_ln(stdin, true))
     {
-      putc ('\n',  stdout);
-      fprintf (stdout, "%s\n",  "!End of file on the terminal... why?");
+      putc('\n', stdout);
+      fprintf(stdout, "%s\n",  "!End of file on the terminal... why?");
       Result = false;
       goto lab_exit;
     }
@@ -1151,7 +1150,7 @@ boolean init_terminal (void)
       Result = true;
       goto lab_exit;
     }
-    fprintf (stdout, "%s\n",  "Please type the name of your input file.");
+    fprintf(stdout, "%s\n",  "Please type the name of your input file.");
   }
 lab_exit:;
   return Result;
@@ -1164,7 +1163,7 @@ str_number make_string (void)
   if (str_ptr == max_str_ptr)
   {
     if (str_ptr == max_strings)
-      overflow (/* 258 */ "number of strings", max_strings - init_str_ptr);
+      overflow("number of strings", max_strings - init_str_ptr);
     incr(max_str_ptr);
   }
   str_ref[str_ptr] = 1;
@@ -1266,7 +1265,6 @@ boolean get_strings_started (void)
   g = loadpoolstrings((pool_size - string_vacancies));
   if (g == 0)
   {
-    ;
     fprintf(stdout, "%s\n", "! You have to increase pool_size.");
     Result = false;
     goto lab_exit;
@@ -1278,7 +1276,7 @@ lab_exit:;
 /* 65 */
 void print_dd (integer n)
 {
-  n = abs (n) % 100;
+  n = abs(n) % 100;
   print_char('0' + (n / 10));
   print_char('0' + (n % 10));
 }
@@ -1287,14 +1285,16 @@ void term_input (void)
 {
   integer k;
 
-  fflush (stdout);
-  if (!inputln (stdin, true))
-    fatal_error (/* 260 */ "End of file on the terminal!");
+  fflush(stdout);
+  if (!input_ln(stdin, true))
+    fatal_error("End of file on the terminal!");
   term_offset = 0;
   decr(selector);
   if (last != first)
+  {
     for (k = first; k <= last - 1; k++)
       print(buffer[k]);
+  }
   print_ln();
   buffer[last] = '%';
   incr(selector);
@@ -1320,9 +1320,9 @@ void pause_for_instructions (void)
     if ((selector == log_only) || (selector == no_print))
       incr(selector);
     print_err("Interruption");
-    help3(/* 295 */ "You rang?",
-      /* 296 */ "Try to insert some instructions for me (e.g.,`I show x'),",
-      /* 297 */ "unless you just want to quit by typing `X'.");
+    help3("You rang?",
+      "Try to insert some instructions for me (e.g.,`I show x'),",
+      "unless you just want to quit by typing `X'.");
     deletions_allowed = false;
     error();
     deletions_allowed = true;
@@ -1340,10 +1340,10 @@ void missing_err (str_number s)
 void clear_arith (void)
 {
   print_err("Arithmetic overflow");
-  help4(/* 301 */ "Uh, oh. A little while ago one of the quantities that I was",
-    /* 302 */ "computing got too large, so I'm afraid your answers will be",
-    /* 303 */ "somewhat askew. You'll probably have to adopt different",
-    /* 304 */ "tactics next time. But I shall try to carry on anyway.");
+  help4("Uh, oh. A little while ago one of the quantities that I was",
+    "computing got too large, so I'm afraid your answers will be",
+    "somewhat askew. You'll probably have to adopt different",
+    "tactics next time. But I shall try to carry on anyway.");
   error();
   arith_error = false;
 }
@@ -1383,7 +1383,7 @@ scaled round_decimals (small_number k)
     decr(k);
     a = (a + dig[k] * two) / 10;
   }
-  Result = half (a + 1);
+  Result = half(a + 1);
   return Result;
 }
 /* 107 */
@@ -1404,7 +1404,6 @@ fraction make_fraction (integer p, integer q)
   }
   if (q <= 0)
   {
-    ;
 #ifdef TEXMF_DEBUG
     if (q == 0)
       confusion("/");
@@ -1486,19 +1485,19 @@ integer take_fraction (integer q, fraction f)
   p = 134217728;
   if (q < fraction_four)
     do {
-      if (odd (f))
-        p = half (p + q);
+      if (odd(f))
+        p = half(p + q);
       else
-        p = half (p);
-      f = half (f);
+        p = half(p);
+      f = half(f);
     } while (!(f == 1));
   else
     do {
-      if (odd (f))
-        p = p + half (q - p);
+      if (odd(f))
+        p = p + half(q - p);
       else
-        p = half (p);
-      f = half (f);
+        p = half(p);
+      f = half(f);
   } while (!(f == 1));
   be_careful = n - 2147483647;
   if (be_careful + p > 0)
@@ -1551,19 +1550,19 @@ integer take_scaled (integer q, scaled f)
   p = 32768;
   if (q < fraction_four)
     do {
-      if (odd (f))
-        p = half (p + q);
+      if (odd(f))
+        p = half(p + q);
       else
-        p = half (p);
-      f = half (f);
+        p = half(p);
+      f = half(f);
     } while (!(f == 1));
   else
     do {
-      if (odd (f))
-        p = p + half (q - p);
+      if (odd(f))
+        p = p + half(q - p);
       else
-        p = half (p);
-      f = half (f);
+        p = half(p);
+      f = half(f);
     } while (!(f == 1));
   be_careful = n - 2147483647;
   if (be_careful + p > 0)
@@ -1595,7 +1594,6 @@ scaled make_scaled (integer p, integer q)
   }
   if (q <= 0)
   {
-    ;
 #ifdef TEXMF_DEBUG
     if (q == 0)
       confusion("/");
@@ -1644,17 +1642,17 @@ fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
   fraction Result;
   integer acc, num, denom;
 
-  acc = take_fraction (st - (sf / 16), sf - (st / 16));
-  acc = take_fraction (acc, ct - cf);
-  num = fraction_two + take_fraction (acc, 379625062L);
-  denom = fraction_three + take_fraction (ct, 497706707L) + take_fraction (cf ,
+  acc = take_fraction(st - (sf / 16), sf - (st / 16));
+  acc = take_fraction(acc, ct - cf);
+  num = fraction_two + take_fraction(acc, 379625062L);
+  denom = fraction_three + take_fraction(ct, 497706707L) + take_fraction (cf ,
   307599661L);
   if (t != unity)
-    num = make_scaled (num, t);
+    num = make_scaled(num, t);
   if (num / 4 >= denom)
     Result = 1073741824;
   else
-    Result = make_fraction (num, denom);
+    Result = make_fraction(num, denom);
   return Result;
 }
 /* 117 */
@@ -1788,8 +1786,8 @@ scaled square_rt (scaled x)
       print_err("Square root of ");
       print_scaled(x);
       print(306);
-      help2(/* 307 */ "Since I don't take square roots of negative numbers,",
-        /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
+      help2("Since I don't take square roots of negative numbers,",
+        "I'm zeroing this one. Proceed, with fingers crossed.");
       error();
     }
     Result = 0;
@@ -1838,7 +1836,7 @@ scaled square_rt (scaled x)
       }
       decr(k);
     } while (!(k == 0));
-    Result = half (q);
+    Result = half(q);
   }
   return Result;
 }
@@ -1869,13 +1867,13 @@ integer pyth_add (integer a, integer b)
     }
     while (true)
     {
-      r = make_fraction (b, a);
-      r = take_fraction (r, r);
+      r = make_fraction(b, a);
+      r = take_fraction(r, r);
       if (r == 0)
         goto done;
-      r = make_fraction (r, fraction_four + r);
-      a = a + take_fraction (a + a, r);
-      b = take_fraction (b, r);
+      r = make_fraction(r, fraction_four + r);
+      a = a + take_fraction(a + a, r);
+      b = take_fraction(b, r);
     }
     done:;
     if (big)
@@ -1922,21 +1920,21 @@ integer pyth_sub (integer a, integer b)
       big = false;
     else
     {
-      a = half (a);
-      b = half (b);
+      a = half(a);
+      b = half(b);
       big = true;
     }
     while (true)
     {
-      r = make_fraction (b, a);
-      r = take_fraction (r, r);
+      r = make_fraction(b, a);
+      r = take_fraction(r, r);
       if (r == 0)
         goto done;
-      r = make_fraction (r, fraction_four - r);
-      a = a - take_fraction (a + a, r);
-      b = take_fraction (b, r);
+      r = make_fraction(r, fraction_four - r);
+      a = a - take_fraction(a + a, r);
+      b = take_fraction(b, r);
     }
-    done:;
+  done:;
     if (big)
       a = a + a;
   }
@@ -1977,7 +1975,7 @@ scaled m_log (scaled x)
       z = ((x - 1) / two_to_the[k]) + 1;
       while (x < fraction_four + z)
       {
-        z = half (z + 1);
+        z = half(z + 1);
         k = k + 1;
       }
       y = y + spec_log[k];
@@ -2073,8 +2071,8 @@ angle n_arg (integer x, integer y)
   {
     while (x >= fraction_two)
     {
-      x = half (x);
-      y = half (y);
+      x = half(x);
+      y = half(y);
     }
     z = 0;
     if (y > 0)
@@ -2151,7 +2149,7 @@ void n_sin_cos(angle z)
   z = z % forty_five_deg;
   x = fraction_one;
   y = x;
-  if (!odd (q))
+  if (!odd(q))
     z = forty_five_deg - z;
   k = 1;
   while (z > 0)
@@ -2247,7 +2245,7 @@ void init_randoms (scaled seed)
 
   j = abs (seed);
   while (j >= fraction_one)
-    j = half (j);
+    j = half(j);
   k = 1;
   for (i = 0; i <= 54; i++)
   {
@@ -3734,7 +3732,7 @@ void init_big_node (pointer p)
   do {
     s = s - 2;
     new_index(q + s);
-    name_type(q + s) = half (s) + x_part_sector;
+    name_type(q + s) = half(s) + x_part_sector;
     link(q + s) = null;
   } while (!(s == 0));
   link(q) = p;
@@ -4296,11 +4294,11 @@ void print_pen (pointer p, str_number s, boolean nuline)
     h = p + octant;
     n = info(h);
     w = link(h);
-    if (!odd (k))
+    if (!odd(k))
       w = knil(w);
     for (m = 1; m <= n + 1; m++)
     {
-      if (odd (k))
+      if (odd(k))
         ww = link(w);
       else
         ww = knile(w);
@@ -7704,7 +7702,7 @@ lab_continue:
           }
         }
       }
-      else if (!odd (mem[pp].hh.b1))
+      else if (!odd(mem[pp].hh.b1))
       {
         mem[pp + 2].cint = -mem[pp + 2].cint;
         mem[pp + 6].cint = -mem[pp + 6].cint;
@@ -8004,7 +8002,7 @@ scaled compromise (scaled u, scaled v)
 {
   scaled Result;
   
-  Result = half (good_val (u + u, -u - v));
+  Result = half(good_val (u + u, -u - v));
   return Result;
 }
 /* 433 */
@@ -8022,9 +8020,9 @@ void xy_round (void)
   cur_rounding_ptr = 0;
   do {
     q = mem[p].hh.rh;
-    if (odd (mem[p].hh.b1) != odd (mem[q].hh.b1))
+    if (odd(mem[p].hh.b1) != odd(mem[q].hh.b1))
     {
-      if (odd (mem[q].hh.b1))
+      if (odd(mem[q].hh.b1))
         b = mem[q + 1].cint;
       else
         b = -mem[q + 1].cint;
@@ -8034,7 +8032,7 @@ void xy_round (void)
           penedge = 0;
         else if (cur_path_type == double_path_code)
          penedge = compromise (mem[mem[cur_pen + 5].hh.rh + 2].cint, mem[mem[cur_pen + 7].hh.rh + 2].cint);
-        else if (odd (mem[q].hh.b1))
+        else if (odd(mem[q].hh.b1))
           penedge = mem[mem[cur_pen + 7].hh.rh + 2].cint;
         else
           penedge = mem[mem[cur_pen + 5].hh.rh + 2].cint;
@@ -8061,7 +8059,7 @@ void xy_round (void)
       if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
       {
         p = node_to_round[cur_rounding_ptr];
-        if (odd (mem[p].hh.b1))
+        if (odd(mem[p].hh.b1))
         {
           b = before[cur_rounding_ptr];
           a = after[cur_rounding_ptr];
@@ -8205,10 +8203,10 @@ void diag_round (void)
               penedge = mem[mem[mem[cur_pen + mem[q].hh.b1].hh.rh].hh.lh + 1].cint;
             else
               penedge = -mem[mem[mem[cur_pen + mem[q].hh.b1].hh.rh].hh.lh + 1].cint;
-            if (odd (mem[q].hh.b1))
-              a = good_val (b, penedge + half (cur_gran));
+            if (odd(mem[q].hh.b1))
+              a = good_val (b, penedge + half(cur_gran));
             else
-              a = good_val (b - 1, penedge + half (cur_gran));
+              a = good_val (b - 1, penedge + half(cur_gran));
           }
         else
           a = b;
@@ -8271,26 +8269,26 @@ void diag_round (void)
               dd = firsty - bb;
             else
               dd = mem[pp + 2].cint - bb;
-            if (odd (aa - bb))
+            if (odd(aa - bb))
             {
               if (mem[p].hh.b1 > 4)
-                cc = dd - half (aa - bb + 1);
+                cc = dd - half(aa - bb + 1);
               else
-                cc = dd - half (aa - bb - 1);
+                cc = dd - half(aa - bb - 1);
             }
             else
-              cc = dd - half (aa - bb);
+              cc = dd - half(aa - bb);
           }
           d = mem[p + 2].cint;
-          if (odd (a - b))
+          if (odd(a - b))
           {
             if (mem[p].hh.b1 > 4)
-              c = d - half (a - b - 1);
+              c = d - half(a - b - 1);
             else
-              c = d - half (a - b + 1);
+              c = d - half(a - b + 1);
           }
           else
-            c = d - half (a - b);
+            c = d - half(a - b);
           if ((aa < a) || (cc < c) || (aa - a > 2 * (bb - b)) || (cc - c > 2 * (dd - d)))
           {
             allsafe = false;
@@ -8343,26 +8341,26 @@ void diag_round (void)
             dd = firsty - bb;
           else
             dd = mem[pp + 2].cint - bb;
-          if (odd (aa - bb))
+          if (odd(aa - bb))
           {
             if (mem[p].hh.b1 > 4)
-              cc = dd - half (aa - bb + 1);
+              cc = dd - half(aa - bb + 1);
             else
-              cc = dd - half (aa - bb - 1);
+              cc = dd - half(aa - bb - 1);
           }
           else
-            cc = dd - half (aa - bb);
+            cc = dd - half(aa - bb);
         }
         d = mem[p + 2].cint;
-        if (odd (a - b))
+        if (odd(a - b))
         {
           if (mem[p].hh.b1 > 4)
-            c = d - half (a - b - 1);
+            c = d - half(a - b - 1);
           else
-            c = d - half (a - b + 1);
+            c = d - half(a - b + 1);
         }
         else
-          c = d - half (a - b);
+          c = d - half(a - b);
         if (b == bb)
           alpha = fraction_one;
         else
@@ -8424,7 +8422,7 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
   p = cur_spec;
   k = 1;
   chopped = 0;
-  dmax = half (max_allowed);
+  dmax = half(max_allowed);
   do {
     if (abs (mem[p + 3].cint) >= dmax)
     {
@@ -8718,7 +8716,7 @@ done:
         {
           if (o2 < o1)
             o2 = o1;
-          if (odd (o2))
+          if (odd(o2))
             mem[p + 6].cint = 0;
           else
             mem[p + 6].cint = 1;
@@ -8922,7 +8920,7 @@ halfword make_pen (halfword h)
       mem[r + 2].cint = cur_y;
       if (n == 0)
         mem[h].hh.rh = r;
-      else if (odd (k))
+      else if (odd(k))
       {
         mem[w].hh.rh = r;
         mem[r].hh.lh = w;
@@ -8940,7 +8938,7 @@ halfword make_pen (halfword h)
     }
   done1:
     r = mem[h].hh.rh;
-    if (odd (k))
+    if (odd(k))
     {
       mem[w].hh.rh = r;
       mem[r].hh.lh = w;
@@ -9024,11 +9022,11 @@ halfword make_path (halfword penhead)
     h = penhead + octant;
     n = mem[h].hh.lh;
     w = mem[h].hh.rh;
-    if (!odd (k))
+    if (!odd(k))
       w = mem[w].hh.lh;
     for (m = 1; m <= n + 1; m++)
     {
-      if (odd (k))
+      if (odd(k))
         ww = mem[w].hh.rh;
       else
         ww = mem[w].hh.lh;
@@ -9098,7 +9096,7 @@ void find_offset (scaled x, scaled y, halfword p)
     x = y - x;
     y = y - x;
   }
-  if (odd (octant_number[octant]))
+  if (odd(octant_number[octant]))
     s = -1;
   else
     s = 1;
@@ -9609,7 +9607,7 @@ void fill_envelope (halfword spechead)
 #endif /* STAT */
     ww = mem[h].hh.rh;
     www = ww;
-    if (odd (octant_number[octant]))
+    if (odd(octant_number[octant]))
       www = mem[www].hh.lh;
     else
       ww = mem[ww].hh.lh;
@@ -9626,7 +9624,7 @@ void fill_envelope (halfword spechead)
     q = p;
     while (mem[q].hh.b1 != 0)
       q = mem[q].hh.rh;
-    if (odd (octant_number[octant]))
+    if (odd(octant_number[octant]))
     {
       k = 0;
       w = mem[h].hh.rh;
@@ -9778,7 +9776,7 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
   {
     symmetric = true;
     alpha = 0;
-    if (odd (theta / ninety_deg))
+    if (odd(theta / ninety_deg))
     {
       beta = major_axis;
       gamma = minor_axis;
@@ -10429,8 +10427,8 @@ void cubic_intersection (halfword p, halfword pp)
             {
               if (max_t == two)
               {
-                cur_t = half (cur_t + 1);
-                cur_tt = half (cur_tt + 1);
+                cur_t = half(cur_t + 1);
+                cur_tt = half(cur_tt + 1);
                 goto lab_exit;
               }
               max_t = max_t + max_t;
@@ -10447,9 +10445,9 @@ void cubic_intersection (halfword p, halfword pp)
             cur_tt = cur_tt + cur_tt;
             bisect_stack[bisect_ptr - 25] = bisect_stack[uv - 5];
             bisect_stack[bisect_ptr - 3] = bisect_stack[uv - 3];
-            bisect_stack[bisect_ptr - 24] = half (bisect_stack[bisect_ptr - 25]+ bisect_stack[uv - 4]);
-            bisect_stack[bisect_ptr - 4] = half (bisect_stack[bisect_ptr - 3]+ bisect_stack[uv - 4]);
-            bisect_stack[bisect_ptr - 23] = half (bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 4]);
+            bisect_stack[bisect_ptr - 24] = half(bisect_stack[bisect_ptr - 25]+ bisect_stack[uv - 4]);
+            bisect_stack[bisect_ptr - 4] = half(bisect_stack[bisect_ptr - 3]+ bisect_stack[uv - 4]);
+            bisect_stack[bisect_ptr - 23] = half(bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 4]);
             bisect_stack[bisect_ptr - 5] = bisect_stack[bisect_ptr - 23];
             if (bisect_stack[bisect_ptr - 25]< 0)
             {
@@ -10535,9 +10533,9 @@ void cubic_intersection (halfword p, halfword pp)
             }
             bisect_stack[bisect_ptr - 30] = bisect_stack[uv - 10];
             bisect_stack[bisect_ptr - 8] = bisect_stack[uv - 8];
-            bisect_stack[bisect_ptr - 29] = half (bisect_stack[bisect_ptr - 30]+ bisect_stack[uv - 9]);
-            bisect_stack[bisect_ptr - 9] = half (bisect_stack[bisect_ptr - 8] + bisect_stack[uv - 9]);
-            bisect_stack[bisect_ptr - 28] = half (bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 9]);
+            bisect_stack[bisect_ptr - 29] = half(bisect_stack[bisect_ptr - 30]+ bisect_stack[uv - 9]);
+            bisect_stack[bisect_ptr - 9] = half(bisect_stack[bisect_ptr - 8] + bisect_stack[uv - 9]);
+            bisect_stack[bisect_ptr - 28] = half(bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 9]);
             bisect_stack[bisect_ptr - 10] = bisect_stack[bisect_ptr - 28];
             if (bisect_stack[bisect_ptr - 30] < 0)
             {
@@ -10623,9 +10621,9 @@ void cubic_intersection (halfword p, halfword pp)
             }
             bisect_stack[bisect_ptr - 35] = bisect_stack[xy - 15];
             bisect_stack[bisect_ptr - 13] = bisect_stack[xy - 13];
-            bisect_stack[bisect_ptr - 34] = half (bisect_stack[bisect_ptr - 35]+ bisect_stack[xy - 14]);
-            bisect_stack[bisect_ptr - 14] = half (bisect_stack[bisect_ptr - 13]+ bisect_stack[xy - 14]);
-            bisect_stack[bisect_ptr - 33] = half (bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 14]);
+            bisect_stack[bisect_ptr - 34] = half(bisect_stack[bisect_ptr - 35]+ bisect_stack[xy - 14]);
+            bisect_stack[bisect_ptr - 14] = half(bisect_stack[bisect_ptr - 13]+ bisect_stack[xy - 14]);
+            bisect_stack[bisect_ptr - 33] = half(bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 14]);
             bisect_stack[bisect_ptr - 15] = bisect_stack[bisect_ptr - 33];
             if (bisect_stack[bisect_ptr - 35] < 0)
             {
@@ -10711,9 +10709,9 @@ void cubic_intersection (halfword p, halfword pp)
             }
             bisect_stack[bisect_ptr - 40] = bisect_stack[xy - 20];
             bisect_stack[bisect_ptr - 18] = bisect_stack[xy - 18];
-            bisect_stack[bisect_ptr - 39] = half (bisect_stack[bisect_ptr - 40] + bisect_stack[xy - 19]);
-            bisect_stack[bisect_ptr - 19] = half (bisect_stack[bisect_ptr - 18] + bisect_stack[xy - 19]);
-            bisect_stack[bisect_ptr - 38] = half (bisect_stack[bisect_ptr - 39] + bisect_stack[bisect_ptr - 19]);
+            bisect_stack[bisect_ptr - 39] = half(bisect_stack[bisect_ptr - 40] + bisect_stack[xy - 19]);
+            bisect_stack[bisect_ptr - 19] = half(bisect_stack[bisect_ptr - 18] + bisect_stack[xy - 19]);
+            bisect_stack[bisect_ptr - 38] = half(bisect_stack[bisect_ptr - 39] + bisect_stack[bisect_ptr - 19]);
             bisect_stack[bisect_ptr - 20] = bisect_stack[bisect_ptr - 38];
             if (bisect_stack[bisect_ptr - 40] < 0)
             {
@@ -10823,12 +10821,12 @@ void cubic_intersection (halfword p, halfword pp)
       goto lab_exit;
     }
   not_found:
-    if (odd (cur_tt))
+    if (odd(cur_tt))
     {
-      if (odd (cur_t))
+      if (odd(cur_t))
       {
-        cur_t = half (cur_t);
-        cur_tt = half (cur_tt);
+        cur_t = half(cur_t);
+        cur_tt = half(cur_tt);
         if (cur_t == 0)
           goto lab_exit;
         bisect_ptr = bisect_ptr - 45;
@@ -14410,12 +14408,12 @@ void materialize_pen (void)
     tyy = mem[q + 6].cint - ty;
     aminusb = pyth_add (txx - tyy, tyx + txy);
     aplusb = pyth_add (txx + tyy, tyx - txy);
-    major_axis = half (aminusb + aplusb);
-    minor_axis = half (abs (aplusb - aminusb));
+    major_axis = half(aminusb + aplusb);
+    minor_axis = half(abs (aplusb - aminusb));
     if (major_axis == minor_axis)
       theta = 0;
     else
-      theta = half (n_arg (txx - tyy, tyx + txy) + n_arg (txx + tyy, tyx - txy));
+      theta = half(n_arg (txx - tyy, tyx + txy) + n_arg (txx + tyy, tyx - txy));
     free_node (q, 7);
     q = make_ellipse (major_axis, minor_axis, theta);
     if ((tx != 0) || (ty != 0))
@@ -14989,7 +14987,7 @@ void do_unary (quarterword c)
           break;
         case 38:
           {
-            if (odd (round_unscaled (cur_exp)))
+            if (odd(round_unscaled (cur_exp)))
               cur_exp = 30;
             else
               cur_exp = 31;
@@ -16345,7 +16343,7 @@ void do_binary (halfword p, quarterword c)
             q = q + 2;
             r = r + 2;
           }
-          done1: take_part (53 + half (r - mem[cur_exp + 1].cint));
+          done1: take_part (53 + half(r - mem[cur_exp + 1].cint));
         }
         else if (cur_type == 2)
           flush_cur_exp (cur_exp - mem[p + 1].cint);
@@ -19163,7 +19161,7 @@ integer skimp (integer m)
         if (excess == 0)
           d = 0;
       } while (!(mem[mem[p].hh.rh + 1].cint > l + d));
-      v = l + half (mem[p + 1].cint - l);
+      v = l + half(mem[p + 1].cint - l);
       if (mem[p + 1].cint - v > perturbation)
         perturbation = mem[p + 1].cint - v;
       r = q;
