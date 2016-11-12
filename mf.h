@@ -901,7 +901,7 @@ do { if (interrupt != 0) pause_for_instructions(); } while (0)
 #define text(a) hash[a].rh //{string number for symbolic token name}
 #define eq_type(a) eqtb[a].lh //{the current ``meaning'' of a symbolic token}
 #define equiv(a) eqtb[a].rh //{parametric part of a token's meaning}
-#define hash_base=257 //{hashing actually starts here}
+#define hash_base 257 //{hashing actually starts here}
 #define hash_is_full (hash_used==hash_base) //{are all positions occupied?}
 /* 201 */
 #define hash_top (hash_base+hash_size) //{the first location of the frozen area}
