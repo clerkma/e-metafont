@@ -753,6 +753,9 @@ do { if (interrupt != 0) pause_for_instructions(); } while (0)
 #define structured 21 //{variable with subscripts and attributes}
 #define unsuffixed_macro 22 //{variable defined with \&{vardef} but no \.{\AT!\#}}
 #define suffixed_macro 23 //{variable defined with \&{vardef} and \.{\AT!\#}}
+#define unknown_types \
+unknown_boolean: case unknown_string:\
+case unknown_pen: case unknown_picture: case unknown_path
 /* 188 */
 #define root 0 //{|name_type| at the top level of a variable}
 #define saved_root 1 //{same, when the variable has been saved}

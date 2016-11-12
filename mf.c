@@ -77,7 +77,7 @@ lab_start_of_MF:
   tally = 0;
   term_offset = 0;
   file_offset = 0;
-  Fputs(stdout, "This is METAFONT, Version 2.7182818");
+  fputs(stdout, "This is METAFONT, Version 2.7182818");
   if (base_ident == 0)
     fprintf(stdout, "%s%s%c\n", " (preloaded base=", dumpname, ')');
   else
@@ -104,7 +104,7 @@ lab_start_of_MF:
       line = 0;
       name = 0;
       force_eof = false;
-      if (!initterminal())
+      if (!init_terminal())
         goto lab_final_end;
       limit = last;
       first = last + 1;
@@ -118,11 +118,11 @@ lab_start_of_MF:
         goto lab_final_end;
       if (!load_base_file())
       {
-        wclose(base_file);
+        w_close(base_file);
         goto lab_final_end;
       }
-      wclose(base_file);
-      while ((loc < limit) && (buffer[loc] == 32))
+      w_close(base_file);
+      while ((loc < limit) && (buffer[loc] == ' '))
         incr(loc);
     }
     buffer[limit] = 37;
@@ -332,7 +332,6 @@ void initialize (void)
   spec_atan[24] = 4;
   spec_atan[25] = 2;
   spec_atan[26] = 1;
-  ;
 #ifdef TEXMF_DEBUG
   was_mem_end = mem_min;
   was_lo_max = mem_min;
@@ -908,11 +907,11 @@ void error(void)
           break;
 #ifdef TEXMF_DEBUG
         case 'D':
-        {
-          debug_help();
-          goto lab_continue;
-        }
-        break;
+          {
+            debug_help();
+            goto lab_continue;
+          }
+          break;
 #endif /* TEXMF_DEBUG */
         case 'E':
           if (file_ptr > 0)
@@ -950,18 +949,18 @@ void error(void)
             else
             {
               if (help_ptr == 0)
-                help2(/* 280 */ "Sorry, I don't know how to help in this situation.",
-                  /* 281 */ "Maybe you should try asking a human?");
+                help2("Sorry, I don't know how to help in this situation.",
+                  "Maybe you should try asking a human?");
               do {
                 decr(help_ptr);
                 print(help_line[help_ptr]);
                 print_ln();
               } while (!(help_ptr == 0));
             }
-            help4(/* 282 */ "Sorry, I already gave what help I could...",
-              /* 281 */ "Maybe you should try asking a human?",
-              /* 283 */ "An error might have occurred before I noticed any problems.",
-              /* 284 */ "``If all else fails, read the instructions.''");
+            help4("Sorry, I already gave what help I could...",
+              "Maybe you should try asking a human?",
+              "An error might have occurred before I noticed any problems.",
+              "``If all else fails, read the instructions.''");
             goto lab_continue;
           }
           break;
@@ -1063,11 +1062,13 @@ void error(void)
     }
   }
   else
+  {
     while (help_ptr > 0)
     {
       decr(help_ptr);
       print_nl(help_line[help_ptr]);
     }
+  }
   print_ln();
   if (interaction > batch_mode)
     incr(selector);
@@ -1091,8 +1092,8 @@ void overflow (str_number s, integer n)
   print_char('=');
   print_int (n);
   print_char(']');
-  help2(/* 287 */ "If you really absolutely need more capacity,",
-    /* 288 */ "you can ask a wizard to enlarge me.");
+  help2("If you really absolutely need more capacity,",
+    "you can ask a wizard to enlarge me.");
   succumb();
 }
 /* 90 */
@@ -1133,12 +1134,12 @@ boolean init_terminal (void)
   }
   while (true)
   {
-    Fputs(stdout, "**");
+    fputs(stdout, "**");
     fflush(stdout);
     if (!input_ln(stdin, true))
     {
       putc('\n', stdout);
-      fprintf(stdout, "%s\n",  "!End of file on the terminal... why?");
+      fprintf(stdout, "%s\n", "!End of file on the terminal... why?");
       Result = false;
       goto lab_exit;
     }
@@ -1150,7 +1151,7 @@ boolean init_terminal (void)
       Result = true;
       goto lab_exit;
     }
-    fprintf(stdout, "%s\n",  "Please type the name of your input file.");
+    fprintf(stdout, "%s\n", "Please type the name of your input file.");
   }
 lab_exit:;
   return Result;
@@ -1238,14 +1239,12 @@ boolean get_strings_started (void)
   max_pool_ptr = 0;
   max_str_ptr = 0;
   str_start[0] = 0;
-
   for (k = 0; k <= 255; k++)
   {
     if (((k < ' ') || (k > '~')))
     {
       append_char('^');
       append_char('^');
-
       if (k < 0100)
         append_char(k + 0100);
       else if (k < 0200)
@@ -1258,11 +1257,10 @@ boolean get_strings_started (void)
     }
     else
       append_char(k);
-
     g = make_string();
     str_ref[g] = max_str_ref;
   }
-  g = loadpoolstrings((pool_size - string_vacancies));
+  g = load_pool_strings((pool_size - string_vacancies));
   if (g == 0)
   {
     fprintf(stdout, "%s\n", "! You have to increase pool_size.");
@@ -1644,13 +1642,12 @@ fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
 
   acc = take_fraction(st - (sf / 16), sf - (st / 16));
   acc = take_fraction(acc, ct - cf);
-  num = fraction_two + take_fraction(acc, 379625062L);
-  denom = fraction_three + take_fraction(ct, 497706707L) + take_fraction (cf ,
-  307599661L);
+  num = fraction_two + take_fraction(acc, 379625062);
+  denom = fraction_three + take_fraction(ct, 497706707) + take_fraction(cf, 307599661);
   if (t != unity)
     num = make_scaled(num, t);
   if (num / 4 >= denom)
-    Result = 1073741824;
+    Result = fraction_four;
   else
     Result = make_fraction(num, denom);
   return Result;
@@ -1847,8 +1844,8 @@ integer pyth_add (integer a, integer b)
   fraction r;
   boolean big;
   
-  a = abs (a);
-  b = abs (b);
+  a = abs(a);
+  b = abs(b);
   if (a < b)
   {
     r = b;
@@ -1897,8 +1894,8 @@ integer pyth_sub (integer a, integer b)
   fraction r;
   boolean big;
   
-  a = abs (a);
-  b = abs (b);
+  a = abs(a);
+  b = abs(b);
   if (a <= b)
   {
     if (a < b)
@@ -1908,8 +1905,8 @@ integer pyth_sub (integer a, integer b)
       print(310);
       print_scaled(b);
       print(306);
-      help2(/* 307 */ "Since I don't take square roots of negative numbers,",
-        /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
+      help2("Since I don't take square roots of negative numbers,",
+        "I'm zeroing this one. Proceed, with fingers crossed.");
       error();
     }
     a = 0;
@@ -1953,8 +1950,8 @@ scaled m_log (scaled x)
     print_err("Logarithm of ");
     print_scaled(x);
     print(306);
-    help2(/* 312 */ "Since I don't take logs of non-positive numbers,",
-      /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
+    help2("Since I don't take logs of non-positive numbers,",
+      "I'm zeroing this one. Proceed, with fingers crossed.");
     error();
     Result = 0;
   }
@@ -2062,8 +2059,8 @@ angle n_arg (integer x, integer y)
   if (x == 0)
   {
     print_err("angle(0,0) is taken as zero");
-    help2(/* 314 */ "The `angle' between two identical points is undefined.",
-      /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed." );
+    help2("The `angle' between two identical points is undefined.",
+      "I'm zeroing this one. Proceed, with fingers crossed." );
     error();
     Result = 0;
   }
@@ -2211,9 +2208,9 @@ void n_sin_cos(angle z)
       y = -y;
       break;
   }
-  r = pyth_add (x, y);
-  n_cos = make_fraction (x, r);
-  n_sin = make_fraction (y, r);
+  r = pyth_add(x, y);
+  n_cos = make_fraction(x, r);
+  n_sin = make_fraction(y, r);
 }
 /* 149 */
 void new_randoms (void)
@@ -2243,7 +2240,7 @@ void init_randoms (scaled seed)
   fraction j, jj, k;
   unsigned char i;
 
-  j = abs (seed);
+  j = abs(seed);
   while (j >= fraction_one)
     j = half(j);
   k = 1;
@@ -2270,8 +2267,8 @@ scaled unif_rand (scaled x)
     new_randoms();
   else
     decr(j_random);
-  y = take_fraction (abs (x), randoms[j_random]);
-  if (y == abs (x))
+  y = take_fraction(abs(x), randoms[j_random]);
+  if (y == abs(x))
     Result = 0;
   else if (x > 0)
     Result = y;
@@ -2290,16 +2287,16 @@ scaled norm_rand (void)
         new_randoms();
       else
         decr(j_random);
-      x = take_fraction (112429L, randoms[j_random] - fraction_half);
+      x = take_fraction(112429L, randoms[j_random] - fraction_half);
       if (j_random == 0)
         new_randoms();
       else
         decr(j_random);
       u = randoms[j_random];
-    } while (!(abs (x) < u));
+    } while (!(abs(x) < u));
     x = make_fraction (x, u);
-    l = 139548960L - m_log (u);
-  } while (!(ab_vs_cd (1024, l, x, x) >= 0));
+    l = 139548960L - m_log(u);
+  } while (!(ab_vs_cd(1024, l, x, x) >= 0));
   Result = x;
   return Result;
 }
@@ -2470,35 +2467,35 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
 /* 665 */
 void runaway (void)
 {
-  if (scanner_status > 2)
+  if (scanner_status > flushing)
   {
-    print_nl(638);
+    print_nl("Runaway ");
     switch (scanner_status)
     {
-      case 3:
-        print(639);
+      case absorbing:
+        print("text?");
         break;
-      case 4:
-      case 5:
-        print(640);
+      case var_defining:
+      case op_defining:
+        print("definition?");
         break;
-      case 6:
-        print(641);
+      case loop_defining:
+        print("loop?");
         break;
     }
     print_ln();
-    show_token_list (mem[mem_top - 2].hh.rh, 0, error_line - 10, 0);
+    show_token_list(link(hold_head), null, error_line - 10, 0);
   }
 }
 /* 163 */
-halfword get_avail (void)
+pointer get_avail (void)
 {
-  halfword Result;
-  halfword p;
+  pointer Result;
+  pointer p;
   
   p = avail;
-  if (p != 0)
-    avail = mem[avail].hh.rh;
+  if (p != null)
+    avail = link(avail);
   else if (mem_end < mem_max)
   {
     incr(mem_end);
@@ -2511,11 +2508,10 @@ halfword get_avail (void)
     if (hi_mem_min <= lo_mem_max)
     {
       runaway();
-      overflow (/* 315 */ "main memory size", mem_max + 1);
+      overflow("main memory size", mem_max + 1 - mem_min);
     }
   }
-  mem[p].hh.rh = 0;
-  ;
+  link(p) = null;
 #ifdef STAT
   incr(dyn_used);
 #endif /* STAT */
@@ -2523,87 +2519,74 @@ halfword get_avail (void)
   return Result;
 }
 /* 167 */
-halfword get_node (integer s)
+pointer get_node (integer s)
 {
-  halfword Result;
-  halfword p;
-  halfword q;
+  pointer Result;
+  pointer p;
+  pointer q;
   integer r;
   integer t, tt;
   
 lab_restart:
   p = rover;
   do {
-    q = p + mem[p].hh.lh;
-    while ((mem[q].hh.rh == 268435455L))
+    q = p + node_size(p);
+    while (is_empty(q))
     {
-      t = mem[q + 1].hh.rh;
-      tt = mem[q + 1].hh.lh;
+      t = rlink(q); tt = llink(q);
       if (q == rover)
         rover = t;
-      mem[t + 1].hh.lh = tt;
-      mem[tt + 1].hh.rh = t;
-      q = q + mem[q].hh.lh;
+      llink(t) = tt; rlink(tt) = t;
+      q = q + node_size(q);
     }
     r = q - s;
     if (r > p + 1)
     {
-      mem[p].hh.lh = r - p;
+      node_size(p) = r - p;
       rover = p;
       goto found;
     }
     if (r == p)
     {
-      if (mem[p + 1].hh.rh != p)
+      if (rlink(p) != p)
       {
-        rover = mem[p + 1].hh.rh;
-        t = mem[p + 1].hh.lh;
-        mem[rover + 1].hh.lh = t;
-        mem[t + 1].hh.rh = rover;
+        rover = rlink(p); t = llink(p);
+        llink(rover) = t; rlink(t) = rover;
         goto found;
       }
     }
-    mem[p].hh.lh = q - p;
-    p = mem[p + 1].hh.rh;
+    node_size(p) = q - p;
+    p = rlink(p);
   } while (!(p == rover));
-  if (s == fraction_four)
+  if (s == 010000000000)
   {
-    Result = 268435455L;
+    Result = max_halfword;
     goto lab_exit;
   }
   if (lo_mem_max + 2 < hi_mem_min)
   {
-    if (lo_mem_max + 2 <= 268435455L)
+    if (lo_mem_max + 2 <= mem_min + max_halfword)
     {
       if (hi_mem_min - lo_mem_max >= 1998)
         t = lo_mem_max + 1000;
       else
         t = lo_mem_max + 1 + (hi_mem_min - lo_mem_max) / 2;
-      if (t > 268435455L)
-        t = 268435455L;
-      p = mem[rover + 1].hh.lh;
-      q = lo_mem_max;
-      mem[p + 1].hh.rh = q;
-      mem[rover + 1].hh.lh = q;
-      mem[q + 1].hh.rh = rover;
-      mem[q + 1].hh.lh = p;
-      mem[q].hh.rh = 268435455L;
-      mem[q].hh.lh = t - lo_mem_max;
-      lo_mem_max = t;
-      mem[lo_mem_max].hh.rh = 0;
-      mem[lo_mem_max].hh.lh = 0;
-      rover = q;
-      goto lab_restart;
+      if (t > mem_min + max_halfword)
+        t = mem_min + max_halfword;
+      p = llink(rover); q = lo_mem_max; rlink(p) = q; llink(rover) = q;
+      rlink(q) = rover; llink(q) = p; link(q) = empty_flag; node_size(q) = t - lo_mem_max;
+      lo_mem_max = t; link(lo_mem_max) = null; info(lo_mem_max) = null;
+      rover = q; goto lab_restart;
     }
   }
-  overflow (/* 315 */ "main memory size", mem_max + 1);
-  found: mem[r].hh.rh = 0;
-  do_nothing();
+  overflow("main memory size", mem_max + 1);
+found:
+  link(r) = null;
 #ifdef STAT
   var_used = var_used + s;
 #endif /* STAT */
   Result = r;
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 172 */
@@ -2633,6 +2616,7 @@ void sort_avail (void)
   rlink(rover) = max_halfword;
   old_rover = rover;
   while (p != old_rover)
+  {
     if (p < rover)
     {
       q = p;
@@ -2650,6 +2634,7 @@ void sort_avail (void)
       rlink(q) = p;
       p = r;
     }
+  }
   p = rover;
   while (rlink(p) != max_halfword)
   {
@@ -2694,9 +2679,9 @@ void flush_node_list (pointer p)
     q = p;
     p = link(p);
     if (q < hi_mem_min)
-      free_node (q, 2);
+      free_node(q, 2);
     else
-      free_avail (q);
+      free_avail(q);
   }
 }
 /* 180 */
@@ -2726,7 +2711,7 @@ void check_mem (boolean print_locs)
     if (clobbered)
     {
       print_nl(316);
-      print_int (q);
+      print_int(q);
       goto done1;
     }
     freearr[p] = true;
@@ -2808,7 +2793,7 @@ void check_mem (boolean print_locs)
       if (!freearr[p] && ((p > was_lo_max) || was_free[p]))
       {
         print_char(' ');
-        print_int (p);
+        print_int(p);
       }
     }
     for (p = hi_mem_min; p <= mem_end; p++)
@@ -2816,7 +2801,7 @@ void check_mem (boolean print_locs)
       if (!freearr[p]&& ((p < was_hi_min) || (p > was_mem_end) || was_free[p]))
       {
         print_char(' ');
-        print_int (p);
+        print_int(p);
       }
     }
   }
@@ -2844,13 +2829,13 @@ void search_mem (halfword p)
     if (mem[q].hh.rh == p)
     {
       print_nl(321);
-      print_int (q);
+      print_int(q);
       print_char(')');
     }
     if (mem[q].hh.lh == p)
     {
       print_nl(322);
-      print_int (q);
+      print_int(q);
       print_char(')');
     }
   }
@@ -2859,13 +2844,13 @@ void search_mem (halfword p)
     if (mem[q].hh.rh == p)
     {
       print_nl(321);
-      print_int (q);
+      print_int(q);
       print_char(')');
     }
     if (mem[q].hh.lh == p)
     {
       print_nl(322);
-      print_int (q);
+      print_int(q);
       print_char(')');
     }
   }
@@ -2874,7 +2859,7 @@ void search_mem (halfword p)
     if (eqtb[q].rh == p)
     {
       print_nl(458);
-      print_int (q);
+      print_int(q);
       print_char(')');
     }
   }
@@ -2884,7 +2869,7 @@ void search_mem (halfword p)
 void print_op (quarterword c)
 {
   if (c <= 15)
-    print_type (c);
+    print_type(c);
   else
     switch (c)
     {
@@ -3106,7 +3091,7 @@ void print_op (quarterword c)
 /* 194 */
 void fix_date_and_time (void)
 {
-  dateandtime (internal[time], internal[day], internal[month], internal[year]);
+  dateandtime(internal[time], internal[day], internal[month], internal[year]);
   internal[time] = internal[time] * unity;
   internal[day] = internal[day] * unity;
   internal[month] = internal[month] * unity;
@@ -3150,7 +3135,7 @@ pointer id_lookup (integer j, integer l)
       {
         do {
           if (hash_is_full)
-            overflow (/* 457 */ "hash size", 9500);
+            overflow("hash size", 9500);
           decr(hash_used);
         } while (!(hash[hash_used].rh == 0));
         next(p) = hash_used;
@@ -3158,9 +3143,9 @@ pointer id_lookup (integer j, integer l)
       }
       str_room(l);
       for (k = j; k <= j + l - 1; k++)
-        append_char (buffer[k]);
+        append_char(buffer[k]);
       text(p) = make_string();
-      str_ref[hash[p].rh] = max_str_ref;
+      str_ref[text(p)] = max_str_ref;
 #ifdef STAT
       incr(st_count);
 #endif /* STAT */
@@ -3245,10 +3230,10 @@ void flush_token_list (pointer p)
           }
           break;
         default:
-          confusion(/* 491 */ "token");
+          confusion("token");
           break;
       }
-      free_node (q, token_node_size);
+      free_node(q, token_node_size);
     }
   }
 }
@@ -3256,7 +3241,7 @@ void flush_token_list (pointer p)
 void delete_mac_ref (pointer p)
 {
   if (ref_count(p) == null)
-    flush_token_list (p);
+    flush_token_list(p);
   else
     decr(ref_count(p));
 }
@@ -3265,284 +3250,133 @@ void print_cmd_mod (integer c, integer m)
 {
   switch (c)
   {
-    case add_to_command:
-      print(462);
+    case add_to_command:print("addto"); break;
+    case assignment:print(":="); break;
+    case at_least:print("atleast"); break;
+    case at_token:print("at"); break;
+    case bchar_label:print("||:"); break;
+    case begin_group:print("begingroup"); break;
+    case colon:print(":"); break;
+    case comma:print(","); break;
+    case controls:print("controls"); break;
+    case cull_command:print("cull"); break;
+    case curl_command:print("curl"); break;
+    case delimiters:print("delimiters"); break;
+    case display_command:print("display"); break;
+    case double_colon:print("::"); break;
+    case end_group:print("endgroup"); break;
+    case every_job_command:print("everyjob"); break;
+    case exit_test:print("exitif"); break;
+    case expand_after:print("expandafter"); break;
+    case from_token:print("from"); break;
+    case in_window:print("inwindow"); break;
+    case interim_command:print("interim"); break;
+    case left_brace:print("{"); break;
+    case left_bracket:print("["); break;
+    case let_command:print("let"); break;
+    case new_internal:print("newinternal"); break;
+    case of_token:print("of"); break;
+    case open_window:print("openwindow"); break;
+    case path_join:print(".."); break;
+    case random_seed:print("randomseed"); break;
+    case relax:print_char("\\");break;
+    case right_brace:print("}"); break;
+    case right_bracket:print("]"); break;
+    case save_command:print("save"); break;
+    case scan_tokens:print("scantokens"); break;
+    case semicolon:print(";"); break;
+    case ship_out_command:print("shipout"); break;
+    case skip_to:print("skipto"); break;
+    case step_token:print("step"); break;
+    case str_op:print("str"); break;
+    case tension:print("tension"); break;
+    case to_token:print("to"); break;
+    case until_token:print("until"); break;
+    case macro_def:
+      if (m <= var_def)
+      if (m == start_def) print("def");
+      else if (m < start_def) print("enddef");
+      else print("vardef");
+      else if (m == secondary_primary_macro) print("primarydef");
+      else if (m == tertiary_secondary_macro) print("secondarydef");
+      else print("tertiarydef");
       break;
-    case 77:
-      print(461);
+    case iteration:
+      if (m <= start_forever)
+        if (m == start_forever) print("forever"); else print("endfor");
+      else if (m == expr_base) print("for"); else print("forsuffixes");
       break;
-    case 59:
-      print(464);
-      break;
-    case 72:
-      print(463);
-      break;
-    case 79:
-      print(460);
-      break;
-    case 32:
-      print(465);
-      break;
-    case 81:
-      print(58);
-      break;
-    case 82:
-      print(44);
-      break;
-    case 57:
-      print(466);
-      break;
-    case 19:
-      print(467);
-      break;
-    case 60:
-      print(468);
-      break;
-    case 27:
-      print(469);
-      break;
-    case 11:
-      print(470);
-      break;
-    case 80:
-      print(459);
-      break;
-    case 84:
-      print(453);
-      break;
-    case 26:
-      print(471);
-      break;
-    case 6:
-      print(472);
-      break;
-    case 9:
-      print(473);
-      break;
-    case 70:
-      print(474);
-      break;
-    case 73:
-      print(475);
-      break;
-    case 13:
-      print(476);
-      break;
-    case 46:
-      print(123);
-      break;
-    case 63:
-      print(91);
-      break;
-    case 14:
-      print(477);
-      break;
-    case 15:
-      print(478);
-      break;
-    case 69:
-      print(479);
-      break;
-    case 28:
-      print(480);
-      break;
-    case 47:
-      print(408);
-      break;
-    case 24:
-      print(481);
-      break;
-    case 7:
-      print_char('\\');
-      break;
-    case 65:
-      print(125);
-      break;
-    case 64:
-      print(93);
-      break;
-    case 12:
-      print(482);
-      break;
-    case 8:
-      print(483);
-      break;
-    case 83:
-      print(59);
-      break;
-    case 17:
-      print(484);
-      break;
-    case 78:
-      print(485);
-      break;
-    case 74:
-      print(486);
-      break;
-    case 35:
-      print(487);
-      break;
-    case 58:
-      print(488);
-      break;
-    case 71:
-      print(489);
-      break;
-    case 75:
-      print(490);
-      break;
-    case 16:
-      if (m <= 2)
-      {
-        if (m == 1)
-          print(655);
-        else if (m < 1)
-          print(454);
-        else
-          print(656);
-      }
-      else if (m == 53)
-        print(657);
-      else if (m == 44)
-        print(658);
-      else
-        print(659);
-      break;
-    case 4:
-      if (m <= 1)
-      {
-        if (m == 1)
-          print(662);
-        else
-          print(455);
-      }
-      else if (m == 9770)
-        print(660);
-      else
-        print(661);
-      break;
-    case 61:
+    case macro_special:
       switch (m)
       {
-        case 1:
-          print(664);
-          break;
-        case 2:
-          print_char('@');
-          break;
-        case 3:
-          print(665);
-          break;
-        default:
-          print(663);
-          break;
+        case macro_prefix: print("#@@"); break;
+        case macro_at: print_char("@@"); break;
+        case macro_suffix: print("@@#"); break;
+        default: print("quote"); break;
       }
       break;
-    case 56:
-      if (m >= 9770)
-      {
-        if (m == 9770)
-          print(676);
-        else if (m == 9920)
-          print(677);
-        else
-          print(678);
-      }
-      else if (m < 2)
-        print(679);
-      else if (m == 2)
-        print(680);
-      else
-        print(681);
+    case param_type:
+      if (m >= expr_base)
+      if (m == expr_base) print("expr");
+      else if (m == suffix_base) print("suffix");
+      else print("text");
+      else if (m < secondary_macro) print("primary");
+      else if (m == secondary_macro) print("secondary");
+      else print("tertiary");
       break;
-    case 3:
-      if (m == 0)
-        print(691);
-      else
-        print(617);
+    case input:
+      if (m == 0) print("input"); else print("endinput");
       break;
-    case 1:
-    case 2:
+    case if_test:
+    case fi_or_else:
       switch (m)
       {
-        case 1:
-          print(718);
-          break;
-        case 2:
-          print(452);
-          break;
-        case 3:
-          print(719);
-          break;
-        default:
-          print(720);
-          break;
+        case if_code: print("if"); break;
+        case fi_code:print("fi"); break;
+        case else_code:print("else"); break;
+        default: print("elseif"); break;
       }
       break;
-    case 33:
-    case 34:
-    case 37:
-    case 55:
-    case 45:
-    case 50:
-    case 36:
-    case 43:
-    case 54:
-    case 48:
-    case 51:
-    case 52:
-      print_op (m);
+    case nullary:
+    case unary:
+    case primary_binary:
+    case secondary_binary:
+    case tertiary_binary:
+    case expression_binary:
+    case cycle:
+    case plus_or_minus:
+    case slash:
+    case ampersand:
+    case equals:
+    case and_command:
+      print_op(m);
       break;
-    case 30:
-      print_type (m);
+    case type_name:
+      print_type(m);
       break;
-    case 85:
-      if (m == 0)
-        print(912);
-      else
-        print(913);
+    case stop:
+      if (m == 0) print("end"); else print("dump");
       break;
-    case 23:
+    case mode_command:
       switch (m)
       {
-        case 0:
-          print(273);
-          break;
-        case 1:
-          print(274);
-          break;
-        case 2:
-          print(275);
-          break;
-        default:
-          print(919);
-          break;
+        case batch_mode: print("batchmode"); break;
+        case nonstop_mode: print("nonstopmode"); break;
+        case scroll_mode: print("scrollmode"); break;
+        default: print("errorstopmode"); break;
       }
       break;
-    case 21:
-      if (m == 0)
-        print(920);
-      else
-        print(921);
+    case protection_command:
+      if (m == 0) print("inner"); else print("outer");
       break;
-    case 22:
+    case show_command:
       switch (m)
       {
-        case 0:
-          print(935);
-          break;
-        case 1:
-          print(936);
-          break;
-        case 2:
-          print(937);
-          break;
-        case 3:
-          print(938);
-          break;
-        default:
-          print(939);
-          break;
+        case show_token_code: print("showtoken"); break;
+        case show_stats_code:print("showstats"); break;
+        case show_code:print("show"); break;
+        case show_var_code:print("showvariable"); break;
+        default: print("showdependencies"); break;
       }
       break;
     case 31:
@@ -4149,13 +3983,13 @@ void print_path (pointer h, str_number s, boolean nuline)
       print("..tension ");
       if (right_tension(p) < 0)
         print("atleast");
-      print_scaled(abs (right_tension(p)));
+      print_scaled(abs(right_tension(p)));
       if (right_tension(p) != left_tension(q))
       {
         print(" and ");
         if (left_tension(q) < 0)
           print("atleast");
-        print_scaled(abs (left_tension(q)));
+        print_scaled(abs(left_tension(q)));
       }
     }
 done1:
@@ -4330,7 +4164,7 @@ void print_dependency (pointer p, small_number t)
   pp = p;
   while (true)
   {
-    v = abs (value(p));
+    v = abs(value(p));
     q = info(p);
     if (q == null)
     {
@@ -4686,14 +4520,14 @@ pointer p_over_v (pointer p, scaled v, small_number t0, small_number t1)
   {
     if (scaling_down)
     {
-      if (abs (v) < 02000000)
+      if (abs(v) < 02000000)
         w = make_scaled (value(p), v * 010000);
       else
         w = make_scaled (round_fraction(value(p)), v);
     }
     else
       w = make_scaled(value(p), v);
-    if (abs (w) <= threshold)
+    if (abs(w) <= threshold)
     {
       s = link(p);
       free_node (p, dep_node_size);
@@ -4701,7 +4535,7 @@ pointer p_over_v (pointer p, scaled v, small_number t0, small_number t1)
     }
     else
     {
-      if (abs (w) >= coef_bound)
+      if (abs(w) >= coef_bound)
       {
         fix_needed = true;
         type(info(p)) = independent_needing_fix;
@@ -7027,7 +6861,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
   sum = move[0];
   for (k = 1; k <= delta; k++)
   {
-    sum = sum + abs (move[k]);
+    sum = sum + abs(move[k]);
   }
   if (sum != m1 - m0)
     confusion("0");
@@ -7473,11 +7307,11 @@ lab_continue:
       del = del3;
     if (del != 0)
     {
-      dmax = abs (del1);
-      if (abs (del2) > dmax)
-        dmax = abs (del2);
-      if (abs (del3) > dmax)
-        dmax = abs (del3);
+      dmax = abs(del1);
+      if (abs(del2) > dmax)
+        dmax = abs(del2);
+      if (abs(del3) > dmax)
+        dmax = abs(del3);
       while (dmax < fraction_half)
       {
         dmax = dmax + dmax;
@@ -7574,11 +7408,11 @@ lab_continue:
         del = del3;
       if (del != 0)
       {
-        dmax = abs (del1);
-        if (abs (del2) > dmax)
-          dmax = abs (del2);
-        if (abs (del3) > dmax)
-          dmax = abs (del3);
+        dmax = abs(del1);
+        if (abs(del2) > dmax)
+          dmax = abs(del2);
+        if (abs(del3) > dmax)
+          dmax = abs(del3);
         while (dmax < fraction_half)
         {
           dmax = dmax + dmax;
@@ -7772,11 +7606,11 @@ void octant_subdivide (void)
       del = del3;
     if (del != 0)
     {
-      dmax = abs (del1);
-      if (abs (del2) > dmax)
-        dmax = abs (del2);
-      if (abs (del3) > dmax)
-        dmax = abs (del3);
+      dmax = abs(del1);
+      if (abs(del2) > dmax)
+        dmax = abs(del2);
+      if (abs(del3) > dmax)
+        dmax = abs(del3);
       while (dmax < fraction_half)
       {
         dmax = dmax + dmax;
@@ -7953,7 +7787,7 @@ void make_safe (void)
       else
         deltaa = nexta - after[k + 1];
       nexta = after[k + 1];
-      if ((deltaa < 0) || (deltaa > abs (deltab + deltab)))
+      if ((deltaa < 0) || (deltaa > abs(deltab + deltab)))
       {
         allsafe = false;
         after[k] = before[k];
@@ -8013,7 +7847,7 @@ void xy_round (void)
   scaled penedge;
   fraction alpha;
 
-  cur_gran = abs (internal[granularity]);
+  cur_gran = abs(internal[granularity]);
   if (cur_gran == 0)
     cur_gran = unity;
   p = cur_spec;
@@ -8026,7 +7860,7 @@ void xy_round (void)
         b = mem[q + 1].cint;
       else
         b = -mem[q + 1].cint;
-      if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs (mem[q + 1].cint + mem[q + 3].cint) < 655))
+      if ((abs(mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs(mem[q + 1].cint + mem[q + 3].cint) < 655))
       {
         if (cur_pen == 3)
           penedge = 0;
@@ -8040,7 +7874,7 @@ void xy_round (void)
       }
       else
         a = b;
-      if (abs (a) > max_allowed)
+      if (abs(a) > max_allowed)
       {
         if (a > 0)
           a = max_allowed;
@@ -8094,7 +7928,7 @@ void xy_round (void)
         b = mem[q + 2].cint;
       else
         b = -mem[q + 2].cint;
-      if ((abs (mem[q + 2].cint - mem[q + 6].cint) < 655) || (abs (mem[q + 2].cint + mem[q + 4].cint) < 655))
+      if ((abs(mem[q + 2].cint - mem[q + 6].cint) < 655) || (abs(mem[q + 2].cint + mem[q + 4].cint) < 655))
       {
         if (cur_pen == 3)
           penedge = 0;
@@ -8108,7 +7942,7 @@ void xy_round (void)
       }
       else
         a = b;
-      if (abs (a) > max_allowed)
+      if (abs(a) > max_allowed)
       {
         if (a > 0)
           a = max_allowed;
@@ -8173,9 +8007,9 @@ void diag_round (void)
         b = -mem[q + 1].cint;
       else
         b = mem[q + 1].cint;
-      if (abs (mem[q].hh.b1 - mem[p].hh.b1) == 4)
+      if (abs(mem[q].hh.b1 - mem[p].hh.b1) == 4)
       {
-        if ((abs (mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs (mem[q + 1].cint + mem[q + 3].cint) < 655))
+        if ((abs(mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs(mem[q + 1].cint + mem[q + 3].cint) < 655))
         {
           if (cur_pen == 3)
             penedge = 0;
@@ -8424,9 +8258,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
   chopped = 0;
   dmax = half(max_allowed);
   do {
-    if (abs (mem[p + 3].cint) >= dmax)
+    if (abs(mem[p + 3].cint) >= dmax)
     {
-      if (abs (mem[p + 3].cint) > max_allowed)
+      if (abs(mem[p + 3].cint) > max_allowed)
       {
         chopped = 1;
         if (mem[p + 3].cint > 0)
@@ -8437,9 +8271,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       else if (chopped == 0)
         chopped = -1;
     }
-    if (abs (mem[p + 4].cint) >= dmax)
+    if (abs(mem[p + 4].cint) >= dmax)
     {
-      if (abs (mem[p + 4].cint) > max_allowed)
+      if (abs(mem[p + 4].cint) > max_allowed)
       {
         chopped = 1;
         if (mem[p + 4].cint > 0)
@@ -8450,9 +8284,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       else if (chopped == 0)
         chopped = -1;
     }
-    if (abs (mem[p + 1].cint) >= dmax)
+    if (abs(mem[p + 1].cint) >= dmax)
     {
-      if (abs (mem[p + 1].cint) > max_allowed)
+      if (abs(mem[p + 1].cint) > max_allowed)
       {
         chopped = 1;
         if (mem[p + 1].cint > 0)
@@ -8463,9 +8297,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       else if (chopped == 0)
         chopped = -1;
     }
-    if (abs (mem[p + 2].cint) >= dmax)
+    if (abs(mem[p + 2].cint) >= dmax)
     {
-      if (abs (mem[p + 2].cint) > max_allowed)
+      if (abs(mem[p + 2].cint) > max_allowed)
       {
         chopped = 1;
         if (mem[p + 2].cint > 0)
@@ -8476,9 +8310,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       else if (chopped == 0)
         chopped = -1;
     }
-    if (abs (mem[p + 5].cint) >= dmax)
+    if (abs(mem[p + 5].cint) >= dmax)
     {
-      if (abs (mem[p + 5].cint) > max_allowed)
+      if (abs(mem[p + 5].cint) > max_allowed)
       {
         chopped = 1;
         if (mem[p + 5].cint > 0)
@@ -8489,9 +8323,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
       else if (chopped == 0)
         chopped = -1;
     }
-    if (abs (mem[p + 6].cint) >= dmax)
+    if (abs(mem[p + 6].cint) >= dmax)
     {
-      if (abs (mem[p + 6].cint) > max_allowed)
+      if (abs(mem[p + 6].cint) > max_allowed)
       {
         chopped = 1;
         if (mem[p + 6].cint > 0)
@@ -8605,9 +8439,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
                 }
               }
             }
-            dmax = abs (dx1);
-            if (abs (dy1) > dmax)
-              dmax = abs (dy1);
+            dmax = abs(dx1);
+            if (abs(dy1) > dmax)
+              dmax = abs(dy1);
             while (dmax < fraction_one)
             {
               dmax = dmax + dmax;
@@ -8642,9 +8476,9 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
                 }
               }
             }
-            dmax = abs (dx2);
-            if (abs (dy2) > dmax)
-              dmax = abs (dy2);
+            dmax = abs(dx2);
+            if (abs(dy2) > dmax)
+              dmax = abs(dy2);
             while (dmax < fraction_one)
             {
               dmax = dmax + dmax;
@@ -8712,7 +8546,7 @@ done:
         s = mem[p].hh.rh;
         o1 = octant_number[mem[p + 5].cint];
         o2 = octant_number[mem[s + 3].cint];
-        if (abs (o1 - o2) == 1)
+        if (abs(o1 - o2) == 1)
         {
           if (o2 < o1)
             o2 = o1;
@@ -8829,13 +8663,13 @@ halfword make_pen (halfword h)
 
   q = h;
   r = mem[q].hh.rh;
-  mc = abs (mem[h + 1].cint);
+  mc = abs(mem[h + 1].cint);
   if (q == r)
   {
     hh = h;
     mem[h].hh.b1 = 0;
-    if (mc < abs (mem[h + 2].cint))
-      mc = abs (mem[h + 2].cint);
+    if (mc < abs(mem[h + 2].cint))
+      mc = abs(mem[h + 2].cint);
   }
   else
   {
@@ -8844,10 +8678,10 @@ halfword make_pen (halfword h)
     while (true)
     {
       s = mem[r].hh.rh;
-      if (mc < abs (mem[r + 1].cint))
-        mc = abs (mem[r + 1].cint);
-      if (mc < abs (mem[r + 2].cint))
-        mc = abs (mem[r + 2].cint);
+      if (mc < abs(mem[r + 1].cint))
+        mc = abs(mem[r + 1].cint);
+      if (mc < abs(mem[r + 2].cint))
+        mc = abs(mem[r + 2].cint);
       dx = mem[r + 1].cint - mem[q + 1].cint;
       dy = mem[r + 2].cint - mem[q + 2].cint;
       if (dx == 0)
@@ -9159,7 +8993,7 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
       ww = mem[w].hh.lh;
     du = mem[ww + 1].cint - mem[w + 1].cint;
     dv = mem[ww + 2].cint - mem[w + 2].cint;
-    if (abs (du) >= abs (dv))
+    if (abs(du) >= abs(dv))
     {
       s = make_fraction (dv, du);
       t0 = take_fraction (x0, s) - y0;
@@ -9241,17 +9075,17 @@ void offset_prep (halfword c, halfword h)
       y0 = mem[p + 6].cint - mem[p + 2].cint;
       y2 = mem[q + 2].cint - mem[q + 4].cint;
       y1 = mem[q + 4].cint - mem[p + 6].cint;
-      lmax_coef = abs (x0);
-      if (abs (x1) > lmax_coef)
-        lmax_coef = abs (x1);
-      if (abs (x2) > lmax_coef)
-        lmax_coef = abs (x2);
-      if (abs (y0) > lmax_coef)
-        lmax_coef = abs (y0);
-      if (abs (y1) > lmax_coef)
-        lmax_coef = abs (y1);
-      if (abs (y2) > lmax_coef)
-        lmax_coef = abs (y2);
+      lmax_coef = abs(x0);
+      if (abs(x1) > lmax_coef)
+        lmax_coef = abs(x1);
+      if (abs(x2) > lmax_coef)
+        lmax_coef = abs(x2);
+      if (abs(y0) > lmax_coef)
+        lmax_coef = abs(y0);
+      if (abs(y1) > lmax_coef)
+        lmax_coef = abs(y1);
+      if (abs(y2) > lmax_coef)
+        lmax_coef = abs(y2);
       if (lmax_coef == 0)
         goto not_found;
       while (lmax_coef < fraction_half)
@@ -9293,7 +9127,7 @@ void offset_prep (halfword c, halfword h)
           if (k == n)
             goto done;
           ww = mem[w].hh.rh;
-          if (ab_vs_cd (dy, abs (mem[ww + 1].cint - mem[w + 1].cint), dx, abs (mem[ww + 2].cint - mem[w + 2].cint)) >= 0)
+          if (ab_vs_cd (dy, abs(mem[ww + 1].cint - mem[w + 1].cint), dx, abs(mem[ww + 2].cint - mem[w + 2].cint)) >= 0)
           {
             incr(k);
             w = ww;
@@ -9309,7 +9143,7 @@ void offset_prep (halfword c, halfword h)
           ww = mem[w].hh.lh;
           du = mem[ww + 1].cint - mem[w + 1].cint;
           dv = mem[ww + 2].cint - mem[w + 2].cint;
-          if (abs (du) >= abs (dv))
+          if (abs(du) >= abs(dv))
           {
             s = make_fraction (dv, du);
             t0 = take_fraction (x0, s) - y0;
@@ -9821,7 +9655,7 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     beta = 1;
   if (gamma == 0)
     gamma = 1;
-  if (gamma <= abs (alpha))
+  if (gamma <= abs(alpha))
   {
     if (alpha > 0)
       alpha = gamma - 1;
@@ -9880,12 +9714,12 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
       beta = make_fraction (beta, delta);
       d = pyth_add (take_fraction (major_axis, alpha), take_fraction (minor_axis, beta));
     }
-    alpha = abs (u);
-    beta = abs (v);
+    alpha = abs(u);
+    beta = abs(v);
     if (alpha < beta)
     {
-      alpha = abs (v);
-      beta = abs (u);
+      alpha = abs(v);
+      beta = abs(u);
     }
     if (internal[fillin] != 0)
       d = d - take_fraction (internal[fillin], make_fraction (beta + beta, delta));
@@ -10022,9 +9856,9 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
   angle theta, phi;
   fraction t;
 
-  if (abs (x) < abs (y))
+  if (abs(x) < abs(y))
   {
-    x = make_fraction (x, abs (y));
+    x = make_fraction (x, abs(y));
     if (y > 0)
       y = fraction_one;
     else
@@ -10037,7 +9871,7 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
   }
   else
   {
-    y = make_fraction (y, abs (x));
+    y = make_fraction (y, abs(x));
     if (x > 0)
       x = fraction_one;
     else
@@ -10057,17 +9891,17 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
     y1 = mem[p + 6].cint - mem[p + 2].cint;
     y2 = mem[q + 4].cint - mem[p + 6].cint;
     y3 = mem[q + 2].cint - mem[q + 4].cint;
-    max = abs (x1);
-    if (abs (x2) > max)
-      max = abs (x2);
-    if (abs (x3) > max)
-      max = abs (x3);
-    if (abs (y1) > max)
-      max = abs (y1);
-    if (abs (y2) > max)
-      max = abs (y2);
-    if (abs (y3) > max)
-      max = abs (y3);
+    max = abs(x1);
+    if (abs(x2) > max)
+      max = abs(x2);
+    if (abs(x3) > max)
+      max = abs(x3);
+    if (abs(y1) > max)
+      max = abs(y1);
+    if (abs(y2) > max)
+      max = abs(y2);
+    if (abs(y3) > max)
+      max = abs(y3);
     if (max == 0)
       goto found;
     while (max < fraction_half)
@@ -11117,8 +10951,8 @@ fraction max_coef (halfword p)
   x = 0;
   while (mem[p].hh.lh != 0)
   {
-    if (abs (mem[p + 1].cint) > x)
-      x = abs (mem[p + 1].cint);
+    if (abs(mem[p + 1].cint) > x)
+      x = abs(mem[p + 1].cint);
     p = mem[p].hh.rh;
   }
   Result = x;
@@ -11151,11 +10985,11 @@ halfword p_plus_q (halfword p, halfword q, small_number t)
       s = p;
       p = mem[p].hh.rh;
       pp = mem[p].hh.lh;
-      if (abs (v) < threshold)
+      if (abs(v) < threshold)
         free_node (s, 2);
       else
       {
-        if (abs (v) >= 626349397L)
+        if (abs(v) >= 626349397L)
         {
           if (watch_coefs)
           {
@@ -11217,7 +11051,7 @@ halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boo
       w = take_fraction (v, mem[p + 1].cint);
     else
       w = take_scaled (v, mem[p + 1].cint);
-    if (abs (w) <= threshold)
+    if (abs(w) <= threshold)
     {
       s = mem[p].hh.rh;
       free_node (p, 2);
@@ -11225,7 +11059,7 @@ halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boo
     }
     else
     {
-      if (abs (w) >= 626349397L)
+      if (abs(w) >= 626349397L)
       {
         fix_needed = true;
         mem[mem[p].hh.lh].hh.b0 = 0;
@@ -11352,7 +11186,7 @@ void linear_eq (halfword p, small_number t)
   v = mem[q + 1].cint;
   while (mem[r].hh.lh != 0)
   {
-    if (abs (mem[r + 1].cint) > abs (v))
+    if (abs(mem[r + 1].cint) > abs(v))
     {
       q = r;
       v = mem[r + 1].cint;
@@ -11373,7 +11207,7 @@ void linear_eq (halfword p, small_number t)
     else
     {
       w = make_fraction (mem[r + 1].cint, v);
-      if (abs (w) <= 1342)
+      if (abs(w) <= 1342)
       {
         mem[s].hh.rh = mem[r].hh.rh;
         free_node (r, 2);
@@ -11438,7 +11272,7 @@ void linear_eq (halfword p, small_number t)
         w = 0;
       else
         w = mem[r + 1].cint / two_to_the[n];
-      if ((abs (w) <= 1342) && (mem[r].hh.lh != 0))
+      if ((abs(w) <= 1342) && (mem[r].hh.lh != 0))
       {
         mem[s].hh.rh = mem[r].hh.rh;
         free_node (r, 2);
@@ -11456,7 +11290,7 @@ void linear_eq (halfword p, small_number t)
   {
     mem[x].hh.b0 = 16;
     mem[x + 1].cint = mem[p + 1].cint;
-    if (abs (mem[x + 1].cint) >= fraction_one)
+    if (abs(mem[x + 1].cint) >= fraction_one)
       val_too_big (mem[x + 1].cint);
     free_node (p, 2);
     if (cur_exp == x)
@@ -14409,7 +14243,7 @@ void materialize_pen (void)
     aminusb = pyth_add (txx - tyy, tyx + txy);
     aplusb = pyth_add (txx + tyy, tyx - txy);
     major_axis = half(aminusb + aplusb);
-    minor_axis = half(abs (aplusb - aminusb));
+    minor_axis = half(abs(aplusb - aminusb));
     if (major_axis == minor_axis)
       theta = 0;
     else
@@ -15091,7 +14925,7 @@ void do_unary (quarterword c)
       else if (cur_type == 9)
         flush_cur_exp (path_length ());
       else if (cur_type == 16)
-        cur_exp = abs (cur_exp);
+        cur_exp = abs(cur_exp);
       else if (nice_pair (cur_exp, cur_type))
         flush_cur_exp (pyth_add (mem[mem[cur_exp + 1].cint + 1].cint, mem[mem[cur_exp + 1].cint + 3].cint));
       else
@@ -15426,7 +15260,7 @@ void dep_mult (halfword p, integer v, boolean v_is_scaled)
   {
     if (v_is_scaled)
     {
-      if (ab_vs_cd (max_coef (q), abs (v), 626349396L, unity) >= 0)
+      if (ab_vs_cd (max_coef (q), abs(v), 626349396L, unity) >= 0)
         t = 18;
     }
   }
@@ -15479,7 +15313,7 @@ void dep_div (halfword p, scaled v)
   s = t;
   if (t == 17)
   {
-    if (ab_vs_cd (max_coef (q), unity, 626349396L, abs (v)) >= 0)
+    if (ab_vs_cd (max_coef (q), unity, 626349396L, abs(v)) >= 0)
       t = 18;
   }
   q = p_over_v (q, v, s, t);
@@ -15710,7 +15544,7 @@ void edges_trans (halfword p, quarterword c)
               y_scale_edges (tyy / unity);
             tx = round_unscaled (tx);
             ty = round_unscaled (ty);
-            if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.rh + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.rh + ty >= 8191) || (abs (tx) >= 4096) || (abs (ty) >= 4096))
+            if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.rh + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.rh + ty >= 8191) || (abs(tx) >= 4096) || (abs(ty) >= 4096))
             {
               print_err("Too far to shift");
               help3(/* 868 */ "I can't shift the picture as requested---it would",
@@ -15722,7 +15556,7 @@ void edges_trans (halfword p, quarterword c)
             {
               if (tx != 0)
               {
-                if (!(abs (mem[cur_edges + 3].hh.lh - tx - 4096) < 4096))
+                if (!(abs(mem[cur_edges + 3].hh.lh - tx - 4096) < 4096))
                   fix_offset();
                 mem[cur_edges + 2].hh.lh = mem[cur_edges + 2].hh.lh + tx;
                 mem[cur_edges + 2].hh.rh = mem[cur_edges + 2].hh.rh + tx;
@@ -17104,7 +16938,7 @@ void try_eq (halfword l, halfword r)
   done1:;
   if (mem[p].hh.lh == 0)
   {
-    if (abs (mem[p + 1].cint) > 64)
+    if (abs(mem[p + 1].cint) > 64)
     {
       print_err("Inconsistent equation");
       print(899);
@@ -17830,7 +17664,7 @@ boolean scan_with (void)
   else
   {
     cur_exp = round_unscaled (cur_exp);
-    if ((abs (cur_exp) < 4) && (cur_exp != 0))
+    if ((abs(cur_exp) < 4) && (cur_exp != 0))
       result = true;
     else
     {
@@ -18053,7 +17887,7 @@ void do_add_to (void)
 scaled tfm_check (small_number m)
 {
   scaled Result;
-  if (abs (internal[m]) >= fraction_half)
+  if (abs(internal[m]) >= fraction_half)
   {
     print_err("Enormous ");
     print(int_name[m]);
@@ -19224,7 +19058,7 @@ integer dimen_out (scaled x)
 {
   integer Result;
 
-  if (abs (x) > max_tfm_dimen)
+  if (abs(x) > max_tfm_dimen)
   {
     incr(tfm_changed);
     if (x > 0)
@@ -19734,7 +19568,7 @@ lab_restart:
           {
             p = stash_cur_exp();
             scan_primary();
-            if ((abs (num) >= abs (denom)) || (cur_type < 14))
+            if ((abs(num) >= abs(denom)) || (cur_type < 14))
               do_binary (p, 71);
             else
             {
@@ -20760,7 +20594,7 @@ void close_files_and_terminate (void)
       {
         if (k == 1)
         {
-          if (abs (param[1]) < fraction_half)
+          if (abs(param[1]) < fraction_half)
             put4bytes (tfm_file, param[1]* 16);
           else
           {
@@ -20835,7 +20669,7 @@ void close_files_and_terminate (void)
             gf_four (gf_dy[k]);
           }
           x = mem[tfm_width[k]+ 1].cint;
-          if (abs (x) > max_tfm_dimen)
+          if (abs(x) > max_tfm_dimen)
           {
             if (x > 0)
               x = 16777215L;
