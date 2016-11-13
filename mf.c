@@ -827,6 +827,11 @@ void print_file_name (integer n, integer a, integer e)
   slow_print(n);
   slow_print(e);
 }
+void normalize_selector(void); void get_next(void);
+void term_input(void); void show_context(void);
+void begin_file_reading(void); void open_log_file(void);
+void close_files_and_terminate(void);
+void clear_for_error_prompt(void);
 /* 43 */
 void flush_string (str_number s)
 {
@@ -2327,6 +2332,7 @@ void print_word (memory_word w)
   print_int (w.qqqq .b3);
 }
 #endif /* TEXMF_DEBUG */
+void print_capsule(void);
 /* 217 */
 void show_token_list (integer p, integer q, integer l, integer nulltally)
 {
@@ -4934,6 +4940,8 @@ void flush_error (scaled v)
   error();
   flush_cur_exp(v);
 }
+void back_error(void);
+void get_x_next(void);
 /* 820 */
 void put_get_error (void)
 {
@@ -12634,6 +12642,9 @@ void scan_def (void)
   scanner_status = 0;
   get_x_next();
 }
+void scan_primary(void);
+void scan_secondary(void); void scan_tertiary(void);
+void scan_expression(void); void scan_suffix(void);
 /* 722 */
 void print_macro_name (halfword a, halfword n)
 {
@@ -12991,6 +13002,10 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     flush_list (arg_list);
   }
 }
+void get_boolean(void); void pass_text(void);
+void conditional(void); void start_input(void);
+void begin_iteration(void); void resume_iteration(void);
+void stop_iteration(void);
 /* 707 */
 void expand (void)
 {
@@ -13178,6 +13193,7 @@ void expand (void)
       break;
   }
 }
+void firm_up_the_line(void);
 /* 718 */
 void get_x_next (void)
 {
@@ -17045,6 +17061,7 @@ done:
   recycle_value (lhs);
   free_node (lhs, 2);
 }
+void do_assignment(void);
 /* 995 */
 void do_equation (void)
 {
@@ -17283,6 +17300,7 @@ void def_delims (void)
   eqtb[rdelim].rh = ldelim;
   get_x_next();
 }
+void do_statement(void);
 /* 1034 */
 void do_interim (void)
 {
@@ -17295,12 +17313,12 @@ void do_interim (void)
     else
       slow_print(hash[cur_sym].rh);
     print(930);
-    help1(/* 931 */ "Something like `tracingonline' should follow `interim'.");
+    help1("Something like `tracingonline' should follow `interim'.");
     back_error();
   }
   else
   {
-    save_internal (cur_mod);
+    save_internal(cur_mod);
     back_input();
   }
   do_statement();
@@ -17350,7 +17368,7 @@ void do_new_internal (void)
 {
   do {
     if (int_ptr == max_internal)
-      overflow (/* 934 */ "number of internals", max_internal);
+      overflow("number of internals", max_internal);
     get_clear_symbol();
     incr(int_ptr);
     eqtb[cur_sym].lh = 40;
@@ -17367,8 +17385,8 @@ void do_show (void)
     get_x_next();
     scan_expression();
     print_nl(765);
-    print_exp (0, 2);
-    flush_cur_exp (0);
+    print_exp(0, 2);
+    flush_cur_exp(0);
   } while (!(cur_cmd != comma));
 }
 /* 1041 */
@@ -17406,11 +17424,11 @@ void disp_token (void)
     print_char('=');
     if (eqtb[cur_sym].lh >= 86)
       print(941);
-    print_cmd_mod (cur_cmd, cur_mod);
+    print_cmd_mod(cur_cmd, cur_mod);
     if (cur_cmd == defined_macro)
     {
       print_ln();
-      show_macro (cur_mod, 0, 100000L);
+      show_macro(cur_mod, 0, 100000L);
     }
   }
 }
@@ -17427,7 +17445,6 @@ void do_show_token (void)
 void do_show_stats (void)
 {
   print_nl(950);
-  ;
 #ifdef STAT
   print_int (var_used);
   print_char('&');
@@ -18834,9 +18851,9 @@ void main_control (void)
     if (cur_cmd == end_group)
     {
       print_err("Extra `endgroup'");
-      help2(/* 911 */ "I'm not currently working on a `begingroup',", 
-        /* 690 */ "so I had better not try to end anything.");
-      flush_error (0);
+      help2("I'm not currently working on a `begingroup',", 
+        "so I had better not try to end anything.");
+      flush_error(0);
     }
   } while (!(cur_cmd == stop));
 }
@@ -19008,7 +19025,7 @@ integer dimen_out (scaled x)
     else
       x = -max_tfm_dimen;
   }
-  x = make_scaled (x * 16, internal[design_size]);
+  x = make_scaled(x * 16, internal[design_size]);
   Result = x;
   return Result;
 }
@@ -19062,10 +19079,10 @@ lab_exit:;
 /* 1133 */
 void tfm_qqqq (four_quarters x)
 {
-  putbyte (x.b0, tfm_file);
-  putbyte (x.b1, tfm_file);
-  putbyte (x.b2, tfm_file);
-  putbyte (x.b3, tfm_file);
+  putbyte(x.b0, tfm_file);
+  putbyte(x.b1, tfm_file);
+  putbyte(x.b2, tfm_file);
+  putbyte(x.b3, tfm_file);
 }
 /* 779 */
 boolean open_base_file (void)
@@ -19079,25 +19096,24 @@ boolean open_base_file (void)
     incr(loc);
     j = loc;
     buffer[last] = 32;
-    while (buffer[j]!= 32)
+    while (buffer[j] != 32)
       incr(j);
-    pack_buffered_name (0, loc, j - 1);
-    if (w_open_in (base_file))
+    pack_buffered_name(0, loc, j - 1);
+    if (w_open_in(base_file))
       goto found;
-    Fputs (stdout,  "Sorry, I can't find the base `");
-    fputs (stringcast (name_of_file + 1), stdout);
-    Fputs (stdout,  "'; will try `");
-    fputs (MF_base_default + 1, stdout);
-    fprintf (stdout, "%s\n",  "'.");
-    fflush (stdout);
+    fputs(stdout, "Sorry, I can't find the base `");
+    fputs(stringcast(name_of_file + 1), stdout);
+    Fputs(stdout, "'; will try `");
+    fputs(MF_base_default + 1, stdout);
+    fprintf(stdout, "%s\n", "'.");
+    fflush(stdout);
   }
-  pack_buffered_name (base_default_length - 5, 1, 0);
-  if (!w_open_in (base_file))
+  pack_buffered_name(base_default_length - 5, 1, 0);
+  if (!w_open_in(base_file))
   {
-    ;
-    Fputs (stdout, "I can't find the base file `");
-    fputs (MF_base_default + 1, stdout);
-    fprintf (stdout, "%s\n",  "'!");
+    fputs(stdout, "I can't find the base file `");
+    fputs(MF_base_default + 1, stdout);
+    fprintf(stdout, "%s\n", "'!");
     Result = false;
     goto lab_exit;
   }
@@ -19129,7 +19145,6 @@ boolean load_base_file (void)
   baseengine[x - 1] = 0;
   if (strcmp(enginename, stringcast(baseengine)))
   {
-    ;
     fprintf(stdout, "%s%s%s%s\n", "---! ", stringcast(name_of_file + 1), " was written by ", stringcast(baseengine));
     libcfree(baseengine);
     goto lab6666;
@@ -20262,10 +20277,10 @@ void get_boolean (void)
   scan_expression();
   if (cur_type != 2)
   {
-    disp_err (null, /* 832 */ "Undefined condition will be treated as `false'");
-    help2(/* 833 */ "The expression shown above should have had a definite",
-      /* 834 */ "true-or-false value. I'm changing it to `false'.");
-    put_get_flush_error (31);
+    disp_err(null, "Undefined condition will be treated as `false'");
+    help2("The expression shown above should have had a definite",
+      "true-or-false value. I'm changing it to `false'.");
+    put_get_flush_error(31);
     cur_type = 2;
   }
 }
@@ -20273,7 +20288,7 @@ void get_boolean (void)
 void print_capsule (void)
 {
   print_char('(');
-  print_exp (g_pointer, 0);
+  print_exp(g_pointer, 0);
   print_char(')');
 }
 /* 224 */
@@ -20290,7 +20305,6 @@ void close_files_and_terminate (void)
   halfword p;
   scaled x;
 
-  ;
 #ifdef STAT
   if (internal[tracing_stats] > 0)
   {
@@ -20562,7 +20576,6 @@ void close_files_and_terminate (void)
         }
         print(1052);
       }
-      ;
 #ifdef STAT
       if (internal[tracing_stats] > 0)
       {
@@ -20619,52 +20632,52 @@ void close_files_and_terminate (void)
               x = -16777215L;
           }
           else
-            x = make_scaled (x * 16, internal[design_size]);
-          gf_four (x);
-          gf_four (char_ptr[k]);
+            x = make_scaled(x * 16, internal[design_size]);
+          gf_four(x);
+          gf_four(char_ptr[k]);
         }
       }
-      gf_out (post_post);
-      gf_four (gf_prev_ptr);
+      gf_out(post_post);
+      gf_four(gf_prev_ptr);
       gf_out (gf_id_byte);
       k = 4 + ((gf_buf_size - gf_ptr) % 4);
       while (k > 0)
       {
-        gf_out (233);
+        gf_out(233);
         decr(k);
       }
       if (gf_limit == half_buf)
-        write_gf (half_buf, gf_buf_size - 1);
+        write_gf(half_buf, gf_buf_size - 1);
       if (gf_ptr > (2147483647L - gf_offset))
       {
         gf_prev_ptr = 0;
-        fatal_error (/* 1053 */ "gf length exceeds \"7FFFFFFF");
+        fatal_error("gf length exceeds \"7FFFFFFF");
       }
       if (gf_ptr > 0)
-        write_gf (0, gf_ptr - 1);
+        write_gf(0, gf_ptr - 1);
       print_nl(1064);
-      print_file_name (0, output_file_name, 0);
+      print_file_name(0, output_file_name, 0);
       print(558);
-      print_int (total_chars);
+      print_int(total_chars);
       if (total_chars != 1)
         print(1065);
       else
         print(1066);
       print(1067);
-      print_int (gf_offset + gf_ptr);
+      print_int(gf_offset + gf_ptr);
       print(1068);
-      b_close (gf_file);
+      b_close(gf_file);
     }
   }
   if (log_opened)
   {
-    putc ('\n', log_file);
-    aclose (log_file);
+    putc('\n', log_file);
+    aclose(log_file);
     selector = selector - 2;
     if (selector == term_only)
     {
       print_nl(1076);
-      print_file_name (0, texmflogname, 0);
+      print_file_name(0, texmflogname, 0);
       print_char('.');
     }
   }
@@ -20692,7 +20705,7 @@ void final_cleanup (void)
   }
   while (cond_ptr != 0)
   {
-    print_nl(/* 1078 */ "(end occurred when ");
+    print_nl("(end occurred when ");
     print_cmd_mod(2, cur_if);
     if (if_line != 0)
     {
@@ -20713,14 +20726,13 @@ void final_cleanup (void)
       if (selector == term_and_log)
       {
         selector = term_only;
-        print_nl(/* 1081 */ "(see the transcript file for additional information)");
+        print_nl("(see the transcript file for additional information)");
         selector = term_and_log;
       }
     }
   }
   if (c == 1)
   {
-    ;
 #ifdef INIMF
     if (iniversion)
     {
@@ -20728,7 +20740,7 @@ void final_cleanup (void)
       goto lab_exit;
     }
 #endif /* INIMF */
-    print_nl(/* 1082 */ "(dump is performed only by INIMF)");
+    print_nl("(dump is performed only by INIMF)");
     goto lab_exit;
   }
 lab_exit:;
@@ -20736,242 +20748,149 @@ lab_exit:;
 /* 1210 */
 void init_prim (void)
 {
-  primitive(409, 40, 1);
-  primitive(410, 40, 2);
-  primitive(411, 40, 3);
-  primitive(412, 40, 4);
-  primitive(413, 40, 5);
-  primitive(414, 40, 6);
-  primitive(415, 40, 7);
-  primitive(416, 40, 8);
-  primitive(417, 40, 9);
-  primitive(418, 40, 10);
-  primitive(419, 40, 11);
-  primitive(420, 40, 12);
-  primitive(421, 40, 13);
-  primitive(422, 40, 14);
-  primitive(423, 40, 15);
-  primitive(424, 40, 16);
-  primitive(425, 40, 17);
-  primitive(426, 40, 18);
-  primitive(427, 40, 19);
-  primitive(428, 40, 20);
-  primitive(429, 40, 21);
-  primitive(430, 40, 22);
-  primitive(431, 40, 23);
-  primitive(432, 40, 24);
-  primitive(433, 40, 25);
-  primitive(434, 40, 26);
-  primitive(435, 40, 27);
-  primitive(436, 40, 28);
-  primitive(437, 40, 29);
-  primitive(438, 40, 30);
-  primitive(439, 40, 31);
-  primitive(440, 40, 32);
-  primitive(441, 40, 33);
-  primitive(442, 40, 34);
-  primitive(443, 40, 35);
-  primitive(444, 40, 36);
-  primitive(445, 40, 37);
-  primitive(446, 40, 38);
-  primitive(447, 40, 39);
-  primitive(448, 40, 40);
-  primitive(449, 40, 41);
-  primitive(408, 47, 0);
-  primitive(91, 63, 0);
-  eqtb[9760] = eqtb[cur_sym];
-  primitive(93, 64, 0);
-  primitive(125, 65, 0);
-  primitive(123, 46, 0);
-  primitive(58, 81, 0);
-  eqtb[9762] = eqtb[cur_sym];
-  primitive(459, 80, 0);
-  primitive(460, 79, 0);
-  primitive(461, 77, 0);
-  primitive(44, 82, 0);
-  primitive(59, 83, 0);
-  eqtb[9763] = eqtb[cur_sym];
-  primitive(92, 7, 0);
-  primitive(462, 18, 0);
-  primitive(463, 72, 0);
-  primitive(464, 59, 0);
-  primitive(465, 32, 0);
-  bg_loc = cur_sym;
-  primitive(466, 57, 0);
-  primitive(467, 19, 0);
-  primitive(468, 60, 0);
-  primitive(469, 27, 0);
-  primitive(470, 11, 0);
-  primitive(453, 84, 0);
-  eqtb[9767] = eqtb[cur_sym];
-  eg_loc = cur_sym;
-  primitive(471, 26, 0);
-  primitive(472, 6, 0);
-  primitive(473, 9, 0);
-  primitive(474, 70, 0);
-  primitive(475, 73, 0);
-  primitive(476, 13, 0);
-  primitive(477, 14, 0);
-  primitive(478, 15, 0);
-  primitive(479, 69, 0);
-  primitive(480, 28, 0);
-  primitive(481, 24, 0);
-  primitive(482, 12, 0);
-  primitive(483, 8, 0);
-  primitive(484, 17, 0);
-  primitive(485, 78, 0);
-  primitive(486, 74, 0);
-  primitive(487, 35, 0);
-  primitive(488, 58, 0);
-  primitive(489, 71, 0);
-  primitive(490, 75, 0);
-  primitive(655, 16, 1);
-  primitive(656, 16, 2);
-  primitive(657, 16, 53);
-  primitive(658, 16, 44);
-  primitive(659, 16, 49);
-  primitive(454, 16, 0);
-  eqtb[9765] = eqtb[cur_sym];
-  primitive(660, 4, 9770);
-  primitive(661, 4, 9920);
-  primitive(662, 4, 1);
-  primitive(455, 4, 0);
-  eqtb[9764] = eqtb[cur_sym];
-  primitive(663, 61, 0);
-  primitive(664, 61, 1);
-  primitive(64, 61, 2);
-  primitive(665, 61, 3);
-  primitive(676, 56, 9770);
-  primitive(677, 56, 9920);
-  primitive(678, 56, 10070);
-  primitive(679, 56, 1);
-  primitive(680, 56, 2);
-  primitive(681, 56, 3);
-  primitive(691, 3, 0);
-  primitive(617, 3, 1);
-  primitive(718, 1, 1);
-  primitive(452, 2, 2);
-  eqtb[9766] = eqtb[cur_sym];
-  primitive(719, 2, 3);
-  primitive(720, 2, 4);
-  primitive(347, 33, 30);
-  primitive(348, 33, 31);
-  primitive(349, 33, 32);
-  primitive(350, 33, 33);
-  primitive(351, 33, 34);
-  primitive(352, 33, 35);
-  primitive(353, 33, 36);
-  primitive(354, 33, 37);
-  primitive(355, 34, 38);
-  primitive(356, 34, 39);
-  primitive(357, 34, 40);
-  primitive(358, 34, 41);
-  primitive(359, 34, 42);
-  primitive(360, 34, 43);
-  primitive(361, 34, 44);
-  primitive(362, 34, 45);
-  primitive(363, 34, 46);
-  primitive(364, 34, 47);
-  primitive(365, 34, 48);
-  primitive(366, 34, 49);
-  primitive(367, 34, 50);
-  primitive(368, 34, 51);
-  primitive(369, 34, 52);
-  primitive(370, 34, 53);
-  primitive(371, 34, 54);
-  primitive(372, 34, 55);
-  primitive(373, 34, 56);
-  primitive(374, 34, 57);
-  primitive(375, 34, 58);
-  primitive(376, 34, 59);
-  primitive(377, 34, 60);
-  primitive(378, 34, 61);
-  primitive(379, 34, 62);
-  primitive(380, 34, 63);
-  primitive(381, 34, 64);
-  primitive(382, 34, 65);
-  primitive(383, 34, 66);
-  primitive(384, 34, 67);
-  primitive(385, 36, 68);
-  primitive(43, 43, 69);
-  primitive(45, 43, 70);
-  primitive(42, 55, 71);
-  primitive(47, 54, 72);
-  eqtb[9761] = eqtb[cur_sym];
-  primitive(386, 45, 73);
-  primitive(310, 45, 74);
-  primitive(388, 52, 76);
-  primitive(387, 45, 75);
-  primitive(60, 50, 77);
-  primitive(389, 50, 78);
-  primitive(62, 50, 79);
-  primitive(390, 50, 80);
-  primitive(61, 51, 81);
-  primitive(391, 50, 82);
-  primitive(401, 37, 94);
-  primitive(402, 37, 95);
-  primitive(403, 37, 96);
-  primitive(404, 37, 97);
-  primitive(405, 37, 98);
-  primitive(406, 37, 99);
-  primitive(407, 37, 100);
-  primitive(38, 48, 83);
-  primitive(392, 55, 84);
-  primitive(393, 55, 85);
-  primitive(394, 55, 86);
-  primitive(395, 55, 87);
-  primitive(396, 55, 88);
-  primitive(397, 55, 89);
-  primitive(398, 55, 90);
-  primitive(399, 55, 91);
-  primitive(400, 45, 92);
-  primitive(340, 30, 15);
-  primitive(326, 30, 4);
-  primitive(324, 30, 2);
-  primitive(331, 30, 9);
-  primitive(328, 30, 6);
-  primitive(333, 30, 11);
-  primitive(335, 30, 13);
-  primitive(336, 30, 14);
-  primitive(912, 85, 0);
-  primitive(913, 85, 1);
-  primitive(273, 23, 0);
-  primitive(274, 23, 1);
-  primitive(275, 23, 2);
-  primitive(919, 23, 3);
-  primitive(920, 21, 0);
-  primitive(921, 21, 1);
-  primitive(935, 22, 0);
-  primitive(936, 22, 1);
-  primitive(937, 22, 2);
-  primitive(938, 22, 3);
-  primitive(939, 22, 4);
-  primitive(956, 68, 1);
-  primitive(957, 68, 0);
-  primitive(958, 68, 2);
-  primitive(959, 66, 6);
-  primitive(960, 66, 16);
-  primitive(961, 67, 0);
-  primitive(962, 67, 1);
-  primitive(992, 25, 0);
-  primitive(993, 25, 1);
-  primitive(994, 25, 2);
-  primitive(1004, 20, 0);
-  primitive(1005, 20, 1);
-  primitive(1006, 20, 2);
-  primitive(1007, 20, 3);
-  primitive(1008, 20, 4);
-  primitive(1026, 76, 0);
-  primitive(1027, 76, 1);
-  primitive(1028, 76, 5);
-  primitive(1029, 76, 2);
-  primitive(1030, 76, 6);
-  primitive(1031, 76, 3);
-  primitive(1032, 76, 7);
-  primitive(1033, 76, 11);
-  primitive(1034, 76, 128);
-  primitive(1059, 29, 4);
-  primitive(1060, 29, 16);
+  primitive("def", macro_def, start_def);
+  primitive("vardef", macro_def, var_def);
+  primitive("primarydef", macro_def, secondary_primary_macro);
+  primitive("secondarydef", macro_def, tertiary_secondary_macro);
+  primitive("tertiarydef", macro_def, expression_tertiary_macro);
+  primitive("enddef", macro_def, end_def); eqtb[frozen_end_def] = eqtb[cur_sym];
+  primitive("for", iteration, expr_base);
+  primitive("forsuffixes", iteration, suffix_base);
+  primitive("forever", iteration, start_forever);
+  primitive("endfor", iteration, end_for); eqtb[frozen_end_for] = eqtb[cur_sym];
+  primitive("quote", macro_special, quote);
+  primitive("#@@", macro_special, macro_prefix);
+  primitive("@@", macro_special, macro_at);
+  primitive("@@#", macro_special, macro_suffix);
+  primitive("expr", param_type, expr_base);
+  primitive("suffix", param_type, suffix_base);
+  primitive("text", param_type, text_base);
+  primitive("primary", param_type, primary_macro);
+  primitive("secondary", param_type, secondary_macro);
+  primitive("tertiary", param_type, tertiary_macro);
+  primitive("input", input, 0);
+  primitive("endinput", input, 1);
+  primitive("if", if_test, if_code);
+  primitive("fi", fi_or_else, fi_code); eqtb[frozen_fi] = eqtb[cur_sym];
+  primitive("else", fi_or_else, else_code);
+  primitive("elseif", fi_or_else, else_if_code);
+  primitive("true", nullary, true_code);
+  primitive("false", nullary, false_code);
+  primitive("nullpicture", nullary, null_picture_code);
+  primitive("nullpen", nullary, null_pen_code);
+  primitive("jobname", nullary, job_name_op);
+  primitive("readstring", nullary, read_string_op);
+  primitive("pencircle", nullary, pen_circle);
+  primitive("normaldeviate", nullary, normal_deviate);
+  primitive("odd", unary, odd_op);
+  primitive("known", unary, known_op);
+  primitive("unknown", unary, unknown_op);
+  primitive("not", unary, not_op);
+  primitive("decimal", unary, decimal);
+  primitive("reverse", unary, reverse);
+  primitive("makepath", unary, make_path_op);
+  primitive("makepen", unary, make_pen_op);
+  primitive("totalweight", unary, total_weight_op);
+  primitive("oct", unary, oct_op);
+  primitive("hex", unary, hex_op);
+  primitive("ASCII", unary, ASCII_op);
+  primitive("char", unary, char_op);
+  primitive("length", unary, length_op);
+  primitive("turningnumber", unary, turning_op);
+  primitive("xpart", unary, x_part);
+  primitive("ypart", unary, y_part);
+  primitive("xxpart", unary, xx_part);
+  primitive("xypart", unary, xy_part);
+  primitive("yxpart", unary, yx_part);
+  primitive("yypart", unary, yy_part);
+  primitive("sqrt", unary, sqrt_op);
+  primitive("mexp", unary, m_exp_op);
+  primitive("mlog", unary, m_log_op);
+  primitive("sind", unary, sin_d_op);
+  primitive("cosd", unary, cos_d_op);
+  primitive("floor", unary, floor_op);
+  primitive("uniformdeviate", unary, uniform_deviate);
+  primitive("charexists", unary, char_exists_op);
+  primitive("angle", unary, angle_op);
+  primitive("cycle", cycle, cycle_op);
+  primitive("+", plus_or_minus, plus);
+  primitive("-", plus_or_minus, minus);
+  primitive("*", secondary_binary, times);
+  primitive("/", slash, over); eqtb[frozen_slash] = eqtb[cur_sym];
+  primitive("++", tertiary_binary, pythag_add);
+  primitive("+-+", tertiary_binary, pythag_sub);
+  primitive("and", and_command, and_op);
+  primitive("or", tertiary_binary, or_op);
+  primitive("<", expression_binary, less_than);
+  primitive("<=", expression_binary, less_or_equal);
+  primitive(">", expression_binary, greater_than);
+  primitive(">=", expression_binary, greater_or_equal);
+  primitive("=", equals, equal_to);
+  primitive("<>", expression_binary, unequal_to);
+  primitive("substring", primary_binary, substring_of);
+  primitive("subpath", primary_binary, subpath_of);
+  primitive("directiontime", primary_binary, direction_time_of);
+  primitive("point", primary_binary, point_of);
+  primitive("precontrol", primary_binary, precontrol_of);
+  primitive("postcontrol", primary_binary, postcontrol_of);
+  primitive("penoffset", primary_binary, pen_offset_of);
+  primitive("&", ampersand, concatenate);
+  primitive("rotated", secondary_binary, rotated_by);
+  primitive("slanted", secondary_binary, slanted_by);
+  primitive("scaled", secondary_binary, scaled_by);
+  primitive("shifted", secondary_binary, shifted_by);
+  primitive("transformed", secondary_binary, transformed_by);
+  primitive("xscaled", secondary_binary, x_scaled);
+  primitive("yscaled", secondary_binary, y_scaled);
+  primitive("zscaled", secondary_binary, z_scaled);
+  primitive("intersectiontimes", tertiary_binary, intersect);
+  primitive("numeric", type_name, numeric_type);
+  primitive("string", type_name, string_type);
+  primitive("boolean", type_name, boolean_type);
+  primitive("path", type_name, path_type);
+  primitive("pen", type_name, pen_type);
+  primitive("picture", type_name, picture_type);
+  primitive("transform", type_name, transform_type);
+  primitive("pair", type_name, pair_type);
+  primitive("end", stop, 0);
+  primitive("dump", stop, 1);
+  primitive("batchmode", mode_command, batch_mode);
+  primitive("nonstopmode", mode_command, nonstop_mode);
+  primitive("scrollmode", mode_command, scroll_mode);
+  primitive("errorstopmode", mode_command, error_stop_mode);
+  primitive("inner", protection_command, 0);
+  primitive("outer", protection_command, 1);
+  primitive("showtoken", show_command, show_token_code);
+  primitive("showstats", show_command, show_stats_code);
+  primitive("show", show_command, show_code);
+  primitive("showvariable", show_command, show_var_code);
+  primitive("showdependencies", show_command, show_dependencies_code);
+  primitive("contour", thing_to_add, contour_code);
+  primitive("doublepath", thing_to_add, double_path_code);
+  primitive("also", thing_to_add, also_code);
+  primitive("withpen", with_option, pen_type);
+  primitive("withweight", with_option, known);
+  primitive("dropping", cull_op, drop_code);
+  primitive("keeping", cull_op, keep_code);
+  primitive("message", message_command, message_code);
+  primitive("errmessage", message_command, err_message_code);
+  primitive("errhelp", message_command, err_help_code);
+  primitive("charlist", tfm_command, char_list_code);
+  primitive("ligtable", tfm_command, lig_table_code);
+  primitive("extensible", tfm_command, extensible_code);
+  primitive("headerbyte", tfm_command, header_byte_code);
+  primitive("fontdimen", tfm_command, font_dimen_code);
+  primitive("=:", lig_kern_token, 0);
+  primitive("=:|", lig_kern_token, 1);
+  primitive("=:|>", lig_kern_token, 5);
+  primitive("|=:", lig_kern_token, 2);
+  primitive("|=:>", lig_kern_token, 6);
+  primitive("|=:|", lig_kern_token, 3);
+  primitive("|=:|>", lig_kern_token, 7);
+  primitive("|=:|>>", lig_kern_token, 11);
+  primitive("kern", lig_kern_token, 128);
+  primitive("special", special_command, string_type);
+  primitive("numspecial", special_command, known);
 }
 /* 1210 */
 void init_tab (void)
