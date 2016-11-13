@@ -3379,180 +3379,125 @@ void print_cmd_mod (integer c, integer m)
         default: print("showdependencies"); break;
       }
       break;
-    case 31:
-    case 62:
+    case left_delimiter:
+    case right_delimiter:
       {
-        if (c == 31)
-          print(942);
-        else
-          print(943);
-        print(944);
-        slow_print(hash[m].rh);
+        if (c == left_delimiter) print("lef");
+        else print("righ");
+        print("t delimiter that matches "); slow_print(text(m));
       }
       break;
-    case 41:
-      if (m == 0)
-        print(945);
-      else
-        print(946);
+    case tag_token:
+      if (m == null) print("tag"); else print("variable");
       break;
-    case 10:
-      print(947);
+    case defined_macro:
+      print("macro:");
       break;
-    case 53:
-    case 44:
-    case 49:
+    case secondary_primary_macro:
+    case tertiary_secondary_macro:
+    case expression_tertiary_macro:
       {
-        print_cmd_mod (16, c);
-        print(948);
-        print_ln();
-        show_token_list (mem[mem[m].hh.rh].hh.rh, 0, 1000, 0);
+        print_cmd_mod(macro_def, c); print("'d macro:");
+        print_ln(); show_token_list(link(link(m)), null, 1000, 0);
       }
       break;
-    case 5:
-      print(949);
+    case repeat_loop:
+      print("[repeat the loop]");
       break;
-    case 40:
+    case internal_quantity:
       slow_print(int_name[m]);
       break;
-    case 68:
-      if (m == 1)
-        print(956);
-      else if (m == 0)
-        print(957);
-      else
-        print(958);
+    case thing_to_add:
+      if (m == contour_code) print("contour");
+      else if (m == double_path_code) print("doublepath");
+      else print("also");
       break;
-    case 66:
-      if (m == 6)
-        print(959);
-      else
-        print(960);
+    case with_option:
+      if (m == pen_type) print("withpen");
+      else print("withweight");
       break;
-    case 67:
-      if (m == 0)
-        print(961);
-      else
-        print(962);
+    case cull_op:
+      if (m == drop_code) print("dropping");
+      else print("keeping");
       break;
-    case 25:
-      if (m < 1)
-        print(992);
-      else if (m == 1)
-        print(993);
-      else
-        print(994);
+    case message_command:
+      if (m < err_message_code) print("message");
+      else if (m == err_message_code) print("errmessage");
+      else print("errhelp");
       break;
-    case 20:
+    case tfm_command:
       switch (m)
       {
-        case 0:
-          print(1004);
-          break;
-        case 1:
-          print(1005);
-          break;
-        case 2:
-          print(1006);
-          break;
-        case 3:
-          print(1007);
-          break;
-        default:
-          print(1008);
-          break;
+        case char_list_code:print("charlist"); break;
+        case lig_table_code:print("ligtable"); break;
+        case extensible_code:print("extensible"); break;
+        case header_byte_code:print("headerbyte"); break;
+        default: print("fontdimen"); break;
       }
       break;
-    case 76:
+    case lig_kern_token:
       switch (m)
       {
-        case 0:
-          print(1026);
-          break;
-        case 1:
-          print(1027);
-          break;
-        case 2:
-          print(1029);
-          break;
-        case 3:
-          print(1031);
-          break;
-        case 5:
-          print(1028);
-          break;
-        case 6:
-          print(1030);
-          break;
-        case 7:
-          print(1032);
-          break;
-        case 11:
-          print(1033);
-          break;
-        default:
-          print(1034);
-          break;
+        case 0:print("=:"); break;
+        case 1:print("=:|"); break;
+        case 2:print("|=:"); break;
+        case 3:print("|=:|"); break;
+        case 5:print("=:|>"); break;
+        case 6:print("|=:>"); break;
+        case 7:print("|=:|>"); break;
+        case 11:print("|=:|>>"); break;
+        default: print("kern"); break;
       }
       break;
-    case 29:
-      if (m == 16)
-        print(1060);
-      else
-        print(1059);
+    case special_command:
+      if (m == known) print("numspecial");
+      else print("special");
       break;
     default:
-      print(603);
+      print("[unknown command code!]");
       break;
   }
 }
 /* 227 */
-void show_macro (halfword p, integer q, integer l)
+void show_macro (pointer p, integer q, integer l)
 {
-  halfword r;
+  pointer r;
 
-  p = mem[p].hh.rh;
-  while (mem[p].hh.lh > 7)
+  p = link(p);
+  while (info(p) > text_macro)
   {
-    r = mem[p].hh.rh;
-    mem[p].hh.rh = 0;
-    show_token_list (p, 0, l, 0);
-    mem[p].hh.rh = r;
-    p = r;
+    r = link(p); link(p) = null;
+    show_token_list(p, null, l, 0); link(p) = r; p = r;
     if (l > 0)
       l = l - tally;
     else
       goto lab_exit;
   }
   tally = 0;
-  switch (mem[p].hh.lh)
+  switch (info(p))
   {
-    case 0:
-      print(501);
-      break;
-    case 1:
-    case 2:
-    case 3:
+    case primary_macro:
+    case secondary_macro:
+    case tertiary_macro:
       {
-        print_char('<');
-        print_cmd_mod (56, mem[p].hh.lh);
-        print(502);
+        print_char("<");
+        print_cmd_mod(param_type, info(p)); print(">->");
       }
       break;
-    case 4:
-      print(503);
+    case expr_macro:
+      print("<expr>->");
       break;
-    case 5:
-      print(504);
+    case of_macro:
+      print("<expr>of<primary>->");
       break;
-    case 6:
-      print(505);
+    case suffix_macro:
+      print("<suffix>->");
       break;
-    case 7:
-      print(506);
+    case text_macro:
+      print("<text>->");
       break;
   }
-  show_token_list (mem[p].hh.rh, q, l - tally, 0);
+  show_token_list(link(p), q, l - tally, 0);
 lab_exit:;
 }
 /* 232 */
@@ -3562,7 +3507,7 @@ void init_big_node (pointer p)
   small_number s;
 
   s = big_node_size[type(p)];
-  q = get_node (s);
+  q = get_node(s);
   do {
     s = s - 2;
     new_index(q + s);
@@ -3578,7 +3523,7 @@ pointer id_transform (void)
   pointer Result;
   pointer p, q, r;
   
-  p = get_node (value_node_size);
+  p = get_node(value_node_size);
   type(p) = transform_type;
   name_type(p) = capsule;
   value(p) = null;
@@ -3600,7 +3545,7 @@ void new_root (pointer x)
 {
   pointer p;
 
-  p = get_node (value_node_size);
+  p = get_node(value_node_size);
   type(p) = undefined;
   name_type(p) = root;
   link(p) = x;
@@ -3663,7 +3608,7 @@ void print_variable_name (pointer p)
     else
     {
       if (name_type(p) != attr)
-        confusion(/* 508 */ "var");
+        confusion("var");
       r = get_avail();
       info(r) = attr_loc(p);
     }
@@ -3825,7 +3770,7 @@ pointer find_variable (pointer t)
         p = s;
       else
       {
-        p = get_node (subscr_node_size);
+        p = get_node(subscr_node_size);
         link(r) = p;
         link(p) = s;
         subscript(p) = n;
@@ -3870,7 +3815,7 @@ pointer find_variable (pointer t)
           p = s;
         else
         {
-          q = get_node (attr_node_size);
+          q = get_node(attr_node_size);
           link(r) = q;
           link(q) = s;
           attr_loc(q) = n;
@@ -3923,7 +3868,7 @@ void print_path (pointer h, str_number s, boolean nuline)
       print_nl("???");
       goto done;
     }
-    print_two (x_coord(p), y_coord(p));
+    print_two(x_coord(p), y_coord(p));
     switch (right_type(p))
     {
       case endpoint:
@@ -3938,12 +3883,12 @@ void print_path (pointer h, str_number s, boolean nuline)
       case explicit:
         {
           print("..controls ");
-          print_two (right_x(p), right_y(p));
+          print_two(right_x(p), right_y(p));
           print(" and ");
           if (left_type(q) != explicit)
             print("??");
           else
-            print_two (left_x(q), left_y(q));
+            print_two(left_x(q), left_y(q));
           goto done1;
         }
         break;
@@ -4017,7 +3962,7 @@ done1:
   if (left_type(h) != endpoint)
     print("cycle");
 done:
-  end_diagnostic (true);
+  end_diagnostic(true);
 }
 /* 333 */
 void print_weight (pointer q, integer x_off)
@@ -4064,20 +4009,20 @@ void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
       print_char(':');
       while (q > _void)
       {
-        print_weight (q, x_off);
+        print_weight(q, x_off);
         q = mem[q].hh.rh;
       }
       print(" |");
       while (r != mem_top)
       {
-        print_weight (r, x_off);
+        print_weight(r, x_off);
         r = link(r);
       }
     }
     p = knil(p);
     decr(n);
   }
-  end_diagnostic (true);
+  end_diagnostic(true);
 }
 /* 388 */
 void unskew (scaled x, scaled y, small_number octant)
@@ -4120,7 +4065,7 @@ void print_pen (pointer p, str_number s, boolean nuline)
   pointer w, ww;
 
   print_diagnostic("Pen polygon", s, nuline);
-  nothingprinted = true;
+  nothing_printed = true;
   print_ln();
   for (k = 1; k <= 8; k++)
   {
@@ -4150,10 +4095,10 @@ void print_pen (pointer p, str_number s, boolean nuline)
   if (nothing_printed)
   {
     w = link(p + first_octant);
-    print_two (x_coord(w) + y_coord(w), y_coord(w));
+    print_two(x_coord(w) + y_coord(w), y_coord(w));
   }
   print_nl(" .. cycle");
-  end_diagnostic (true);
+  end_diagnostic(true);
 }
 /* 589 */
 void print_dependency (pointer p, small_number t)
@@ -4219,7 +4164,7 @@ halfword stash_cur_exp (void)
 
   switch (cur_type)
   {
-    case unknown_type:
+    case unknown_types:
     case transform_type:
     case pair_type:
     case dependent:
@@ -4247,7 +4192,7 @@ void unstash_cur_exp (pointer p)
   cur_type = type(p);
   switch (cur_type)
   {
-    case unknown_type:
+    case unknown_types:
     case transform_type:
     case pair_type:
     case dependent:
@@ -4266,17 +4211,17 @@ void unstash_cur_exp (pointer p)
 /* 801 */
 void print_exp (pointer p, small_number verbosity)
 {
-  boolean restorecur_exp;
+  boolean restore_cur_exp;
   small_number t;
   integer v;
   pointer q;
   
   if (p != null)
-    restorecur_exp = false;
+    restore_cur_exp = false;
   else
   {
     p = stash_cur_exp();
-    restorecur_exp = true;
+    restore_cur_exp = true;
   }
   t = type(p);
   if (t < dependent)
@@ -4294,7 +4239,7 @@ void print_exp (pointer p, small_number verbosity)
       else
         print("false");
       break;
-    case unknown_type:
+    case unknown_types:
     case numeric_type:
       {
         print_type (t);
@@ -4319,7 +4264,7 @@ void print_exp (pointer p, small_number verbosity)
     case path_type:
     case picture_type:
       if (verbosity <= 1)
-        print_type (t);
+        print_type(t);
       else
       {
         if (selector == term_and_log)
@@ -4327,7 +4272,7 @@ void print_exp (pointer p, small_number verbosity)
           if (internal[tracing_online] <= 0)
           {
             selector = term_only;
-            print_type (t);
+            print_type(t);
             print(" (see the transcript file)");
             selector = term_and_log;
           }
@@ -4335,18 +4280,18 @@ void print_exp (pointer p, small_number verbosity)
         switch (t)
         {
           case pen_type:
-            print_pen (v, "", false);
+            print_pen(v, "", false);
             break;
           case future_pen:
-            print_path (v, " (future pen)", false);
+            print_path(v, " (future pen)", false);
             break;
           case path_type:
-            print_path (v, "", false);
+            print_path(v, "", false);
             break;
           case picture_type:
             {
               cur_edges = v;
-              print_edges ("", false, 0, 0);
+              print_edges("", false, 0, 0);
             }
             break;
         }
@@ -4355,7 +4300,7 @@ void print_exp (pointer p, small_number verbosity)
     case transform_type:
     case pair_type:
       if (v == null)
-        print_type (t);
+        print_type(t);
       else
       {
         print_char('(');
@@ -4366,7 +4311,7 @@ void print_exp (pointer p, small_number verbosity)
           else if (type(v) == independent)
             print_variable_name(v);
           else
-            print_dp (type(v), disp_list(v), verbosity);
+            print_dp(type(v), disp_list(v), verbosity);
           v = v + 2;
           if (v != q)
             print_char(',');
@@ -4379,7 +4324,7 @@ void print_exp (pointer p, small_number verbosity)
       break;
     case dependent:
     case proto_dependent:
-      print_dp (t, v, verbosity);
+      print_dp(t, v, verbosity);
       break;
     case independent:
       print_variable_name(p);
@@ -4388,7 +4333,7 @@ void print_exp (pointer p, small_number verbosity)
       confusion("exp");
       break;
   }
-  if (restorecur_exp)
+  if (restore_cur_exp)
     unstash_cur_exp (p);
 }
 /* 807 */
@@ -4397,7 +4342,7 @@ void disp_err (halfword p, str_number s)
   if (interaction == error_stop_mode)
     wake_up_terminal();
   print_nl(">> ");
-  print_exp (p, 1);
+  print_exp(p, 1);
   if (s != "")
   {
     print_nl("! ");
@@ -4490,9 +4435,9 @@ halfword p_plus_fq(pointer p, integer f, pointer q, small_number t, small_number
   }
 done:
   if (t == dependent)
-    value(p) = slow_add (value(p), take_fraction (value(q), f));
+    value(p) = slow_add(value(p), take_fraction(value(q), f));
   else
-    value(p) = slow_add (value(p), take_scaled (value(q), f));
+    value(p) = slow_add(value(p), take_scaled(value(q), f));
   link(r) = p;
   dep_final = p;
   Result = link(temp_head);
@@ -4521,16 +4466,16 @@ pointer p_over_v (pointer p, scaled v, small_number t0, small_number t1)
     if (scaling_down)
     {
       if (abs(v) < 02000000)
-        w = make_scaled (value(p), v * 010000);
+        w = make_scaled(value(p), v * 010000);
       else
-        w = make_scaled (round_fraction(value(p)), v);
+        w = make_scaled(round_fraction(value(p)), v);
     }
     else
       w = make_scaled(value(p), v);
     if (abs(w) <= threshold)
     {
       s = link(p);
-      free_node (p, dep_node_size);
+      free_node(p, dep_node_size);
       p = s;
     }
     else
@@ -4597,7 +4542,7 @@ void make_known (halfword p, halfword q)
     {
       cur_type = known;
       cur_exp = value(p);
-      free_node (p, value_node_size);
+      free_node(p, value_node_size);
     }
   }
 }
@@ -6782,7 +6727,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       y0 = unity - y0;
       while (true)
       {
-        r = get_avail; link(r) = unsorted(p); unsorted(p) = r;
+        r = get_avail(); link(r) = unsorted(p); unsorted(p) = r;
         tx = take_fraction(delx, make_fraction(y0, dely));
         if (ab_vs_cd(delx, y0, dely, tx) < 0)
           decr(tx);
@@ -6804,8 +6749,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       else
         edge_prep(m1, m0, n1, n0);
       decr(n0);
-      n = mem[cur_edges + 5].hh.lh - 4096;
-      p = mem[cur_edges + 5].hh.rh;
+      n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
       if (n != n0)
       {
         if (n < n0)
@@ -6825,7 +6769,7 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       }
       while (true)
       {
-        r = get_avail; link(r) = unsorted(p); unsorted(p) = r;
+        r = get_avail(); link(r) = unsorted(p); unsorted(p) = r;
         tx = take_fraction(delx, make_fraction(y0, dely));
         if (ab_vs_cd(delx, y0, dely, tx) < 0)
           incr(tx);
@@ -7273,23 +7217,21 @@ void split_cubic (pointer p, fraction t, scaled xq, scaled yq)
 /* 406 */
 void quadrant_subdivide (void)
 {
-  halfword p, q, r, s, pp, qq;
-  scaled firstx, firsty;
+  pointer p, q, r, s, pp, qq;
+  scaled first_x, first_y;
   scaled del1, del2, del3, del, dmax;
   fraction t;
   scaled destx, desty;
   boolean constantx;
 
-  p = cur_spec;
-  firstx = mem[cur_spec + 1].cint;
-  firsty = mem[cur_spec + 2].cint;
+  p = cur_spec; first_x = x_coord(cur_spec); first_y = y_coord(cur_spec);
   do {
 lab_continue:
     q = mem[p].hh.rh;
     if (q == cur_spec)
     {
-      destx = firstx;
-      desty = firsty;
+      destx = first_x;
+      desty = first_y;
     }
     else
     {
@@ -7995,7 +7937,7 @@ void diag_round (void)
   scaled nexta;
   boolean allsafe;
   integer k;
-  scaled firstx, firsty;
+  scaled first_x, first_y;
 
   p = cur_spec;
   cur_rounding_ptr = 0;
@@ -8054,8 +7996,8 @@ void diag_round (void)
   if (cur_rounding_ptr > 0)
   {
     p = node_to_round[0];
-    firstx = mem[p + 1].cint;
-    firsty = mem[p + 2].cint;
+    first_x = mem[p + 1].cint;
+    first_y = mem[p + 2].cint;
     before[cur_rounding_ptr] = before[0];
     node_to_round[cur_rounding_ptr] = node_to_round[0];
     do {
@@ -8076,7 +8018,7 @@ void diag_round (void)
           if (aa == bb)
           {
             if (pp == node_to_round[0])
-              unskew (firstx, firsty, mem[pp].hh.b1);
+              unskew (first_x, first_y, mem[pp].hh.b1);
             else
               unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[pp].hh.b1);
             skew (cur_x, cur_y, mem[p].hh.b1);
@@ -8100,7 +8042,7 @@ void diag_round (void)
               a = -a;
             }
             if (pp == node_to_round[0])
-              dd = firsty - bb;
+              dd = first_y - bb;
             else
               dd = mem[pp + 2].cint - bb;
             if (odd(aa - bb))
@@ -8148,7 +8090,7 @@ void diag_round (void)
         if (aa == bb)
         {
           if (pp == node_to_round[0])
-            unskew (firstx, firsty, mem[pp].hh.b1);
+            unskew (first_x, first_y, mem[pp].hh.b1);
           else
             unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[pp].hh.b1);
           skew (cur_x, cur_y, mem[p].hh.b1);
@@ -8172,7 +8114,7 @@ void diag_round (void)
             a = -a;
           }
           if (pp == node_to_round[0])
-            dd = firsty - bb;
+            dd = first_y - bb;
           else
             dd = mem[pp + 2].cint - bb;
           if (odd(aa - bb))
