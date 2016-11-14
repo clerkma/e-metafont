@@ -967,6 +967,16 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define yy_part_loc(a) (a+10) //{where the \&{yypart} is found in a transform node}
 #define pair_node_size 4 //{the number of words in a pair node}
 #define transform_node_size 12 //{the number of words in a transform node}
+/* 250 */
+#define save_node_size 2 //{number of words per non-boundary save-stack node}
+#define saved_equiv(a) mem[a+1].hh //{where an |eqtb| entry gets saved}
+#define save_boundary_item(a) \
+do                                    \
+  {                                   \
+    a = get_avail(); info(a) = 0;     \
+    link(a) = save_ptr; save_ptr = a; \
+  }                                   \
+while (0)
 /* 255 */
 #define left_type(a) mem[a].hh.b0 //{characterizes the path entering this knot}
 #define right_type(a) mem[a].hh.b1 //{characterizes the path leaving this knot}
@@ -1029,6 +1039,10 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define double_path_code 0 //{command modifier for `\&{doublepath}'}
 #define contour_code 1 //{command modifier for `\&{contour}'}
 #define also_code 2 //{command modifier for `\&{also}'}
+/* 472 */
+#define pen_node_size 10
+#define coord_node_size 3
+#define max_offset(a) mem[a + 9].sc
 /* 553 */
 #define stack_1(a) bisect_stack[a] //{$U_1$, $V_1$, $X_1$, or $Y_1$}
 #define stack_2(a) bisect_stack[a+1] //{$U_2$, $V_2$, $X_2$, or $Y_2$}
@@ -1082,6 +1096,23 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define stack_uv bisect_stack[bisect_ptr+3] //{stacked value of |uv|}
 #define stack_xy bisect_stack[bisect_ptr+4] //{stacked value of |xy|}
 #define int_increment (int_packets+int_packets+5) //{number of stack words per level}
+/* 585 */
+#define s_scale 64 //{the serial numbers are multiplied by this factor}
+#define new_indep(a) \
+do                                                            \
+  {                                                           \
+    if (serial_no > el_gordo-s_scale)                         \
+      overflow("independent variables", serial_no / s_scale); \
+    type(a) = independent; serial_no = serial_no + s_scale;   \
+    value(a) = serial_no;                                     \
+  }                                                           \
+while (0)
+/* 587 */
+#define dep_list(a) link(value_loc(a))
+//  {half of the |value| field in a |dependent| variable}
+#define prev_dep(a) info(value_loc(a))
+//  {the other half; makes a doubly linked list}
+#define dep_node_size 2 //{the number of words per dependency node}
 /* 592 */
 #define coef_bound 04525252525 //{|fraction| approximation to 7/3}
 #define independent_needing_fix 0
@@ -1090,6 +1121,8 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define half_fraction_threshold 1342 //{half of |fraction_threshold|}
 #define scaled_threshold 8 //{a |scaled| coefficient less than this is zeroed}
 #define half_scaled_threshold 4 //{half of |scaled_threshold|}
+/* 505 */
+#define independent_being_fixed 1 //{this variable already appears in |s|}
 /* 629 */
 #define index cur_input.index_field //{reference for buffer information}
 #define start cur_input.start_field //{starting position in |buffer|}

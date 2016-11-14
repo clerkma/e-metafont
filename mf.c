@@ -633,7 +633,7 @@ void print_nl (str_number s)
   print(s);
 }
 /* 63 */
-void print_the_digs (eight_bits k)
+void print_the_digs(eight_bits k)
 {
   while (k > 0)
   {
@@ -642,7 +642,7 @@ void print_the_digs (eight_bits k)
   }
 }
 /* 64 */
-void print_int (integer n)
+void print_int(integer n)
 {
   unsigned char k;
   integer m;
@@ -1095,7 +1095,7 @@ void overflow (str_number s, integer n)
   print_err("METAFONT capacity exceeded, sorry [");
   print(s);
   print_char('=');
-  print_int (n);
+  print_int(n);
   print_char(']');
   help2("If you really absolutely need more capacity,",
     "you can ask a wizard to enlarge me.");
@@ -2309,27 +2309,27 @@ scaled norm_rand (void)
 #ifdef TEXMF_DEBUG
 void print_word (memory_word w)
 {
-  print_int (w.cint);
+  print_int(w.cint);
   print_char(' ');
   print_scaled(w.cint);
   print_char(' ');
   print_scaled(w.cint / 4096);
   print_ln();
-  print_int (w.hh.lh);
+  print_int(w.hh.lh);
   print_char('=');
-  print_int (w.hh.b0);
+  print_int(w.hh.b0);
   print_char(':');
-  print_int (w.hh.b1);
+  print_int(w.hh.b1);
   print_char(';');
-  print_int (w.hh.rh);
+  print_int(w.hh.rh);
   print_char(' ');
-  print_int (w.qqqq.b0);
+  print_int(w.qqqq.b0);
   print_char(':');
-  print_int (w.qqqq.b1);
+  print_int(w.qqqq.b1);
   print_char(':');
-  print_int (w.qqqq .b2);
+  print_int(w.qqqq .b2);
   print_char(':');
-  print_int (w.qqqq .b3);
+  print_int(w.qqqq .b3);
 }
 #endif /* TEXMF_DEBUG */
 void print_capsule(void);
@@ -2419,7 +2419,7 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
           print(500);
           r = r - (10070);
         }
-        print_int (r);
+        print_int(r);
         print_char(')');
         c = 8;
       }
@@ -2739,7 +2739,7 @@ void check_mem (boolean print_locs)
     if (clobbered)
     {
       print_nl(317);
-      print_int (q);
+      print_int(q);
       goto done2;
     }
     for (q = p; q <= p + mem[p].hh.lh - 1; q++)
@@ -2747,7 +2747,7 @@ void check_mem (boolean print_locs)
       if (freearr[q])
       {
         print_nl(318);
-        print_int (q);
+        print_int(q);
         goto done2;
       }
       freearr[q] = true;
@@ -2762,7 +2762,7 @@ void check_mem (boolean print_locs)
     if ((mem[p].hh.rh == 268435455L))
     {
       print_nl(319);
-      print_int (p);
+      print_int(p);
     }
     while ((p <= lo_mem_max) && !freearr[p])
       incr(p);
@@ -2776,7 +2776,7 @@ void check_mem (boolean print_locs)
     if (mem[p + 1].hh.lh != q)
     {
       print_nl(598);
-      print_int (p);
+      print_int(p);
     }
     p = mem[p + 1].hh.rh;
     r = 19;
@@ -2784,7 +2784,7 @@ void check_mem (boolean print_locs)
       if (mem[mem[p].hh.lh + 1].cint >= mem[r + 1].cint)
       {
         print_nl(599);
-        print_int (p);
+        print_int(p);
       }
       r = mem[p].hh.lh;
       q = p;
@@ -3983,7 +3983,7 @@ void print_weight (pointer q, integer x_off)
     print_nl(' ');
   else
     print_char(' ');
-  print_int (m + x_off);
+  print_int(m + x_off);
   while (w > zero_w)
   {
     print_char('+');
@@ -4011,7 +4011,7 @@ void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
     if ((q > _void) || (r != mem_top))
     {
       print_nl("row ");
-      print_int (n + y_off);
+      print_int(n + y_off);
       print_char(':');
       while (q > _void)
       {
@@ -4692,7 +4692,7 @@ void recycle_value (pointer p)
     case numeric_type:
       do_nothing();
       break;
-    case unknown_type:
+    case unknown_types:
       ring_delete(p);
       break;
     case string_type:
@@ -7719,27 +7719,25 @@ void octant_subdivide (void)
 void make_safe (void)
 {
   integer k;
-  boolean allsafe;
-  scaled nexta;
-  scaled deltaa, deltab;
+  boolean all_safe;
+  scaled next_a;
+  scaled delta_a, delta_b;
 
   before[cur_rounding_ptr] = before[0];
   node_to_round[cur_rounding_ptr] = node_to_round[0];
   do {
-    after[cur_rounding_ptr] = after[0];
-    allsafe = true;
-    nexta = after[0];
+    after[cur_rounding_ptr] = after[0]; all_safe = true; next_a = after[0];
     for (k = 0; k <= cur_rounding_ptr - 1; k++)
     {
-      deltab = before[k + 1] - before[k];
-      if (deltab >= 0)
-        deltaa = after[k + 1] - nexta;
+      delta_b = before[k + 1] - before[k];
+      if (delta_b >= 0)
+        delta_a = after[k + 1] - next_a;
       else
-        deltaa = nexta - after[k + 1];
-      nexta = after[k + 1];
-      if ((deltaa < 0) || (deltaa > abs(deltab + deltab)))
+        delta_a = next_a - after[k + 1];
+      next_a = after[k + 1];
+      if ((delta_a < 0) || (delta_a > abs(delta_b + delta_b)))
       {
-        allsafe = false;
+        all_safe = false;
         after[k] = before[k];
         if (k == cur_rounding_ptr - 1)
           after[0] = before[0];
@@ -7747,17 +7745,17 @@ void make_safe (void)
           after[k + 1] = before[k + 1];
       }
     }
-  } while (!(allsafe));
+  } while (!(all_safe));
 }
 /* 429 */
-void before_and_after (scaled b, scaled a, halfword p)
+void before_and_after (scaled b, scaled a, pointer p)
 {
   if (cur_rounding_ptr == max_rounding_ptr)
   {
     if (max_rounding_ptr < max_wiggle)
       incr(max_rounding_ptr);
     else
-      overflow (/* 568 */ "rounding table size", max_wiggle);
+      overflow("rounding table size", max_wiggle);
   }
   after[cur_rounding_ptr] = a;
   before[cur_rounding_ptr] = b;
@@ -9240,7 +9238,7 @@ void dual_moves (halfword h, halfword p, halfword q)
       if (internal[tracing_edges] > unity)
       {
         print_nl(586);
-        print_int (k);
+        print_int(k);
         print(587);
         unskew (xx, yy - half_unit, octant);
         print_two (cur_x, cur_y);
@@ -9373,7 +9371,7 @@ void fill_envelope (halfword spechead)
       print_nl(580);
       print(octant_dir[octant]);
       print(558);
-      print_int (mem[h].hh.lh);
+      print_int(mem[h].hh.lh);
       if (mem[h].hh.lh != 1)
         print(581);
       else
@@ -9437,7 +9435,7 @@ void fill_envelope (halfword spechead)
           if (internal[tracing_edges] > unity)
           {
             print_nl(586);
-            print_int (k);
+            print_int(k);
             print(587);
             unskew (xx, yy - half_unit, octant);
             print_two (cur_x, cur_y);
@@ -10714,8 +10712,8 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   if (r0 < 0)
     r0 = 0;
   else
-    r0 = round_unscaled (r0);
-  r1 = round_unscaled (r1);
+    r0 = round_unscaled(r0);
+  r1 = round_unscaled(r1);
   if (r1 > screendepth)
     r1 = screendepth;
   if (r1 < r0)
@@ -10728,8 +10726,8 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   if (c0 < 0)
     c0 = 0;
   else
-    c0 = round_unscaled (c0);
-  c1 = round_unscaled (c1);
+    c0 = round_unscaled(c0);
+  c1 = round_unscaled(c1);
   if (c1 > screenwidth)
     c1 = screenwidth;
   if (c1 < c0)
@@ -10745,8 +10743,8 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   right_col[k] = c1;
   top_row[k] = r0;
   bot_row[k] = r1;
-  m = round_unscaled (x);
-  n = round_unscaled (y) - 1;
+  m = round_unscaled(x);
+  n = round_unscaled(y) - 1;
   m_window[k] = c0 - m;
   n_window[k] = r0 + n;
   {
@@ -11397,7 +11395,7 @@ void show_context (void)
         else
         {
           print_nl(607);
-          print_int (line);
+          print_int(line);
         }
         print_char(' ');
         {
@@ -11940,7 +11938,7 @@ boolean check_outer_validity (void)
     else
     {
       print_err("Incomplete if; all text was ignored after line ");
-      print_int (warning_info);
+      print_int(warning_info);
       help3(/* 619 */ "A forbidden `outer' token occurred in skipped text.",
         /* 620 */ "This kind of error happens when you say `if...' and forget",
         /* 621 */ "the matching `fi'. I've inserted a `fi'; this might work.");
@@ -12677,7 +12675,7 @@ void print_arg (halfword q, integer n, halfword b)
     print_nl(499);
   else
     print_nl(500);
-  print_int (n);
+  print_int(n);
   print(703);
   if (mem[q].hh.rh == 1)
     print_exp (q, 1);
@@ -13978,18 +13976,18 @@ void open_log_file (void)
     Fputs (log_file,  versionstring);
     slow_print(base_ident);
     print(755);
-    print_int (round_unscaled (internal[day]));
+    print_int(round_unscaled(internal[day]));
     print_char(' ');
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
-    m = round_unscaled (internal[month]);
+    m = round_unscaled(internal[month]);
     for (k = 3 * m - 2; k <= 3 * m; k++)
     {
       putc (months[k], log_file);
     }
     print_char(' ');
-    print_int (round_unscaled (internal[year]));
+    print_int(round_unscaled(internal[year]));
     print_char(' ');
-    m = round_unscaled (internal[time]);
+    m = round_unscaled(internal[time]);
     print_dd (m / 60);
     print_char(':');
     print_dd (m % 60);
@@ -14596,7 +14594,7 @@ void str_to_num (quarterword c)
     if (n > 4095)
     {
       print_err("Number too large (");
-      print_int (n);
+      print_int(n);
       print_char(')');
       help1(/* 847 */ "I have trouble with numbers greater than 4095; watch out.");
       put_get_error();
@@ -14779,7 +14777,7 @@ void do_unary (quarterword c)
           break;
         case 38:
           {
-            if (odd(round_unscaled (cur_exp)))
+            if (odd(round_unscaled(cur_exp)))
               cur_exp = 30;
             else
               cur_exp = 31;
@@ -14788,7 +14786,7 @@ void do_unary (quarterword c)
           break;
         case 66:
           {
-            cur_exp = round_unscaled (cur_exp) % 256;
+            cur_exp = round_unscaled(cur_exp) % 256;
             if (cur_exp < 0)
               cur_exp = cur_exp + 256;
             if (char_exists[cur_exp])
@@ -14834,7 +14832,7 @@ void do_unary (quarterword c)
         bad_unary (50);
       else
       {
-        cur_exp = round_unscaled (cur_exp) % 256;
+        cur_exp = round_unscaled(cur_exp) % 256;
         cur_type = 4;
         if (cur_exp < 0)
           cur_exp = cur_exp + 256;
@@ -15500,8 +15498,8 @@ void edges_trans (halfword p, quarterword c)
               x_scale_edges (txx / unity);
             if (tyy != unity)
               y_scale_edges (tyy / unity);
-            tx = round_unscaled (tx);
-            ty = round_unscaled (ty);
+            tx = round_unscaled(tx);
+            ty = round_unscaled(ty);
             if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.rh + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.rh + ty >= 8191) || (abs(tx) >= 4096) || (abs(ty) >= 4096))
             {
               print_err("Too far to shift");
@@ -15741,8 +15739,8 @@ void chop_string (halfword p)
   str_number s;
   boolean reversed;
 
-  a = round_unscaled (mem[p + 1].cint);
-  b = round_unscaled (mem[p + 3].cint);
+  a = round_unscaled(mem[p + 1].cint);
+  b = round_unscaled(mem[p + 3].cint);
   if (a <= b)
     reversed = false;
   else
@@ -16619,7 +16617,7 @@ void init_gf (void)
     old_setting = selector;
     selector = new_string;
     print_char('.');
-    print_int (make_scaled (internal[hppp], 59429463));
+    print_int(make_scaled (internal[hppp], 59429463));
     print(1056);
     gf_ext = make_string();
     selector = old_setting;
@@ -16630,13 +16628,13 @@ void init_gf (void)
   old_setting = selector;
   selector = new_string;
   print(1054);
-  print_int (round_unscaled (internal[year]));
+  print_int(round_unscaled(internal[year]));
   print_char('.');
-  print_dd (round_unscaled (internal[month]));
+  print_dd (round_unscaled(internal[month]));
   print_char('.');
-  print_dd (round_unscaled (internal[day]));
+  print_dd (round_unscaled(internal[day]));
   print_char(':');
-  t = round_unscaled (internal[time]);
+  t = round_unscaled(internal[time]);
   print_dd (t / 60);
   print_dd (t % 60);
   selector = old_setting;
@@ -16661,19 +16659,19 @@ void ship_out (eight_bits c)
 
   if (output_file_name == 0)
     init_gf();
-  f = round_unscaled (internal[char_ext]);
-  x_off = round_unscaled (internal[x_offset]);
-  y_off = round_unscaled (internal[y_offset]);
+  f = round_unscaled(internal[char_ext]);
+  x_off = round_unscaled(internal[x_offset]);
+  y_off = round_unscaled(internal[y_offset]);
   if (term_offset > max_print_line - 9)
     print_ln();
   else if ((term_offset > 0) || (file_offset > 0))
     print_char(' ');
   print_char('[');
-  print_int (c);
+  print_int(c);
   if (f != 0)
   {
     print_char('.');
-    print_int (f);
+    print_int(f);
   }
   update_terminal();
   boc_c = 256 * f + c;
@@ -17336,9 +17334,9 @@ void do_let (void)
     if (cur_cmd != assignment)
     {
       missing_err (61);
-      help3(/* 932 */ "You should have said `let symbol = something'.",
-        /* 673 */ "But don't worry; I'll pretend that an equals sign",
-        /* 933 */ "was present. The next token I read will be `something'.");
+      help3("You should have said `let symbol = something'.",
+        "But don't worry; I'll pretend that an equals sign",
+        "was present. The next token I read will be `something'.");
       back_error();
     }
   }
@@ -17355,7 +17353,7 @@ void do_let (void)
       do_nothing();
       break;
   }
-  clear_symbol (l, false);
+  clear_symbol(l, false);
   eqtb[l].lh = cur_cmd;
   if (cur_cmd == tag_token)
     eqtb[l].rh = 0;
@@ -17413,7 +17411,7 @@ void disp_token (void)
           if (str_ref[cur_mod] > 1)
             decr(str_ref[cur_mod]);
           else
-            flush_string (cur_mod);
+            flush_string(cur_mod);
         }
       }
     }
@@ -17446,24 +17444,24 @@ void do_show_stats (void)
 {
   print_nl(950);
 #ifdef STAT
-  print_int (var_used);
+  print_int(var_used);
   print_char('&');
-  print_int (dyn_used);
+  print_int(dyn_used);
   if (false)
 #endif /* STAT */
   print(357);
   print(558);
-  print_int (hi_mem_min - lo_mem_max - 1);
+  print_int(hi_mem_min - lo_mem_max - 1);
   print(951);
   print_ln();
   print_nl(952);
-  print_int (str_ptr - init_str_ptr);
+  print_int(str_ptr - init_str_ptr);
   print_char('&');
-  print_int (pool_ptr - init_pool_ptr);
+  print_int(pool_ptr - init_pool_ptr);
   print(558);
-  print_int (max_strings - max_str_ptr);
+  print_int(max_strings - max_str_ptr);
   print_char('&');
-  print_int (pool_size - max_pool_ptr);
+  print_int(pool_size - max_pool_ptr);
   print(951);
   print_ln();
   get_x_next();
@@ -17536,12 +17534,12 @@ void do_show_var (void)
 /* 1050 */
 void do_show_dependencies (void)
 {
-  halfword p;
+  pointer p;
 
   p = mem[13].hh.rh;
   while (p != 13)
   {
-    if (interesting (p))
+    if (interesting(p))
     {
       print_nl(261);
       print_variable_name(p);
@@ -17590,7 +17588,7 @@ void do_show_whatever (void)
       decr(error_count);
     }
     else
-      help1(/* 955 */ "This isn't an error message; I'm just showing something.");
+      help1("This isn't an error message; I'm just showing something.");
     if (cur_cmd == semicolon)
       error();
     else
@@ -17611,25 +17609,25 @@ boolean scan_with (void)
   result = false;
   if (cur_type != t)
   {
-    disp_err (null, /* 963 */ "Improper type");
-    help2(/* 964 */ "Next time say `withweight <known numeric expression>';",
-      /* 965 */ "I'll ignore the bad `with' clause and look for another.");
+    disp_err(null, "Improper type");
+    help2("Next time say `withweight <known numeric expression>';",
+      "I'll ignore the bad `with' clause and look for another.");
     if (t == 6)
       help_line[1] = 966;
-    put_get_flush_error (0);
+    put_get_flush_error(0);
   }
   else if (cur_type == 6)
     result = true;
   else
   {
-    cur_exp = round_unscaled (cur_exp);
+    cur_exp = round_unscaled(cur_exp);
     if ((abs(cur_exp) < 4) && (cur_exp != 0))
       result = true;
     else
     {
       print_err("Weight must be -3, -2, -1, +1, +2, or +3");
-      help1(/* 965 */ "I'll ignore the bad `with' clause and look for another.");
-      put_get_flush_error (0);
+      help1("I'll ignore the bad `with' clause and look for another.");
+      put_get_flush_error(0);
     }
   }
   Result = result;
@@ -17640,27 +17638,27 @@ void find_edges_var (halfword t)
 {
   halfword p;
 
-  p = find_variable (t);
+  p = find_variable(t);
   cur_edges = 0;
   if (p == 0)
   {
-    obliterated (t);
+    obliterated(t);
     put_get_error();
   }
   else if (mem[p].hh.b0 != 11)
   {
     print_err("Variable ");
-    show_token_list (t, 0, 1000, 0);
+    show_token_list(t, 0, 1000, 0);
     print(968);
-    print_type (mem[p].hh.b0);
+    print_type(mem[p].hh.b0);
     print_char(')');
-    help2(/* 969 */ "I was looking for a \"known\" picture variable.",
-      /* 970 */ "So I'll not change anything just now.");
+    help2("I was looking for a \"known\" picture variable.",
+      "So I'll not change anything just now.");
     put_get_error();
   }
   else
     cur_edges = mem[p + 1].cint;
-  flush_node_list (t);
+  flush_node_list(t);
 }
 /* 1059 */
 void do_add_to (void)
@@ -17851,7 +17849,7 @@ scaled tfm_check (small_number m)
     print_err("Enormous ");
     print(int_name[m]);
     print(1002);
-    help1(/* 1003 */ "Font metric dimensions must be less than 2048pt.");
+    help1("Font metric dimensions must be less than 2048pt.");
     put_get_error();
     if (internal[m] > 0)
       Result = 134217727L;
@@ -17894,7 +17892,7 @@ void do_ship_out (void)
   }
   if (cur_edges != 0)
   {
-    c = round_unscaled (internal[char_code]) % 256;
+    c = round_unscaled(internal[char_code]) % 256;
     if (c < 0)
       c = c + 256;
     if (c < bc)
@@ -17939,7 +17937,7 @@ void do_display (void)
     scan_expression();
     if (cur_type != 16)
       goto common_ending;
-    cur_exp = round_unscaled (cur_exp);
+    cur_exp = round_unscaled(cur_exp);
     if (cur_exp < 0)
       goto not_found;
     if (cur_exp > 15)
@@ -17997,7 +17995,7 @@ void do_open_window (void)
   scan_expression();
   if (cur_type != 16)
     goto not_found;
-  k = round_unscaled (cur_exp);
+  k = round_unscaled(cur_exp);
   if (k < 0)
     goto not_found;
   if (k > 15)
@@ -18160,7 +18158,7 @@ eight_bits get_code (void)
   scan_expression();
   if (cur_type == 16)
   {
-    c = round_unscaled (cur_exp);
+    c = round_unscaled(cur_exp);
     if (c >= 0)
     {
       if (c < 256)
@@ -18208,7 +18206,7 @@ void set_tag (halfword c, small_number t, halfword r)
     else
     {
       print(1014);
-      print_int (c);
+      print_int(c);
     }
     print(1015);
     switch (char_tag[c])
@@ -18431,7 +18429,7 @@ void do_tfm_command (void)
         }
         else
         {
-          j = round_unscaled (cur_exp);
+          j = round_unscaled(cur_exp);
           if (cur_cmd != colon)
           {
             missing_err (58);
@@ -19466,7 +19464,7 @@ lab_restart:
         if (cur_cmd != end_group)
         {
           print_err("A group begun on line ");
-          print_int (groupline);
+          print_int(groupline);
           print(781);
           help2(/* 782 */ "I saw a `begingroup' back there that hasn't been matched",
             /* 783 */ "by `endgroup'. So I've inserted `endgroup' now.");
@@ -20407,7 +20405,7 @@ void close_files_and_terminate (void)
       lh = (k + 3) / 4;
       if (bc > ec)
         bc = 1;
-      bchar = round_unscaled (internal[boundary_char]);
+      bchar = round_unscaled(internal[boundary_char]);
       if ((bchar < 0) || (bchar > 255))
       {
         bchar = -1;
@@ -20497,7 +20495,7 @@ void close_files_and_terminate (void)
         if (skip_table[k] < lig_table_size)
         {
           print_nl(1048);
-          print_int (k);
+          print_int(k);
           print(1049);
           ll = skip_table[k];
           do {
@@ -20571,7 +20569,7 @@ void close_files_and_terminate (void)
         else
         {
           print_nl(40);
-          print_int (tfm_changed);
+          print_int(tfm_changed);
           print(1051);
         }
         print(1052);
@@ -21031,23 +21029,23 @@ void debug_help (void)
           print_word (mem[n]);
           break;
         case 2:
-          print_int (mem[n].hh.lh);
+          print_int(mem[n].hh.lh);
           break;
         case 3:
-          print_int (mem[n].hh.rh);
+          print_int(mem[n].hh.rh);
           break;
         case 4:
           {
-            print_int (eqtb[n].lh);
+            print_int(eqtb[n].lh);
             print_char(':');
-            print_int (eqtb[n].rh);
+            print_int(eqtb[n].rh);
           }
           break;
         case 5:
           print_variable_name(n);
           break;
         case 6:
-          print_int (internal[n]);
+          print_int(internal[n]);
           break;
         case 7:
           do_show_dependencies();
