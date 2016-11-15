@@ -4,6 +4,7 @@
 void main_program (void)
 {
   history = fatal_error_stop;
+  t_open_out();
   if (ready_already == 314159)
     goto lab_start_of_MF;
   bad = 0;
@@ -13,9 +14,9 @@ void main_program (void)
     bad = 2;
   if (gf_buf_size % 8 != 0)
     bad = 3;
-  if (1100 > mem_top)
+  if (mem_min + 1100 > mem_top)
     bad = 4;
-  if (7919 > 9500)
+  if (hash_prime > hash_size)
     bad = 5;
   if (header_size % 4 != 0)
     bad = 6;
@@ -27,29 +28,29 @@ void main_program (void)
 #endif /* INIMF */
   if (mem_max < mem_top)
     bad = 10;
-  if ((0 > 0) || (255 < 127))
+  if ((min_quarterword > 0) || (max_quarterword < 127))
     bad = 11;
-  if ((0 > 0) || (268435455L < 32767))
+  if ((min_halfword > 0) || (max_halfword < 32767))
     bad = 12;
-  if ((0 < 0) || (255 > 268435455L))
+  if ((min_quarterword < min_halfword) || (max_quarterword > max_halfword))
     bad = 13;
-  if ((0 < 0) || (mem_max >= 268435455L))
+  if ((mem_min < min_halfword) || (mem_max >= max_halfword))
     bad = 14;
-  if (max_strings > 268435455L)
+  if (max_strings > max_halfword)
     bad = 15;
-  if (buf_size > 268435455L)
+  if (buf_size > max_halfword)
     bad = 16;
-  if ((255 < 255) || (268435455L < 65535L))
+  if ((max_quarterword - min_quarterword < 255) || (max_halfword - min_halfword < 65535))
     bad = 17;
-  if (9769 + max_internal > 268435455L)
+  if (hash_end + max_internal > max_halfword)
     bad = 21;
-  if (10220 > 268435455L)
+  if (text_base + param_size > max_halfword)
     bad = 22;
-  if (15 * 11 > bistack_size)
+  if (15 * move_increment > bistack_size)
     bad = 31;
-  if (20 + 17 * 45 > bistack_size)
+  if (int_packets + 17 * int_increment > bistack_size)
     bad = 32;
-  if (base_default_length > maxint)
+  if (base_default_length > file_name_size)
     bad = 41;
   if (bad > 0)
   {
@@ -85,7 +86,7 @@ lab_start_of_MF:
     slow_print(base_ident);
     print_ln();
   }
-  fflush(stdout);
+  update_terminal();
   job_name = 0;
   log_opened = false;
   output_file_name = 0;
@@ -109,8 +110,8 @@ lab_start_of_MF:
       limit = last;
       first = last + 1;
     }
-    scanner_status = 0;
-    if ((base_ident == 0) || (buffer[loc] == 38))
+    scanner_status = normal;
+    if ((base_ident == 0) || (buffer[loc] == '&'))
     {
       if (base_ident != 0)
         initialize();
@@ -125,16 +126,16 @@ lab_start_of_MF:
       while ((loc < limit) && (buffer[loc] == ' '))
         incr(loc);
     }
-    buffer[limit] = 37;
+    buffer[limit] = '%';
     fix_date_and_time();
-    ini_trandoms((internal[time] / 65536) + internal[day]);
+    ini_trandoms((internal[time] / unity) + internal[day]);
     if (interaction == batch_mode)
       selector = no_print;
     else
       selector = term_only;
     if (loc < limit)
     {
-      if (buffer[loc] != 92)
+      if (buffer[loc] != '\\')
         start_input();
     }
   }
@@ -148,14 +149,7 @@ lab_start_of_MF:
   final_cleanup();
   close_files_and_terminate();
 lab_final_end:
-  {
-    fflush(stdout);
-    ready_already = 0;
-    if ((history != spotless) && (history != warning_issued))
-      uexit(1);
-    else
-      uexit(0);
-  }
+  ready_already = 0;
 }
 /* 4 */
 void initialize (void)
@@ -258,23 +252,23 @@ void initialize (void)
   xchr[124] = '|';
   xchr[125] = '}';
   xchr[126] = '~';
-  for (i = 0; i <= 31; i++)
+  for (i = 0; i <= 037; i++)
   {
-    xchr[i] = i;
+    xchr[i] = ' ';
   }
-  for (i = 127; i <= 255; i++)
+  for (i = 0177; i <= 0377; i++)
   {
-    xchr[i] = i;
+    xchr[i] = ' ';
   }
-  for (i = 0; i <= 255; i++)
+  for (i = first_text_char; i <= last_text_char; i++)
   {
-    xord[chr (i)] = 127;
+    xord[chr (i)] = 0177;
   }
-  for (i = 128; i <= 255; i++)
+  for (i = 0200; i <= 0377; i++)
   {
     xord[xchr[i]] = i;
   }
-  for (i = 0; i <= 126; i++)
+  for (i = 0; i <= 0176; i++)
   {
     xord[xchr[i]] = i;
   }
@@ -386,64 +380,64 @@ void initialize (void)
     char_class[k] = invalid_class;
   char_class[9] = 2;
   char_class[12] = 2;
-  hash[1].lh = 0;
-  hash[1].rh = 0;
-  eqtb[1].lh = 41;
-  eqtb[1].rh = 0;
-  for (k = 2; k <= 9769; k++)
+  next(1) = 0;
+  text(1) = 0;
+  eqtb_type(1) = tag_token;
+  equiv(1) = null;
+  for (k = 2; k <= hash_end; k++)
   {
     hash[k] = hash[1];
     eqtb[k] = eqtb[1];
   }
-  big_node_size[13] = 12;
-  big_node_size[14] = 4;
-  save_ptr = 0;
-  octant_dir[1] = 548;
-  octant_dir[5] = 549;
-  octant_dir[6] = 550;
-  octant_dir[2] = 551;
-  octant_dir[4] = 552;
-  octant_dir[8] = 553;
-  octant_dir[7] = 554;
-  octant_dir[3] = 555;
+  big_node_size[transform_type] = transform_node_size;
+  big_node_size[pair_type] = pair_node_size;
+  save_ptr = null;
+  octant_dir[first_octant] = 548;
+  octant_dir[second_octant] = 549;
+  octant_dir[third_octant] = 550;
+  octant_dir[fourth_octant] = 551;
+  octant_dir[fifth_octant] = 552;
+  octant_dir[sixth_octant] = 553;
+  octant_dir[seventh_octant] = 554;
+  octant_dir[eighth_octant] = 555;
   max_rounding_ptr = 0;
-  octant_code[1] = 1;
-  octant_code[2] = 5;
-  octant_code[3] = 6;
-  octant_code[4] = 2;
-  octant_code[5] = 4;
-  octant_code[6] = 8;
-  octant_code[7] = 7;
-  octant_code[8] = 3;
+  octant_code[1] = first_octant;
+  octant_code[2] = second_octant;
+  octant_code[3] = third_octant;
+  octant_code[4] = fourth_octant;
+  octant_code[5] = fifth_octant;
+  octant_code[6] = sixth_octant;
+  octant_code[7] = seventh_octant;
+  octant_code[8] = eighth_octant;
   for (k = 1; k <= 8; k++)
   {
     octant_number[octant_code[k]] = k;
   }
   rev_turns = false;
-  x_corr[1] = 0;
-  y_corr[1] = 0;
-  xy_corr[1] = 0;
-  x_corr[5] = 0;
-  y_corr[5] = 0;
-  xy_corr[5] = 1;
-  x_corr[6] = -1;
-  y_corr[6] = 1;
-  xy_corr[6] = 0;
-  x_corr[2] = 1;
-  y_corr[2] = 0;
-  xy_corr[2] = 1;
-  x_corr[4] = 0;
-  y_corr[4] = 1;
-  xy_corr[4] = 1;
-  x_corr[8] = 0;
-  y_corr[8] = 1;
-  xy_corr[8] = 0;
-  x_corr[7] = 1;
-  y_corr[7] = 0;
-  xy_corr[7] = 1;
-  x_corr[3] = -1;
-  y_corr[3] = 1;
-  xy_corr[3] = 0;
+  x_corr[first_octant] = 0;
+  y_corr[first_octant] = 0;
+  xy_corr[first_octant] = 0;
+  x_corr[second_octant] = 0;
+  y_corr[second_octant] = 0;
+  xy_corr[second_octant] = 1;
+  x_corr[third_octant] = -1;
+  y_corr[third_octant] = 1;
+  xy_corr[third_octant] = 0;
+  x_corr[fourth_octant] = 1;
+  y_corr[fourth_octant] = 0;
+  xy_corr[forth_octant] = 1;
+  x_corr[fifth_octant] = 0;
+  y_corr[fifth_octant] = 1;
+  xy_corr[fifth_octant] = 1;
+  x_corr[sixth_octant] = 0;
+  y_corr[sixth_octant] = 1;
+  xy_corr[sixth_octant] = 0;
+  x_corr[seventh_octant] = 1;
+  y_corr[seventh_octant] = 0;
+  xy_corr[seventh_octant] = 1;
+  x_corr[eighth_octant] = -1;
+  y_corr[eighth_octant] = 1;
+  xy_corr[eighth_octant] = 0;
   for (k = 1; k <= 8; k++)
   {
     z_corr[k] = xy_corr[k] - x_corr[k];
@@ -457,11 +451,12 @@ void initialize (void)
   }
   fix_needed = false;
   watch_coefs = true;
-  cond_ptr = 0;
-  if_limit = 0;
+  cond_ptr = null;
+  if_limit = normal;
   cur_if = 0;
   if_line = 0;
-  loop_ptr = 0;
+  loop_ptr = null;
+  MF_base_default = "MFbases:plain.base";
   cur_exp = 0;
   var_flag = 0;
   start_sym = 0;
@@ -475,7 +470,7 @@ void initialize (void)
     char_exists[k] = false;
     char_tag[k] = 0;
     char_remainder[k] = 0;
-    skip_table[k] = lig_table_size;
+    skip_table[k] = undefined_label;
   }
   for (k = 1; k <= header_size; k++)
   {
@@ -488,7 +483,7 @@ void initialize (void)
   ne = 0;
   np = 0;
   internal[boundary_char] = -65536;
-  bch_label = lig_table_size;
+  bch_label = undefined_label;
   label_loc[0] = -1;
   label_ptr = 0;
   gf_prev_ptr = 0;
@@ -498,7 +493,6 @@ void initialize (void)
   gf_ptr = 0;
   gf_offset = 0;
   base_ident = 0;
-  stopatspace = true;
 }
 /* 57 */
 void print_ln (void)
@@ -1149,7 +1143,7 @@ boolean init_terminal (void)
       goto lab_exit;
     }
     loc = first;
-    while ((loc < last) && (buffer[loc] == 32))
+    while ((loc < last) && (buffer[loc] == ' '))
       incr(loc);
     if (loc < last)
     {
@@ -1209,8 +1203,8 @@ integer str_vs_str (str_number s, str_number t)
   integer ls, lt;
   integer l;
 
-  ls = (str_start[s + 1] - str_start[s]);
-  lt = (str_start[t + 1] - str_start[t]);
+  ls = length(s);
+  lt = length(t);
   if (ls <= lt)
     l = ls;
   else
@@ -1288,7 +1282,7 @@ void term_input (void)
 {
   integer k;
 
-  fflush(stdout);
+  update_terminal();
   if (!input_ln(stdin, true))
     fatal_error("End of file on the terminal!");
   term_offset = 0;
@@ -1462,31 +1456,32 @@ integer take_fraction (integer q, fraction f)
     negative = false;
   else
   {
-    f = -f;
+    negate(f);
     negative = true;
   }
   if (q < 0)
   {
-    q = -q;
+    negate(q);
     negative = !negative;
   }
   if (f < fraction_one)
     n = 0;
   else
   {
-    n = f / 268435456;
-    f = f % 268435456;
-    if (q <= 2147483647 / n)
+    n = f / fraction_one;
+    f = f % fraction_one;
+    if (q <= el_gordo / n)
       n = n * q;
     else
     {
       arith_error = true;
-      n = 2147483647;
+      n = el_gordo;
     }
   }
-  f = f + 268435456;
-  p = 134217728;
+  f = f + fraction_one;
+  p = fraction_half;
   if (q < fraction_four)
+  {
     do {
       if (odd(f))
         p = half(p + q);
@@ -1494,19 +1489,22 @@ integer take_fraction (integer q, fraction f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
+  }
   else
+  {
     do {
       if (odd(f))
         p = p + half(q - p);
       else
         p = half(p);
       f = half(f);
-  } while (!(f == 1));
-  be_careful = n - 2147483647;
+    } while (!(f == 1));
+  }
+  be_careful = n - el_gordo;
   if (be_careful + p > 0)
   {
     arith_error = true;
-    n = 2147483647L - p;
+    n = el_gordo - p;
   }
   if (negative)
     Result = -(n + p);
@@ -1527,31 +1525,32 @@ integer take_scaled (integer q, scaled f)
     negative = false;
   else
   {
-    f = -f;
+    negate(f);
     negative = true;
   }
   if (q < 0)
   {
-    q = -q;
+    negate(q);
     negative = !negative;
   }
   if (f < unity)
     n = 0;
   else
   {
-    n = f / 65536;
-    f = f % 65536;
-    if (q <= 2147483647 / n)
+    n = f / unity;
+    f = f % unity;
+    if (q <= el_gordo / n)
       n = n * q;
     else
     {
       arith_error = true;
-      n = 2147483647;
+      n = el_gordo;
     }
   }
-  f = f + 65536;
-  p = 32768;
+  f = f + unity;
+  p = half_unit;
   if (q < fraction_four)
+  {
     do {
       if (odd(f))
         p = half(p + q);
@@ -1559,7 +1558,9 @@ integer take_scaled (integer q, scaled f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
+  }
   else
+  {
     do {
       if (odd(f))
         p = p + half(q - p);
@@ -1567,11 +1568,12 @@ integer take_scaled (integer q, scaled f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
-  be_careful = n - 2147483647;
+  }
+  be_careful = n - el_gordo;
   if (be_careful + p > 0)
   {
     arith_error = true;
-    n = 2147483647 - p;
+    n = el_gordo - p;
   }
   if (negative)
     Result = -(n + p);
@@ -1592,7 +1594,7 @@ scaled make_scaled (integer p, integer q)
     negative = false;
   else
   {
-    p = -p;
+    negate(p);
     negative = true;
   }
   if (q <= 0)
@@ -1601,7 +1603,7 @@ scaled make_scaled (integer p, integer q)
     if (q == 0)
       confusion("/");
 #endif /* TEXMF_DEBUG */
-    q = -q;
+    negate(q);
     negative = !negative;
   }
   n = p / q;
@@ -1610,13 +1612,13 @@ scaled make_scaled (integer p, integer q)
   {
     arith_error = true;
     if (negative)
-      Result = -2147483647;
+      Result = -el_gordo;
     else
-      Result = 2147483647;
+      Result = el_gordo;
   }
   else
   {
-    n = (n - 1) * 65536;
+    n = (n - 1) * unity;
     f = 1;
     do {
       be_careful = p - q;
@@ -1625,7 +1627,7 @@ scaled make_scaled (integer p, integer q)
         f = f + f + 1;
       else
       {
-        f = f + f;
+        _double(f);
         p = p + q;
       }
     } while (!(f >= unity));
@@ -1665,41 +1667,29 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
   
   if (a < 0)
   {
-    a = -a;
-    b = -b;
+    negate(a);
+    negate(b);
   }
   if (c < 0)
   {
-    c = -c;
-    d = -d;
+    negate(c);
+    negate(d);
   }
   if (d <= 0)
   {
     if (b >= 0)
     {
       if (((a == 0) || (b == 0)) && ((c == 0) || (d == 0)))
-      {
-        Result = 0;
-        goto lab_exit;
-      }
+        return_sign(0);
       else
-      {
-        Result = 1;
-        goto lab_exit;
-      }
+        return_sign(1);
     }
     if (d == 0)
     {
       if (a == 0)
-      {
-        Result = 0;
-        goto lab_exit;
-      }
+        return_sign(0);
       else
-      {
-        Result = -1;
-        goto lab_exit;
-      }
+        return_sign(-1);
     }
     q = a;
     a = c;
@@ -1713,21 +1703,12 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
     if (b < 0)
     {
       if (a > 0)
-      {
-        Result = -1;
-        goto lab_exit;
-      }
+        return_sign(-1);
     }
     if (c == 0)
-    {
-      Result = 0;
-      goto lab_exit;
-    }
+      return_sign(0);
     else
-    {
-      Result = -1;
-      goto lab_exit;
-    }
+      return_sign(-1);
   }
   while (true)
   {
@@ -1736,36 +1717,21 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
     if (q != r)
     {
       if (q > r)
-      {
-        Result = 1;
-        goto lab_exit;
-      }
+        return_sign(1);
       else
-      {
-        Result = -1;
-        goto lab_exit;
-      }
+        return_sign(-1);
     }
     q = a % d;
     r = c % b;
     if (r == 0)
     {
       if (q == 0)
-      {
-        Result = 0;
-        goto lab_exit;
-      }
+        return_sign(0);
       else
-      {
-        Result = 1;
-        goto lab_exit;
-      }
+        return_sign(1);
     }
     if (q == 0)
-    {
-      Result = -1;
-      goto lab_exit;
-    }
+      return_sign(-1);
     a = b;
     b = q;
     c = d;
@@ -1807,7 +1773,7 @@ scaled square_rt (scaled x)
       y = 0;
     else
     {
-      x = x - 1073741824;
+      x = x - fraction_four;
       y = 1;
     }
     do {
@@ -1815,7 +1781,7 @@ scaled square_rt (scaled x)
       y = y + y;
       if (x >= fraction_four)
       {
-        x = x - 1073741824;
+        x = x - fraction_four;
         incr(y);
       }
       x = x + x;
@@ -1859,7 +1825,7 @@ integer pyth_add (integer a, integer b)
   }
   if (b > 0)
   {
-    if (a < 536870912)
+    if (a < fraction_two)
       big = false;
     else
     {
@@ -1885,7 +1851,7 @@ integer pyth_add (integer a, integer b)
       else
       {
         arith_error = true;
-        a = 2147483647L;
+        a = el_gordo;
       }
     }
   }
@@ -1962,17 +1928,17 @@ scaled m_log (scaled x)
   }
   else
   {
-    y = 1302456860L;
-    z = 6581195L;
+    y = 1302456956 + 4 - 100;
+    z = 27595 + 6553600;
     while (x < fraction_four)
     {
       x = x + x;
-      y = y - 93032639L;
-      z = z - 48782L;
+      y = y - 93032639;
+      z = z - 48782;
     }
     y = y + (z / unity);
     k = 2;
-    while (x > 1073741828L)
+    while (x > fraction_four + 4)
     {
       z = ((x - 1) / two_to_the[k]) + 1;
       while (x < fraction_four + z)
@@ -1994,27 +1960,27 @@ scaled m_exp (scaled x)
   small_number k;
   integer y, z;
   
-  if (x > 174436200L)
+  if (x > 174436200)
   {
     arith_error = true;
-    Result = 2147483647L;
+    Result = el_gordo;
   }
-  else if (x < -197694359L)
+  else if (x < -197694359)
     Result = 0;
   else
   {
     if (x <= 0)
     {
       z = -8 * x;
-      y = 1048576L;
+      y = 04000000;
     }
     else
     {
-      if (x <= 127919879L)
-        z = 1023359037L - 8 * x;
+      if (x <= 127919879)
+        z = 1023359037 - 8 * x;
       else
-        z = 8 * (174436200L - x);
-      y = 2147483647L;
+        z = 8 * (174436200 - x);
+      y = el_gordo;
     }
     k = 1;
     while (z > 0)
@@ -2026,7 +1992,7 @@ scaled m_exp (scaled x)
       }
       incr(k);
     }
-    if (x <= 127919879L)
+    if (x <= 127919879)
       Result = (y + 8) / 16;
     else
       Result = y;
@@ -2043,23 +2009,23 @@ angle n_arg (integer x, integer y)
   unsigned char octant;
   
   if (x >= 0)
-    octant = 1;
+    octant = first_octant;
   else
   {
-    x = -x;
-    octant = 2;
+    negate(x);
+    octant = first_octant + negate_x;
   }
   if (y < 0)
   {
-    y = -y;
-    octant = octant + 2;
+    negate(y);
+    octant = octant + negate_y;
   }
   if (x < y)
   {
     t = y;
     y = x;
     x = t;
-    octant = octant + 4;
+    octant = octant + switch_x_and_y;
   }
   if (x == 0)
   {
@@ -2081,12 +2047,12 @@ angle n_arg (integer x, integer y)
     {
       while (x < fraction_one)
       {
-        x = x + x;
-        y = y + y;
+        _double(x);
+        _double(y);
       }
       k = 0;
       do {
-        y = y + y;
+        _double(y);
         incr(k);
         if (y > x)
         {
@@ -2097,7 +2063,7 @@ angle n_arg (integer x, integer y)
         }
       } while (!(k == 15));
       do {
-        y = y + y;
+        _double(y);
         incr(k);
         if (y > x)
         {
@@ -2108,28 +2074,28 @@ angle n_arg (integer x, integer y)
     }
     switch (octant)
     {
-      case 1:
+      case first_octant:
         Result = z;
         break;
-      case 5:
+      case second_octant:
         Result = ninety_deg - z;
         break;
-      case 6:
+      case third_octant:
         Result = ninety_deg + z;
         break;
-      case 2:
+      case forth_octant:
         Result = one_eighty_deg - z;
         break;
-      case 4:
+      case fifth_octant:
         Result = z - one_eighty_deg;
         break;
-      case 8:
+      case sixth_octant:
         Result = -z - ninety_deg;
         break;
-      case 7:
+      case seventh_octant:
         Result = z - ninety_deg;
         break;
-      case 3:
+      case eighth_octant:
         Result = -z;
         break;
     }
@@ -2137,7 +2103,7 @@ angle n_arg (integer x, integer y)
   return Result;
 }
 /* 145 */
-void n_sin_cos(angle z)
+void n_sin_cos (angle z)
 {
   small_number k;
   unsigned char q;
@@ -2170,7 +2136,7 @@ void n_sin_cos(angle z)
   switch (q)
   {
     case 0:
-      ;
+      do_nothing();
       break;
     case 1:
       {
@@ -2187,12 +2153,12 @@ void n_sin_cos(angle z)
       }
       break;
     case 3:
-      x = -x;
+      negate(x);
       break;
     case 4:
       {
-        x = -x;
-        y = -y;
+        negate(x);
+        negate(y);
       }
       break;
     case 5:
@@ -2210,7 +2176,7 @@ void n_sin_cos(angle z)
       }
       break;
     case 7:
-      y = -y;
+      negate(y);
       break;
   }
   r = pyth_add(x, y);
@@ -2268,10 +2234,7 @@ scaled unif_rand (scaled x)
   scaled Result;
   scaled y;
   
-  if (j_random == 0)
-    new_randoms();
-  else
-    decr(j_random);
+  next_random();
   y = take_fraction(abs(x), randoms[j_random]);
   if (y == abs(x))
     Result = 0;
@@ -2286,21 +2249,16 @@ scaled norm_rand (void)
 {
   scaled Result;
   integer x, u, l;
+
   do {
     do {
-      if (j_random == 0)
-        new_randoms();
-      else
-        decr(j_random);
-      x = take_fraction(112429L, randoms[j_random] - fraction_half);
-      if (j_random == 0)
-        new_randoms();
-      else
-        decr(j_random);
+      next_random();
+      x = take_fraction(112429, randoms[j_random] - fraction_half);
+      next_random();
       u = randoms[j_random];
     } while (!(abs(x) < u));
     x = make_fraction (x, u);
-    l = 139548960L - m_log(u);
+    l = 139548960 - m_log(u);
   } while (!(ab_vs_cd(1024, l, x, x) >= 0));
   Result = x;
   return Result;
@@ -2309,11 +2267,11 @@ scaled norm_rand (void)
 #ifdef TEXMF_DEBUG
 void print_word (memory_word w)
 {
-  print_int(w.cint);
+  print_int(w.sc);
   print_char(' ');
-  print_scaled(w.cint);
+  print_scaled(w.sc);
   print_char(' ');
-  print_scaled(w.cint / 4096);
+  print_scaled(w.sc / 010000);
   print_ln();
   print_int(w.hh.lh);
   print_char('=');
@@ -2327,21 +2285,21 @@ void print_word (memory_word w)
   print_char(':');
   print_int(w.qqqq.b1);
   print_char(':');
-  print_int(w.qqqq .b2);
+  print_int(w.qqqq.b2);
   print_char(':');
-  print_int(w.qqqq .b3);
+  print_int(w.qqqq.b3);
 }
 #endif /* TEXMF_DEBUG */
 void print_capsule(void);
 /* 217 */
-void show_token_list (integer p, integer q, integer l, integer nulltally)
+void show_token_list (integer p, integer q, integer l, integer null_tally)
 {
   small_number cclass, c;
   integer r, v;
-  cclass = 3;
-  tally = nulltally;
-  
-  while ((p != 0) && (tally < l))
+
+  cclass = percent_class;
+  tally = null_tally;
+  while ((p != null) && (tally < l))
   {
     if (p == q)
     {
@@ -2350,29 +2308,29 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
       if (trick_count < error_line)
         trick_count = error_line;
     }
-    c = 9;
-    if ((p < 0) || (p > mem_end))
+    c = letter_class;
+    if ((p < mem_min) || (p > mem_end))
     {
       print(493);
       goto lab_exit;
     }
     if (p < hi_mem_min)
     {
-      if (mem[p].hh.b1 == 12)
+      if (name_type(p) == token)
       {
-        if (mem[p].hh.b0 == 16)
+        if (type(p) == known)
         {
-          if (cclass == 0)
+          if (cclass == digit_class)
             print_char(' ');
-          v = mem[p + 1].cint;
+          v = value(p);
           if (v < 0)
           {
-            if (cclass == 17)
+            if (cclass == left_bracket_class)
               print_char(' ');
             print_char('[');
             print_scaled(v);
             print_char(']');
-            c = 18;
+            c = right_bracket_class;
           }
           else
           {
@@ -2380,93 +2338,92 @@ void show_token_list (integer p, integer q, integer l, integer nulltally)
             c = 0;
           }
         }
-        else if (mem[p].hh.b0 != 4)
+        else if (type(p) != string_type)
           print(496);
         else
         {
           print_char('"');
-          slow_print(mem[p + 1].cint);
+          slow_print(value(p));
           print_char('"');
-          c = 4;
+          c = string_class;
         }
       }
-      else if ((mem[p].hh.b1 != 11) || (mem[p].hh.b0 < 1) || (mem[p].hh.b0 > 19))
+      else if ((name_type(p) != capsule) || (type(p) < vacuous) || (type(p) > independent))
         print(496);
       else
       {
         g_pointer = p;
         print_capsule();
-        c = 8;
+        c = right_paren_class;
       }
     }
     else
     {
-      r = mem[p].hh.lh;
-      if (r >= 9770)
+      r = info(p);
+      if (r >= expr_base)
       {
-        if (r < 9920)
+        if (r < suffix_base)
         {
           print(498);
-          r = r - (9770);
+          r = r - (expr_base);
         }
-        else if (r < 10070)
+        else if (r < text_base)
         {
           print(499);
-          r = r - (9920);
+          r = r - (suffix_base);
         }
         else
         {
           print(500);
-          r = r - (10070);
+          r = r - (text_base);
         }
         print_int(r);
         print_char(')');
-        c = 8;
+        c = right_paren_class;
       }
       else if (r < 1)
       {
         if (r == 0)
         {
-          if (cclass == 17)
+          if (cclass == left_bracket_class)
             print_char(' ');
           print(497);
-          c = 18;
+          c = right_bracket_class;
         }
         else
           print(494);
       }
       else
       {
-        r = hash[r].rh;
+        r = text(r);
         if ((r < 0) || (r >= str_ptr))
           print(495);
         else
         {
           c = char_class[str_pool[str_start[r]]];
           if (c == cclass)
+          {
             switch (c)
             {
-              case 9:
+              case letter_class:
                 print_char('.');
                 break;
-              case 5:
-              case 6:
-              case 7:
-              case 8:
-                ;
+              case isolated_classes:
+                do_nothing();
                 break;
               default:
                 print_char(' ');
                 break;
             }
+          }
           slow_print(r);
         }
       }
     }
     cclass = c;
-    p = mem[p].hh.rh;
+    p = link(p);
   }
-  if (p != 0)
+  if (p != null)
     print(492);
   lab_exit:;
 }
@@ -7784,7 +7741,7 @@ scaled compromise (scaled u, scaled v)
 {
   scaled Result;
   
-  Result = half(good_val (u + u, -u - v));
+  Result = half(good_val(u + u, -u - v));
   return Result;
 }
 /* 433 */
@@ -8294,10 +8251,10 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
   if (chopped > 0)
   {
     print_err("Curve out of range");
-    help4(/* 564 */ "At least one of the coordinates in the path I'm about to",
-      /* 565 */ "digitize was really huge (potentially bigger than 4095).",
-      /* 566 */ "So I've cut it back to the maximum size.",
-      /* 567 */ "The results will probably be pretty wild.");
+    help4("At least one of the coordinates in the path I'm about to",
+      "digitize was really huge (potentially bigger than 4095).",
+      "So I've cut it back to the maximum size.",
+      "The results will probably be pretty wild.");
     put_get_error();
   }
   quadrant_subdivide();
