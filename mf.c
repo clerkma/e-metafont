@@ -14005,192 +14005,193 @@ void stash_in (pointer p)
 {
   pointer q;
 
-  mem[p].hh.b0 = cur_type;
-  if (cur_type == 16)
-    mem[p + 1].cint = cur_exp;
+  type(p) = cur_type;
+  if (cur_type == known)
+    value(p) = cur_exp;
   else
   {
-    if (cur_type == 19)
+    if (cur_type == independent)
     {
-      q = single_dependency (cur_exp);
+      q = single_dependency(cur_exp);
       if (q == dep_final)
       {
-        mem[p].hh.b0 = 16;
-        mem[p + 1].cint = 0;
-        free_node (q, 2);
+        type(p) = known;
+        value(p) = 0;
+        free_node(q, dep_node_size);
       }
       else
       {
-        mem[p].hh.b0 = 17;
-        new_dep (p, q);
+        type(p) = dependent;
+        new_dep(p, q);
       }
-      recycle_value (cur_exp);
+      recycle_value(cur_exp);
     }
     else
     {
-      mem[p + 1] = mem[cur_exp + 1];
-      mem[mem[p + 1].hh.lh].hh.rh = p;
+      mem[value_loc(p)] = mem[value_loc(cur_exp)];
+      link(prev_dep(p)) = p;
     }
-    free_node (cur_exp, 2);
+    free_node(cur_exp, value_node_size);
   }
-  cur_type = 1;
+  cur_type = vacuous;
 }
 /* 848 */
 void back_expr (void)
 {
-  halfword p;
+  pointer p;
 
   p = stash_cur_exp();
-  mem[p].hh.rh = 0;
-  begin_token_list (p, 19);
+  link(p) = null;
+  back_list(p);
 }
 /* 849 */
 void bad_sub_script (void)
 {
-  disp_err (null, /* 786 */ "Improper subscript has been replaced by zero");
-  help3(/* 787 */ "A bracketed subscript must have a known numeric value;",
-    /* 788 */ "unfortunately, what I found was the value that appears just",
-    /* 789 */ "above this error message. So I'll try a zero subscript.");
-  flush_error (0);
+  disp_err (null, "Improper subscript has been replaced by zero");
+  help3("A bracketed subscript must have a known numeric value;",
+    "unfortunately, what I found was the value that appears just",
+    "above this error message. So I'll try a zero subscript.");
+  flush_error(0);
 }
 /* 851 */
 void obliterated (halfword q)
 {
   print_err("Variable ");
-  show_token_list (q, 0, 1000, 0);
+  show_token_list(q, null, 1000, 0);
   print(791);
-  help3(/* 792 */ "It seems you did a nasty thing---probably by accident,",
-    /* 793 */ "but nevertheless you nearly hornswoggled me...",
-    /* 794 */ "While I was evaluating the right-hand side of this",
-    /* 795 */ "command, something happened, and the left-hand side",
-    /* 796 */ "is no longer a variable! So I won't change anything.");
+  help3("It seems you did a nasty thing---probably by accident,",
+    "but nevertheless you nearly hornswoggled me...",
+    "While I was evaluating the right-hand side of this",
+    "command, something happened, and the left-hand side",
+    "is no longer a variable! So I won't change anything.");
 }
 /* 863 */
-void binary_mac (halfword p, halfword c, halfword n)
+void binary_mac (pointer p, pointer c, pointer n)
 {
-  halfword q, r;
+  pointer q, r;
 
   q = get_avail();
   r = get_avail();
-  mem[q].hh.rh = r;
-  mem[q].hh.lh = p;
-  mem[r].hh.lh = stash_cur_exp();
-  macro_call (c, q, n);
+  link(q) = r;
+  info(q) = p;
+  info(r) = stash_cur_exp;
+  macro_call(c, q, n);
 }
 /* 865 */
 void materialize_pen (void)
 {
-  scaled aminusb, aplusb, major_axis, minor_axis;
+  scaled a_minus_b, a_plus_b, major_axis, minor_axis;
   angle theta;
-  halfword p;
-  halfword q;
+  pointer p;
+  pointer q;
 
   q = cur_exp;
-  if (mem[q].hh.b0 == 0)
+  if (left_type(q) == endpoint)
   {
     print_err("Pen path must be a cycle");
-    help2(/* 807 */ "I can't make a pen from the given path.",
-      /* 575 */ "So I've replaced it by the trivial path `(0,0)..cycle'.");
+    help2("I can't make a pen from the given path.",
+      "So I've replaced it by the trivial path `(0,0)..cycle'.");
     put_get_error();
-    cur_exp = 3;
+    cur_exp = null_pen;
     goto common_ending;
   }
-  else if (mem[q].hh.b0 == 4)
+  else if (left_type(q) == open)
   {
-    tx = mem[q + 1].cint;
-    ty = mem[q + 2].cint;
-    txx = mem[q + 3].cint - tx;
-    tyx = mem[q + 4].cint - ty;
-    txy = mem[q + 5].cint - tx;
-    tyy = mem[q + 6].cint - ty;
-    aminusb = pyth_add (txx - tyy, tyx + txy);
-    aplusb = pyth_add (txx + tyy, tyx - txy);
-    major_axis = half(aminusb + aplusb);
-    minor_axis = half(abs(aplusb - aminusb));
+    tx = x_coord(q);
+    ty = y_coord(q);
+    txx = left_x(q) - tx;
+    tyx = left_y(q) - ty;
+    txy = right_x(q) - tx;
+    tyy = right_y(q) - ty;
+    a_minus_b = pyth_add(txx - tyy, tyx + txy);
+    a_plus_b = pyth_add(txx + tyy, tyx - txy);
+    major_axis = half(a_minus_b + a_plus_b);
+    minor_axis = half(abs(a_plus_b - a_minus_b));
     if (major_axis == minor_axis)
       theta = 0;
     else
-      theta = half(n_arg (txx - tyy, tyx + txy) + n_arg (txx + tyy, tyx - txy));
-    free_node (q, 7);
-    q = make_ellipse (major_axis, minor_axis, theta);
+      theta = half(n_arg(txx - tyy, tyx + txy) + n_arg(txx + tyy, tyx - txy));
+    free_node(q, knot_node_size);
+    q = make_ellipse(major_axis, minor_axis, theta);
     if ((tx != 0) || (ty != 0))
     {
       p = q;
       do {
-        mem[p + 1].cint = mem[p + 1].cint + tx;
-        mem[p + 2].cint = mem[p + 2].cint + ty;
-        p = mem[p].hh.rh;
+        x_coord(p) = x_coord(p) + tx;
+        y_coord(p) = y_coord(p) + ty;
+        p = link(p);
       } while (!(p == q));
     }
   }
-  cur_exp = make_pen (q);
-  common_ending: toss_knot_list (q);
-  cur_type = 6;
+  cur_exp = make_pen(q);
+common_ending:
+  toss_knot_list(q);
+  cur_type = pen_type;
 }
 /* 872 */
 void known_pair (void)
 {
-  halfword p;
+  pointer p;
 
-  if (cur_type != 14)
+  if (cur_type != pair_type)
   {
-    disp_err (null, /* 809 */ "Undefined coordinates have been replaced by (0,0)");
-    help5(/* 810 */ "I need x and y numbers for this part of the path.",
-      /* 811 */ "The value I found (see above) was no good;",
-      /* 812 */ "so I'll try to keep going by using zero instead.",
-      /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
-      /* 814 */ "you might want to type `I ???' now.)");
-    put_get_flush_error (0);
+    disp_err(null, "Undefined coordinates have been replaced by (0,0)");
+    help5("I need x and y numbers for this part of the path.",
+      "The value I found (see above) was no good;",
+      "so I'll try to keep going by using zero instead.",
+      "(Chapter 27 of The METAFONTbook explains that",
+      "you might want to type `I ???' now.)");
+    put_get_flush_error(0);
     cur_x = 0;
     cur_y = 0;
   }
   else
   {
-    p = mem[cur_exp + 1].cint;
-    if (mem[p].hh.b0 == 16)
-      cur_x = mem[p + 1].cint;
+    p = value(cur_exp);
+    if (type(x_part_loc(p)) == known)
+      cur_x = value(x_part_loc(p));
     else
     {
-      disp_err (p, /* 815 */ "Undefined x coordinate has been replaced by 0");
-      help5(/* 816 */ "I need a `known' x value for this part of the path.",
-        /* 811 */ "The value I found (see above) was no good;",
-        /* 812 */ "so I'll try to keep going by using zero instead.",
-        /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
-        /* 814 */ "you might want to type `I ???' now.)");
+      disp_err(p, "Undefined x coordinate has been replaced by 0");
+      help5("I need a `known' x value for this part of the path.",
+        "The value I found (see above) was no good;",
+        "so I'll try to keep going by using zero instead.",
+        "(Chapter 27 of The METAFONTbook explains that",
+        "you might want to type `I ???' now.)");
       put_get_error();
-      recycle_value (p);
+      recycle_value(p);
       cur_x = 0;
     }
-    if (mem[p + 2].hh.b0 == 16)
-      cur_y = mem[p + 3].cint;
+    if (type(y_part_loc(p)) == known)
+      cur_y = value(y_part_loc(p));
     else
     {
-      disp_err (p + 2, /* 817 */ "Undefined y coordinate has been replaced by 0");
-      help5(/* 818 */ "I need a `known' y value for this part of the path.",
-        /* 811 */ "The value I found (see above) was no good;",
-        /* 812 */ "so I'll try to keep going by using zero instead.",
-        /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
-        /* 814 */ "you might want to type `I ???' now.)");
+      disp_err(y_part_loc(p), "Undefined y coordinate has been replaced by 0");
+      help5("I need a `known' y value for this part of the path.",
+        "The value I found (see above) was no good;",
+        "so I'll try to keep going by using zero instead.",
+        "(Chapter 27 of The METAFONTbook explains that",
+        "you might want to type `I ???' now.)");
       put_get_error();
-      recycle_value (p + 2);
+      recycle_value(y_part_loc(p));
       cur_y = 0;
     }
-    flush_cur_exp (0);
+    flush_cur_exp(0);
   }
 }
 /* 871 */
-halfword new_knot (void)
+pointer new_knot (void)
 {
-  halfword Result;
-  halfword q;
+  pointer Result;
+  pointer q;
 
-  q = get_node (7);
-  mem[q].hh.b0 = 0;
-  mem[q].hh.b1 = 0;
-  mem[q].hh.rh = q;
+  q = get_node(knot_node_size);
+  left_type(q) = endpoint;
+  right_type(q) = endpoint;
+  link(q) = q;
   known_pair();
-  mem[q + 1].cint = cur_x;
-  mem[q + 2].cint = cur_y;
+  x_coord(q) = cur_x;
+  y_coord(q) = cur_y;
   Result = q;
   return Result;
 }
@@ -14206,48 +14207,48 @@ small_number scan_direction (void)
   {
     get_x_next();
     scan_expression();
-    if ((cur_type != 16) || (cur_exp < 0))
+    if ((cur_type != known) || (cur_exp < 0))
     {
-      disp_err (null, /* 821 */ "Improper curl has been replaced by 1");
-      help1(/* 822 */ "A curl must be a known, nonnegative number.");
-      put_get_flush_error (unity);
+      disp_err(null, "Improper curl has been replaced by 1");
+      help1("A curl must be a known, nonnegative number.");
+      put_get_flush_error(unity);
     }
-    t = 3;
+    t = curl;
   }
   else
   {
     scan_expression();
-    if (cur_type > 14)
+    if (cur_type > pair_type)
     {
-      if (cur_type != 16)
+      if (cur_type != known)
       {
-        disp_err (null, /* 815 */ "Undefined x coordinate has been replaced by 0");
-        help5(/* 816 */ "I need a `known' x value for this part of the path.", 
-          /* 811 */ "The value I found (see above) was no good;",
-          /* 812 */ "so I'll try to keep going by using zero instead.",
-          /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
-          /* 814 */ "you might want to type `I ???' now.)");
-        put_get_flush_error (0);
+        disp_err(null, "Undefined x coordinate has been replaced by 0");
+        help5("I need a `known' x value for this part of the path.", 
+          "The value I found (see above) was no good;",
+          "so I'll try to keep going by using zero instead.",
+          "(Chapter 27 of The METAFONTbook explains that",
+          "you might want to type `I ???' now.)");
+        put_get_flush_error(0);
       }
       x = cur_exp;
       if (cur_cmd != comma)
       {
-        missing_err (44);
-        help2(/* 823 */ "I've got the x coordinate of a path direction;",
-          /* 824 */ "will look for the y coordinate next.");
+        missing_err(44);
+        help2("I've got the x coordinate of a path direction;",
+          "will look for the y coordinate next.");
         back_error();
       }
       get_x_next();
       scan_expression();
-      if (cur_type != 16)
+      if (cur_type != known)
       {
-        disp_err (null, /* 817 */ "Undefined y coordinate has been replaced by 0");
-        help5(/* 818 */ "I need a `known' y value for this part of the path.",
-          /* 811 */ "The value I found (see above) was no good;",
-          /* 812 */ "so I'll try to keep going by using zero instead.",
-          /* 813 */ "(Chapter 27 of The METAFONTbook explains that",
-          /* 814 */ "you might want to type `I ???' now.)");
-        put_get_flush_error (0);
+        disp_err(null, "Undefined y coordinate has been replaced by 0");
+        help5("I need a `known' y value for this part of the path.",
+          "The value I found (see above) was no good;",
+          "so I'll try to keep going by using zero instead.",
+          "(Chapter 27 of The METAFONTbook explains that",
+          "you might want to type `I ???' now.)");
+        put_get_flush_error(0);
       }
       cur_y = cur_exp;
       cur_x = x;
@@ -14255,19 +14256,19 @@ small_number scan_direction (void)
     else
       known_pair();
     if ((cur_x == 0) && (cur_y == 0))
-      t = 4;
+      t = open;
     else
     {
-      t = 2;
-      cur_exp = n_arg (cur_x, cur_y);
+      t = given;
+      cur_exp = n_arg(cur_x, cur_y);
     }
   }
   if (cur_cmd != right_brace)
   {
-    missing_err (125);
-    help3(/* 819 */ "I've scanned a direction spec for part of a path,",
-      /* 820 */ "so a right brace should have come next.",
-      /* 698 */ "I shall pretend that one was there.");
+    missing_err(125);
+    help3("I've scanned a direction spec for part of a path,",
+      "so a right brace should have come next.",
+      "I shall pretend that one was there.");
     back_error();
   }
   get_x_next();
@@ -14284,77 +14285,69 @@ void do_nullary (quarterword c)
     show_cmd_mod (33, c);
   switch (c)
   {
-    case 30:
-    case 31:
+    case true_code:
+    case false_code:
       {
-        cur_type = 2;
+        cur_type = boolean_type;
         cur_exp = c;
       }
       break;
-    case 32:
+    case null_picture_code:
       {
-        cur_type = 11;
-        cur_exp = get_node (6);
-        init_edges (cur_exp);
+        cur_type = picture_type;
+        cur_exp = get_node(edge_header_size);
+        init_edges(cur_exp);
       }
       break;
-    case 33:
+    case null_pen_code:
       {
-        cur_type = 6;
-        cur_exp = 3;
+        cur_type = pen_type;
+        cur_exp = null_pen;
       }
       break;
-    case 37:
+    case normal_deviate:
       {
-        cur_type = 16;
+        cur_type = known;
         cur_exp = norm_rand();
       }
       break;
-    case 36:
+    case pen_circle:
       {
-        cur_type = 8;
-        cur_exp = get_node (7);
-        mem[cur_exp].hh.b0 = 4;
-        mem[cur_exp].hh.b1 = 4;
-        mem[cur_exp].hh.rh = cur_exp;
-        mem[cur_exp + 1].cint = 0;
-        mem[cur_exp + 2].cint = 0;
-        mem[cur_exp + 3].cint = unity;
-        mem[cur_exp + 4].cint = 0;
-        mem[cur_exp + 5].cint = 0;
-        mem[cur_exp + 6].cint = unity;
+        cur_type = future_pen;
+        cur_exp = get_node(knot_node_size);
+        left_type(cur_exp) = open;
+        right_type(cur_exp) = open;
+        link(cur_exp) = cur_exp;
+        x_coord(cur_exp) = 0;
+        y_coord(cur_exp) = 0;
+        left_x(cur_exp) = unity;
+        left_y(cur_exp) = 0;
+        right_x(cur_exp) = 0;
+        right_y(cur_exp) = unity;
       }
       break;
-    case 34:
+    case job_name_op:
       {
         if (job_name == 0)
           open_log_file();
-        cur_type = 4;
+        cur_type = string_type;
         cur_exp = job_name;
       }
       break;
-    case 35:
+    case read_string_op:
       {
         if (interaction <= nonstop_mode)
-          fatal_error (/* 835 */ "*** (cannot readstring in nonstop modes)");
+          fatal_error("*** (cannot readstring in nonstop modes)");
         begin_file_reading();
         name = 1;
         prompt_input("");
-        {
-          if (pool_ptr + last - start > max_pool_ptr)
-          {
-            if (pool_ptr + last - start > pool_size)
-              overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
-            max_pool_ptr = pool_ptr + last - start;
-          }
-        }
+        str_room(last - start);
         for (k = start; k <= last - 1; k++)
         {
-          str_pool[pool_ptr] = buffer[k];
-          incr(pool_ptr);
+          append_char(buffer[k]);
         }
         end_file_reading();
-        cur_type = 4;
+        cur_type = string_type;
         cur_exp = make_string();
       }
       break;
@@ -14366,12 +14359,12 @@ boolean nice_pair (integer p, quarterword t)
 {
   boolean Result;
 
-  if (t == 14)
+  if (t == pair_type)
   {
-    p = mem[p + 1].cint;
-    if (mem[p].hh.b0 == 16)
+    p = value(p);
+    if (type(x_part_loc(p)) == known)
     {
-      if (mem[p + 2].hh.b0 == 16)
+      if (type(y_part_loc(p)) == known)
       {
         Result = true;
         goto lab_exit;
@@ -14386,11 +14379,11 @@ boolean nice_pair (integer p, quarterword t)
 void print_known_or_unknown_type (small_number t, integer v)
 {
   print_char('(');
-  if (t < 17)
+  if (t < dependent)
   {
-    if (t != 14)
+    if (t != pair_type)
       print_type (t);
-    else if (nice_pair (v, 14))
+    else if (nice_pair(v, pair_type))
       print(336);
     else
       print(836);
@@ -14402,23 +14395,23 @@ void print_known_or_unknown_type (small_number t, integer v)
 /* 901 */
 void bad_unary (quarterword c)
 {
-  disp_err (null, /* 838 */ "Not implemented: ");
-  print_op (c);
+  disp_err(null, "Not implemented: ");
+  print_op(c);
   print_known_or_unknown_type (cur_type, cur_exp);
-  help3(/* 839 */ "I'm afraid I don't know how to apply that operation to that",
-    /* 840 */ "particular type. Continue, and I'll simply return the",
-    /* 841 */ "argument (shown above) as the result of the operation.");
+  help3("I'm afraid I don't know how to apply that operation to that",
+    "particular type. Continue, and I'll simply return the",
+    "argument (shown above) as the result of the operation.");
   put_get_error();
 }
 /* 904 */
-void negate_dep_list (halfword p)
+void negate_dep_list (pointer p)
 {
   while (true)
   {
-    mem[p + 1].cint = -mem[p + 1].cint;
-    if (mem[p].hh.lh == 0)
+    negate(value(p));
+    if (info(p) == null)
       goto lab_exit;
-    p = mem[p].hh.rh;
+    p = link(p);
   }
   lab_exit:;
 }
@@ -14426,20 +14419,20 @@ void negate_dep_list (halfword p)
 void pair_to_path (void)
 {
   cur_exp = new_knot();
-  cur_type = 9;
+  cur_type = path_type;
 }
 /* 910 */
 void take_part (quarterword c)
 {
-  halfword p;
+  pointer p;
 
-  p = mem[cur_exp + 1].cint;
-  mem[18].cint = p;
-  mem[17].hh.b0 = cur_type;
-  mem[p].hh.rh = 17;
-  free_node (cur_exp, 2);
-  make_exp_copy (p + 2 * (c - 53));
-  recycle_value (17);
+  p = value(cur_exp);
+  value(temp_val) = p;
+  type(temp_val) = cur_type;
+  link(p) = temp_val;
+  free_node(cur_exp, value_node_size);
+  make_exp_copy(p + 2 * (c - x_part));
+  recycle_value(temp_val);
 }
 /* 913 */
 void str_to_num (quarterword c)
@@ -14448,26 +14441,26 @@ void str_to_num (quarterword c)
   ASCII_code m;
   pool_pointer k;
   unsigned char b;
-  boolean badchar;
+  boolean bad_char;
 
-  if (c == 49)
+  if (c == ASCII_op)
   {
-    if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
+    if (length(cur_exp) == 0)
       n = -1;
     else
-      n = str_pool[str_start[cur_exp]];
+      n = so(str_pool[str_start[cur_exp]]);
   }
   else
   {
-    if (c == 47)
+    if (c == oct_op)
       b = 8;
     else
       b = 16;
     n = 0;
-    badchar = false;
+    bad_char = false;
     for (k = str_start[cur_exp]; k <= str_start[cur_exp + 1] - 1; k++)
     {
-      m = str_pool[k];
+      m = so(str_pool[k]);
       if ((m >= 48) && (m <= 57))
         m = m - 48;
       else if ((m >= 65) && (m <= 70))
@@ -14476,12 +14469,12 @@ void str_to_num (quarterword c)
         m = m - 87;
       else
       {
-        badchar = true;
+        bad_char = true;
         m = 0;
       }
       if (m >= b)
       {
-        badchar = true;
+        bad_char = true;
         m = 0;
       }
       if (n < half_unit / b)
@@ -14489,13 +14482,13 @@ void str_to_num (quarterword c)
       else
         n = 32767;
     }
-    if (badchar)
+    if (bad_char)
     {
-      disp_err (null, /* 843 */ "String contains illegal digits");
-      if (c == 47)
-        help1(/* 844 */ "I zeroed out characters that weren't in the range 0..7.");
+      disp_err(null, "String contains illegal digits");
+      if (c == oct_op)
+        help1("I zeroed out characters that weren't in the range 0..7.");
       else
-        help1(/* 845 */ "I zeroed out characters that weren't hex digits.");
+        help1("I zeroed out characters that weren't hex digits.");
       put_get_error();
     }
     if (n > 4095)
@@ -14503,26 +14496,26 @@ void str_to_num (quarterword c)
       print_err("Number too large (");
       print_int(n);
       print_char(')');
-      help1(/* 847 */ "I have trouble with numbers greater than 4095; watch out.");
+      help1("I have trouble with numbers greater than 4095; watch out.");
       put_get_error();
     }
   }
-  flush_cur_exp (n * unity);
+  flush_cur_exp(n * unity);
 }
 /* 916 */
 scaled path_length (void)
 {
   scaled Result;
   scaled n;
-  halfword p;
+  pointer p;
 
   p = cur_exp;
-  if (mem[p].hh.b0 == 0)
+  if (left_type(p) == endpoint)
     n = -unity;
   else
     n = 0;
   do {
-    p = mem[p].hh.rh;
+    p = link(p);
     n = n + unity;
   } while (!(p == cur_exp));
   Result = n;
@@ -14532,49 +14525,49 @@ scaled path_length (void)
 void test_known (quarterword c)
 {
   unsigned char b;
-  halfword p, q;
+  pointer p, q;
 
-  b = 31;
+  b = false_code;
   switch (cur_type)
   {
-    case 1:
-    case 2:
-    case 4:
-    case 6:
-    case 8:
-    case 9:
-    case 11:
-    case 16:
-      b = 30;
+    case vacuous:
+    case boolean_type:
+    case string_type:
+    case pen_type:
+    case future_pen:
+    case path_type:
+    case picture_type:
+    case known:
+      b = true_code;
       break;
-    case 13:
-    case 14:
+    case transform_type:
+    case pair_type:
       {
-        p = mem[cur_exp + 1].cint;
+        p = value(cur_exp);
         q = p + big_node_size[cur_type];
         do {
           q = q - 2;
-          if (mem[q].hh.b0 != 16)
+          if (type(q) != known)
             goto done;
         } while (!(q == p));
-        b = 30;
+        b = true_code;
 done:;
       }
       break;
     default:
-      ;
+      do_nothing();
       break;
   }
-  if (c == 39)
-    flush_cur_exp (b);
+  if (c == known_op)
+    flush_cur_exp(b);
   else
-    flush_cur_exp (61 - b);
-  cur_type = 2;
+    flush_cur_exp(true_code + false_code - b);
+  cur_type = boolean_type;
 }
 /* 895 */
 void do_unary (quarterword c)
 {
-  halfword p, q;
+  pointer p, q;
   integer x;
 
   check_arith();
@@ -14586,7 +14579,7 @@ void do_unary (quarterword c)
     print_char('(');
     print_exp (0, 0);
     print(842);
-    end_diagnostic (false);
+    end_diagnostic(false);
   }
   switch (c)
   {
@@ -14935,371 +14928,371 @@ void do_unary (quarterword c)
   check_arith();
 }
 /* 923 */
-void bad_binary (halfword p, quarterword c)
+void bad_binary (pointer p, quarterword c)
 {
-  disp_err (p, /* 261 */ "");
-  disp_err (null, /* 838 */ "Not implemented: ");
-  if (c >= 94)
-    print_op (c);
-  print_known_or_unknown_type (mem[p].hh.b0, p);
-  if (c >= 94)
+  disp_err(p, "");
+  disp_err(null, "Not implemented: ");
+  if (c >= min_of)
+    print_op(c);
+  print_known_or_unknown_type(type(p), p);
+  if (c >= min_of)
     print(479);
   else
-    print_op (c);
-  print_known_or_unknown_type (cur_type, cur_exp);
-  help3(/* 839 */ "I'm afraid I don't know how to apply that operation to that", 
-    /* 848 */ "combination of types. Continue, and I'll return the second",
-    /* 849 */ "argument (see above) as the result of the operation.");
+    print_op(c);
+  print_known_or_unknown_type(cur_type, cur_exp);
+  help3("I'm afraid I don't know how to apply that operation to that", 
+    "combination of types. Continue, and I'll return the second",
+    "argument (see above) as the result of the operation.");
   put_get_error();
 }
 /* 928 */
-halfword tarnished (halfword p)
+pointer tarnished (pointer p)
 {
-  halfword Result;
-  halfword q;
-  halfword r;
+  pointer Result;
+  pointer q;
+  pointer r;
 
-  q = mem[p + 1].cint;
-  r = q + big_node_size[mem[p].hh.b0];
+  q = value(p);
+  r = q + big_node_size[type(p)];
   do {
     r = r - 2;
-    if (mem[r].hh.b0 == 19)
+    if (type(r) == independent)
     {
       Result = 1;
       goto lab_exit;
     }
   } while (!(r == q));
-  Result = 0;
+  Result = null;
   lab_exit:;
   return Result;
 }
 /* 935 */
-void dep_finish (halfword v, halfword q, small_number t)
+void dep_finish (pointer v, pointer q, small_number t)
 {
-  halfword p;
+  pointer p;
   scaled vv;
 
-  if (q == 0)
+  if (q == null)
     p = cur_exp;
   else
     p = q;
-  mem[p + 1].hh.rh = v;
-  mem[p].hh.b0 = t;
-  if (mem[v].hh.lh == 0)
+  dep_list(p) = v;
+  type(p) = t;
+  if (info(v) == null)
   {
-    vv = mem[v + 1].cint;
-    if (q == 0)
-      flush_cur_exp (vv);
+    vv = value(v);
+    if (q == null)
+      flush_cur_exp(vv);
     else
     {
-      recycle_value (p);
-      mem[q].hh.b0 = 16;
-      mem[q + 1].cint = vv;
+      recycle_value(p);
+      type(q) = known;
+      value(q) = vv;
     }
   }
-  else if (q == 0)
+  else if (q == null)
     cur_type = t;
   if (fix_needed)
     fix_dependencies();
 }
 /* 930 */
-void add_or_subtract (halfword p, halfword q, quarterword c)
+void add_or_subtract (pointer p, pointer q, quarterword c)
 {
   small_number s, t;
-  halfword r;
+  pointer r;
   integer v;
 
-  if (q == 0)
+  if (q == null)
   {
     t = cur_type;
-    if (t < 17)
+    if (t < dependent)
       v = cur_exp;
     else
-      v = mem[cur_exp + 1].hh.rh;
+      v = dep_list(cur_exp);
   }
   else
   {
-    t = mem[q].hh.b0;
-    if (t < 17)
-      v = mem[q + 1].cint;
+    v = dep_list(cur_exp);
+    if (t < dependent)
+      v = value(q);
     else
-      v = mem[q + 1].hh.rh;
+      v = dep_list(q);
   }
-  if (t == 16)
+  if (t == known)
   {
-    if (c == 70)
-      v = -v;
-    if (mem[p].hh.b0 == 16)
+    if (c == minus)
+      negate(v);
+    if (type(p) == known)
     {
-      v = slow_add (mem[p + 1].cint, v);
-      if (q == 0)
+      v = slow_add(value(p), v);
+      if (q == null)
         cur_exp = v;
       else
-        mem[q + 1].cint = v;
+        value(q) = v;
       goto lab_exit;
     }
-    r = mem[p + 1].hh.rh;
-    while (mem[r].hh.lh != 0)
-      r = mem[r].hh.rh;
-    mem[r + 1].cint = slow_add (mem[r + 1].cint, v);
-    if (q == 0)
+    r = dep_list(p);
+    while (info(r) != null)
+      r = link(r);
+    value(r) = slow_add(value(r), v);
+    if (q == null)
     {
-      q = get_node (2);
+      q = get_node(value_node_size);
       cur_exp = q;
-      cur_type = mem[p].hh.b0;
-      mem[q].hh.b1 = 11;
+      cur_type = type(p);
+      name_type(q) = capsule;
     }
-    mem[q + 1].hh.rh = mem[p + 1].hh.rh;
-    mem[q].hh.b0 = mem[p].hh.b0;
-    mem[q + 1].hh.lh = mem[p + 1].hh.lh;
-    mem[mem[p + 1].hh.lh].hh.rh = q;
-    mem[p].hh.b0 = 16;
+    dep_list(q) = dep_list(p);
+    type(q) = type(p);
+    prev_dep(q) = prev_dep(p);
+    link(prev_dep(p)) = q;
+    type(p) = known;
   }
   else
   {
-    if (c == 70)
-      negate_dep_list (v);
-    if (mem[p].hh.b0 == 16)
+    if (c == minus)
+      negate_dep_list(v);
+    if (type(p) == known)
     {
-      while (mem[v].hh.lh != 0)
-        v = mem[v].hh.rh;
-      mem[v + 1].cint = slow_add (mem[p + 1].cint, mem[v + 1].cint);
+      while (info(v) != null)
+        v = link(v);
+      value(v) = slow_add(value(p), value(v));
     }
     else
     {
-      s = mem[p].hh.b0;
-      r = mem[p + 1].hh.rh;
-      if (t == 17)
+      s = type(p);
+      r = dep_list(p);
+      if (t == dependent)
       {
-        if (s == 17)
+        if (s == dependent)
         {
-          if (max_coef (r) + max_coef (v) < 626349397L)
+          if (max_coef (r) + max_coef (v) < coef_bound)
           {
-            v = p_plus_q (v, r, 17);
+            v = p_plus_q(v, r, dependent);
             goto done;
           }
         }
-        t = 18;
-        v = p_over_v (v, unity, 17, 18);
+        t = proto_dependent;
+        v = p_over_v(v, unity, dependent, proto_dependent);
       }
-      if (s == 18)
-        v = p_plus_q (v, r, 18);
+      if (s == proto_dependent)
+        v = p_plus_q(v, r, proto_dependent);
       else
-        v = p_plus_fq (v, unity, r, 18, 17);
+        v = p_plus_fq(v, unity, r, proto_dependent, dependent);
     done:
-      if (q != 0)
-        dep_finish (v, q, t);
+      if (q != null)
+        dep_finish(v, q, t);
       else
       {
         cur_type = t;
-        dep_finish (v, 0, t);
+        dep_finish(v, null, t);
       }
     }
   }
   lab_exit:;
 }
 /* 943 */
-void dep_mult (halfword p, integer v, boolean v_is_scaled)
+void dep_mult (pointer p, integer v, boolean v_is_scaled)
 {
-  halfword q;
+  pointer q;
   small_number s, t;
 
-  if (p == 0)
+  if (p == null)
     q = cur_exp;
-  else if (mem[p].hh.b0 != 16)
+  else if (type(p) != known)
     q = p;
   else
   {
     if (v_is_scaled)
-      mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
+      value(p) = take_scaled(value(p), v);
     else
-      mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
+      value(p) = take_fraction(value(p), v);
     goto lab_exit;
   }
-  t = mem[q].hh.b0;
-  q = mem[q + 1].hh.rh;
+  t = type(q);
+  q = dep_list(q);
   s = t;
-  if (t == 17)
+  if (t == dependent)
   {
     if (v_is_scaled)
     {
-      if (ab_vs_cd (max_coef (q), abs(v), 626349396L, unity) >= 0)
-        t = 18;
+      if (ab_vs_cd(max_coef(q), abs(v), coef_bound - 1, unity) >= 0)
+        t = proto_dependent;
     }
   }
-  q = p_times_v (q, v, s, t, v_is_scaled);
-  dep_finish (q, p, t);
+  q = p_times_v(q, v, s, t, v_is_scaled);
+  dep_finish(q, p, t);
   lab_exit:;
 }
 /* 946 */
-void hard_times (halfword p)
+void hard_times (pointer p)
 {
-  halfword q;
-  halfword r;
+  pointer q;
+  pointer r;
   scaled u, v;
 
-  if (mem[p].hh.b0 == 14)
+  if (type(p) == pair_type)
   {
-    q = stash_cur_exp();
-    unstash_cur_exp (p);
+    q = stash_cur_exp;
+    unstash_cur_exp(p);
     p = q;
   }
-  r = mem[cur_exp + 1].cint;
-  u = mem[r + 1].cint;
-  v = mem[r + 3].cint;
-  mem[r + 2].hh.b0 = mem[p].hh.b0;
-  new_dep (r + 2, copy_dep_list (mem[p + 1].hh.rh));
-  mem[r].hh.b0 = mem[p].hh.b0;
-  mem[r + 1] = mem[p + 1];
-  mem[mem[p + 1].hh.lh].hh.rh = r;
-  free_node (p, 2);
-  dep_mult (r, u, true);
-  dep_mult (r + 2, v, true);
+  r = value(cur_exp);
+  u = value(x_part_loc(r));
+  v = value(y_part_loc(r));
+  type(y_part_loc(r)) = type(p);
+  new_dep(y_part_loc(r), copy_dep_list(dep_list(p)));
+  type(x_part_loc(r)) = type(p);
+  mem[value_loc(x_part_loc(r))] = mem[value_loc(p)];
+  link(prev_dep(p)) = x_part_loc(r);
+  free_node(p, value_node_size);
+  dep_mult(x_part_loc(r), u, true);
+  dep_mult(y_part_loc(r), v, true);
 }
 /* 949 */
-void dep_div (halfword p, scaled v)
+void dep_div (pointer p, scaled v)
 {
-  halfword q;
+  pointer q;
   small_number s, t;
 
-  if (p == 0)
+  if (p == null)
     q = cur_exp;
-  else if (mem[p].hh.b0 != 16)
+  else if (type(p) != known)
     q = p;
   else
   {
-    mem[p + 1].cint = make_scaled (mem[p + 1].cint, v);
+    value(p) = make_scaled(value(p), v);
     goto lab_exit;
   }
-  t = mem[q].hh.b0;
-  q = mem[q + 1].hh.rh;
+  t = type(q);
+  q = dep_list(q);
   s = t;
-  if (t == 17)
+  if (t == dependent)
   {
-    if (ab_vs_cd (max_coef (q), unity, 626349396L, abs(v)) >= 0)
-      t = 18;
+    if (ab_vs_cd(max_coef(q), unity, coef_bound - 1, abs(v)) >= 0)
+      t = proto_dependent;
   }
-  q = p_over_v (q, v, s, t);
-  dep_finish (q, p, t);
+  q = p_over_v(q, v, s, t);
+  dep_finish(q, p, t);
   lab_exit:;
 }
 /* 953 */
 void set_up_trans (quarterword c)
 {
-  halfword p, q, r;
+  pointer p, q, r;
 
-  if ((c != 88) || (cur_type != 13))
+  if ((c != transformed_by) || (cur_type != transform_type))
   {
     p = stash_cur_exp();
     cur_exp = id_transform();
-    cur_type = 13;
-    q = mem[cur_exp + 1].cint;
+    cur_type = transform_type;
+    q = value(cur_exp);
     switch (c)
     {
-      case 84:
-        if (mem[p].hh.b0 == 16)
+      case rotated_by:
+        if (type(p) == known)
         {
-          n_sin_cos((mem[p + 1].cint % 23592960L) * 16);
-          mem[q + 5].cint = round_fraction (n_cos);
-          mem[q + 9].cint = round_fraction (n_sin);
-          mem[q + 7].cint = -mem[q + 9].cint;
-          mem[q + 11].cint = mem[q + 5].cint;
+          n_sin_cos((value(p) % three_sixty_units) * 16);
+          value(xx_part_loc(q)) = round_fraction(n_cos);
+          value(yx_part_loc(q)) = round_fraction(n_sin);
+          value(xy_part_loc(q)) = -value(yx_part_loc(q));
+          value(yy_part_loc(q)) = value(xx_part_loc(q));
           goto done;
         }
         break;
-      case 85:
-        if (mem[p].hh.b0 > 14)
+      case slanted_by:
+        if (type(p) > pair_type)
         {
-          install (q + 6, p);
+          install(xy_part_loc(q), p);
           goto done;
         }
         break;
-      case 86 :
-        if (mem[p].hh.b0 > 14)
+      case scaled_by:
+        if (type(p) > pair_type)
         {
-          install (q + 4, p);
-          install (q + 10, p);
+          install(xx_part_loc(q), p);
+          install(yy_part_loc(q), p);
           goto done;
         }
         break;
-      case 87:
-        if (mem[p].hh.b0 == 14)
+      case shifted_by:
+        if (type(p) == pair_type)
         {
-          r = mem[p + 1].cint;
-          install (q, r);
-          install (q + 2, r + 2);
+          r = value(p);
+          install(x_part_loc(q), x_part_loc(r));
+          install(y_part_loc(q), y_part_loc(r));
           goto done;
         }
         break;
-      case 89:
-        if (mem[p].hh.b0 > 14)
+      case x_scaled:
+        if (type(p) > pair_type)
         {
-          install (q + 4, p);
+          install(xx_part_loc(q), p);
           goto done;
         }
         break;
-      case 90:
-        if (mem[p].hh.b0 > 14)
+      case y_scaled:
+        if (type(p) > pair_type)
         {
-          install (q + 10, p);
+          install(yy_part_loc(q), p);
           goto done;
         }
         break;
-      case 91:
-        if (mem[p].hh.b0 == 14)
+      case z_scaled:
+        if (type(p) == pair_type)
         {
-          r = mem[p + 1].cint;
-          install (q + 4, r);
-          install (q + 10, r);
-          install (q + 8, r + 2);
-          if (mem[r + 2].hh.b0 == 16)
-            mem[r + 3].cint = -mem[r + 3].cint;
+          r = value(p);
+          install(xx_part_loc(q), x_part_loc(r));
+          install(yy_part_loc(q), x_part_loc(r));
+          install(yx_part_loc(q), y_part_loc(r));
+          if (type(y_part_loc(r)) == known)
+            negate(value(y_part_loc(r)));
           else
-            negate_dep_list (mem[r + 3].hh.rh);
-          install (q + 6, r + 2);
+            negate_dep_list(dep_list(y_part_loc(r)));
+          install(xy_part_loc(q), y_part_loc(r));
           goto done;
         }
         break;
-      case 88:
-        ;
+      case transformed_by:
+        do_nothing();
         break;
     }
-    disp_err (p, /* 858 */ "Improper transformation argument");
-    help3(/* 859 */ "The expression shown above has the wrong type,",
-      /* 860 */ "so I can't transform anything using it.",
-      /* 538 */ "Proceed, and I'll omit the transformation.");
+    disp_err(p, "Improper transformation argument");
+    help3("The expression shown above has the wrong type,",
+      "so I can't transform anything using it.",
+      "Proceed, and I'll omit the transformation.");
     put_get_error();
   done:
-    recycle_value (p);
-    free_node (p, 2);
+    recycle_value(p);
+    free_node(p, value_node_size);
   }
-  q = mem[cur_exp + 1].cint;
-  r = q + 12;
+  q = value(cur_exp);
+  r = q + transform_node_size;
   do {
     r = r - 2;
-    if (mem[r].hh.b0 != 16)
+    if (type(r) != known)
       goto lab_exit;
   } while (!(r == q));
-  txx = mem[q + 5].cint;
-  txy = mem[q + 7].cint;
-  tyx = mem[q + 9].cint;
-  tyy = mem[q + 11].cint;
-  tx = mem[q + 1].cint;
-  ty = mem[q + 3].cint;
-  flush_cur_exp (0);
+  txx = value(xx_part_loc(q));
+  txy = value(xy_part_loc(q));
+  tyx = value(yx_part_loc(q));
+  tyy = value(yy_part_loc(q));
+  tx = value(x_part_loc(q));
+  ty = value(y_part_loc(q));
+  flush_cur_exp(0);
   lab_exit:;
 }
 /* 960 */
 void set_up_known_trans (quarterword c)
 {
-  set_up_trans (c);
-  if (cur_type != 16)
+  set_up_trans(c);
+  if (cur_type != known)
   {
-    disp_err (null, /* 861 */ "Transform components aren't all known");
-    help3(/* 862 */ "I'm unable to apply a partially specified transformation",
-      /* 863 */ "except to a fully known pair or transform.",
-      /* 538 */ "Proceed, and I'll omit the transformation.");
-    put_get_flush_error (0);
+    disp_err(null, "Transform components aren't all known");
+    help3("I'm unable to apply a partially specified transformation",
+      "except to a fully known pair or transform.",
+      "Proceed, and I'll omit the transformation.");
+    put_get_flush_error(0);
     txx = unity;
     txy = 0;
     tyx = 0;
@@ -15309,24 +15302,24 @@ void set_up_known_trans (quarterword c)
   }
 }
 /* 961 */
-void trans (halfword p, halfword q)
+void trans (pointer p, pointer q)
 {
   scaled v;
 
-  v = take_scaled (mem[p].cint, txx) + take_scaled (mem[q].cint, txy) + tx;
-  mem[q].cint = take_scaled (mem[p].cint, tyx) + take_scaled (mem[q].cint, tyy) + ty;
-  mem[p].cint = v;
+  v = take_scaled(mem[p].sc, txx) + take_scaled(mem[q].sc, txy) + tx;
+  mem[q].sc = take_scaled(mem[p].sc, tyx) + take_scaled(mem[q].sc, tyy) + ty;
+  mem[p].sc = v;
 }
 /* 962 */
-void path_trans (halfword p, quarterword c)
+void path_trans (pointer p, quarterword c)
 {
-  halfword q;
+  pointer q;
 
-  set_up_known_trans (c);
-  unstash_cur_exp (p);
-  if (cur_type == 6)
+  set_up_known_trans(c);
+  unstash_cur_exp(p);
+  if (cur_type == pen_type)
   {
-    if (mem[cur_exp + 9].cint == 0)
+    if (max_offset(cur_exp) == 0)
     {
       if (tx == 0)
       {
@@ -15334,27 +15327,27 @@ void path_trans (halfword p, quarterword c)
           goto lab_exit;
       }
     }
-    flush_cur_exp (make_path (cur_exp));
-    cur_type = 8;
+    flush_cur_exp(make_path(cur_exp));
+    cur_type = future_pen;
   }
   q = cur_exp;
   do {
-    if (mem[q].hh.b0 != 0)
-      trans (q + 3, q + 4);
-    trans (q + 1, q + 2);
-    if (mem[q].hh.b1 != 0)
-      trans (q + 5, q + 6);
-    q = mem[q].hh.rh;
+    if (left_type(q) != endpoint)
+      trans(q + 3, q + 4);
+    trans(q + 1, q + 2);
+    if (right_type(q) != endpoint)
+      trans(q + 5, q + 6);
+    q = link(q);
   } while (!(q == cur_exp));
   lab_exit:;
 }
 /* 963 */
-void edges_trans (halfword p, quarterword c)
+void edges_trans (pointer p, quarterword c)
 {
-  set_up_known_trans (c);
-  unstash_cur_exp (p);
+  set_up_known_trans(c);
+  unstash_cur_exp(p);
   cur_edges = cur_exp;
-  if (mem[cur_edges].hh.rh == cur_edges)
+  if (empty_edges(cur_edges))
     goto lab_exit;
   if (txx == 0)
   {
@@ -15369,7 +15362,7 @@ void edges_trans (halfword p, quarterword c)
           tyy = tyx;
           txy = 0;
           tyx = 0;
-          if (mem[cur_edges].hh.rh == cur_edges)
+          if (empty_edges(cur_edges))
             goto lab_exit;
         }
       }
@@ -15385,9 +15378,9 @@ void edges_trans (halfword p, quarterword c)
         {
           if ((txx == 0) || (tyy == 0))
           {
-            toss_edges (cur_edges);
-            cur_exp = get_node (6);
-            init_edges (cur_exp);
+            toss_edges(cur_edges);
+            cur_exp = get_node(edge_header_size);
+            init_edges(cur_exp);
           }
           else
           {
@@ -15402,36 +15395,38 @@ void edges_trans (halfword p, quarterword c)
               tyy = -tyy;
             }
             if (txx != unity)
-              x_scale_edges (txx / unity);
+              x_scale_edges(txx / unity);
             if (tyy != unity)
-              y_scale_edges (tyy / unity);
+              y_scale_edges(tyy / unity);
             tx = round_unscaled(tx);
             ty = round_unscaled(ty);
-            if ((mem[cur_edges + 2].hh.lh + tx <= 0) || (mem[cur_edges + 2].hh.rh + tx >= 8192) || (mem[cur_edges + 1].hh.lh + ty <= 0) || (mem[cur_edges + 1].hh.rh + ty >= 8191) || (abs(tx) >= 4096) || (abs(ty) >= 4096))
+            if ((m_min(cur_edges) + tx <= 0) || (m_max(cur_edges) + tx >= 8192) || 
+              (n_min(cur_edges) + ty <= 0) || (n_max(cur_edges) + ty >= 8191) ||
+              (abs(tx) >= 4096) || (abs(ty) >= 4096))
             {
               print_err("Too far to shift");
-              help3(/* 868 */ "I can't shift the picture as requested---it would",
-                /* 537 */ "make some coordinates too large or too small.",
-                /* 538 */ "Proceed, and I'll omit the transformation.");
+              help3("I can't shift the picture as requested---it would",
+                "make some coordinates too large or too small.",
+                "Proceed, and I'll omit the transformation.");
               put_get_error();
             }
             else
             {
               if (tx != 0)
               {
-                if (!(abs(mem[cur_edges + 3].hh.lh - tx - 4096) < 4096))
+                if (!(valid_range(m_offset(cur_edges) - tx)))
                   fix_offset();
-                mem[cur_edges + 2].hh.lh = mem[cur_edges + 2].hh.lh + tx;
-                mem[cur_edges + 2].hh.rh = mem[cur_edges + 2].hh.rh + tx;
-                mem[cur_edges + 3].hh.lh = mem[cur_edges + 3].hh.lh - tx;
-                mem[cur_edges + 4].cint = 0;
+                m_min(cur_edges) = m_min(cur_edges) + tx;
+                m_max(cur_edges) = m_max(cur_edges) + tx;
+                m_offset(cur_edges) = m_offset(cur_edges) - tx;
+                last_window_time(cur_edges) = 0;
               }
               if (ty != 0)
               {
-                mem[cur_edges + 1].hh.lh = mem[cur_edges + 1].hh.lh + ty;
-                mem[cur_edges + 1].hh.rh = mem[cur_edges + 1].hh.rh + ty;
-                mem[cur_edges + 5].hh.lh = mem[cur_edges + 5].hh.lh + ty;
-                mem[cur_edges + 4].cint = 0;
+                n_min(cur_edges) = n_min(cur_edges) + ty;
+                n_max(cur_edges) = n_max(cur_edges) + ty;
+                n_pos(cur_edges) = n_pos(cur_edges) + ty;
+                last_window_time(cur_edges) = 0;
               }
             }
           }
@@ -15441,95 +15436,95 @@ void edges_trans (halfword p, quarterword c)
     }
   }
   print_err("That transformation is too hard");
-  help3(/* 865 */ "I can apply complicated transformations to paths,",
-    /* 866 */ "but I can only do integer operations on pictures.",
-    /* 538 */ "Proceed, and I'll omit the transformation.");
+  help3("I can apply complicated transformations to paths,",
+    "but I can only do integer operations on pictures.",
+    "Proceed, and I'll omit the transformation.");
   put_get_error();
   lab_exit:;
 }
 /* 968 */
-void bilin1 (halfword p, scaled t, halfword q, scaled u, scaled delta)
+void bilin1 (pointer p, scaled t, pointer q, scaled u, scaled delta)
 {
-  halfword r;
+  pointer r;
 
   if (t != unity)
-    dep_mult (p, t, true);
+    dep_mult(p, t, true);
   if (u != 0)
   {
-    if (mem[q].hh.b0 == 16)
-      delta = delta + take_scaled (mem[q + 1].cint, u);
+    if (type(q) == known)
+      delta = delta + take_scaled(value(q), u);
     else
     {
-      if (mem[p].hh.b0 != 18)
+      if (type(p) != proto_dependent)
       {
-        if (mem[p].hh.b0 == 16)
-          new_dep (p, const_dependency (mem[p + 1].cint));
+        if (type(p) == known)
+          new_dep(p, const_dependency(value(p)));
         else
-          mem[p + 1].hh.rh = p_times_v (mem[p + 1].hh.rh, unity, 17, 18, true);
-        mem[p].hh.b0 = 18;
+          dep_list(p) = p_times_v(dep_list(p), unity, dependent, proto_dependent, true);
+        type(p) = proto_dependent;
       }
-      mem[p + 1].hh.rh = p_plus_fq (mem[p + 1].hh.rh, u, mem[q + 1].hh.rh, 18, mem[q].hh.b0);
+      dep_list(p) = p_plus_fq(dep_list(p), u, dep_list(q), proto_dependent, type(q));
     }
   }
-  if (mem[p].hh.b0 == 16)
-    mem[p + 1].cint = mem[p + 1].cint + delta;
+  if (type(p) == known)
+    value(p) = value(p) + delta;
   else
   {
-    r = mem[p + 1].hh.rh;
-    while (mem[r].hh.lh != 0)
-      r = mem[r].hh.rh;
-    delta = mem[r + 1].cint + delta;
-    if (r != mem[p + 1].hh.rh)
-      mem[r + 1].cint = delta;
+    r = dep_list(p);
+    while (info(r) != null)
+      r = link(r);
+    delta = value(r) + delta;
+    if (r != dep_list(p))
+      value(r) = delta;
     else
     {
-      recycle_value (p);
-      mem[p].hh.b0 = 16;
-      mem[p + 1].cint = delta;
+      recycle_value(p);
+      type(p) = known;
+      value(p) = delta;
     }
   }
   if (fix_needed)
     fix_dependencies();
 }
 /* 971 */
-void add_mult_dep (halfword p, scaled v, halfword r)
+void add_mult_dep (pointer p, scaled v, pointer r)
 {
-  if (mem[r].hh.b0 == 16)
-    mem[dep_final + 1].cint = mem[dep_final + 1].cint + take_scaled (mem[r + 1].cint, v);
+  if (type(r) == known)
+    value(dep_final) = value(dep_final) + take_scaled(value(r), v);
   else
   {
-    mem[p + 1].hh.rh = p_plus_fq (mem[p + 1].hh.rh, v, mem[r + 1].hh.rh, 18, mem[r].hh.b0);
+    dep_list(p) = p_plus_fq(dep_list(p), v, dep_list(r), proto_dependent, type(r));
     if (fix_needed)
       fix_dependencies();
   }
 }
 /* 972 */
-void bilin2 (halfword p, halfword t, scaled v, halfword u, halfword q)
+void bilin2 (pointer p, pointer t, scaled v, pointer u, pointer q)
 {
   scaled vv;
 
   vv = value(p);
-  type(p) = 18;
-  new_dep (p, const_dependency (0));
+  type(p) = proto_dependent;
+  new_dep(p, const_dependency(0));
   if (vv != 0)
-    add_mult_dep (p, vv, t);
+    add_mult_dep(p, vv, t);
   if (v != 0)
-    add_mult_dep (p, v, u);
+    add_mult_dep(p, v, u);
   if (q != 0)
-    add_mult_dep (p, unity, q);
-  if (mem[p + 1].hh.rh == dep_final)
+    add_mult_dep(p, unity, q);
+  if (dep_list(p) == dep_final)
   {
-    vv = mem[dep_final + 1].cint;
-    recycle_value (p);
-    mem[p].hh.b0 = 16;
-    mem[p + 1].cint = vv;
+    vv = value(dep_final);
+    recycle_value(p);
+    type(p) = known;
+    value(p) = vv;
   }
 }
 /* 974 */
-void bilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
+void bilin3 (pointer p, scaled t, scaled v, scaled u, scaled delta)
 {
   if (t != unity)
-    delta = delta + take_scaled (value(p), t);
+    delta = delta + take_scaled(value(p), t);
   else
     delta = delta + value(p);
   if (u != 0)
@@ -15538,107 +15533,89 @@ void bilin3 (halfword p, scaled t, scaled v, scaled u, scaled delta)
     value(p) = delta;
 }
 /* 966 */
-void big_trans (halfword p, quarterword c)
+void big_trans (pointer p, quarterword c)
 {
-  halfword q, r, pp, qq;
+  pointer q, r, pp, qq;
   small_number s;
 
-  s = big_node_size[mem[p].hh.b0];
-  q = mem[p + 1].cint;
+  s = big_node_size[type(p)];
+  q = value(p);
   r = q + s;
   do {
     r = r - 2;
-    if (mem[r].hh.b0 != 16)
+    if (type(r) != known)
     {
-      set_up_known_trans (c);
-      make_exp_copy (p);
-      r = mem[cur_exp + 1].cint;
-      if (cur_type == 13)
+      set_up_known_trans(c);
+      make_exp_copy(p);
+      r = value(cur_exp);
+      if (cur_type == transform_type)
       {
-        bilin1 (r + 10, tyy, q + 6, tyx, 0);
-        bilin1 (r + 8, tyy, q + 4, tyx, 0);
-        bilin1 (r + 6, txx, q + 10, txy, 0);
-        bilin1 (r + 4, txx, q + 8, txy, 0);
+        bilin1(yy_part_loc(r), tyy, xy_part_loc(q), tyx, 0);
+        bilin1(yx_part_loc(r), tyy, xx_part_loc(q), tyx, 0);
+        bilin1(xy_part_loc(r), txx, yy_part_loc(q), txy, 0);
+        bilin1(xx_part_loc(r), txx, yx_part_loc(q), txy, 0);
       }
-      bilin1 (r + 2, tyy, q, tyx, ty);
-      bilin1 (r, txx, q + 2, txy, tx);
+      bilin1(y_part_loc(r), tyy, x_part_loc(q), tyx, ty);
+      bilin1(x_part_loc(r), txx, y_part_loc(q), txy, tx);
       goto lab_exit;
     }
   } while (!(r == q));
-  set_up_trans (c);
-  if (cur_type == 16)
+  set_up_trans(c);
+  if (cur_type == known)
   {
-    make_exp_copy (p);
-    r = mem[cur_exp + 1].cint;
+    make_exp_copy(p);
+    r = value(cur_exp);
     if (cur_type == 13)
     {
-      bilin3 (r + 10, tyy, mem[q + 7].cint, tyx, 0);
-      bilin3 (r + 8, tyy, mem[q + 5].cint, tyx, 0);
-      bilin3 (r + 6, txx, mem[q + 11].cint, txy, 0);
-      bilin3 (r + 4, txx, mem[q + 9].cint, txy, 0);
+      bilin3(yy_part_loc(r), tyy, value(xy_part_loc(q)), tyx, 0);
+      bilin3(yx_part_loc(r), tyy, value(xx_part_loc(q)), tyx, 0);
+      bilin3(xy_part_loc(r), txx, value(yy_part_loc(q)), txy, 0);
+      bilin3(xx_part_loc(r), txx, value(yx_part_loc(q)), txy, 0);
     }
-    bilin3 (r + 2, tyy, mem[q + 1].cint, tyx, ty);
-    bilin3 (r, txx, mem[q + 3].cint, txy, tx);
+    bilin3(y_part_loc(r), tyy, value(x_part_loc(q)), tyx, ty);
+    bilin3(x_part_loc(r), txx, value(y_part_loc(q)), txy, tx);
   }
   else
   {
-    pp = stash_cur_exp();
-    qq = mem[pp + 1].cint;
-    make_exp_copy (p);
-    r = mem[cur_exp + 1].cint;
+    pp = stash_cur_exp;
+    qq = value(pp);
+    make_exp_copy(p);
+    r = value(cur_exp);
     if (cur_type == 13)
     {
-      bilin2 (r + 10, qq + 10, mem[q + 7].cint, qq + 8, 0);
-      bilin2 (r + 8, qq + 10, mem[q + 5].cint, qq + 8, 0);
-      bilin2 (r + 6, qq + 4, mem[q + 11].cint, qq + 6, 0);
-      bilin2 (r + 4, qq + 4, mem[q + 9].cint, qq + 6, 0);
+      bilin2(yy_part_loc(r), yy_part_loc(qq), value(xy_part_loc(q)), yx_part_loc(qq), null);
+      bilin2(yx_part_loc(r), yy_part_loc(qq), value(xx_part_loc(q)), yx_part_loc(qq), null);
+      bilin2(xy_part_loc(r), xx_part_loc(qq), value(yy_part_loc(q)), xy_part_loc(qq), null);
+      bilin2(xx_part_loc(r), xx_part_loc(qq), value(yx_part_loc(q)), xy_part_loc(qq), null);
     }
-    bilin2 (r + 2, qq + 10, mem[q + 1].cint, qq + 8, qq + 2);
-    bilin2 (r, qq + 4, mem[q + 3].cint, qq + 6, qq);
-    recycle_value (pp);
-    free_node (pp, 2);
+    bilin2(y_part_loc(r), yy_part_loc(qq), value(x_part_loc(q)), yx_part_loc(qq), y_part_loc(qq));
+    bilin2(x_part_loc(r), xx_part_loc(qq), value(y_part_loc(q)), xy_part_loc(qq), x_part_loc(qq));
+    recycle_value(pp); free_node(pp, value_node_size);
   }
   lab_exit:;
 }
 /* 976 */
-void cat (halfword p)
+void cat (pointer p)
 {
   str_number a, b;
   pool_pointer k;
 
-  a = mem[p + 1].cint;
+  a = value(p);
   b = cur_exp;
-  {
-    if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]) > max_pool_ptr)
-    {
-      if (pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]) > pool_size)
-        overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
-      max_pool_ptr = pool_ptr + (str_start[a + 1] - str_start[a]) + (str_start[b + 1] - str_start[b]);
-    }
-  }
+  str_room(length(a) + length(b));
   for (k = str_start[a]; k <= str_start[a + 1] - 1; k++)
   {
-    str_pool[pool_ptr] = str_pool[k];
-    incr(pool_ptr);
+    append_char(so(str_pool[k]));
   }
   for (k = str_start[b]; k <= str_start[b + 1] - 1; k++)
   {
-    str_pool[pool_ptr] = str_pool[k];
-    incr(pool_ptr);
+    append_char(so(str_pool[k]));
   }
   cur_exp = make_string();
-  {
-    if (str_ref[b]< 127)
-    {
-      if (str_ref[b] > 1)
-        decr(str_ref[b]);
-      else
-        flush_string (b);
-    }
-  }
+  delete_str_ref(b);
 }
 /* 977 */
-void chop_string (halfword p)
+void chop_string (pointer p)
 {
   integer a, b;
   integer l;
@@ -15646,8 +15623,8 @@ void chop_string (halfword p)
   str_number s;
   boolean reversed;
 
-  a = round_unscaled(mem[p + 1].cint);
-  b = round_unscaled(mem[p + 3].cint);
+  a = round_unscaled(value(x_part_loc(p)));
+  b = round_unscaled(value(y_part_loc(p)));
   if (a <= b)
     reversed = false;
   else
@@ -15658,7 +15635,7 @@ void chop_string (halfword p)
     b = k;
   }
   s = cur_exp;
-  l = (str_start[s + 1] - str_start[s]);
+  l = length(s);
   if (a < 0)
   {
     a = 0;
@@ -15671,52 +15648,35 @@ void chop_string (halfword p)
     if (a > l)
       a = l;
   }
-  {
-    if (pool_ptr + b - a > max_pool_ptr)
-    {
-      if (pool_ptr + b - a > pool_size)
-        overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
-      max_pool_ptr = pool_ptr + b - a;
-    }
-  }
+  str_room(b - a);
   if (reversed)
   {
     for (k = str_start[s] + b - 1; k <= str_start[s] + a; k--)
     {
-      str_pool[pool_ptr] = str_pool[k];
-      incr(pool_ptr);
+      append_char(so(str_pool[k]));
     }
   }
   else
   {
     for (k = str_start[s] + a; k <= str_start[s] + b - 1; k++)
     {
-      str_pool[pool_ptr] = str_pool[k];
-      incr(pool_ptr);
+      append_char(so(str_pool[k]));
     }
   }
   cur_exp = make_string();
-  {
-    if (str_ref[s]< 127)
-    {
-      if (str_ref[s] > 1)
-        decr(str_ref[s]);
-      else
-        flush_string (s);
-    }
-  }
+  delete_str_ref(s);
 }
 /* 978 */
-void chop_path (halfword p)
+void chop_path (pointer p)
 {
-  halfword q;
-  halfword pp, qq, rr, ss;
+  pointer q;
+  pointer pp, qq, rr, ss;
   scaled a, b, k, l;
   boolean reversed;
 
-  l = path_length();
-  a = mem[p + 1].cint;
-  b = mem[p + 3].cint;
+  l = path_length;
+  a = value(x_part_loc(p));
+  b = value(y_part_loc(p));
   if (a <= b)
     reversed = false;
   else
@@ -15728,7 +15688,7 @@ void chop_path (halfword p)
   }
   if (a < 0)
   {
-    if (mem[cur_exp].hh.b0 == 0)
+    if (left_type(cur_exp) == endpoint)
     {
       a = 0;
       if (b < 0)
@@ -15742,7 +15702,7 @@ void chop_path (halfword p)
   }
   if (b > l)
   {
-    if (mem[cur_exp].hh.b0 == 0)
+    if (left_type(cur_exp) == endpoint)
     {
       b = l;
       if (a > l)
@@ -15758,7 +15718,7 @@ void chop_path (halfword p)
   q = cur_exp;
   while (a >= unity)
   {
-    q = mem[q].hh.rh;
+    q = link(q);
     a = a - unity;
     b = b - unity;
   }
@@ -15766,11 +15726,11 @@ void chop_path (halfword p)
   {
     if (a > 0)
     {
-      qq = mem[q].hh.rh;
-      split_cubic (q, a * 4096, mem[qq + 1].cint, mem[qq + 2].cint);
-      q = mem[q].hh.rh;
+      qq = link(q);
+      split_cubic(q, a * 4096, x_coord(qq), y_coord(qq));
+      q = link(q);
     }
-    pp = copy_knot (q);
+    pp = copy_knot(q);
     qq = pp;
   }
   else
@@ -15778,40 +15738,40 @@ void chop_path (halfword p)
     pp = copy_knot (q);
     qq = pp;
     do {
-      q = mem[q].hh.rh;
+      q = link(q);
       rr = qq;
-      qq = copy_knot (q);
-      mem[rr].hh.rh = qq;
+      qq = copy_knot(q);
+      link(rr) = qq;
       b = b - unity;
     } while (!(b <= 0));
     if (a > 0)
     {
       ss = pp;
-      pp = mem[pp].hh.rh;
-      split_cubic (ss, a * 4096, mem[pp + 1].cint, mem[pp + 2].cint);
-      pp = mem[ss].hh.rh;
-      free_node (ss, 7);
+      pp = link(pp);
+      split_cubic(ss, a * 4096, x_coord(pp), y_coord(pp));
+      pp = link(ss);
+      free_node(ss, knot_node_size);
       if (rr == ss)
       {
-        b = make_scaled (b, unity - a);
+        b = make_scaled(b, unity - a);
         rr = pp;
       }
     }
     if (b < 0)
     {
-      split_cubic (rr, (b + unity) * 4096, mem[qq + 1].cint, mem[qq + 2].cint);
-      free_node (qq, 7);
-      qq = mem[rr].hh.rh;
+      split_cubic(rr, (b + unity) * 4096, x_coord(qq), y_coord(qq));
+      free_node(qq, knot_node_size);
+      qq = link(rr);
     }
   }
-  mem[pp].hh.b0 = 0;
-  mem[qq].hh.b1 = 0;
-  mem[qq].hh.rh = pp;
-  toss_knot_list (cur_exp);
+  left_type(pp) = endpoint;
+  right_type(qq) = endpoint;
+  link(qq) = pp;
+  toss_knot_list(cur_exp);
   if (reversed)
   {
-    cur_exp = mem[htap_ypoc (pp)].hh.rh;
-    toss_knot_list (pp);
+    cur_exp = link(htap_ypoc(pp));
+    toss_knot_list(pp);
   }
   else
     cur_exp = pp;
@@ -15819,59 +15779,59 @@ void chop_path (halfword p)
 /* 982 */
 void pair_value (scaled x, scaled y)
 {
-  halfword p;
+  pointer p;
 
-  p = get_node (2);
-  flush_cur_exp (p);
-  cur_type = 14;
-  mem[p].hh.b0 = 14;
-  mem[p].hh.b1 = 11;
-  init_big_node (p);
-  p = mem[p + 1].cint;
-  mem[p].hh.b0 = 16;
-  mem[p + 1].cint = x;
-  mem[p + 2].hh.b0 = 16;
-  mem[p + 3].cint = y;
+  p = get_node(value_node_size);
+  flush_cur_exp(p);
+  cur_type = pair_type;
+  type(p) = pair_type;
+  name_type(p) = capsule;
+  init_big_node(p);
+  p = value(p);
+  type(x_part_loc(p)) = known;
+  value(x_part_loc(p)) = x;
+  type(y_part_loc(p)) = known;
+  value(y_part_loc(p)) = y;
 }
 /* 984 */
-void set_up_offset (halfword p)
+void set_up_offset (pointer p)
 {
-  find_offset (mem[p + 1].cint, mem[p + 3].cint, cur_exp);
-  pair_value (cur_x, cur_y);
+  find_offset(value(x_part_loc(p)), value(y_part_loc(p)), cur_exp);
+  pair_value(cur_x, cur_y);
 }
 /* 984 */
-void set_up_direction_time (halfword p)
+void set_up_direction_time (pointer p)
 {
-  flush_cur_exp (find_direction_time (mem[p + 1].cint, mem[p + 3].cint, cur_exp));
+  flush_cur_exp(find_direction_time(value(x_part_loc(p)), value(y_part_loc(p)), cur_exp));
 }
 /* 985 */
 void find_point (scaled v, quarterword c)
 {
-  halfword p;
+  pointer p;
   scaled n;
-  halfword q;
+  pointer q;
 
   p = cur_exp;
-  if (mem[p].hh.b0 == 0)
+  if (left_type(p) == endpoint)
     n = -unity;
   else
     n = 0;
   do {
-    p = mem[p].hh.rh;
+    p = link(p);
     n = n + unity;
   } while (!(p == cur_exp));
   if (n == 0)
     v = 0;
   else if (v < 0)
   {
-    if (mem[p].hh.b0 == 0)
+    if (left_type(p) == endpoint)
       v = 0;
     else
       v = n - 1 - ((-v - 1) % n);
   }
   else if (v > n)
   {
-    if (mem[p].hh.b0 == 0)
+    if (left_type(p) == endpoint)
       v = n;
     else
       v = v % n;
@@ -15879,31 +15839,31 @@ void find_point (scaled v, quarterword c)
   p = cur_exp;
   while (v >= unity)
   {
-    p = mem[p].hh.rh;
+    p = link(p);
     v = v - unity;
   }
   if (v != 0)
   {
-    q = mem[p].hh.rh;
-    split_cubic (p, v * 4096, mem[q + 1].cint, mem[q + 2].cint);
-    p = mem[p].hh.rh;
+    q = link(p);
+    split_cubic(p, v * 4096, x_coord(q), y_coord(q));
+    p = link(p);
   }
   switch (c)
   {
-    case 97:
-      pair_value (mem[p + 1].cint, mem[p + 2].cint);
+    case point_of:
+      pair_value(x_coord(p), y_coord(p));
       break;
-    case 98:
-      if (mem[p].hh.b0 == 0)
-        pair_value (mem[p + 1].cint, mem[p + 2].cint);
+    case precontrol_of:
+      if (left_type(p) == endpoint)
+        pair_value(x_coord(p), y_coord(p));
       else
-        pair_value (mem[p + 3].cint, mem[p + 4].cint);
+        pair_value(left_x(p), left_y(p));
       break;
-    case 99:
-      if (mem[p].hh.b1 == 0)
-        pair_value (mem[p + 1].cint, mem[p + 2].cint);
+    case postcontrol_of:
+      if (right_type(p) == endpoint)
+        pair_value(x_coord(p), y_coord(p));
       else
-        pair_value (mem[p + 5].cint, mem[p + 6].cint);
+        pair_value(right_x(p), right_y(p));
       break;
   }
 }
@@ -16306,8 +16266,8 @@ lab_exit:
 /* 944 */
 void frac_mult (scaled n, scaled d)
 {
-  halfword p;
-  halfword oldexp;
+  pointer p;
+  pointer old_exp;
   fraction v;
 
   if (internal[tracing_commands] > two)
@@ -16318,43 +16278,43 @@ void frac_mult (scaled n, scaled d)
     print_char('/');
     print_scaled(d);
     print(855);
-    print_exp (0, 0);
+    print_exp(0, 0);
     print(842);
-    end_diagnostic (false);
+    end_diagnostic(false);
   }
   switch (cur_type)
   {
-    case 13:
-    case 14:
-      oldexp = tarnished (cur_exp);
+    case transform_type:
+    case pair_type:
+      old_exp = tarnished(cur_exp);
       break;
-    case 19:
-      oldexp = 1;
+    case independent:
+      old_exp = _void;
       break;
     default:
-      oldexp = 0;
+      old_exp = null;
       break;
   }
-  if (oldexp != 0)
+  if (old_exp != null)
   {
-    oldexp = cur_exp;
-    make_exp_copy (oldexp);
+    old_exp = cur_exp;
+    make_exp_copy(old_exp);
   }
-  v = make_fraction (n, d);
-  if (cur_type == 16)
-    cur_exp = take_fraction (cur_exp, v);
-  else if (cur_type == 14)
+  v = make_fraction(n, d);
+  if (cur_type == known)
+    cur_exp = take_fraction(cur_exp, v);
+  else if (cur_type == pair_type)
   {
-    p = mem[cur_exp + 1].cint;
-    dep_mult (p, v, false);
-    dep_mult (p + 2, v, false);
+    p = value(cur_exp);
+    dep_mult(x_part_loc(p), v, false);
+    dep_mult(y_part_loc(p), v, false);
   }
   else
-    dep_mult (0, v, false);
-  if (oldexp != 0)
+    dep_mult(null, v, false);
+  if (old_exp != 0)
   {
-    recycle_value (oldexp);
-    free_node (oldexp, 2);
+    recycle_value(old_exp);
+    free_node(old_exp, value_node_size);
   }
 }
 /* 1154 */
@@ -16367,21 +16327,16 @@ void write_gf (gf_index a, gf_index b)
 /* 1155 */
 void gf_swap (void)
 {
-  if (gf_ptr > (2147483647L - gf_offset))
-  {
-    gf_prev_ptr = 0;
-    fatal_error (/* 1053 */ "gf length exceeds \"7FFFFFFF");
-  }
   if (gf_limit == gf_buf_size)
   {
-    write_gf (0, half_buf - 1);
+    write_gf(0, half_buf - 1);
     gf_limit = half_buf;
     gf_offset = gf_offset + gf_buf_size;
     gf_ptr = 0;
   }
   else
   {
-    write_gf (half_buf, gf_buf_size - 1);
+    write_gf(half_buf, gf_buf_size - 1);
     gf_limit = gf_buf_size;
   }
 }
@@ -16389,18 +16344,18 @@ void gf_swap (void)
 void gf_four (integer x)
 {
   if (x >= 0)
-    gf_out (x / three_bytes);
+    gf_out(x / three_bytes);
   else
   {
     x = x + fraction_four;
     x = x + fraction_four;
-    gf_out ((x / three_bytes) + 128);
+    gf_out((x / three_bytes) + 128);
   }
   x = x % three_bytes;
-  gf_out (x / unity);
+  gf_out(x / unity);
   x = x % unity;
-  gf_out (x / 0400);
-  gf_out (x % 0400);
+  gf_out(x / 0400);
+  gf_out(x % 0400);
 }
 /* 1158 */
 void gf_two (integer x)
@@ -16411,9 +16366,9 @@ void gf_two (integer x)
 /* 1158 */
 void gf_three (integer x)
 {
-  gf_out (x / unity);
-  gf_out ((x % unity) / 0400);
-  gf_out (x % 0400);
+  gf_out(x / unity);
+  gf_out((x % unity) / 0400);
+  gf_out(x % 0400);
 }
 /* 1159 */
 void gf_paint (integer d)
@@ -16422,13 +16377,13 @@ void gf_paint (integer d)
     gf_out(paint_0 + d);
   else if (d < 256)
   {
-    gf_out (paint1);
-    gf_out (d);
+    gf_out(paint1);
+    gf_out(d);
   }
   else
   {
-    gf_out (paint1 + 1);
-    gf_two (d);
+    gf_out(paint1 + 1);
+    gf_two(d);
   }
 }
 /* 1160 */
@@ -16444,13 +16399,13 @@ void gf_string (str_number s, str_number t)
       l = l + length(t);
     if (l <= 255)
     {
-      gf_out (xxx1);
-      gf_out (l);
+      gf_out(xxx1);
+      gf_out(l);
     }
     else
     {
-      gf_out (xxx3);
-      gf_three (l);
+      gf_out(xxx3);
+      gf_three(l);
     }
     for (k = str_start[s]; k <= str_start[s + 1] - 1; k++)
       gf_out(so(str_pool[k]));
@@ -16481,12 +16436,12 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
           {
             if (one_byte(max_n))
             {
-              gf_out (boc1);
-              gf_out (boc_c);
-              gf_out (max_m - min_m);
-              gf_out (max_m);
-              gf_out (max_n - min_n);
-              gf_out (max_n);
+              gf_out(boc1);
+              gf_out(boc_c);
+              gf_out(max_m - min_m);
+              gf_out(max_m);
+              gf_out(max_n - min_n);
+              gf_out(max_n);
               goto lab_exit;
             }
           }
@@ -16494,13 +16449,13 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
       } 
     }
   }
-  gf_out (boc);
-  gf_four (boc_c);
-  gf_four (boc_p);
-  gf_four (min_m);
-  gf_four (max_m);
-  gf_four (min_n);
-  gf_four (max_n);
+  gf_out(boc);
+  gf_four(boc_c);
+  gf_four(boc_p);
+  gf_four(min_m);
+  gf_four(max_m);
+  gf_four(min_n);
+  gf_four(max_n);
   lab_exit:;
 }
 /* 1163 */
@@ -16524,14 +16479,14 @@ void init_gf (void)
     old_setting = selector;
     selector = new_string;
     print_char('.');
-    print_int(make_scaled (internal[hppp], 59429463));
+    print_int(make_scaled(internal[hppp], 59429463));
     print(1056);
     gf_ext = make_string();
     selector = old_setting;
   }
   set_output_file_name();
-  gf_out (pre);
-  gf_out (gf_id_byte);
+  gf_out(pre);
+  gf_out(gf_id_byte);
   old_setting = selector;
   selector = new_string;
   print(1054);
@@ -16542,11 +16497,11 @@ void init_gf (void)
   print_dd (round_unscaled(internal[day]));
   print_char(':');
   t = round_unscaled(internal[time]);
-  print_dd (t / 60);
-  print_dd (t % 60);
+  print_dd(t / 60);
+  print_dd(t % 60);
   selector = old_setting;
-  gf_out (cur_length);
-  gf_string (0, make_string ());
+  gf_out(cur_length);
+  gf_string(0, make_string ());
   decr(str_ptr);
   pool_ptr = str_start[str_ptr];
   gf_prev_ptr = gf_offset + gf_ptr;
@@ -16588,15 +16543,15 @@ void ship_out (eight_bits c)
   {
     if (x_off != 0)
     {
-      gf_string (437, 0);
-      gf_out (yyy);
-      gf_four (x_off * unity);
+      gf_string(437, 0);
+      gf_out(yyy);
+      gf_four(x_off * unity);
     }
     if (y_off != 0)
     {
-      gf_string (438, 0);
-      gf_out (yyy);
-      gf_four (y_off * unity);
+      gf_string(438, 0);
+      gf_out(yyy);
+      gf_four(y_off * unity);
     }
   }
   prev_n = 4096;
@@ -16605,7 +16560,7 @@ void ship_out (eight_bits c)
   while (p != cur_edges)
   {
     if (mem[p + 1].hh.lh > 1)
-      sort_edges (p);
+      sort_edges(p);
     q = mem[p + 1].hh.rh;
     w = 0;
     prev_m = -fraction_one;
