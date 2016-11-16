@@ -1458,7 +1458,7 @@ void clear_for_error_prompt(void);
 boolean check_outer_validity(void);
 void get_next(void);
 void firm_up_the_line(void);
-halfword scan_toks(commandcode terminator, halfword substlist, halfword tailend, small_number suffixcount);
+halfword scan_toks(command_code terminator, halfword substlist, halfword tailend, small_number suffixcount);
 void get_symbol(void);
 void get_clear_symbol(void);
 void check_equals(void);

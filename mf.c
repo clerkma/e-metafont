@@ -8494,8 +8494,8 @@ void end_round (scaled x, scaled y)
 {
   y = y + half_unit - y_corr[octant];
   x = x + y - x_corr[octant];
-  m1 = floorunscaled (x);
-  n1 = floorunscaled (y);
+  m1 = floor_unscaled (x);
+  n1 = floor_unscaled (y);
   if (x - unity * m1 >= y - unity * n1 + z_corr[octant])
     d1 = 1;
   else
@@ -8504,56 +8504,58 @@ void end_round (scaled x, scaled y)
 /* 465 */
 void fill_spec (halfword h)
 {
-  halfword p, q, r, s;
+  pointer p, q, r, s;
 
   if (internal[tracing_edges] > 0)
     begin_edge_tracing();
   p = h;
   do {
-    octant = mem[p + 3].cint;
+    octant = left_octant(p);
     q = p;
-    while (mem[q].hh.b1 != 0)
-      q = mem[q].hh.rh;
+    while (right_type(q) != endpoint)
+      q = link(q);
     if (q != p)
     {
-      end_round (mem[p + 1].cint, mem[p + 2].cint);
+      end_round(x_coord(p), y_coord(p));
       m0 = m1;
       n0 = n1;
       d0 = d1;
-      end_round (mem[q + 1].cint, mem[q + 2].cint);
+      end_round(x_coord(q), y_coord(q));
       if (n1 - n0 >= move_size)
-        overflow (/* 540 */ "move table size", move_size);
+        overflow("move table size", move_size);
       move[0] = d0;
       move_ptr = 0;
       r = p;
       do {
-        s = mem[r].hh.rh;
-        make_moves (mem[r + 1].cint, mem[r + 5].cint, mem[s + 3].cint, mem[s + 1].cint, mem[r + 2].cint + half_unit, mem[r + 6].cint + half_unit, mem[s + 4].cint + half_unit, mem[s + 2].cint + half_unit, xy_corr[octant], y_corr[octant]);
+        s = link(r);
+        make_moves(x_coord(r), right_x(r), left_x(s), x_coord(s), y_coord(r) +
+          half_unit, right_y(r) + half_unit, left_y(s) + half_unit, y_coord(s) + half_unit,
+          xy_corr[octant], y_corr[octant]);
         r = s;
       } while (!(r == q));
       move[move_ptr] = move[move_ptr] - d1;
       if (internal[smoothing] > 0)
-        smooth_moves (0, move_ptr);
-      move_to_edges (m0, n0, m1, n1);
+        smooth_moves(0, move_ptr);
+      move_to_edges(m0, n0, m1, n1);
     }
-    p = mem[q].hh.rh;
+    p = link(q);
   } while (!(p == h));
-  toss_knot_list (h);
+  toss_knot_list(h);
   if (internal[tracing_edges] > 0)
     end_edge_tracing();
 }
 /* 476 */
-void dup_offset (halfword w)
+void dup_offset (pointer w)
 {
-  halfword r;
+  pointer r;
 
-  r = get_node (3);
-  mem[r + 1].cint = mem[w + 1].cint;
-  mem[r + 2].cint = mem[w + 2].cint;
-  mem[r].hh.rh = mem[w].hh.rh;
-  mem[mem[w].hh.rh].hh.lh = r;
-  mem[r].hh.lh = w;
-  mem[w].hh.rh = r;
+  r = get_node(coord_node_size);
+  x_coord(r) = x_coord(w);
+  y_coord(r) = y_coord(w);
+  link(r) = link(w);
+  knil(link(w)) = r;
+  knil(r) = w;
+  link(w) = r;
 }
 /* 477 */
 halfword make_pen (halfword h)
@@ -8729,63 +8731,63 @@ found:
 /* 486 */
 halfword trivial_knot (scaled x, scaled y)
 {
-  halfword Result;
-  halfword p;
+  pointer Result;
+  pointer p;
 
-  p = get_node (7);
-  mem[p].hh.b0 = 1;
-  mem[p].hh.b1 = 1;
-  mem[p + 1].cint = x;
-  mem[p + 3].cint = x;
-  mem[p + 5].cint = x;
-  mem[p + 2].cint = y;
-  mem[p + 4].cint = y;
-  mem[p + 6].cint = y;
+  p = get_node(knot_node_size);
+  left_type(p) = explicit;
+  right_type(p) = explicit;
+  x_coord(p) = x;
+  left_x(p) = x;
+  right_x(p) = x;
+  y_coord(p) = y;
+  left_y(p) = y;
+  right_y(p) = y;
   Result = p;
   return Result;
 }
 /* 484 */
-halfword make_path (halfword penhead)
+halfword make_path (halfword pen_head)
 {
-  halfword Result;
-  halfword p;
+  pointer Result;
+  pointer p;
   unsigned char k;
-  halfword h;
+  pointer h;
   integer m, n;
-  halfword w, ww;
+  pointer w, ww;
 
-  p = mem_top - 1;
+  p = temp_head;
   for (k = 1; k <= 8; k++)
   {
     octant = octant_code[k];
-    h = penhead + octant;
-    n = mem[h].hh.lh;
-    w = mem[h].hh.rh;
+    h = pen_head + octant;
+    n = info(h);
+    w = link(h);
     if (!odd(k))
-      w = mem[w].hh.lh;
+      w = knil(w);
     for (m = 1; m <= n + 1; m++)
     {
       if (odd(k))
-        ww = mem[w].hh.rh;
+        ww = link(w);
       else
-        ww = mem[w].hh.lh;
-      if ((mem[ww + 1].cint != mem[w + 1].cint) || (mem[ww + 2].cint != mem[w + 2].cint))
+        ww = knil(w);
+      if ((x_coord(ww) != x_coord(w)) || (y_coord(ww) != y_coord(w)))
       {
-        unskew (mem[ww + 1].cint, mem[ww + 2].cint, octant);
-        mem[p].hh.rh = trivial_knot (cur_x, cur_y);
-        p = mem[p].hh.rh;
+        unskew(x_coord(ww), y_coord(ww), octant);
+        link(p) = trivial_knot(cur_x, cur_y);
+        p = link(p);
       }
       w = ww;
     }
   }
-  if (p == mem_top - 1)
+  if (p == temp_head)
   {
-    w = mem[penhead + 1].hh.rh;
-    p = trivial_knot (mem[w + 1].cint + mem[w + 2].cint, mem[w + 2].cint);
-    mem[mem_top - 1].hh.rh = p;
+    w = link(pen_head + first_octant);
+    p = trivial_knot(x_coord(w) + y_coord(w), y_coord(w));
+    link(temp_head) = p;
   }
-  mem[p].hh.rh = mem[mem_top - 1].hh.rh;
-  Result = mem[mem_top - 1].hh.rh;
+  link(p) = link(temp_head);
+  Result = link(temp_head);
   return Result;
 }
 /* 488 */
@@ -8855,22 +8857,22 @@ void find_offset (scaled x, scaled y, halfword p)
   lab_exit:;
 }
 /* 493 */
-void split_for_offset (halfword p, fraction t)
+void split_for_offset (pointer p, fraction t)
 {
-  halfword q;
-  halfword r;
+  pointer q;
+  pointer r;
 
-  q = mem[p].hh.rh;
-  split_cubic (p, t, mem[q + 1].cint, mem[q + 2].cint);
-  r = mem[p].hh.rh;
-  if (mem[r + 2].cint < mem[p + 2].cint)
-    mem[r + 2].cint = mem[p + 2].cint;
-  else if (mem[r + 2].cint > mem[q + 2].cint)
-    mem[r + 2].cint = mem[q + 2].cint;
-  if (mem[r + 1].cint < mem[p + 1].cint)
-    mem[r + 1].cint = mem[p + 1].cint;
-  else if (mem[r + 1].cint > mem[q + 1].cint)
-    mem[r + 1].cint = mem[q + 1].cint;
+  q = link(p);
+  split_cubic(p, t, x_coord(q), y_coord(q));
+  r = link(p);
+  if (y_coord(r) < y_coord(p))
+    y_coord(r) = y_coord(p);
+  else if (y_coord(r) > y_coord(q))
+    y_coord(r) = y_coord(q);
+  if (x_coord(r) < x_coord(p))
+    x_coord(r) = x_coord(p);
+  else if (x_coord(r) > x_coord(q))
+    x_coord(r) = x_coord(q);
 }
 /* 497 */
 void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1, integer x2, integer y0, integer y1, integer y2, boolean rising, integer n)
@@ -9130,32 +9132,31 @@ void offset_prep (halfword c, halfword h)
   }
 }
 /* 510 */
-void skew_line_edges (halfword p, halfword w, halfword ww)
+void skew_line_edges (pointer p, pointer w, pointer ww)
 {
   scaled x0, y0, x1, y1;
 
-  if ((mem[w + 1].cint != mem[ww + 1].cint) || (mem[w + 2].cint != mem[ww + 2].cint))
+  if ((x_coord(w) != x_coord(ww)) || (y_coord(w) != y_coord(ww)))
   {
-    x0 = mem[p + 1].cint + mem[w + 1].cint;
-    y0 = mem[p + 2].cint + mem[w + 2].cint;
-    x1 = mem[p + 1].cint + mem[ww + 1].cint;
-    y1 = mem[p + 2].cint + mem[ww + 2].cint;
-    unskew (x0, y0, octant);
+    x0 = x_coord(p) + x_coord(w);
+    y0 = y_coord(p) + y_coord(w);
+    x1 = x_coord(p) + x_coord(ww);
+    y1 = y_coord(p) + y_coord(ww);
+    unskew(x0, y0, octant);
     x0 = cur_x;
     y0 = cur_y;
-    unskew (x1, y1, octant);
-    ;
+    unskew(x1, y1, octant);
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
       print_nl(585);
-      print_two (x0, y0);
+      print_two(x0, y0);
       print(584);
-      print_two (cur_x, cur_y);
+      print_two(cur_x, cur_y);
       print_nl(261);
     }
 #endif /* STAT */
-    line_edges (x0, y0, cur_x, cur_y);
+    line_edges(x0, y0, cur_x, cur_y);
   }
 }
 /* 518 */
@@ -9321,7 +9322,6 @@ void fill_envelope (halfword spechead)
     w = mem[h].hh.rh;
     if (mem[p + 4].cint == 1)
       w = mem[w].hh.lh;
-    ;
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
@@ -10607,40 +10607,40 @@ void cubic_intersection (halfword p, halfword pp)
   lab_exit:;
 }
 /* 562 */
-void path_intersection (halfword h, halfword hh)
+void path_intersection (pointer h, pointer hh)
 {
-  halfword p, pp;
+  pointer p, pp;
   integer n, nn;
 
-  if (mem[h].hh.b1 == 0)
+  if (right_type(h) == endpoint)
   {
-    mem[h + 5].cint = mem[h + 1].cint;
-    mem[h + 3].cint = mem[h + 1].cint;
-    mem[h + 6].cint = mem[h + 2].cint;
-    mem[h + 4].cint = mem[h + 2].cint;
-    mem[h].hh.b1 = 1;
+    right_x(h) = x_coord(h);
+    left_x(h) = x_coord(h);
+    right_y(h) = y_coord(h);
+    left_y(h) = y_coord(h);
+    right_type(h) = explicit;
   }
-  if (mem[hh].hh.b1 == 0)
+  if (right_type(hh) == endpoint)
   {
-    mem[hh + 5].cint = mem[hh + 1].cint;
-    mem[hh + 3].cint = mem[hh + 1].cint;
-    mem[hh + 6].cint = mem[hh + 2].cint;
-    mem[hh + 4].cint = mem[hh + 2].cint;
-    mem[hh].hh.b1 = 1;
+    right_x(hh) = x_coord(hh);
+    left_x(hh) = x_coord(hh);
+    right_y(hh) = y_coord(hh);
+    left_y(hh) = y_coord(hh);
+    right_type(hh) = explicit;
   }
   tol_step = 0;
   do {
     n = -unity;
     p = h;
     do {
-      if (mem[p].hh.b1 != 0)
+      if (right_type(p) != endpoint)
       {
         nn = -unity;
         pp = hh;
         do {
-          if (mem[pp].hh.b1 != 0)
+          if (right_type(pp) != endpoint)
           {
-            cubic_intersection (p, pp);
+            cubic_intersection(p, pp);
             if (cur_t > 0)
             {
               cur_t = cur_t + n;
@@ -10649,11 +10649,11 @@ void path_intersection (halfword h, halfword hh)
             }
           }
           nn = nn + unity;
-          pp = mem[pp].hh.rh;
+          pp = link(pp);
         } while (!(pp == hh));
       }
       n = n + unity;
-      p = mem[p].hh.rh;
+      p = link(p);
     } while (!(p == h));
     tol_step = tol_step + 3;
   } while (!(tol_step > 3));
@@ -10848,17 +10848,17 @@ void disp_edges (window_number k)
   }
 }
 /* 495 */
-fraction max_coef (halfword p)
+fraction max_coef (pointer p)
 {
   fraction Result;
   fraction x;
 
   x = 0;
-  while (mem[p].hh.lh != 0)
+  while (info(p) != null)
   {
-    if (abs(mem[p + 1].cint) > x)
-      x = abs(mem[p + 1].cint);
-    p = mem[p].hh.rh;
+    if (abs(value(p)) > x)
+      x = abs(value(p));
+    p = link(p);
   }
   Result = x;
   return Result;
@@ -11012,65 +11012,65 @@ halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t
   return Result;
 }
 /* 606 */
-void new_dep (halfword q, halfword p)
+void new_dep (pointer q, pointer p)
 {
-  halfword r;
+  pointer r;
 
-  mem[q + 1].hh.rh = p;
-  mem[q + 1].hh.lh = 13;
-  r = mem[13].hh.rh;
-  mem[dep_final].hh.rh = r;
-  mem[r + 1].hh.lh = dep_final;
-  mem[13].hh.rh = q;
+  dep_list(q) = p;
+  prev_dep(q) = dep_head;
+  r = link(dep_head);
+  link(dep_final) = r;
+  prev_dep(r) = dep_final;
+  link(dep_head) = q;
 }
 /* 607 */
-halfword const_dependency (scaled v)
+pointer const_dependency (scaled v)
 {
-  halfword Result;
+  pointer Result;
 
-  dep_final = get_node (2);
-  mem[dep_final + 1].cint = v;
-  mem[dep_final].hh.lh = 0;
+  dep_final = get_node(dep_node_size);
+  value(dep_final) = v;
+  info(dep_final) = null;
   Result = dep_final;
   return Result;
 }
 /* 608 */
-halfword single_dependency (halfword p)
+pointer single_dependency (pointer p)
 {
-  halfword Result;
-  halfword q;
+  pointer Result;
+  pointer q;
   integer m;
 
-  m = mem[p + 1].cint % 64;
+  m = value(p) % s_scale;
   if (m > 28)
-    Result = const_dependency (0);
+    Result = const_dependency(0);
   else
   {
-    q = get_node (2);
-    mem[q + 1].cint = two_to_the[28 - m];
-    mem[q].hh.lh = p;
-    mem[q].hh.rh = const_dependency (0);
+    q = get_node(dep_node_size);
+    value(q) = two_to_the[28 - m];
+    info(q) = p;
+    link(q) = const_dependency(0);
     Result = q;
   }
   return Result;
 }
 /* 609 */
-halfword copy_dep_list (halfword p)
+pointer copy_dep_list (pointer p)
 {
-  halfword Result;
-  halfword q;
+  pointer Result;
+  pointer q;
 
-  q = get_node (2);
+  q = get_node(dep_node_size);
   dep_final = q;
   while (true)
   {
-    mem[dep_final].hh.lh = mem[p].hh.lh;
-    mem[dep_final + 1].cint = mem[p + 1].cint;
-    if (mem[dep_final].hh.lh == 0)
+    info(dep_final) = info(p);
+    value(dep_final) = value(p);
+    if (info(dep_final) == null)
       goto done;
-    mem[dep_final].hh.rh = get_node (2);
-    dep_final = mem[dep_final].hh.rh;
-    p = mem[p].hh.rh;
+    link(dep_final) = get_node(dep_node_size);
+    dep_final = link(dep_final);
+    p = link(p);
   }
   done: Result = q;
   return Result;
@@ -11223,90 +11223,87 @@ void linear_eq (halfword p, small_number t)
     fix_dependencies();
 }
 /* 619 */
-halfword new_ring_entry (halfword p)
+pointer new_ring_entry (pointer p)
 {
-  halfword Result;
-  halfword q;
+  pointer Result;
+  pointer q;
 
-  q = get_node (2);
-  mem[q].hh.b1 = 11;
-  mem[q].hh.b0 = mem[p].hh.b0;
-  if (mem[p + 1].cint == 0)
-    mem[q + 1].cint = p;
+  q = get_node(value_node_size);
+  name_type(q) = capsule;
+  type(q) = type(p);
+  if (value(p) == null)
+    value(q) = p;
   else
-    mem[q + 1].cint = mem[p + 1].cint;
-  mem[p + 1].cint = q;
+    value(q) = value(p);
+  value(p) = q;
   Result = q;
   return Result;
 }
 /* 621 */
-void non_linear_eq (integer v, halfword p, boolean flushp)
+void non_linear_eq (integer v, pointer p, boolean flush_p)
 {
   small_number t;
-  halfword q, r;
+  pointer q, r;
 
-  t = mem[p].hh.b0 - 1;
-  q = mem[p + 1].cint;
-  if (flushp)
-    mem[p].hh.b0 = 1;
+  t = type(p) - unknown_tag;
+  q = value(p);
+  if (flush_p)
+    type(p) = vacuous;
   else
     p = q;
   do {
-    r = mem[q + 1].cint;
-    mem[q].hh.b0 = t;
+    r = value(q);
+    type(q) = t;
     switch (t)
     {
-      case 2:
-        mem[q + 1].cint = v;
+      case boolean_type:
+        value(q) = v;
         break;
-      case 4:
+      case string_type:
         {
-          mem[q + 1].cint = v;
-          {
-            if (str_ref[v]< 127)
-            incr(str_ref[v]);
-          }
+          value(q) = v;
+          add_str_ref(v);
         }
         break;
-      case 6:
+      case pen_type:
         {
-          mem[q + 1].cint = v;
-          incr(mem[v].hh.lh);
+          value(q) = v;
+          add_pen_ref(v);
         }
         break;
-      case 9:
-        mem[q + 1].cint = copy_path (v);
+      case path_type:
+        value(q) = copy_path(v);
         break;
-      case 11:
-        mem[q + 1].cint = copy_edges (v);
+      case picture_type:
+        value(q) = copy_edges(v);
         break;
     }
     q = r;
   } while (!(q == p));
 }
 /* 622 */
-void ring_merge (halfword p, halfword q)
+void ring_merge (pointer p, pointer q)
 {
-  halfword r;
+  pointer r;
 
-  r = mem[p + 1].cint;
+  r = value(p);
   while (r != p)
   {
     if (r == q)
     {
       {
         print_err("Redundant equation");
-        help2(/* 601 */ "I already knew that this equation was true.",
-          /* 602 */ "But perhaps no harm has been done; let's continue.");
+        help2("I already knew that this equation was true.",
+          "But perhaps no harm has been done; let's continue.");
         put_get_error();
       }
       goto lab_exit;
     }
-    r = mem[r + 1].cint;
+    r = value(r);
   }
-  r = mem[p + 1].cint;
-  mem[p + 1].cint = mem[q + 1].cint;
-  mem[q + 1].cint = r;
+  r = value(p);
+  value(p) = value(q);
+  value(q) = r;
   lab_exit:;
 }
 /* 626 */
@@ -11316,7 +11313,7 @@ void show_cmd_mod (integer c, integer m)
   print_nl(123);
   print_cmd_mod (c, m);
   print_char('}');
-  end_diagnostic (false);
+  end_diagnostic(false);
 }
 /* 635 */
 void show_context (void)
@@ -11507,7 +11504,7 @@ void begin_token_list (halfword p, quarterword t)
     {
       max_in_stack = input_ptr;
       if (input_ptr == stack_size)
-        overflow (/* 615 */ "input stack size", stack_size);
+        overflow("input stack size", stack_size);
     }
     input_stack[input_ptr] = cur_input;
     incr(input_ptr);
@@ -11520,77 +11517,74 @@ void begin_token_list (halfword p, quarterword t)
 /* 650 */
 void end_token_list (void)
 {
-  halfword p;
+  pointer p;
 
-  if (index >= 19)
+  if (index >= backed_up)
   {
-    if (index <= 20)
+    if (index <= inserted)
     {
-      flush_token_list (start);
+      flush_token_list(start);
       goto done;
     }
     else
-      delete_mac_ref (start);
+      delete_mac_ref(start);
   }
   while (param_ptr > limit)
   {
     decr(param_ptr);
     p = param_stack[param_ptr];
-    if (p != 0)
+    if (p != null)
     {
-      if (mem[p].hh.rh == 1)
+      if (link(p) == _void)
       {
-        recycle_value (p);
-        free_node (p, 2);
+        recycle_value(p);
+        free_node(p, value_node_size);
       }
       else
-        flush_token_list (p);
+        flush_token_list(p);
     }
   }
 done:
-  {
-    decr(input_ptr);
-    cur_input = input_stack[input_ptr];
-  }
+  pop_input();
   check_interrupt();
 }
 /* 856 */
 void encapsulate (halfword p)
 {
-  cur_exp = get_node (2);
-  mem[cur_exp].hh.b0 = cur_type;
-  mem[cur_exp].hh.b1 = 11;
-  new_dep (cur_exp, p);
+  cur_exp = get_node(value_node_size);
+  type(cur_exp) = cur_type;
+  name_type(cur_exp) = capsule;
+  new_dep(cur_exp, p);
 }
 /* 858 */
-void install (halfword r, halfword q)
+void install (pointer r, pointer q)
 {
-  halfword p;
+  pointer p;
 
-  if (mem[q].hh.b0 == 16)
+  if (type(q) == known)
   {
-    mem[r + 1].cint = mem[q + 1].cint;
-    mem[r].hh.b0 = 16;
+    value(r) = value(q);
+    type(r) = known;
   }
-  else if (mem[q].hh.b0 == 19)
+  else if (type(q) == independent)
   {
-    p = single_dependency (q);
+    p = single_dependency(q);
     if (p == dep_final)
     {
-      mem[r].hh.b0 = 16;
-      mem[r + 1].cint = 0;
-      free_node (p, 2);
+      type(r) = known;
+      value(r) = 0;
+      free_node(p, dep_node_size);
     }
     else
     {
-      mem[r].hh.b0 = 17;
-      new_dep (r, p);
+      type(r) = dependent;
+      new_dep(r, p);
     }
   }
   else
   {
-    mem[r].hh.b0 = mem[q].hh.b0;
-    new_dep (r, copy_dep_list (mem[q + 1].hh.rh));
+    type(r) = type(q);
+    new_dep(r, copy_dep_list(dep_list(q)));
   }
 }
 /* 855 */
@@ -11663,7 +11657,7 @@ lab_restart:
       {
         {
           if (serial_no > 2147483583L)
-            overflow (/* 588 */ "independent variables", serial_no / 64);
+            overflow("independent variables", serial_no / 64);
           mem[p].hh.b0 = 19;
           serial_no = serial_no + 64;
           mem[p + 1].cint = serial_no;
@@ -11688,15 +11682,15 @@ lab_restart:
       }
       break;
     default:
-      confusion(/* 800 */ "copy");
+      confusion("copy");
       break;
   }
 }
 /* 651 */
-halfword cur_tok (void)
+pointer cur_tok (void)
 {
-  halfword Result;
-  halfword p;
+  pointer Result;
+  pointer p;
   small_number save_type;
   integer save_exp;
 
@@ -11706,40 +11700,27 @@ halfword cur_tok (void)
     {
       save_type = cur_type;
       save_exp = cur_exp;
-      make_exp_copy (cur_mod);
+      make_exp_copy(cur_mod);
       p = stash_cur_exp();
-      mem[p].hh.rh = 0;
+      link(p) = null;
       cur_type = save_type;
       cur_exp = save_exp;
     }
     else
     {
-      p = get_node (2);
-      mem[p + 1].cint = cur_mod;
-      mem[p].hh.b1 = 12;
+      p = get_node(token_node_size);
+      value(p) = cur_mod;
+      name_type(p) = token;
       if (cur_cmd == numeric_token)
-        mem[p].hh.b0 = 16;
+        type(p) = known;
       else
-        mem[p].hh.b0 = 4;
+        type(p) = string_type;
     }
   }
   else
   {
-    {
-      p = avail;
-      if (p == 0)
-        p = get_avail();
-      else
-      {
-        avail = mem[p].hh.rh;
-        mem[p].hh.rh = 0;
-        ;
-#ifdef STAT
-        incr(dyn_used);
-#endif /* STAT */
-      }
-    }
-    mem[p].hh.lh = cur_sym;
+    fast_get_avail(p);
+    info(p) = cur_sym;
   }
   Result = p;
   return Result;
@@ -11747,12 +11728,12 @@ halfword cur_tok (void)
 /* 652 */
 void back_input (void)
 {
-  halfword p;
+  pointer p;
 
   p = cur_tok();
-  while ((index > 15) && (loc == 0))
+  while (token_state && (loc == null))
     end_token_list();
-  begin_token_list (p, 19);
+  back_list(p);
 }
 /* 653 */
 void back_error (void)
@@ -11767,7 +11748,7 @@ void ins_error (void)
 {
   OK_to_interrupt = false;
   back_input();
-  index = 20;
+  token_type = inserted;
   OK_to_interrupt = true;
   error();
 }
@@ -11775,16 +11756,16 @@ void ins_error (void)
 void begin_file_reading (void)
 {
   if (in_open == 15)
-    overflow (/* 616 */ "text input levels", 15);
+    overflow("text input levels", 15);
   if (first == buf_size)
-    overflow (/* 256 */ "buffer size", buf_size);
+    overflow("buffer size", buf_size);
   incr(in_open);
   {
     if (input_ptr > max_in_stack)
     {
       max_in_stack = input_ptr;
       if (input_ptr == stack_size)
-        overflow (/* 615 */ "input stack size", stack_size);
+        overflow("input stack size", stack_size);
     }
     input_stack[input_ptr] = cur_input;
     incr(input_ptr);
@@ -11800,19 +11781,16 @@ void end_file_reading (void)
   first = start;
   line = line_stack[index];
   if (index != in_open)
-    confusion(/* 617 */ "endinput");
+    confusion("endinput");
   if (name > 2)
-    aclose (input_file[index]);
-  {
-    decr(input_ptr);
-    cur_input = input_stack[input_ptr];
-  }
+    a_close(input_file[index]);
+  pop_input();
   decr(in_open);
 }
 /* 656 */
 void clear_for_error_prompt (void)
 {
-  while ((index <= 15) && (name == 0) && (input_ptr > 0) && (loc == limit))
+  while (file_state && terminal_input && (input_ptr > 0) && (loc == limit))
     end_file_reading();
   print_ln();
 }
@@ -12203,7 +12181,7 @@ void firm_up_the_line (void)
   {
     if (interaction > nonstop_mode)
     {
-      ;
+      wakeup_terminal();
       print_ln();
       if (start < limit)
       {
@@ -12224,32 +12202,32 @@ void firm_up_the_line (void)
   }
 }
 /* 685 */
-halfword scan_toks (command_code terminator, halfword substlist, halfword tailend, small_number suffixcount)
+pointer scan_toks (command_code terminator, pointer subst_list, pointer tail_end, small_number suffix_count)
 {
-  halfword Result;
-  halfword p;
-  halfword q;
+  pointer Result;
+  pointer p;
+  pointer q;
   integer balance;
 
-  p = mem_top - 2;
+  p = hold_head;
   balance = 1;
-  mem[mem_top - 2].hh.rh = 0;
+  link(hold_head) = null;
   while (true)
   {
     get_next();
     if (cur_sym > 0)
     {
       {
-        q = substlist;
-        while (q != 0)
+        q = subst_list;
+        while (q != null)
         {
-          if (mem[q].hh.lh == cur_sym)
+          if (info(q) == cur_sym)
           {
-            cur_sym = mem[q + 1].cint;
+            cur_sym = value(q);
             cur_cmd = relax;
             goto found;
           }
-          q = mem[q].hh.rh;
+          q = link(q);
         }
         found:;
       }
@@ -12268,17 +12246,17 @@ halfword scan_toks (command_code terminator, halfword substlist, halfword tailen
       {
         if (cur_mod == 0)
           get_next();
-        else if (cur_mod <= suffixcount)
-          cur_sym = 9919 + cur_mod;
+        else if (cur_mod <= suffix_count)
+          cur_sym = suffix_base - 1 + cur_mod;
       }
     }
-    mem[p].hh.rh = cur_tok();
-    p = mem[p].hh.rh;
+    link(p) = cur_tok();
+    p = link(p);
   }
 done:
-  mem[p].hh.rh = tailend;
-  flush_node_list (substlist);
-  Result = mem[mem_top - 2].hh.rh;
+  link(p) = tail_end;
+  flush_node_list(subst_list);
+  Result = link(hold_head);
   return Result;
 }
 /* 691 */
@@ -12286,25 +12264,17 @@ void get_symbol (void)
 {
 lab_restart:
   get_next();
-  if ((cur_sym == 0) || (cur_sym > 9757))
+  if ((cur_sym == 0) || (cur_sym > frozen_inaccessible))
   {
     print_err("Missing symbolic token inserted");
-    help3(/* 667 */ "Sorry: You can't redefine a number, string, or expr.",
-      /* 668 */ "I've inserted an inaccessible symbol so that your",
-      /* 669 */ "definition will be completed without mixing me up too badly.");
+    help3("Sorry: You can't redefine a number, string, or expr.",
+      "I've inserted an inaccessible symbol so that your",
+      "definition will be completed without mixing me up too badly.");
     if (cur_sym > 0)
       help_line[2] = 670;
     else if (cur_cmd == string_token)
-    {
-      if (str_ref[cur_mod] < 127)
-      {
-        if (str_ref[cur_mod] > 1)
-          decr(str_ref[cur_mod]);
-        else
-          flush_string (cur_mod);
-      }
-    }
-    cur_sym = 9757;
+      delete_str_ref(cur_mod);
+    cur_sym = frozen_inaccessible;
     ins_error();
     goto lab_restart;
   }
@@ -12313,7 +12283,7 @@ lab_restart:
 void get_clear_symbol (void)
 {
   get_symbol();
-  clear_symbol (cur_sym, false);
+  clear_symbol(cur_sym, false);
 }
 /* 693 */
 void check_equals (void)
@@ -12322,12 +12292,12 @@ void check_equals (void)
   {
     if (cur_cmd != assignment)
     {
-      missing_err (61);
-      help5(/* 671 */ "The next thing in this `def' should have been `=',",
-        /* 672 */ "because I've already looked at the definition heading.",
-        /* 673 */ "But don't worry; I'll pretend that an equals sign",
-        /* 674 */ "was present. Everything from here to `enddef'",
-        /* 675 */ "will be the replacement text of this macro.");
+      missing_err(61);
+      help5("The next thing in this `def' should have been `=',",
+        "because I've already looked at the definition heading.",
+        "But don't worry; I'll pretend that an equals sign",
+        "was present. Everything from here to `enddef'",
+        "will be the replacement text of this macro.");
       back_error();
     }
   }
@@ -12336,36 +12306,36 @@ void check_equals (void)
 void make_op_def (void)
 {
   command_code m;
-  halfword p, q, r;
+  pointer p, q, r;
 
   m = cur_mod;
-  get_symbol();
-  q = get_node (2);
-  mem[q].hh.lh = cur_sym;
-  mem[q + 1].cint = 9770;
+  get_symbol;
+  q = get_node(token_node_size);
+  info(q) = cur_sym;
+  value(q) = expr_base;
   get_clear_symbol();
   warning_info = cur_sym;
   get_symbol();
-  p = get_node (2);
-  mem[p].hh.lh = cur_sym;
-  mem[p + 1].cint = 9771;
-  mem[p].hh.rh = q;
+  p = get_node(token_node_size);
+  info(p) = cur_sym;
+  value(p) = expr_base + 1;
+  link(p) = q;
   get_next();
   check_equals();
-  scanner_status = 5;
+  scanner_status = op_defining;
   q = get_avail();
-  mem[q].hh.lh = 0;
+  ref_count(q) = null;
   r = get_avail();
-  mem[q].hh.rh = r;
-  mem[r].hh.lh = 0;
-  mem[r].hh.rh = scan_toks (16, p, 0, 0);
-  scanner_status = 0;
-  eqtb[warning_info].lh = m;
-  eqtb[warning_info].rh = q;
+  link(q) = r;
+  info(r) = general_macro;
+  link(r) = scan_toks(macro_def, p, null, 0);
+  scanner_status = normal;
+  eq_type(warning_info) = m;
+  equiv(warning_info) = q;
   get_x_next();
 }
 /* 1032 */
-void check_delimiter (halfword ldelim, halfword rdelim)
+void check_delimiter (pointer ldelim, pointer rdelim)
 {
   if (cur_cmd == right_delimiter)
   {
@@ -12374,9 +12344,9 @@ void check_delimiter (halfword ldelim, halfword rdelim)
   }
   if (cur_sym != rdelim)
   {
-    missing_err (hash[rdelim].rh);
-    help2(/* 922 */ "I found no right delimiter to match a left one. So I've",
-      /* 923 */ "put one in, behind the scenes; this may fix the problem.");
+    missing_err(hash[rdelim].rh);
+    help2("I found no right delimiter to match a left one. So I've",
+      "put one in, behind the scenes; this may fix the problem.");
     back_error();
   }
   else
@@ -12384,27 +12354,27 @@ void check_delimiter (halfword ldelim, halfword rdelim)
     print_err("The token `");
     slow_print(hash[rdelim].rh);
     print(925);
-    help3(/* 926 */ "Strange: This token has lost its former meaning!",
-      /* 927 */ "I'll read it as a right delimiter this time;",
-      /* 928 */ "but watch out, I'll probably miss it later.");
+    help3("Strange: This token has lost its former meaning!",
+      "I'll read it as a right delimiter this time;",
+      "but watch out, I'll probably miss it later.");
     error();
   }
   lab_exit:;
 }
 /* 1011 */
-halfword scan_declared_variable (void)
+pointer scan_declared_variable (void)
 {
-  halfword Result;
-  halfword x;
-  halfword h, t;
-  halfword l;
+  pointer Result;
+  pointer x;
+  pointer h, t;
+  pointer l;
 
   get_symbol();
   x = cur_sym;
   if (cur_cmd != tag_token)
-    clear_symbol (x, false);
+    clear_symbol(x, false);
   h = get_avail();
-  mem[h].hh.lh = x;
+  info(h) = x;
   t = h;
   while (true)
   {
@@ -12427,21 +12397,21 @@ halfword scan_declared_variable (void)
             goto done;
           }
           else
-            cur_sym = 0;
+            cur_sym = collective_subscript;
         }
         else
           goto done;
       }
     }
-    mem[t].hh.rh = get_avail();
-    t = mem[t].hh.rh;
-    mem[t].hh.lh = cur_sym;
+    link(t) = get_avail();
+    t = link(t);
+    info(t) = cur_sym;
   }
 done:
-  if (eqtb[x].lh % 86 != 41)
-    clear_symbol (x, false);
-  if (eqtb[x].rh == 0)
-    new_root (x);
+  if (eq_type(x) % outer_tag != tag_token)
+    clear_symbol(x, false);
+  if (equiv(x) == null)
+    new_root(x);
   Result = h;
   return Result;
 }
@@ -12601,61 +12571,61 @@ void scan_primary(void);
 void scan_secondary(void); void scan_tertiary(void);
 void scan_expression(void); void scan_suffix(void);
 /* 722 */
-void print_macro_name (halfword a, halfword n)
+void print_macro_name (pointer a, pointer n)
 {
-  halfword p, q;
+  pointer p, q;
 
-  if (n != 0)
-    slow_print(hash[n].rh);
+  if (n != null)
+    slow_print(text(n));
   else
   {
-    p = mem[a].hh.lh;
-    if (p == 0)
-      slow_print(hash[mem[mem[mem[a].hh.rh].hh.lh].hh.lh].rh);
+    p = info(a);
+    if (p == null)
+      slow_print(text(info(info(link(a)))));
     else
     {
       q = p;
-      while (mem[q].hh.rh != 0)
-        q = mem[q].hh.rh;
-      mem[q].hh.rh = mem[mem[a].hh.rh].hh.lh;
-      show_token_list (p, 0, 1000, 0);
-      mem[q].hh.rh = 0;
+      while (link(q) != null)
+        q = link(q);
+      link(q) = info(link(a));
+      show_token_list(p, null, 1000, 0);
+      link(q) = null;
     }
   }
 }
 /* 723 */
-void print_arg (halfword q, integer n, halfword b)
+void print_arg (pointer q, integer n, pointer b)
 {
-  if (mem[q].hh.rh == 1)
+  if (link(q) = _void)
     print_nl(498);
-  else if ((b < 10070) && (b != 7))
+  else if ((b < text_base) && (b != text_macro))
     print_nl(499);
   else
     print_nl(500);
   print_int(n);
   print(703);
-  if (mem[q].hh.rh == 1)
-    print_exp (q, 1);
+  if (link(q) = _void)
+    print_exp(q, 1);
   else
-    show_token_list (q, 0, 1000, 0);
+    show_token_list(q, null, 1000, 0);
 }
 /* 730 */
-void scan_text_arg (halfword ldelim, halfword rdelim)
+void scan_text_arg (pointer l_delim, pointer r_delim)
 {
   integer balance;
-  halfword p;
+  pointer p;
 
-  warning_info = ldelim;
-  scanner_status = 3;
-  p = mem_top - 2;
+  warning_info = l_delim;
+  scanner_status = absorbing;
+  p = hold_head;
   balance = 1;
-  mem[mem_top - 2].hh.rh = 0;
+  link(hold_head) = null;
   while (true)
   {
     get_next();
-    if (ldelim == 0)
+    if (l_delim == 0)
     {
-      if (cur_cmd > comma)
+      if (end_of_statement)
       {
         if (balance == 1)
           goto done;
@@ -12669,7 +12639,7 @@ void scan_text_arg (halfword ldelim, halfword rdelim)
     {
       if (cur_cmd == right_delimiter)
       {
-        if (cur_mod == ldelim)
+        if (cur_mod == l_delim)
         {
           decr(balance);
           if (balance == 0)
@@ -12678,17 +12648,17 @@ void scan_text_arg (halfword ldelim, halfword rdelim)
       }
       else if (cur_cmd == left_delimiter)
       {
-        if (cur_mod == rdelim)
+        if (cur_mod == r_delim)
           incr(balance);
       }
     }
-    mem[p].hh.rh = cur_tok();
-    p = mem[p].hh.rh;
+    link(p) = cur_tok();
+    p = link(p);
   }
 done:
-  cur_exp = mem[mem_top - 2].hh.rh;
-  cur_type = 20;
-  scanner_status = 0;
+  cur_exp = link(hold_head);
+  cur_type = token_list;
+  scanner_status = normal;
 }
 /* 720 */
 void macro_call (halfword defref, halfword arg_list, halfword macro_name)
@@ -13160,7 +13130,7 @@ void get_x_next (void)
     save_exp = stash_cur_exp();
     do {
       if (cur_cmd == defined_macro)
-        macro_call (cur_mod, 0, cur_sym);
+        macro_call(cur_mod, 0, cur_sym);
       else
         expand();
       get_next();
@@ -13175,7 +13145,7 @@ void stack_argument (halfword p)
   {
     incr(max_param_stack);
     if (max_param_stack > 150)
-      overflow (/* 687 */ "parameter stack size", 150);
+      overflow("parameter stack size", 150);
   }
   param_stack[param_ptr] = p;
   incr(param_ptr);
@@ -13218,9 +13188,9 @@ done:
   scanner_status = 0;
 }
 /* 746 */
-void change_if_limit (small_number l, halfword p)
+void change_if_limit (small_number l, pointer p)
 {
-  halfword q;
+  pointer q;
 
   if (p == cond_ptr)
     if_limit = l;
@@ -13229,14 +13199,14 @@ void change_if_limit (small_number l, halfword p)
     q = cond_ptr;
     while (true)
     {
-      if (q == 0)
-        confusion(/* 718 */ "if");
+      if (q == null)
+        confusion("if");
       if (mem[q].hh.rh == p)
       {
         mem[q].hh.b0 = l;
         goto lab_exit;
       }
-      q = mem[q].hh.rh;
+      q = link(q);
     }
   }
   lab_exit:;
@@ -13246,9 +13216,9 @@ void check_colon (void)
 {
   if (cur_cmd != colon)
   {
-    missing_err (58);
-    help2(/* 721 */ "There should've been a colon after the condition.",
-      /* 698 */ "I shall pretend that one was there.");
+    missing_err(58);
+    help2("There should've been a colon after the condition.",
+      "I shall pretend that one was there.");
     back_error();
   }
 }
@@ -13330,51 +13300,51 @@ done:
 /* 754 */
 void bad_for (str_number s)
 {
-  disp_err (null, /* 726 */ "Improper ");
+  disp_err(null, "Improper ");
   print(s);
   print(306);
-  help4(/* 727 */ "When you say `for x=a step b until c',",
-    /* 728 */ "the initial value `a' and the step size `b'",
-    /* 729 */ "and the final value `c' must have known numeric values.",
-    /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
-  put_get_flush_error (0);
+  help4("When you say `for x=a step b until c',",
+    "the initial value `a' and the step size `b'",
+    "and the final value `c' must have known numeric values.",
+    "I'm zeroing this one. Proceed, with fingers crossed.");
+  put_get_flush_error(0);
 }
 /* 755 */
 void begin_iteration (void)
 {
   halfword m;
   halfword n;
-  halfword p, q, s, pp;
+  pointer p, q, s, pp;
 
   m = cur_mod;
   n = cur_sym;
-  s = get_node (2);
-  if (m == 1)
+  s = get_node(loop_node_size);
+  if (m == start_forever)
   {
-    mem[s + 1].hh.lh = 1;
-    p = 0;
+    loop_type(s) = _void;
+    p = null;
     get_x_next();
     goto found;
   }
   get_symbol();
-  p = get_node (2);
-  mem[p].hh.lh = cur_sym;
-  mem[p + 1].cint = m;
+  p = get_node(token_node_size);
+  info(p) = cur_sym;
+  value(p) = m;
   get_x_next();
   if ((cur_cmd != equals) && (cur_cmd != assignment))
   {
-    missing_err (61);
-    help3(/* 730 */ "The next thing in this loop should have been `=' or `:='.", 
-      /* 673 */ "But don't worry; I'll pretend that an equals sign", 
-      /* 731 */ "was present, and I'll look for the values next.");
+    missing_err(61);
+    help3("The next thing in this loop should have been `=' or `:='.", 
+      "But don't worry; I'll pretend that an equals sign", 
+      "was present, and I'll look for the values next.");
     back_error();
   }
-  mem[s + 1].hh.lh = 0;
-  q = s + 1;
-  mem[q].hh.rh = 0;
+  loop_type(s) = null;
+  q = loop_list_loc(s);
+  link(q) = null;
   do {
     get_x_next();
-    if (m != 9770)
+    if (m != expr_base)
       scan_suffix();
     else
     {
@@ -13386,107 +13356,101 @@ void begin_iteration (void)
       scan_expression();
       if (cur_cmd == step_token)
       {
-        if (q == s + 1)
+        if (q == loop_list_loc(s))
         {
-          if (cur_type != 16)
-            bad_for (737);
-          pp = get_node (4);
-          mem[pp + 1].cint = cur_exp;
+          if (cur_type != known)
+            bad_for(737);
+          pp = get_node(progression_node_size);
+          value(pp) = cur_exp;
           get_x_next();
           scan_expression();
-          if (cur_type != 16)
-            bad_for (738);
-          mem[pp + 2].cint = cur_exp;
+          if (cur_type != known)
+            bad_for(738);
+          step_size(pp) = cur_exp;
           if (cur_cmd != until_token)
           {
-            missing_err (490);
-            help2(/* 739 */ "I assume you meant to say `until' after `step'.",
-              /* 740 */ "So I'll look for the final value and colon next.");
+            missing_err(490);
+            help2("I assume you meant to say `until' after `step'.",
+              "So I'll look for the final value and colon next.");
             back_error();
           }
           get_x_next();
           scan_expression();
-          if (cur_type != 16)
-            bad_for (741);
-          mem[pp + 3].cint = cur_exp;
-          mem[s + 1].hh.lh = pp;
+          if (cur_type != known)
+            bad_for(741);
+          final_value(pp) = cur_exp;
+          loop_type(s) = pp;
           goto done;
         }
       }
       cur_exp = stash_cur_exp();
     }
-    mem[q].hh.rh = get_avail();
-    q = mem[q].hh.rh;
-    mem[q].hh.lh = cur_exp;
-    cur_type = 1;
+    link(q) = get_avail();
+    q = link(q);
+    info(q) = cur_exp;
+    cur_type = vacuous;
     lab_continue:;
   } while (!(cur_cmd != comma));
 done:;
 found:
   if (cur_cmd != colon)
   {
-    missing_err (58);
-    help3(/* 732 */ "The next thing in this loop should have been a `:'.",
-      /* 733 */ "So I'll pretend that a colon was present;",
-      /* 734 */ "everything from here to `endfor' will be iterated.");
+    missing_err(58);
+    help3("The next thing in this loop should have been a `:'.",
+      "So I'll pretend that a colon was present;",
+      "everything from here to `endfor' will be iterated.");
     back_error();
   }
   q = get_avail();
-  mem[q].hh.lh = 9758;
-  scanner_status = 6;
+  info(q) = frozen_repeat_loop;
+  scanner_status = loop_defining;
   warning_info = n;
-  mem[s].hh.lh = scan_toks (4, p, q, 0);
-  scanner_status = 0;
-  mem[s].hh.rh = loop_ptr;
+  info(s) = scan_toks(iteration, p, q, 0);
+  scanner_status = normal;
+  link(s) = loop_ptr;
   loop_ptr = s;
   resume_iteration();
 }
 /* 760 */
 void resume_iteration (void)
 {
-  halfword p, q;
+  pointer p, q;
 
-  p = mem[loop_ptr + 1].hh.lh;
-  if (p > 1)
+  p = loop_type(loop_ptr);
+  if (p > _void)
   {
-    cur_exp = mem[p + 1].cint;
-    if (((mem[p + 2].cint > 0) && (cur_exp > mem[p + 3].cint)) || ((mem[p + 2].cint < 0) && (cur_exp < mem[p + 3].cint)))
+    cur_exp = value(p);
+    if (((step_size(p) > 0) && (cur_exp > final_value(p))) || ((step_size(p) < 0)
+      && (cur_exp < final_value(p))))
       goto not_found;
-    cur_type = 16;
+    cur_type = known;
     q = stash_cur_exp();
-    mem[p + 1].cint = cur_exp + mem[p + 2].cint;
+    value(p) = cur_exp + step_size(p);
   }
-  else if (p < 1)
+  else if (p < _void)
   {
-    p = mem[loop_ptr + 1].hh.rh;
-    if (p == 0)
+    p = loop_list(loop_ptr);
+    if (p == null)
       goto not_found;
-    mem[loop_ptr + 1].hh.rh = mem[p].hh.rh;
-    q = mem[p].hh.lh;
-    {
-      mem[p].hh.rh = avail;
-      avail = p;
-      ;
-#ifdef STAT
-      decr(dyn_used);
-#endif /* STAT */
-    }
+    loop_list(loop_ptr) = link(p);
+    q = info(p);
+    free_avail(p);
   }
   else
   {
-    begin_token_list (mem[loop_ptr].hh.lh, 16);
+    begin_token_list(info(loop_ptr), forever_text);
     goto lab_exit;
   }
-  begin_token_list (mem[loop_ptr].hh.lh, 17);
-  stack_argument (q);
+  begin_token_list(info(loop_ptr), loop_text);
+  stack_argument(q);
   if (internal[tracing_commands] > unity)
   {
     begin_diagnostic();
     print_nl(736);
-    if ((q != 0) && (mem[q].hh.rh == 1))
-      print_exp (q, 1);
+    if ((q != null) && (link(q) = _void))
+      print_exp(q, 1);
     else
-      show_token_list (q, 0, 50, 0);
+      show_token_list(q, null, 50, 0);
     print_char('}');
     end_diagnostic (false);
   }
@@ -13498,43 +13462,36 @@ lab_exit:;
 /* 763 */
 void stop_iteration (void)
 {
-  halfword p, q;
+  pointer p, q;
 
-  p = mem[loop_ptr + 1].hh.lh;
-  if (p > 1)
-    free_node (p, 4);
-  else if (p < 1)
+  p = loop_type(loop_ptr);
+  if (p > _void)
+    free_node(p, progression_node_size);
+  else if (p < _void)
   {
-    q = mem[loop_ptr + 1].hh.rh;
-    while (q != 0)
+    q = loop_list(loop_ptr);
+    while (q != null)
     {
-      p = mem[q].hh.lh;
-      if (p != 0)
+      p = info(q);
+      if (p != null)
       {
-        if (mem[p].hh.rh == 1)
+        if (link(p) == _void)
         {
-          recycle_value (p);
-          free_node (p, 2);
+          recycle_value(p);
+          free_node(p, value_node_size);
         }
         else
-          flush_token_list (p);
+          flush_token_list(p);
       }
       p = q;
-      q = mem[q].hh.rh;
-      {
-        mem[p].hh.rh = avail;
-        avail = p;
-        ;
-#ifdef STAT
-        decr(dyn_used);
-#endif /* STAT */
-      }
+      q = link(q);
+      free_avail(p);
     }
   }
   p = loop_ptr;
-  loop_ptr = mem[p].hh.rh;
-  flush_token_list (mem[p].hh.lh);
-  free_node (p, 2);
+  loop_ptr = link(p);
+  flush_token_list(info(p));
+  free_node(p, loop_node_size);
 }
 /* 770 */
 void begin_name (void)
@@ -13873,14 +13830,14 @@ void prompt_file_name (str_number s, str_number e)
     print_err("I can't find file `");
   else
     print_err("I can't write on file `");
-  print_file_name (cur_name, cur_area, cur_ext);
+  print_file_name(cur_name, cur_area, cur_ext);
   print(746);
   if (e == 747)
     show_context();
   print_nl(748);
   print(s);
   if (interaction < scroll_mode)
-    fatal_error (/* 749 */ "*** (job aborted, file error in nonstop mode)");
+    fatal_error("*** (job aborted, file error in nonstop mode)");
   saved_cur_name = cur_name;
   prompt_input(": ");
   {
@@ -13929,8 +13886,8 @@ void open_log_file (void)
   selector = log_only;
   log_opened = true;
   {
-    Fputs (log_file,  "This is METAFONT, Version 2.7182818");
-    Fputs (log_file,  versionstring);
+    Fputs(log_file, "This is METAFONT, Version 2.7182818");
+    Fputs(log_file, versionstring);
     slow_print(base_ident);
     print(755);
     print_int(round_unscaled(internal[day]));
@@ -13948,13 +13905,6 @@ void open_log_file (void)
     print_dd (m / 60);
     print_char(':');
     print_dd (m % 60);
-    if (translatefilename)
-    {
-      putc ('\n', log_file);
-      putc ('(', log_file);
-      fputs (translatefilename, log_file);
-      putc (')', log_file);
-    }
   }
   input_stack[input_ptr] = cur_input;
   print_nl(753);
@@ -13974,9 +13924,9 @@ void start_input (void)
   if ((index > 15))
   {
     print_err("File names can't appear within macros");
-    help3(/* 758 */ "Sorry...I've converted what follows to tokens,",
-      /* 759 */ "possibly garbaging the name you gave.",
-      /* 760 */ "Please delete the tokens and insert the name again.");
+    help3("Sorry...I've converted what follows to tokens,",
+      "possibly garbaging the name you gave.",
+      "Please delete the tokens and insert the name again.");
     error();
   }
   if ((index <= 15))
@@ -13987,26 +13937,26 @@ void start_input (void)
     cur_ext = 261;
     cur_area = 261;
   }
-  pack_file_name (cur_name, cur_area, cur_ext);
+  pack_file_name(cur_name, cur_area, cur_ext);
   while (true)
   {
     begin_file_reading();
     if (cur_ext == 747)
     {
       cur_ext = 261;
-      pack_file_name (cur_name, cur_area, cur_ext);
+      pack_file_name(cur_name, cur_area, cur_ext);
     }
     if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file[index], kpsemfformat))
       goto done;
     end_file_reading();
-    prompt_file_name (743, 747);
+    prompt_file_name(743, 747);
   }
 done:
-  name = a_make_name_string (input_file[index]);
+  name = a_make_name_string(input_file[index]);
   str_ref[cur_name] = 127;
   if (job_name == 0)
   {
-    job_name = getjob_name (cur_name);
+    job_name = getjob_name(cur_name);
     open_log_file();
   }
   if (term_offset + (str_start[name + 1] - str_start[name]) > max_print_line - 2)
@@ -14019,7 +13969,7 @@ done:
   fflush (stdout);
   {
     line = 1;
-    if (inputln (input_file[index], false))
+    if (inputln(input_file[index], false))
       ;
     firm_up_the_line();
     buffer[limit] = 37;
@@ -14036,10 +13986,10 @@ void bad_exp (str_number s)
   print(770);
   print_cmd_mod (cur_cmd, cur_mod);
   print_char('\'');
-  help4(/* 771 */ "I'm afraid I need some sort of value in order to continue,",
-    /* 772 */ "so I've tentatively inserted `0'. You may want to",
-    /* 773 */ "delete this zero and insert something else;",
-    /* 774 */ "see Chapter 27 of The METAFONTbook for an example.");
+  help4("I'm afraid I need some sort of value in order to continue,",
+    "so I've tentatively inserted `0'. You may want to",
+    "delete this zero and insert something else;",
+    "see Chapter 27 of The METAFONTbook for an example.");
   back_input();
   cur_sym = 0;
   cur_cmd = numeric_token;
@@ -14051,9 +14001,9 @@ void bad_exp (str_number s)
   var_flag = saveflag;
 }
 /* 827 */
-void stash_in (halfword p)
+void stash_in (pointer p)
 {
-  halfword q;
+  pointer q;
 
   mem[p].hh.b0 = cur_type;
   if (cur_type == 16)
