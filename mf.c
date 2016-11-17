@@ -16794,91 +16794,87 @@ void try_eq (halfword l, halfword r)
   }
 }
 /* 1001 */
-void make_eq (halfword lhs)
+void make_eq (pointer lhs)
 {
   small_number t;
   integer v;
-  halfword p, q;
+  pointer p, q;
 
 lab_restart:
-  t = mem[lhs].hh.b0;
-  if (t <= 14)
-    v = mem[lhs + 1].cint;
+  t = type(lhs);
+  if (t <= pair_type)
+    v = value(lhs);
   switch (t)
   {
-    case 2:
-    case 4:
-    case 6:
-    case 9:
-    case 11:
-      if (cur_type == t + 1)
+    case boolean_type:
+    case string_type:
+    case pen_type:
+    case path_type:
+    case picture_type:
+      if (cur_type == t + unknown_tag)
       {
-        non_linear_eq (v, cur_exp, false);
-        unstash_cur_exp (cur_exp);
+        non_linear_eq(v, cur_exp, false);
+        unstash_cur_exp(cur_exp);
         goto done;
       }
       else if (cur_type == t)
       {
-        if (cur_type <= 4)
+        if (cur_type <= string_type)
         {
-          if (cur_type == 4)
+          if (cur_type == string_type)
           {
-            if (str_vs_str (v, cur_exp) != 0)
+            if (str_vs_str(v, cur_exp) != 0)
               goto not_found;
           }
           else if (v != cur_exp)
             goto not_found;
           {
             print_err("Redundant equation");
-            help2(/* 601 */ "I already knew that this equation was true.",
-              /* 602 */ "But perhaps no harm has been done; let's continue.");
+            help2("I already knew that this equation was true.",
+              "But perhaps no harm has been done; let's continue.");
             put_get_error();
           }
           goto done;
         }
         print_err("Redundant or inconsistent equation");
-        help2(/* 895 */ "An equation between already-known quantities can't help.",
-          /* 896 */ "But don't worry; continue and I'll just ignore it.");
+        help2("An equation between already-known quantities can't help.",
+          "But don't worry; continue and I'll just ignore it.");
         put_get_error();
         goto done;
       not_found:
         print_err("Inconsistent equation");
-        help2(/* 898 */ "The equation I just read contradicts what was said before.",
-          /* 896 */ "But don't worry; continue and I'll just ignore it.");
+        help2("The equation I just read contradicts what was said before.",
+          "But don't worry; continue and I'll just ignore it.");
         put_get_error();
         goto done;
       }
       break;
-    case 3:
-    case 5:
-    case 7:
-    case 12:
-    case 10:
-      if (cur_type == t - 1)
+    case unknown_types:
+      if (cur_type == t - unknown_tag)
       {
-        non_linear_eq (cur_exp, lhs, true);
+        non_linear_eq(cur_exp, lhs, true);
         goto done;
       }
       else if (cur_type == t)
       {
-        ring_merge (lhs, cur_exp);
+        ring_merge(lhs, cur_exp);
         goto done;
       }
-      else if (cur_type == 14)
+      else if (cur_type == pair_type)
       {
-        if (t == 10)
+        if (t == unknown_path)
         {
           pair_to_path();
           goto lab_restart;
         }
       }
       break;
-    case 13:
-    case 14:
+    case transform_type:
+    case pair_type:
       if (cur_type == t)
       {
         p = v + big_node_size[t];
-        q = mem[cur_exp + 1].cint + big_node_size[t];
+        q = value(cur_exp) + big_node_size[t];
         do {
           p = p - 2;
           q = q - 2;
@@ -16887,50 +16883,50 @@ lab_restart:
         goto done;
       }
       break;
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-      if (cur_type >= 16)
+    case known:
+    case dependent:
+    case proto_dependent:
+    case independent:
+      if (cur_type >= known)
       {
-        try_eq (lhs, 0);
+        try_eq(lhs, null);
         goto done;
       }
       break;
-    case 1:
-      ;
+    case vacuous:
+      do_nothing();
       break;
   }
-  disp_err (lhs, /* 261 */ "");
-  disp_err (null, /* 891 */ "Equation cannot be performed (");
-  if (mem[lhs].hh.b0 <= 14)
-    print_type (mem[lhs].hh.b0);
+  disp_err(lhs, "");
+  disp_err(null, "Equation cannot be performed (");
+  if (type(lhs) <= pair_type)
+    print_type(type(lhs));
   else
     print(340);
   print_char('=');
-  if (cur_type <= 14)
-    print_type (cur_type);
+  if (cur_type <= pair_type)
+    print_type(cur_type);
   else
     print(340);
   print_char(')');
-  help2(/* 892 */ "I'm sorry, but I don't know how to make such things equal.",
-    /* 893 */ "(See the two expressions just above the error message.)");
+  help2("I'm sorry, but I don't know how to make such things equal.",
+    "(See the two expressions just above the error message.)");
   put_get_error();
 done:
   check_arith();
-  recycle_value (lhs);
-  free_node (lhs, 2);
+  recycle_value(lhs);
+  free_node(lhs, value_node_size);
 }
 void do_assignment(void);
 /* 995 */
 void do_equation (void)
 {
-  halfword lhs;
-  halfword p;
+  pointer lhs;
+  pointer p;
 
   lhs = stash_cur_exp();
   get_x_next();
-  var_flag = 77;
+  var_flag = assignment;
   scan_expression();
   if (cur_cmd == equals)
     do_equation();
@@ -16940,44 +16936,44 @@ void do_equation (void)
   {
     begin_diagnostic();
     print_nl(850);
-    print_exp (lhs, 0);
+    print_exp(lhs, 0);
     print(886);
-    print_exp (0, 0);
+    print_exp(null, 0);
     print(842);
-    end_diagnostic (false);
+    end_diagnostic(false);
   }
-  if (cur_type == 10)
+  if (cur_type == unknown_path)
   {
-    if (mem[lhs].hh.b0 == 14)
+    if (type(lhs) == pair_type)
     {
       p = stash_cur_exp();
-      unstash_cur_exp (lhs);
+      unstash_cur_exp(lhs);
       lhs = p;
     }
   }
-  make_eq (lhs);
+  make_eq(lhs);
 }
 /* 996 */
 void do_assignment (void)
 {
-  halfword lhs;
-  halfword p;
-  halfword q;
+  pointer lhs;
+  pointer p;
+  pointer q;
 
-  if (cur_type != 20)
+  if (cur_type != token_list)
   {
-    disp_err (null, /* 883 */ "Improper `:=' will be changed to `='");
-    help2(/* 884 */ "I didn't find a variable name at the left of the `:=',",
-      /* 885 */ "so I'm going to pretend that you said `=' instead.");
+    disp_err(null, "Improper `:=' will be changed to `='");
+    help2("I didn't find a variable name at the left of the `:=',",
+      "so I'm going to pretend that you said `=' instead.");
     error();
     do_equation();
   }
   else
   {
     lhs = cur_exp;
-    cur_type = 1;
+    cur_type = vacuous;
     get_x_next();
-    var_flag = 77;
+    var_flag = assignment;
     scan_expression();
     if (cur_cmd == equals)
       do_equation();
@@ -16987,104 +16983,98 @@ void do_assignment (void)
     {
       begin_diagnostic();
       print_nl(123);
-      if (mem[lhs].hh.lh > 9769)
-        slow_print(int_name[mem[lhs].hh.lh - (9769)]);
+      if (info(lhs) > hash_end)
+        slow_print(int_name[info(lhs) - (hash_end)]);
       else
-        show_token_list (lhs, 0, 1000, 0);
+        show_token_list(lhs, null, 1000, 0);
       print(461);
-      print_exp (0, 0);
+      print_exp(null, 0);
       print_char('}');
-      end_diagnostic (false);
+      end_diagnostic(false);
     }
-    if (mem[lhs].hh.lh > 9769)
+    if (info(lhs) > hash_end)
     {
-      if (cur_type == 16)
-        internal[mem[lhs].hh.lh - (9769)] = cur_exp;
+      if (cur_type == known)
+        internal[info(lhs) - (hash_end)] = cur_exp;
       else
       {
-        disp_err (null, /* 887 */ "Internal quantity `");
+        disp_err(null, "Internal quantity `");
         slow_print(int_name[mem[lhs].hh.lh - (9769)]);
         print(888);
-        help2(/* 889 */ "I can't set an internal quantity to anything but a known",
-          /* 890 */ "numeric value, so I'll have to ignore this assignment.");
+        help2("I can't set an internal quantity to anything but a known",
+          "numeric value, so I'll have to ignore this assignment.");
         put_get_error();
       }
     }
     else
     {
-      p = find_variable (lhs);
-      if (p != 0)
+      p = find_variable(lhs);
+      if (p != null)
       {
         q = stash_cur_exp();
-        cur_type = und_type (p);
-        recycle_value (p);
-        mem[p].hh.b0 = cur_type;
-        mem[p + 1].cint = 0;
-        make_exp_copy (p);
+        cur_type = und_type(p);
+        recycle_value(p);
+        type(p) = cur_type;
+        value(p) = null;
+        make_exp_copy(p);
         p = stash_cur_exp();
-        unstash_cur_exp (q);
+        unstash_cur_exp(q);
         make_eq (p);
       }
       else
       {
-        obliterated (lhs);
+        obliterated(lhs);
         put_get_error();
       }
     }
-    flush_node_list (lhs);
+    flush_node_list(lhs);
   }
 }
 /* 1015 */
 void do_type_declaration (void)
 {
   small_number t;
-  halfword p;
-  halfword q;
+  pointer p;
+  pointer q;
 
-  if (cur_mod >= 13)
+  if (cur_mod >= transform_type)
     t = cur_mod;
   else
-    t = cur_mod + 1;
+    t = cur_mod + unknown_tag;
   do {
     p = scan_declared_variable();
-    flush_variable (eqtb[mem[p].hh.lh].rh, mem[p].hh.rh, false);
-    q = find_variable (p);
-    if (q != 0)
+    flush_variable(equiv(info(p)), link(p), false);
+    q = find_variable(p);
+    if (q != null)
     {
-      mem[q].hh.b0 = t;
-      mem[q + 1].cint = 0;
+      type(q) = t;
+      value(q) = null;
     }
     else
     {
       print_err("Declared variable conflicts with previous vardef");
-      help2(/* 901 */ "You can't use, e.g., `numeric foo[]' after `vardef foo'.",
-        /* 902 */ "Proceed, and I'll ignore the illegal redeclaration.");
+      help2("You can't use, e.g., `numeric foo[]' after `vardef foo'.",
+        "Proceed, and I'll ignore the illegal redeclaration.");
       put_get_error();
     }
-    flush_list (p);
+    flush_list(p);
     if (cur_cmd < comma)
     {
       print_err("Illegal suffix of declared variable will be flushed");
-      help5(/* 904 */ "Variables in declarations must consist entirely of",
-        /* 905 */ "names and collective subscripts, e.g., `x[]a'.",
-        /* 906 */ "Are you trying to use a reserved word in a variable name?",
-        /* 907 */ "I'm going to discard the junk I found here,",
-        /* 908 */ "up to the next comma or the end of the declaration.");
+      help5("Variables in declarations must consist entirely of",
+        "names and collective subscripts, e.g., `x[]a'.",
+        "Are you trying to use a reserved word in a variable name?",
+        "I'm going to discard the junk I found here,",
+        "up to the next comma or the end of the declaration.");
       if (cur_cmd == numeric_token)
         help_line[2] = 909;
       put_get_error();
-      scanner_status = 2;
+      scanner_status = flushing;
       do {
         get_next();
         if (cur_cmd == string_token)
         {
-          if (str_ref[cur_mod]< 127)
-          {
-            if (str_ref[cur_mod] > 1)
-              decr(str_ref[cur_mod]);
-            else
-              flush_string (cur_mod);
-          }
+          delete_str_ref(cur_mod);
         }
       } while (!(cur_cmd >= comma));
       scanner_status = 0;
@@ -17097,23 +17087,23 @@ void do_random_seed (void)
   get_x_next();
   if (cur_cmd != assignment)
   {
-    missing_err (461);
-    help1(/* 914 */ "Always say `randomseed:=<numeric expression>'.");
+    missing_err(461);
+    help1("Always say `randomseed:=<numeric expression>'.");
     back_error();
   }
   get_x_next();
   scan_expression();
   if (cur_type != 16)
   {
-    disp_err (null, /* 915 */ "Unknown value will be ignored");
-    help2(/* 916 */ "Your expression was too random for me to handle,",
-      /* 917 */ "so I won't change the random seed just now.");
-    put_get_flush_error (0);
+    disp_err(null, "Unknown value will be ignored");
+    help2("Your expression was too random for me to handle,",
+      "so I won't change the random seed just now.");
+    put_get_flush_error(0);
   }
   else
   {
-    init_randoms (cur_exp);
-    if (selector >= 2)
+    init_randoms(cur_exp);
+    if (selector >= log_only)
     {
       old_setting = selector;
       selector = log_only;
@@ -17137,27 +17127,27 @@ void do_protection (void)
     t = eqtb[cur_sym].lh;
     if (m == 0)
     {
-      if (t >= 86)
-        eqtb[cur_sym].lh = t - 86;
+      if (t >= outer_tag)
+        eq_type(cur_sym) = t - outer_tag;
     }
-    else if (t < 86)
-      eqtb[cur_sym].lh = t + 86;
+    else if (t < outer_tag)
+      eq_type(cur_sym) = t + outer_tag;
     get_x_next();
   } while (!(cur_cmd != comma));
 }
 /* 1031 */
 void def_delims (void)
 {
-  halfword ldelim, rdelim;
+  pointer l_delim, r_delim;
 
   get_clear_symbol();
-  ldelim = cur_sym;
+  l_delim = cur_sym;
   get_clear_symbol();
-  rdelim = cur_sym;
-  eqtb[ldelim].lh = 31;
-  eqtb[ldelim].rh = rdelim;
-  eqtb[rdelim].lh = 62;
-  eqtb[rdelim].rh = ldelim;
+  r_delim = cur_sym;
+  eq_type(l_delim) = left_delimiter;
+  equiv(l_delim) = r_delim;
+  eq_type(r_delim) = right_delimiter;
+  equiv(r_delim) = l_delim;
   get_x_next();
 }
 void do_statement(void);
@@ -17171,7 +17161,7 @@ void do_interim (void)
     if (cur_sym == 0)
       print(929);
     else
-      slow_print(hash[cur_sym].rh);
+      slow_print(text(cur_sym));
     print(930);
     help1("Something like `tracingonline' should follow `interim'.");
     back_error();
@@ -17186,7 +17176,7 @@ void do_interim (void)
 /* 1035 */
 void do_let (void)
 {
-  halfword l;
+  pointer l;
 
   get_symbol();
   l = cur_sym;
@@ -17195,7 +17185,7 @@ void do_let (void)
   {
     if (cur_cmd != assignment)
     {
-      missing_err (61);
+      missing_err(61);
       help3("You should have said `let symbol = something'.",
         "But don't worry; I'll pretend that an equals sign",
         "was present. The next token I read will be `something'.");
@@ -17209,18 +17199,18 @@ void do_let (void)
     case secondary_primary_macro:
     case tertiary_secondary_macro:
     case expression_tertiary_macro:
-      incr(mem[cur_mod].hh.lh);
+      add_mac_ref(cur_mod);
       break;
     default:
       do_nothing();
       break;
   }
   clear_symbol(l, false);
-  eqtb[l].lh = cur_cmd;
+  eq_type(l) = cur_cmd;
   if (cur_cmd == tag_token)
-    eqtb[l].rh = 0;
+    equiv(l) = null;
   else
-    eqtb[l].rh = cur_mod;
+    equiv(l) = cur_mod;
   get_x_next();
 }
 /* 1036 */
@@ -17231,9 +17221,9 @@ void do_new_internal (void)
       overflow("number of internals", max_internal);
     get_clear_symbol();
     incr(int_ptr);
-    eqtb[cur_sym].lh = 40;
-    eqtb[cur_sym].rh = int_ptr;
-    int_name[int_ptr] = hash[cur_sym].rh;
+    eq_type(cur_sym) = internal_quantity;
+    equiv(cur_sym) = int_ptr;
+    int_name[int_ptr] = text(cur_sym);
     internal[int_ptr] = 0;
     get_x_next();
   } while (!(cur_cmd != comma));
@@ -17267,28 +17257,20 @@ void disp_token (void)
       print_char('"');
       slow_print(cur_mod);
       print_char('"');
-      {
-        if (str_ref[cur_mod] < 127)
-        {
-          if (str_ref[cur_mod] > 1)
-            decr(str_ref[cur_mod]);
-          else
-            flush_string(cur_mod);
-        }
-      }
+      delete_str_ref(cur_mod);
     }
   }
   else
   {
-    slow_print(hash[cur_sym].rh);
+    slow_print(text(cur_sym));
     print_char('=');
-    if (eqtb[cur_sym].lh >= 86)
+    if (eq_type(cur_sym) >= outer_tag)
       print(941);
     print_cmd_mod(cur_cmd, cur_mod);
     if (cur_cmd == defined_macro)
     {
       print_ln();
-      show_macro(cur_mod, 0, 100000L);
+      show_macro(cur_mod, null, 100000);
     }
   }
 }
@@ -17329,44 +17311,44 @@ void do_show_stats (void)
   get_x_next();
 }
 /* 1046 */
-void disp_var (halfword p)
+void disp_var (pointer p)
 {
-  halfword q;
+  pointer q;
   integer n;
 
-  if (mem[p].hh.b0 == 21)
+  if (type(p) == structured)
   {
-    q = mem[p + 1].hh.lh;
+    q = attr_head(p);
     do {
-      disp_var (q);
-      q = mem[q].hh.rh;
-    } while (!(q == 17));
-    q = mem[p + 1].hh.rh;
-    while (mem[q].hh.b1 == 3)
+      disp_var(q);
+      q = link(q);
+    } while (!(q == end_attr));
+    q = subscr_head(p);
+    while (name_type(q) == subscr)
     {
-      disp_var (q);
-      q = mem[q].hh.rh;
+      disp_var(q);
+      q = link(q);
     }
   }
-  else if (mem[p].hh.b0 >= 22)
+  else if (type(p) >= unsuffixed_macro)
   {
     print_nl(261);
     print_variable_name(p);
-    if (mem[p].hh.b0 > 22)
+    if (type(p) > unsuffixed_macro)
       print(665);
     print(953);
     if (file_offset >= max_print_line - 20)
       n = 5;
     else
       n = max_print_line - file_offset - 15;
-    show_macro (mem[p + 1].cint, 0, n);
+    show_macro(value(p), null, n);
   }
-  else if (mem[p].hh.b0 != 0)
+  else if (type(p) != undefined)
   {
     print_nl(261);
     print_variable_name(p);
     print_char('=');
-    print_exp (p, 0);
+    print_exp(p, 0);
   }
 }
 /* 1049 */
@@ -17376,13 +17358,13 @@ void do_show_var (void)
     get_next();
     if (cur_sym > 0)
     {
-      if (cur_sym <= 9769)
+      if (cur_sym <= hash_end)
       {
         if (cur_cmd == tag_token)
         {
-          if (cur_mod != 0)
+          if (cur_mod != null)
           {
-            disp_var (cur_mod);
+            disp_var(cur_mod);
             goto done;
           }
         }
@@ -17398,23 +17380,23 @@ void do_show_dependencies (void)
 {
   pointer p;
 
-  p = mem[13].hh.rh;
-  while (p != 13)
+  p = link(dep_head);
+  while (p != dep_head)
   {
     if (interesting(p))
     {
       print_nl(261);
       print_variable_name(p);
-      if (mem[p].hh.b0 == 17)
+      if (type(p) == dependent)
         print_char('=');
       else
         print(768);
-      print_dependency(mem[p + 1].hh.rh, mem[p].hh.b0);
+      print_dependency(dep_list(p), type(p));
     }
-    p = mem[p + 1].hh.rh;
-    while (mem[p].hh.lh != 0)
-      p = mem[p].hh.rh;
-    p = mem[p].hh.rh;
+    p = dep_list(p);
+    while (info(p) != null)
+      p = link(p);
+    p = link(p);
   }
   get_x_next();
 }
@@ -17422,22 +17404,22 @@ void do_show_dependencies (void)
 void do_show_whatever (void)
 {
   if (interaction == error_stop_mode)
-    ;
+    wake_up_terminal();
   switch (cur_mod)
   {
-    case 0:
+    case show_token_code:
       do_show_token();
       break;
-    case 1:
+    case show_stats_code:
       do_show_stats();
       break;
-    case 2:
+    case show_code:
       do_show();
       break;
-    case 3:
+    case show_var_code:
       do_show_var();
       break;
-    case 4:
+    case show_dependencies_code:
       do_show_dependencies();
       break;
   }
@@ -17465,7 +17447,7 @@ boolean scan_with (void)
   boolean result;
 
   t = cur_mod;
-  cur_type = 1;
+  cur_type = vacuous;
   get_x_next();
   scan_expression();
   result = false;
@@ -17501,203 +17483,197 @@ void find_edges_var (halfword t)
   halfword p;
 
   p = find_variable(t);
-  cur_edges = 0;
-  if (p == 0)
+  cur_edges = null;
+  if (p == null)
   {
     obliterated(t);
     put_get_error();
   }
-  else if (mem[p].hh.b0 != 11)
+  else if (type(p) != picture_type)
   {
     print_err("Variable ");
-    show_token_list(t, 0, 1000, 0);
+    show_token_list(t, null, 1000, 0);
     print(968);
-    print_type(mem[p].hh.b0);
+    print_type(type(p));
     print_char(')');
     help2("I was looking for a \"known\" picture variable.",
       "So I'll not change anything just now.");
     put_get_error();
   }
   else
-    cur_edges = mem[p + 1].cint;
+    cur_edges = value(p);
   flush_node_list(t);
 }
 /* 1059 */
 void do_add_to (void)
 {
-  halfword lhs, rhs;
+  pointer lhs, rhs;
   integer w;
-  halfword p;
-  halfword q;
-  unsigned char addtotype;
+  pointer p;
+  pointer q;
+  unsigned char add_to_type;
 
   get_x_next();
-  var_flag = 68;
+  var_flag = thing_to_add;
   scan_primary();
-  if (cur_type != 20)
+  if (cur_type != token_list)
   {
-    disp_err (null, /* 971 */ "Not a suitable variable");
-    help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
-      /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
-      /* 974 */ "have missed it, if it wasn't followed by the proper token.)", 
-      /* 970 */ "So I'll not change anything just now.");
-    put_get_flush_error (0);
+    disp_err(null, "Not a suitable variable");
+    help4("At this point I needed to see the name of a picture variable.",
+      "(Or perhaps you have indeed presented me with one; I might",
+      "have missed it, if it wasn't followed by the proper token.)", 
+      "So I'll not change anything just now.");
+    put_get_flush_error(0);
   }
   else
   {
     lhs = cur_exp;
-    addtotype = cur_mod;
-    cur_type = 1;
+    add_to_type = cur_mod;
+    cur_type = vacuous;
     get_x_next();
     scan_expression();
-    if (addtotype == 2)
+    if (add_to_type == also_code)
     {
-      find_edges_var (lhs);
-      if (cur_edges == 0)
-        flush_cur_exp (0);
-      else if (cur_type != 11)
+      find_edges_var(lhs);
+      if (cur_edges == null)
+        flush_cur_exp(0);
+      else if (cur_type != picture_type)
       {
-        disp_err (null, /* 975 */ "Improper `addto'");
-        help2(/* 976 */ "This expression should have specified a known picture.",
-          /* 970 */ "So I'll not change anything just now.");
-        put_get_flush_error (0);
+        disp_err(null, "Improper `addto'");
+        help2("This expression should have specified a known picture.",
+          "So I'll not change anything just now.");
+        put_get_flush_error(0);
       }
       else
       {
-        merge_edges (cur_exp);
-        flush_cur_exp (0);
+        merge_edges(cur_exp);
+        flush_cur_exp(0);
       }
     }
     else
     {
-      if (cur_type == 14)
+      if (cur_type == pair_type)
         pair_to_path();
-      if (cur_type != 9)
+      if (cur_type != path_type)
       {
-        disp_err (null, /* 975 */ "Improper `addto'");
-        help2(/* 977 */ "This expression should have been a known path.", 
-          /* 970 */ "So I'll not change anything just now.");
-        put_get_flush_error (0);
-        flush_token_list (lhs);
+        disp_err(null, "Improper `addto'");
+        help2("This expression should have been a known path.", 
+          "So I'll not change anything just now.");
+        put_get_flush_error(0);
+        flush_token_list(lhs);
       }
       else
       {
         rhs = cur_exp;
         w = 1;
-        cur_pen = 3;
+        cur_pen = null_pen;
         while (cur_cmd == with_option)
           if (scan_with ())
           {
-            if (cur_type == 16)
+            if (cur_type == known)
               w = cur_exp;
             else
             {
-              if (mem[cur_pen].hh.lh == 0)
-                toss_pen (cur_pen);
-              else
-                decr(mem[cur_pen].hh.lh);
+              delete_pen_ref(cur_pen);
               cur_pen = cur_exp;
             }
           }
-        find_edges_var (lhs);
-        if (cur_edges == 0)
-          toss_knot_list (rhs);
+        find_edges_var(lhs);
+        if (cur_edges == null)
+          toss_knot_list(rhs);
         else
         {
-          lhs = 0;
-          cur_path_type = addtotype;
-          if (mem[rhs].hh.b0 == 0)
+          lhs = null;
+          cur_path_type = add_to_type;
+          if (left_type(rhs) == endpoint)
           {
             if (cur_path_type == double_path_code)
             {
-              if (mem[rhs].hh.rh == rhs)
+              if (link(rhs) == rhs)
               {
-                mem[rhs + 5].cint = mem[rhs + 1].cint;
-                mem[rhs + 6].cint = mem[rhs + 2].cint;
-                mem[rhs + 3].cint = mem[rhs + 1].cint;
-                mem[rhs + 4].cint = mem[rhs + 2].cint;
-                mem[rhs].hh.b0 = 1;
-                mem[rhs].hh.b1 = 1;
+                right_x(rhs) = x_coord(rhs);
+                right_y(rhs) = y_coord(rhs);
+                left_x(rhs) = x_coord(rhs);
+                left_y(rhs) = y_coord(rhs);
+                left_type(rhs) = explicit;
+                right_type(rhs) = explicit;
               }
               else
               {
-                p = htap_ypoc (rhs);
-                q = mem[p].hh.rh;
-                mem[path_tail + 5].cint = mem[q + 5].cint;
-                mem[path_tail + 6].cint = mem[q + 6].cint;
-                mem[path_tail].hh.b1 = mem[q].hh.b1;
-                mem[path_tail].hh.rh = mem[q].hh.rh;
-                free_node (q, 7);
-                mem[p + 5].cint = mem[rhs + 5].cint;
-                mem[p + 6].cint = mem[rhs + 6].cint;
-                mem[p].hh.b1 = mem[rhs].hh.b1;
-                mem[p].hh.rh = mem[rhs].hh.rh;
-                free_node (rhs, 7);
+                p = htap_ypoc(rhs);
+                q = link(p);
+                right_x(path_tail) = right_x(q);
+                right_y(path_tail) = right_y(q);
+                right_type(path_tail) = right_type(q);
+                link(path_tail) = link(q);
+                free_node(q, knot_node_size);
+                right_x(p) = right_x(rhs);
+                right_y(p) = right_y(rhs);
+                right_type(p) = right_type(rhs);
+                link(p) = link(rhs);
+                free_node(rhs, knot_node_size);
                 rhs = p;
               }
             }
             else
             {
               print_err("Not a cycle");
-              help2(/* 979 */ "That contour should have ended with `..cycle' or `&cycle'.",
-                /* 970 */ "So I'll not change anything just now.");
+              help2("That contour should have ended with `..cycle' or `&cycle'.",
+                "So I'll not change anything just now.");
               put_get_error();
-              toss_knot_list (rhs);
+              toss_knot_list(rhs);
               goto not_found;
             }
           }
           else if (cur_path_type == double_path_code)
-            lhs = htap_ypoc (rhs);
+            lhs = htap_ypoc(rhs);
           cur_wt = w;
-          rhs = make_spec (rhs, mem[cur_pen + 9].cint, internal[tracing_specs]);
+          rhs = make_spec(rhs, max_offset(cur_pen), internal[tracing_specs]);
           if (turning_number <= 0)
           {
             if (cur_path_type != double_path_code)
             {
               if (internal[turning_check] > 0)
               {
-                if ((turning_number < 0) && (mem[cur_pen].hh.rh == 0))
+                if ((turning_number < 0) && (link(cur_pen) == null))
                   cur_wt = -cur_wt;
                 else
                 {
                   if (turning_number == 0)
                   {
-                    if ((internal[turning_check] <= unity) && (mem[cur_pen].hh.rh == 0))
+                    if ((internal[turning_check] <= unity) && (link(cur_pen) == null))
                       goto done;
                     else
-                      print_strange (980);
+                      print_strange(980);
                   }
                   else
-                    print_strange (981);
-                  help3(/* 982 */ "The path doesn't have a counterclockwise orientation,",
-                    /* 983 */ "so I'll probably have trouble drawing it.",
-                    /* 984 */ "(See Chapter 27 of The METAFONTbook for more help.)");
+                    print_strange(981);
+                  help3("The path doesn't have a counterclockwise orientation,",
+                    "so I'll probably have trouble drawing it.",
+                    "(See Chapter 27 of The METAFONTbook for more help.)");
                   put_get_error();
                 }
               }
             }
           }
           done:;
-          if (mem[cur_pen + 9].cint == 0)
-            fill_spec (rhs);
+          if (max_offset(cur_pen) == 0)
+            fill_spec(rhs);
           else
-            fill_envelope (rhs);
-          if (lhs != 0)
+            fill_envelope(rhs);
+          if (lhs != null)
           {
             rev_turns = true;
-            lhs = make_spec (lhs, mem[cur_pen + 9].cint, internal[tracing_specs]);
+            lhs = make_spec(lhs, max_offset(cur_pen), internal[tracing_specs]);
             rev_turns = false;
-            if (mem[cur_pen + 9].cint == 0)
-              fill_spec (lhs);
+            if (max_offset(cur_pen) == 0)
+              fill_spec(lhs);
             else
-              fill_envelope (lhs);
+              fill_envelope(lhs);
           }
           not_found:;
         }
-        if (mem[cur_pen].hh.lh == 0)
-          toss_pen (cur_pen);
-        else
-          decr(mem[cur_pen].hh.lh);
+        delete_pen_ref(cur_pen);
       }
     }
   }
@@ -17714,9 +17690,9 @@ scaled tfm_check (small_number m)
     help1("Font metric dimensions must be less than 2048pt.");
     put_get_error();
     if (internal[m] > 0)
-      Result = 134217727L;
+      Result = fraction_half - 1;
     else
-      Result = -134217727L;
+      Result = 1 - fraction_half;
   }
   else
     Result = internal[m];
@@ -17728,31 +17704,31 @@ void do_ship_out (void)
   integer c;
 
   get_x_next();
-  var_flag = 83;
+  var_flag = semicolon;
   scan_expression();
-  if (cur_type != 20)
+  if (cur_type != token_list)
   {
-    if (cur_type == 11)
+    if (cur_type == picture_type)
       cur_edges = cur_exp;
     else
     {
       {
-        disp_err (null, /* 971 */ "Not a suitable variable");
-        help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
-          /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
-          /* 974 */ "have missed it, if it wasn't followed by the proper token.)", 
-          /* 970 */ "So I'll not change anything just now.");
-        put_get_flush_error (0);
+        disp_err(null, "Not a suitable variable");
+        help4("At this point I needed to see the name of a picture variable.",
+          "(Or perhaps you have indeed presented me with one; I might",
+          "have missed it, if it wasn't followed by the proper token.)", 
+          "So I'll not change anything just now.");
+        put_get_flush_error(0);
       }
       goto lab_exit;
     }
   }
   else
   {
-    find_edges_var (cur_exp);
-    cur_type = 1;
+    find_edges_var(cur_exp);
+    cur_type = vacuous;
   }
-  if (cur_edges != 0)
+  if (cur_edges != null)
   {
     c = round_unscaled(internal[char_code]) % 256;
     if (c < 0)
@@ -17764,14 +17740,14 @@ void do_ship_out (void)
     char_exists[c] = true;
     gf_dx[c] = internal[char_dx];
     gf_dy[c] = internal[char_dy];
-    tfm_width[c] = tfm_check (20);
-    tfm_height[c] = tfm_check (21);
-    tfm_depth[c] = tfm_check (22);
-    tfm_ital_corr[c] = tfm_check (23);
+    tfm_width[c] = tfm_check(char_wd);
+    tfm_height[c] = tfm_check(char_ht);
+    tfm_depth[c] = tfm_check(char_dp);
+    tfm_ital_corr[c] = tfm_check(char_ic);
     if (internal[proofing] >= 0)
-      ship_out (c);
+      ship_out(c);
   }
-  flush_cur_exp (0);
+  flush_cur_exp(0);
   lab_exit:;
 }
 /* 1071 */
@@ -17780,24 +17756,24 @@ void do_display (void)
   halfword e;
 
   get_x_next();
-  var_flag = 73;
+  var_flag = in_window;
   scan_primary();
-  if (cur_type != 20)
+  if (cur_type != token_list)
   {
-    disp_err (null, /* 971 */ "Not a suitable variable");
-    help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
-      /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
-      /* 974 */ "have missed it, if it wasn't followed by the proper token.)",
-      /* 970 */ "So I'll not change anything just now.");
-    put_get_flush_error (0);
+    disp_err(null, "Not a suitable variable");
+    help4("At this point I needed to see the name of a picture variable.",
+      "(Or perhaps you have indeed presented me with one; I might",
+      "have missed it, if it wasn't followed by the proper token.)",
+      "So I'll not change anything just now.");
+    put_get_flush_error(0);
   }
   else
   {
     e = cur_exp;
-    cur_type = 1;
+    cur_type = vacuous;
     get_x_next();
     scan_expression();
-    if (cur_type != 16)
+    if (cur_type != known)
       goto common_ending;
     cur_exp = round_unscaled(cur_exp);
     if (cur_exp < 0)
@@ -17806,17 +17782,17 @@ void do_display (void)
       goto not_found;
     if (!window_open[cur_exp])
       goto not_found;
-    find_edges_var (e);
+    find_edges_var(e);
     if (cur_edges != 0)
-      disp_edges (cur_exp);
+      disp_edges(cur_exp);
     goto lab_exit;
   not_found:
     cur_exp = cur_exp * unity;
   common_ending:
-    disp_err (null, /* 985 */ "Bad window number");
-    help1(/* 986 */ "It should be the number of an open window.");
-    put_get_flush_error (0);
-    flush_token_list (e);
+    disp_err(null, "Bad window number");
+    help1("It should be the number of an open window.");
+    put_get_flush_error(0);
+    flush_token_list(e);
   }
   lab_exit:;
 }
@@ -17824,7 +17800,7 @@ void do_display (void)
 boolean get_pair (command_code c)
 {
   boolean Result;
-  halfword p;
+  pointer p;
   boolean b;
 
   if (cur_cmd != c)
@@ -17833,16 +17809,16 @@ boolean get_pair (command_code c)
   {
     get_x_next();
     scan_expression();
-    if (nice_pair (cur_exp, cur_type))
+    if (nice_pair(cur_exp, cur_type))
     {
-      p = mem[cur_exp + 1].cint;
-      cur_x = mem[p + 1].cint;
-      cur_y = mem[p + 3].cint;
+      p = value(cur_exp);
+      cur_x = value(x_part_loc(p));
+      cur_y = value(y_part_loc(p));
       b = true;
     }
     else
       b = false;
-    flush_cur_exp (0);
+    flush_cur_exp(0);
     Result = b;
   }
   return Result;
@@ -17855,61 +17831,61 @@ void do_open_window (void)
 
   get_x_next();
   scan_expression();
-  if (cur_type != 16)
+  if (cur_type != known)
     goto not_found;
   k = round_unscaled(cur_exp);
   if (k < 0)
     goto not_found;
   if (k > 15)
     goto not_found;
-  if (!get_pair (70))
+  if (!get_pair(from_token))
     goto not_found;
   r0 = cur_x;
   c0 = cur_y;
-  if (!get_pair (71))
+  if (!get_pair(to_token))
     goto not_found;
   r1 = cur_x;
   c1 = cur_y;
-  if (!get_pair (72))
+  if (!get_pair(at_token))
     goto not_found;
-  open_a_window (k, r0, c0, r1, c1, cur_x, cur_y);
+  open_a_window(k, r0, c0, r1, c1, cur_x, cur_y);
   goto lab_exit;
 not_found:
   print_err("Improper `openwindow'");
-  help2(/* 988 */ "Say `openwindow k from (r0,c0) to (r1,c1) at (x,y)',",
-    /* 989 */ "where all quantities are known and k is between 0 and 15.");
+  help2("Say `openwindow k from (r0,c0) to (r1,c1) at (x,y)',",
+    "where all quantities are known and k is between 0 and 15.");
   put_get_error();
   lab_exit:;
 }
 /* 1047 */
 void do_cull (void)
 {
-  halfword e;
+  pointer e;
   unsigned char keeping;
-  integer w, win, wout;
+  integer w, w_in, w_out;
 
   w = 1;
   get_x_next();
-  var_flag = 67;
+  var_flag = cull_op;
   scan_primary();
-  if (cur_type != 20)
+  if (cur_type != token_list)
   {
-    disp_err (null, /* 971 */ "Not a suitable variable");
-    help4(/* 972 */ "At this point I needed to see the name of a picture variable.",
-      /* 973 */ "(Or perhaps you have indeed presented me with one; I might",
-      /* 974 */ "have missed it, if it wasn't followed by the proper token.)",
-      /* 970 */ "So I'll not change anything just now.");
-    put_get_flush_error (0);
+    disp_err(null, "Not a suitable variable");
+    help4("At this point I needed to see the name of a picture variable.",
+      "(Or perhaps you have indeed presented me with one; I might",
+      "have missed it, if it wasn't followed by the proper token.)",
+      "So I'll not change anything just now.");
+    put_get_flush_error(0);
   }
   else
   {
     e = cur_exp;
-    cur_type = 1;
+    cur_type = vacuous;
     keeping = cur_mod;
-    if (!get_pair (67))
+    if (!get_pair (cull_op))
       goto not_found;
-    while ((cur_cmd == with_option) && (cur_mod == 16))
-      if (scan_with ())
+    while ((cur_cmd == with_option) && (cur_mod == known))
+      if (scan_with())
         w = cur_exp;
     if (cur_x > cur_y)
       goto not_found;
@@ -17917,25 +17893,25 @@ void do_cull (void)
     {
       if ((cur_x > 0) || (cur_y < 0))
         goto not_found;
-      wout = w;
-      win = 0;
+      w_out = w;
+      w_in = 0;
     }
     else
     {
       if ((cur_x <= 0) && (cur_y >= 0))
         goto not_found;
-      wout = 0;
-      win = w;
+      w_out = 0;
+      w_in = w;
     }
-    find_edges_var (e);
-    if (cur_edges != 0)
-      cull_edges (floorunscaled (cur_x + 65535L), floorunscaled (cur_y), wout, win);
+    find_edges_var(e);
+    if (cur_edges != null)
+      cull_edges(floor_unscaled(cur_x + unity - 1), floor_unscaled(cur_y), w_out, w_in);
     goto lab_exit;
   not_found:
     print_err("Bad culling amounts");
-    help1(/* 991 */ "Always cull by known amounts that exclude 0.");
+    help1("Always cull by known amounts that exclude 0.");
     put_get_error();
-    flush_token_list (e);
+    flush_token_list(e);
   }
   lab_exit:;
 }
@@ -17947,68 +17923,59 @@ void do_message (void)
   m = cur_mod;
   get_x_next();
   scan_expression();
-  if (cur_type != 4)
+  if (cur_type != string_type)
   {
-    disp_err (null, /* 700 */ "Not a string");
-    help1(/* 995 */ "A message should be a known string expression.");
+    disp_err(null, "Not a string");
+    help1("A message should be a known string expression.");
     put_get_error();
   }
   else
     switch (m)
     {
-      case 0:
+      case message_code:
         {
           print_nl(261);
           slow_print(cur_exp);
         }
         break;
-      case 1:
+      case err_message_code:
         {
           print_err("");
           slow_print(cur_exp);
           if (err_help != 0)
             use_err_help = true;
           else if (long_help_seen)
-            help1(/* 996 */ "(That was another `errmessage'.)");
+            help1("(That was another `errmessage'.)");
           else
           {
             if (interaction < error_stop_mode)
               long_help_seen = true;
-            help4(/* 997 */ "This error message was generated by an `errmessage'",
-              /* 998 */ "command, so I can't give any explicit help.",
-              /* 999 */ "Pretend that you're Miss Marple: Examine all clues,",
-              /* 1000 */ "and deduce the truth by inspired guesses.");
+            help4("This error message was generated by an `errmessage'",
+              "command, so I can't give any explicit help.",
+              "Pretend that you're Miss Marple: Examine all clues,",
+              "and deduce the truth by inspired guesses.");
           }
           put_get_error();
           use_err_help = false;
         }
         break;
-      case 2:
+      case err_help_code:
         {
           if (err_help != 0)
           {
-            if (str_ref[err_help]< 127)
-            {
-              if (str_ref[err_help] > 1)
-                decr(str_ref[err_help]);
-              else
-                flush_string (err_help);
-            }
+            delete_str_ref(err_help);
           }
-          if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 0)
+          if (length(cur_exp) == 0)
             err_help = 0;
           else
           {
             err_help = cur_exp;
-            {
-              if (str_ref[err_help]< 127)
-                incr(str_ref[err_help]);
-            }
+            add_str_ref(err_help);
           }
         }
         break;
     }
-  flush_cur_exp (0);
+  flush_cur_exp(0);
 }
 /* 1103 */
 eight_bits get_code (void)
@@ -18018,7 +17985,7 @@ eight_bits get_code (void)
 
   get_x_next();
   scan_expression();
-  if (cur_type == 16)
+  if (cur_type == known)
   {
     c = round_unscaled(cur_exp);
     if (c >= 0)
@@ -18027,18 +17994,18 @@ eight_bits get_code (void)
         goto found;
     }
   }
-  else if (cur_type == 4)
+  else if (cur_type == string_type)
   {
-    if ((str_start[cur_exp + 1] - str_start[cur_exp]) == 1)
+    if ((length(cur_exp) == 1)
     {
       c = str_pool[str_start[cur_exp]];
       goto found;
     }
   }
-  disp_err (null, /* 1009 */ "Invalid code has been replaced by 0");
-  help2(/* 1010 */ "I was looking for a number between 0 and 255, or for a",
-    /* 1011 */ "string of length 1. Didn't find it; will use 0 instead.");
-  put_get_flush_error (0);
+  disp_err(null, "Invalid code has been replaced by 0");
+  help2("I was looking for a number between 0 and 255, or for a",
+    "string of length 1. Didn't find it; will use 0 instead.");
+  put_get_flush_error(0);
   c = 0;
 found:
   Result = c;
@@ -18047,7 +18014,7 @@ found:
 /* 1104 */
 void set_tag (halfword c, small_number t, halfword r)
 {
-  if (char_tag[c] == 0)
+  if (char_tag[c] == no_tag)
   {
     char_tag[c] = t;
     char_remainder[c] = r;
@@ -18073,18 +18040,18 @@ void set_tag (halfword c, small_number t, halfword r)
     print(1015);
     switch (char_tag[c])
     {
-      case 1:
+      case lig_tag:
         print(1016);
         break;
-      case 2:
+      case list_tag:
         print(1017);
         break;
-      case 3:
+      case ext_tag:
         print(1006);
         break;
     }
-    help2(/* 1018 */ "It's not legal to label a character more than once.",
-      /* 970 */ "So I'll not change anything just now.");
+    help2("It's not legal to label a character more than once.",
+      "So I'll not change anything just now.");
     put_get_error();
   }
 }
@@ -18097,18 +18064,18 @@ void do_tfm_command (void)
 
   switch (cur_mod)
   {
-    case 0:
+    case char_list_code:
       {
         c = get_code();
         while (cur_cmd == colon)
         {
           cc = get_code();
-          set_tag (c, 2, cc);
+          set_tag(c, list_tag, cc);
           c = cc;
         }
       }
       break;
-    case 1:
+    case lig_table_code:
       {
         lk_started = false;
       lab_continue:
@@ -18118,30 +18085,20 @@ void do_tfm_command (void)
           c = get_code();
           if (nl - skip_table[c] > 128)
           {
-            {
-              print_err("Too far to skip");
-              help1(/* 1036 */ "At most 127 lig/kern steps can separate skipto1 from 1::.");
-              error();
-              ll = skip_table[c];
-              do {
-                lll = lig_kern[ll].b0;
-                lig_kern[ll].b0 = 128;
-                ll = ll - lll;
-              } while (!(lll == 0));
-            }
-            skip_table[c] = lig_table_size;
+            skip_error(skip_table[c]);
+            skip_table[c] = undefined_label;
           }
-          if (skip_table[c] == lig_table_size)
-            lig_kern[nl - 1].b0 = 0;
+          if (skip_table[c] == undefined_label)
+            skip_byte(nl - 1) = qi(0);
           else
-            lig_kern[nl - 1].b0 = nl - skip_table[c] - 1;
+            skip_byte(nl - 1) = qi(nl - skip_table[c] - 1);
           skip_table[c] = nl - 1;
           goto done;
         }
         if (cur_cmd == bchar_label)
         {
           c = 256;
-          cur_cmd = 81;
+          cur_cmd = colon;
         }
         else
         {
@@ -18155,30 +18112,20 @@ void do_tfm_command (void)
             if (c == 256)
               bch_label = nl;
             else
-              set_tag (c, 1, nl);
+              set_tag(c, lig_tag, nl);
           }
-          else if (skip_table[c]< lig_table_size)
+          else if (skip_table[c] < undefined_label)
           {
             ll = skip_table[c];
-            skip_table[c] = lig_table_size;
+            skip_table[c] = undefined_label;
             do {
-              lll = lig_kern[ll].b0;
+              lll = qo(skip_byte(ll));
               if (nl - ll > 128)
               {
-                {
-                  print_err("Too far to skip");
-                  help1(/* 1036 */ "At most 127 lig/kern steps can separate skipto1 from 1::.");
-                  error();
-                  ll = ll;
-                  do {
-                    lll = lig_kern[ll].b0;
-                    lig_kern[ll].b0 = 128;
-                    ll = ll - lll;
-                  } while (!(lll == 0));
-                }
+                skip_error(ll);
                 goto lab_continue;
               }
-              lig_kern[ll].b0 = nl - ll - 1;
+              skip_byte(ll) = qi(nl - ll - 1);
               ll = ll - lll;
             } while (!(lll == 0));
           }
@@ -18186,23 +18133,23 @@ void do_tfm_command (void)
         }
         if (cur_cmd == lig_kern_token)
         {
-          lig_kern[nl].b1 = c;
-          lig_kern[nl].b0 = 0;
+          next_char(nl) = qi(c);
+          skip_byte(nl) = qi(0);
           if (cur_mod < 128)
           {
-            lig_kern[nl].b2 = cur_mod;
-            lig_kern[nl].b3 = get_code();
+            op_byte(nl) = qi(cur_mod);
+            rem_byte(nl) = qi(get_code);
           }
           else
           {
             get_x_next();
             scan_expression();
-            if (cur_type != 16)
+            if (cur_type != known)
             {
-              disp_err (null, /* 1037 */ "Improper kern");
-              help2(/* 1038 */ "The amount of kern should be a known numeric value.",
-                /* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
-              put_get_flush_error (0);
+              disp_err(null, "Improper kern");
+              help2("The amount of kern should be a known numeric value.",
+                "I'm zeroing this one. Proceed, with fingers crossed.");
+              put_get_flush_error(0);
             }
             kern[nk] = cur_exp;
             k = 0;
@@ -18211,82 +18158,66 @@ void do_tfm_command (void)
             if (k == nk)
             {
               if (nk == max_kerns)
-                overflow (/* 1034 */ "kern", max_kerns);
+                overflow("kern", max_kerns);
               incr(nk);
             }
-            lig_kern[nl].b2 = 128 + (k / 256);
-            lig_kern[nl].b3 = (k % 256);
+            op_byte(nl) = kern_flag + (k div 256);
+            rem_byte(nl) = qi((k % 256));
           }
           lk_started = true;
         }
         else
         {
           print_err("Illegal ligtable step");
-          help1(/* 1024 */ "I was looking for `=:' or `kern' here.");
+          help1("I was looking for `=:' or `kern' here.");
           back_error();
-          lig_kern[nl].b1 = 0;
-          lig_kern[nl].b2 = 0;
-          lig_kern[nl].b3 = 0;
-          lig_kern[nl].b0 = 129;
+          next_char(nl) = qi(0);
+          op_byte(nl) = qi(0);
+          rem_byte(nl) = qi(0);
+          skip_byte(nl) = stop_flag + 1;
         }
         if (nl == lig_table_size)
-          overflow (/* 1025 */ "ligtable size", lig_table_size);
+          overflow("ligtable size", lig_table_size);
         incr(nl);
         if (cur_cmd == comma)
           goto lab_continue;
-        if (lig_kern[nl - 1].b0 < 128)
-          lig_kern[nl - 1].b0 = 128;
+        if (skip_byte(nl - 1) < stop_flag)
+          skip_byte(nl - 1) = stop_flag;
         done:;
       }
       break;
-    case 2:
+    case extensible_code:
       {
         if (ne == 256)
-          overflow (/* 1006 */ "extensible", 256);
+          overflow("extensible", 256);
         c = get_code();
-        set_tag (c, 3, ne);
+        set_tag(c, ext_tag, ne);
         if (cur_cmd != colon)
-        {
-          missing_err (58);
-          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
-          back_error();
-        }
-        exten[ne].b0 = get_code();
+          missing_extensible_punctuation(58);
+        ext_top(ne) = qi(get_code);
         if (cur_cmd != comma)
-        {
-          missing_err (44);
-          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
-          back_error();
-        }
-        exten[ne].b1 = get_code();
+          missing_extensible_punctuation(44);
+        ext_mid(ne) = qi(get_code);
         if (cur_cmd != comma)
-        {
-          missing_err (44);
-          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
-          back_error();
-        }
-        exten[ne].b2 = get_code();
+          missing_extensible_punctuation(44);
+        ext_bot(ne) = qi(get_code);
         if (cur_cmd != comma)
-        {
-          missing_err (44);
-          help1(/* 1039 */ "I'm processing `extensible c: t,m,b,r'.");
-          back_error();
-        }
-        exten[ne].b3 = get_code();
+          missing_extensible_punctuation(44);
+        ext_rep(ne) = qi(get_code);
         incr(ne);
       }
       break;
-    case 3:
-    case 4:
+    case header_byte_code:
+    case font_dimen_code:
       {
         c = cur_mod;
         get_x_next();
         scan_expression();
-        if ((cur_type != 16) || (cur_exp < half_unit))
+        if ((cur_type != known) || (cur_exp < half_unit))
         {
-          disp_err (null, /* 1019 */ "Improper location");
-          help2(/* 1020 */ "I was looking for a known, positive number.",
-            /* 1021 */ "For safety's sake I'll ignore the present command.");
+          disp_err(null, "Improper location");
+          help2("I was looking for a known, positive number.",
+            "For safety's sake I'll ignore the present command.");
           put_get_error();
         }
         else
@@ -18294,21 +18225,21 @@ void do_tfm_command (void)
           j = round_unscaled(cur_exp);
           if (cur_cmd != colon)
           {
-            missing_err (58);
-            help1(/* 1022 */ "A colon should follow a headerbyte or fontinfo location.");
+            missing_err(58);
+            help1("A colon should follow a headerbyte or fontinfo location.");
             back_error();
           }
-          if (c == 3)
+          if (c == header_byte_code)
             do {
               if (j > header_size)
-                overflow (/* 1007 */ "headerbyte", header_size);
+                overflow("headerbyte", header_size);
               header_byte[j] = get_code();
               incr(j);
             } while (!(cur_cmd != comma));
           else
             do {
               if (j > max_font_dimen)
-                overflow (/* 1008 */ "fontdimen", max_font_dimen);
+                overflow("fontdimen", max_font_dimen);
               while (j > np)
               {
                 incr(np);
@@ -18316,11 +18247,11 @@ void do_tfm_command (void)
               }
               get_x_next();
               scan_expression();
-              if (cur_type != 16)
+              if (cur_type != known)
               {
-                disp_err (null, /* 1040 */ "Improper font parameter");
-                help1(/* 308 */ "I'm zeroing this one. Proceed, with fingers crossed.");
-                put_get_flush_error (0);
+                disp_err(null, "Improper font parameter");
+                help1("I'm zeroing this one. Proceed, with fingers crossed.");
+                put_get_flush_error(0);
               }
               param[j] = cur_exp;
               incr(j);
@@ -18342,24 +18273,24 @@ void do_special (void)
   {
     if (cur_type != m)
     {
-      disp_err (null, /* 1061 */ "Unsuitable expression");
-      help1(/* 1062 */ "The expression shown above has the wrong type to be output.");
+      disp_err(null, "Unsuitable expression");
+      help1("The expression shown above has the wrong type to be output.");
       put_get_error();
     }
     else
     {
       if (output_file_name == 0)
         init_gf();
-      if (m == 4)
-        gf_string (cur_exp, 0);
+      if (m == string_type)
+        gf_string(cur_exp, 0);
       else
       {
-        gf_out (yyy);
-        gf_four (cur_exp);
+        gf_out(yyy);
+        gf_four(cur_exp);
       }
     }
   }
-  flush_cur_exp (0);
+  flush_cur_exp(0);
 }
 /* 1186 */
 void store_base_file (void)
@@ -18526,7 +18457,7 @@ void store_base_file (void)
 /* 989 */
 void do_statement (void)
 {
-  cur_type = 1;
+  cur_type = vacuous;
   get_x_next();
   if (cur_cmd > plus_or_minus)
   {
@@ -18535,18 +18466,18 @@ void do_statement (void)
       print_err("A statement can't begin with `");
       print_cmd_mod (cur_cmd, cur_mod);
       print_char('\'');
-      help5(/* 870 */ "I was looking for the beginning of a new statement.",
-        /* 871 */ "If you just proceed without changing anything, I'll ignore",
-        /* 872 */ "everything up to the next `;'. Please insert a semicolon",
-        /* 873 */ "now in front of anything that you don't want me to delete.",
-        /* 874 */ "(See Chapter 27 of The METAFONTbook for an example.)");
+      help5("I was looking for the beginning of a new statement.",
+        "If you just proceed without changing anything, I'll ignore",
+        "everything up to the next `;'. Please insert a semicolon",
+        "now in front of anything that you don't want me to delete.",
+        "(See Chapter 27 of The METAFONTbook for an example.)");
       back_error();
       get_x_next();
     }
   }
-  else if (cur_cmd > type_name)
+  else if (cur_cmd > max_statement_command)
   {
-    var_flag = 77;
+    var_flag = assignment;
     scan_expression();
     if (cur_cmd < end_group)
     {
@@ -18554,46 +18485,46 @@ void do_statement (void)
         do_equation();
       else if (cur_cmd == assignment)
         do_assignment();
-      else if (cur_type == 4)
+      else if (cur_type == string_type)
       {
         if (internal[tracing_titles] > 0)
         {
           print_nl(261);
           slow_print(cur_exp);
-          fflush (stdout);
+          fflush(stdout);
         }
         if (internal[proofing] > 0)
         {
           if (output_file_name == 0)
             init_gf();
-          gf_string (1063, cur_exp);
+          gf_string(1063, cur_exp);
         }
       }
-      else if (cur_type != 1)
+      else if (cur_type != vacuous)
       {
-        disp_err (null, /* 879 */ "Isolated expression");
-        help3(/* 880 */ "I couldn't find an `=' or `:=' after the",
-          /* 881 */ "expression that is shown above this error message,",
-          /* 882 */ "so I guess I'll just ignore it and carry on.");
+        disp_err(null, "Isolated expression");
+        help3("I couldn't find an `=' or `:=' after the",
+          "expression that is shown above this error message,",
+          "so I guess I'll just ignore it and carry on.");
         put_get_error();
       }
-      flush_cur_exp (0);
-      cur_type = 1;
+      flush_cur_exp(0);
+      cur_type = vacuous;
     }
   }
   else
   {
     if (internal[tracing_commands] > 0)
-      show_cmd_mod (cur_cmd, cur_mod);
+      show_cmd_mod(cur_cmd, cur_mod);
     switch (cur_cmd)
     {
       case type_name:
         do_type_declaration();
         break;
       case macro_def:
-        if (cur_mod > 2)
+        if (cur_mod > var_def)
           make_op_def();
-        else if (cur_mod > 0)
+        else if (cur_mod > end_def)
           scan_def();
         break;
       case random_seed:
@@ -18603,10 +18534,6 @@ void do_statement (void)
         {
           print_ln();
           interaction = cur_mod;
-          if (interaction == batch_mode)
-            kpsemaketexdiscarderrors = 1;
-          else
-            kpsemaketexdiscarderrors = 0;
           if (interaction == batch_mode)
             selector = no_print;
           else
@@ -18625,7 +18552,7 @@ void do_statement (void)
       case save_command:
         do {
           get_symbol();
-          save_variable (cur_sym);
+          save_variable(cur_sym);
           get_x_next();
         } while (!(cur_cmd != comma));
         break;
@@ -18673,33 +18600,27 @@ void do_statement (void)
         do_special();
         break;
     }
-    cur_type = 1;
+    cur_type = vacuous;
   }
   if (cur_cmd < semicolon)
   {
     print_err("Extra tokens will be flushed");
-    help6(/* 876 */ "I've just read as much of that statement as I could fathom,",
-      /* 877 */ "so a semicolon should have been next. It's very puzzling...",
-      /* 878 */ "but I'll try to get myself back together, by ignoring",
-      /* 872 */ "everything up to the next `;'. Please insert a semicolon",
-      /* 873 */ "now in front of anything that you don't want me to delete.",
-      /* 874 */ "(See Chapter 27 of The METAFONTbook for an example.)");
+    help6("I've just read as much of that statement as I could fathom,",
+      "so a semicolon should have been next. It's very puzzling...",
+      "but I'll try to get myself back together, by ignoring",
+      "everything up to the next `;'. Please insert a semicolon",
+      "now in front of anything that you don't want me to delete.",
+      "(See Chapter 27 of The METAFONTbook for an example.)");
     back_error();
-    scanner_status = 2;
+    scanner_status = flushing;
     do {
       get_next();
       if (cur_cmd == string_token)
       {
-        if (str_ref[cur_mod]< 127)
-        {
-          if (str_ref[cur_mod] > 1)
-            decr(str_ref[cur_mod]);
-          else
-            flush_string (cur_mod);
-        }
+        delete_str_ref(cur_mod);
       }
     } while (!(cur_cmd > comma));
-    scanner_status = 0;
+    scanner_status = normal;
   }
   error_count = 0;
 }
