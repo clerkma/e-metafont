@@ -18639,50 +18639,50 @@ void main_control (void)
   } while (!(cur_cmd == stop));
 }
 /* 1117 */
-halfword sort_in (scaled v)
+pointer sort_in (scaled v)
 {
-  halfword Result;
-  halfword p, q, r;
+  pointer Result;
+  pointer p, q, r;
 
-  p = mem_top - 1;
+  p = temp_head;
   while (true)
   {
-    q = mem[p].hh.rh;
-    if (v <= mem[q + 1].cint)
+    q = link(p);
+    if (v <= value(q))
       goto found;
     p = q;
   }
 found:
-  if (v < mem[q + 1].cint)
+  if (v < value(q))
   {
-    r = get_node (2);
-    mem[r + 1].cint = v;
-    mem[r].hh.rh = q;
-    mem[p].hh.rh = r;
+    r = get_node(value_node_size);
+    value(r) = v;
+    link(r) = q;
+    link(p) = r;
   }
-  Result = mem[p].hh.rh;
+  Result = link(p);
   return Result;
 }
 /* 1118 */
 integer min_cover (scaled d)
 {
   integer Result;
-  halfword p;
+  pointer p;
   scaled l;
   integer m;
 
   m = 0;
-  p = mem[mem_top - 1].hh.rh;
-  perturbation = 2147483647L;
-  while (p != 19)
+  p = link(temp_head);
+  perturbation = el_gordo;
+  while (p != inf_val)
   {
     incr(m);
-    l = mem[p + 1].cint;
+    l = value(p);
     do {
-      p = mem[p].hh.rh;
-    } while (!(mem[p + 1].cint > l + d));
-    if (mem[p + 1].cint - l < perturbation)
-      perturbation = mem[p + 1].cint - l;
+      p = link(p);
+    } while (!(value(p) > l + d));
+    if (value(p) - l < perturbation)
+      perturbation = value(p) - l;
   }
   Result = m;
   return Result;
@@ -18693,15 +18693,15 @@ scaled threshold (integer m)
   scaled Result;
   scaled d;
 
-  excess = min_cover (0) - m;
+  excess = min_cover(0) - m;
   if (excess <= 0)
     Result = 0;
   else
   {
     do {
       d = perturbation;
-    } while (!(min_cover (d + d) <= m));
-    while (min_cover (d) > m)
+    } while (!(min_cover(d + d) <= m));
+    while (min_cover(d) > m)
       d = perturbation;
     Result = d;
   }
@@ -18712,41 +18712,41 @@ integer skimp (integer m)
 {
   integer Result;
   scaled d;
-  halfword p, q, r;
+  pointer p, q, r;
   scaled l;
   scaled v;
 
-  d = threshold_fn (m);
+  d = threshold(m);
   perturbation = 0;
-  q = mem_top - 1;
+  q = temp_head;
   m = 0;
-  p = mem[mem_top - 1].hh.rh;
-  while (p != 19)
+  p = link(temp_head);
+  while (p != inf_val)
   {
     incr(m);
-    l = mem[p + 1].cint;
-    mem[p].hh.lh = m;
-    if (mem[mem[p].hh.rh + 1].cint <= l + d)
+    l = value(p);
+    info(p) = m;
+    if (value(link(p)) <= l + d)
     {
       do {
-        p = mem[p].hh.rh;
-        mem[p].hh.lh = m;
+        p = link(p);
+        info(p) = m;
         decr(excess);
         if (excess == 0)
           d = 0;
-      } while (!(mem[mem[p].hh.rh + 1].cint > l + d));
-      v = l + half(mem[p + 1].cint - l);
-      if (mem[p + 1].cint - v > perturbation)
-        perturbation = mem[p + 1].cint - v;
+      } while (!(value(link(p)) > l + d));
+      v = l + half(value(p) - l);
+      if (value(p) - v > perturbation)
+        perturbation = value(p) - v;
       r = q;
       do {
-        r = mem[r].hh.rh;
-        mem[r + 1].cint = v;
+        r = link(r);
+        value(r) = v;
       } while (!(r == p));
-      mem[q].hh.rh = p;
+      link(q) = p;
     }
     q = p;
-    p = mem[p].hh.rh;
+    p = link(p);
   }
   Result = m;
   return Result;
@@ -18770,7 +18770,7 @@ void fix_design_size (void)
   {
     if (d != 0)
       print_nl(1044);
-    d = 8388608L;
+    d = 8388608;
     internal[design_size] = d;
   }
   if (header_byte[5] < 0)
@@ -18781,7 +18781,7 @@ void fix_design_size (void)
       {
         if (header_byte[8] < 0)
         {
-          header_byte[5] = d / 1048576L;
+          header_byte[5] = d / 1048576;
           header_byte[6] = (d / 4096) % 256;
           header_byte[7] = (d / 16) % 256;
           header_byte[8] = (d % 16) * 16;
@@ -18789,9 +18789,9 @@ void fix_design_size (void)
       }
     }
   }
-  max_tfm_dimen = 16 * internal[design_size] - 1 - internal[design_size] / 2097152L;
+  max_tfm_dimen = 16 * internal[design_size] - 1 - internal[design_size] / 2097152;
   if (max_tfm_dimen >= fraction_half)
-    max_tfm_dimen = 134217727L;
+    max_tfm_dimen = fraction_half - 1;
 }
 /* 1129 */
 integer dimen_out (scaled x)
@@ -18834,7 +18834,7 @@ void fix_check_sum (void)
           {
             if (char_exists[k])
             {
-              x = dimen_out (mem[tfm_width[k]+ 1].cint) + (k + 4) * 4194304L;
+              x = dimen_out(value(tfm_width[k])) + (k + 4) * 4194304;
               lb1 = (lb1 + lb1 + x) % 255;
               lb2 = (lb2 + lb2 + x) % 253;
               lb3 = (lb3 + lb3 + x) % 251;
@@ -18852,7 +18852,7 @@ void fix_check_sum (void)
   }
   for (k = 1; k <= 4; k++)
   {
-    if (header_byte[k]< 0)
+    if (header_byte[k] < 0)
       header_byte[k] = 0;
   }
 lab_exit:;
@@ -18907,7 +18907,8 @@ found:
 /* 1187 */
 boolean load_base_file (void)
 {
-  boolean Result; integer k;
+  boolean Result;
+  integer k;
   halfword p, q;
   integer x;
   four_quarters w;
@@ -19165,25 +19166,24 @@ lab_exit:;
 /* 823 */
 void scan_primary (void)
 {
-  halfword p, q, r;
+  pointer p, q, r;
   quarterword c;
-  unsigned char myvar_flag;
-  halfword ldelim, rdelim;
-  integer groupline;
+  unsigned char my_var_flag;
+  pointer l_delim, r_delim;
+  integer group_line;
   scaled num, denom;
-  halfword prehead, posthead, tail;
+  pointer pre_head, post_head, tail;
   small_number tt;
-  halfword t;
-  halfword macroref;
+  pointer t;
+  pointer macro_ref;
 
-  myvar_flag = var_flag;
+  my_var_flag = var_flag;
   var_flag = 0;
 lab_restart:
   check_arith();
-  ;
 #ifdef TEXMF_DEBUG
   if (panicking)
-    check_mem (false);
+    check_mem(false);
 #endif /* TEXMF_DEBUG */
   if (interrupt != 0)
   {
@@ -19198,77 +19198,72 @@ lab_restart:
   {
     case left_delimiter:
       {
-        ldelim = cur_sym;
-        rdelim = cur_mod;
+        l_delim = cur_sym;
+        r_delim = cur_mod;
         get_x_next();
         scan_expression();
-        if ((cur_cmd == comma) && (cur_type >= 16))
+        if ((cur_cmd == comma) && (cur_type >= known))
         {
-          p = get_node (2);
-          mem[p].hh.b0 = 14;
-          mem[p].hh.b1 = 11;
-          init_big_node (p);
-          q = mem[p + 1].cint;
-          stash_in (q);
+          p = get_node(value_node_size);
+          type(p) = pair_type;
+          name_type(p) = capsule;
+          init_big_node(p);
+          q = value(p);
+          stash_in(x_part_loc(q));
           get_x_next();
           scan_expression();
-          if (cur_type < 16)
+          if (cur_type < known)
           {
-            disp_err (null, /* 775 */ "Nonnumeric ypart has been replaced by 0");
-            help4(/* 776 */ "I thought you were giving me a pair `(x,y)'; but",
-              /* 777 */ "after finding a nice xpart `x' I found a ypart `y'",
-              /* 778 */ "that isn't of numeric type. So I've changed y to zero.",
-              /* 779 */ "(The y that I didn't like appears above the error message.)");
-            put_get_flush_error (0);
+            disp_err(null, "Nonnumeric ypart has been replaced by 0");
+            help4("I thought you were giving me a pair `(x,y)'; but",
+              "after finding a nice xpart `x' I found a ypart `y'",
+              "that isn't of numeric type. So I've changed y to zero.",
+              "(The y that I didn't like appears above the error message.)");
+            put_get_flush_error(0);
           }
-          stash_in (q + 2);
-          check_delimiter (ldelim, rdelim);
-          cur_type = 14;
+          stash_in(y_part_loc(q));
+          check_delimiter(l_delim, r_delim);
+          cur_type = pair_type;
           cur_exp = p;
         }
         else
-          check_delimiter (ldelim, rdelim);
+          check_delimiter(l_delim, r_delim);
       }
       break;
     case begin_group:
       {
-        groupline = line;
+        group_line = line;
         if (internal[tracing_commands] > 0)
           show_cmd_mod (cur_cmd, cur_mod);
-        {
-          p = get_avail();
-          mem[p].hh.lh = 0;
-          mem[p].hh.rh = save_ptr;
-          save_ptr = p;
-        }
+        save_boundary_item(p);
         do {
           do_statement();
         } while (!(cur_cmd != semicolon));
         if (cur_cmd != end_group)
         {
           print_err("A group begun on line ");
-          print_int(groupline);
+          print_int(group_line);
           print(781);
-          help2(/* 782 */ "I saw a `begingroup' back there that hasn't been matched",
-            /* 783 */ "by `endgroup'. So I've inserted `endgroup' now.");
+          help2("I saw a `begingroup' back there that hasn't been matched",
+            "by `endgroup'. So I've inserted `endgroup' now.");
           back_error();
           cur_cmd = end_group;
         }
         unsave();
         if (internal[tracing_commands] > 0)
-          show_cmd_mod (cur_cmd, cur_mod);
+          show_cmd_mod(cur_cmd, cur_mod);
       }
       break;
     case string_token:
       {
-        cur_type = 4;
+        cur_type = string_type;
         cur_exp = cur_mod;
       }
       break;
     case numeric_token:
       {
         cur_exp = cur_mod;
-        cur_type = 16;
+        cur_type = known;
         get_x_next();
         if (cur_cmd != slash)
         {
@@ -19282,8 +19277,8 @@ lab_restart:
           {
             back_input();
             cur_cmd = slash;
-            cur_mod = 72;
-            cur_sym = 9761;
+            cur_mod = over;
+            cur_sym = frozen_slash;
             goto done;
           }
           num = cur_exp;
@@ -19291,27 +19286,26 @@ lab_restart:
           if (denom == 0)
           {
             print_err("Division by zero");
-            help1(/* 785 */ "I'll pretend that you meant to divide by 1.");
+            help1("I'll pretend that you meant to divide by 1.");
             error();
           }
-          else cur_exp = make_scaled (num, denom);
-          {
-            check_arith();
-          }
+          else
+            cur_exp = make_scaled(num, denom);
+          check_arith();
           get_x_next();
         }
-        if (cur_cmd >= type_name)
+        if (cur_cmd >= min_primary_command)
         {
           if (cur_cmd < numeric_token)
           {
             p = stash_cur_exp();
             scan_primary();
-            if ((abs(num) >= abs(denom)) || (cur_type < 14))
-              do_binary (p, 71);
+            if ((abs(num) >= abs(denom)) || (cur_type < pair_type))
+              do_binary(p, times);
             else
             {
-              frac_mult (num, denom);
-              free_node (p, 2);
+              frac_mult(num, denom);
+              free_node(p, value_node_size);
             }
           }
         }
@@ -19319,7 +19313,7 @@ lab_restart:
       }
       break;
     case nullary:
-      do_nullary (cur_mod);
+      do_nullary(cur_mod);
       break;
     case unary:
     case type_name:
@@ -19329,7 +19323,7 @@ lab_restart:
         c = cur_mod;
         get_x_next();
         scan_primary();
-        do_unary (c);
+        do_unary(c);
         goto done;
       }
       break;
@@ -19342,14 +19336,14 @@ lab_restart:
         {
           missing_err (479);
           print(716);
-          print_cmd_mod (37, c);
-          help1(/* 717 */ "I've got the first argument; will look now for the other.");
+          print_cmd_mod(37, c);
+          help1("I've got the first argument; will look now for the other.");
           back_error();
         }
         p = stash_cur_exp();
         get_x_next();
         scan_primary();
-        do_binary (p, c);
+        do_binary(p, c);
         goto done;
       }
       break;
@@ -19359,8 +19353,8 @@ lab_restart:
         scan_suffix();
         old_setting = selector;
         selector = new_string;
-        show_token_list (cur_exp, 0, 100000L, 0);
-        flush_token_list (cur_exp);
+        show_token_list(cur_exp, null, 100000, 0);
+        flush_token_list(cur_exp);
         cur_exp = make_string();
         selector = old_setting;
         cur_type = 4;
@@ -19370,101 +19364,88 @@ lab_restart:
     case internal_quantity:
       {
         q = cur_mod;
-        if (myvar_flag == 77)
+        if (my_var_flag == assignment)
         {
           get_x_next();
           if (cur_cmd == assignment)
           {
             cur_exp = get_avail();
-            mem[cur_exp].hh.lh = q + 9769;
-            cur_type = 20;
+            info(cur_exp) = q + hash_end;
+            cur_type = token_list;
             goto done;
           }
           back_input();
         }
-        cur_type = 16;
+        cur_type = known;
         cur_exp = internal[q];
       }
       break;
     case capsule_token:
-      make_exp_copy (cur_mod);
+      make_exp_copy(cur_mod);
       break;
     case tag_token:
       {
-        {
-          prehead = avail;
-          if (prehead == 0)
-            prehead = get_avail();
-          else
-          {
-            avail = mem[prehead].hh.rh;
-            mem[prehead].hh.rh = 0;
-            ;
-#ifdef STAT
-            incr(dyn_used);
-#endif /* STAT */
-          }
-        }
-        tail = prehead;
-        posthead = 0;
-        tt = 1;
+        fast_get_avail(pre_head);
+        tail = pre_head;
+        post_head = null;
+        tt = vacuous;
         while (true)
         {
           t = cur_tok();
-          mem[tail].hh.rh = t;
-          if (tt != 0)
+          link(tail) = t;
+          if (tt != undefined)
           {
             {
-              p = mem[prehead].hh.rh;
-              q = mem[p].hh.lh;
-              tt = 0;
-              if (eqtb[q].lh % 86 == 41)
+              p = link(pre_head);
+              q = info(p);
+              tt = undefined;
+              if (eq_type(q) % outer_tag == tag_token)
               {
-                q = eqtb[q].rh;
-                if (q == 0)
+                q = equiv(q);
+                if (q == null)
                   goto done2;
                 while (true)
                 {
-                  p = mem[p].hh.rh;
-                  if (p == 0)
+                  p = link(p);
+                  if (p == null)
                   {
-                    tt = mem[q].hh.b0;
+                    tt = type(q);
                     goto done2;
                   }
-                  if (mem[q].hh.b0 != 21)
+                  if (type(q) != structured)
                     goto done2;
-                  q = mem[mem[q + 1].hh.lh].hh.rh;
+                  q = link(attr_head(q));
                   if (p >= hi_mem_min)
                   {
                     do {
-                      q = mem[q].hh.rh;
-                    } while (!(mem[q + 2].hh.lh >= mem[p].hh.lh));
-                    if (mem[q + 2].hh.lh > mem[p].hh.lh)
+                      q = link(q);
+                    } while (!(attr_loc(q) >= info(p)));
+                    if (attr_loc(q) > info(p))
                       goto done2;
                   }
                 }
               }
               done2:;
             }
-            if (tt >= 22)
+            if (tt >= unsuffixed_macro)
             {
-              mem[tail].hh.rh = 0;
-              if (tt > 22)
+              link(tail) = null;
+              if (tt > unsuffixed_macro)
               {
-                posthead = get_avail();
-                tail = posthead;
-                mem[tail].hh.rh = t;
-                tt = 0;
-                macroref = mem[q + 1].cint;
-                incr(mem[macroref].hh.lh);
+                post_head = get_avail();
+                tail = post_head;
+                link(tail) = t;
+                tt = undefined;
+                macro_ref = value(q);
+                add_mac_ref(macro_ref);
               }
               else
               {
                 p = get_avail();
-                mem[prehead].hh.lh = mem[prehead].hh.rh;
-                mem[prehead].hh.rh = p;
-                mem[p].hh.lh = t;
-                macro_call (mem[q + 1].cint, prehead, 0);
+                info(pre_head) = link(pre_head);
+                link(pre_head) = p;
+                info(p) = t;
+                macro_call(value(q), pre_head, null);
                 get_x_next();
                 goto lab_restart;
               }
@@ -19482,11 +19463,11 @@ lab_restart:
               back_expr();
               cur_cmd = left_bracket;
               cur_mod = 0;
-              cur_sym = 9760;
+              cur_sym = frozen_left_bracket;
             }
             else
             {
-              if (cur_type != 16)
+              if (cur_type != known)
                 bad_sub_script();
               cur_cmd = numeric_token;
               cur_mod = cur_exp;
@@ -19499,55 +19480,48 @@ lab_restart:
             goto done1;
         }
       done1:
-        if (posthead != 0)
+        if (post_head != null)
         {
           back_input();
           p = get_avail();
-          q = mem[posthead].hh.rh;
-          mem[prehead].hh.lh = mem[prehead].hh.rh;
-          mem[prehead].hh.rh = posthead;
-          mem[posthead].hh.lh = q;
-          mem[posthead].hh.rh = p;
-          mem[p].hh.lh = mem[q].hh.rh;
-          mem[q].hh.rh = 0;
-          macro_call (macroref, prehead, 0);
-          decr(mem[macroref].hh.lh);
+          q = link(post_head);
+          info(pre_head) = link(pre_head);
+          link(pre_head) = post_head;
+          info(post_head) = q;
+          link(post_head) = p;
+          info(p) = link(q);
+          link(q) = null;
+          macro_call(macro_ref, pre_head, null);
+          decr(ref_count(macro_ref));
           get_x_next();
           goto lab_restart;
         }
-        q = mem[prehead].hh.rh;
+        q = link(pre_head);
+        free_avail(pre_head);
+        if (cur_cmd == my_var_flag)
         {
-          mem[prehead].hh.rh = avail;
-          avail = prehead;
-          ;
-#ifdef STAT
-          decr(dyn_used);
-#endif /* STAT */
-        }
-        if (cur_cmd == myvar_flag)
-        {
-          cur_type = 20;
+          cur_type = token_list;
           cur_exp = q;
           goto done;
         }
-        p = find_variable (q);
-        if (p != 0)
-          make_exp_copy (p);
+        p = find_variable(q);
+        if (p != null)
+          make_exp_copy(p);
         else
         {
-          obliterated (q);
+          obliterated(q);
           help_line[2] = 797;
           help_line[1] = 798;
           help_line[0] = 799;
-          put_get_flush_error (0);
+          put_get_flush_error(0);
         }
-        flush_node_list (q);
+        flush_node_list(q);
         goto done;
       }
       break;
     default:
       {
-        bad_exp (769);
+        bad_exp(769);
         goto lab_restart;
       }
       break;
@@ -19556,7 +19530,7 @@ lab_restart:
 done:
   if (cur_cmd == left_bracket)
   {
-    if (cur_type >= 16)
+    if (cur_type >= known)
     {
       p = stash_cur_exp();
       get_x_next();
@@ -19568,9 +19542,9 @@ done:
           back_expr();
           cur_cmd = left_bracket;
           cur_mod = 0;
-          cur_sym = 9760;
+          cur_sym = frozen_left_bracket;
         }
-        unstash_cur_exp (p);
+        unstash_cur_exp(p);
       }
       else
       {
@@ -19579,17 +19553,17 @@ done:
         scan_expression();
         if (cur_cmd != right_bracket)
         {
-          missing_err (93);
-          help3(/* 801 */ "I've scanned an expression of the form `a[b,c',",
-            /* 802 */ "so a right bracket should have come next.", 
-            /* 698 */ "I shall pretend that one was there.");
+          missing_err(93);
+          help3("I've scanned an expression of the form `a[b,c',",
+            "so a right bracket should have come next.", 
+            "I shall pretend that one was there.");
           back_error();
         }
         r = stash_cur_exp();
-        make_exp_copy (q);
-        do_binary (r, 70);
-        do_binary (p, 71);
-        do_binary (q, 69);
+        make_exp_copy(q);
+        do_binary(r, minus);
+        do_binary(p, times);
+        do_binary(q, plus);
         get_x_next();
       }
     }
@@ -19598,8 +19572,8 @@ done:
 /* 860 */
 void scan_suffix (void)
 {
-  halfword h, t;
-  halfword p;
+  pointer h, t;
+  pointer p;
 
   h = get_avail();
   t = h;
@@ -19609,77 +19583,70 @@ void scan_suffix (void)
     {
       get_x_next();
       scan_expression();
-      if (cur_type != 16)
+      if (cur_type != known)
         bad_sub_script();
       if (cur_cmd != right_bracket)
       {
-        missing_err (93);
-        help3(/* 803 */ "I've seen a `[' and a subscript value, in a suffix,",
-          /* 802 */ "so a right bracket should have come next.",
-          /* 698 */ "I shall pretend that one was there.");
+        missing_err(93);
+        help3("I've seen a `[' and a subscript value, in a suffix,",
+          "so a right bracket should have come next.",
+          "I shall pretend that one was there.");
         back_error();
       }
       cur_cmd = numeric_token;
       cur_mod = cur_exp;
     }
     if (cur_cmd == numeric_token)
-      p = new_num_tok (cur_mod);
+      p = new_num_tok(cur_mod);
     else if ((cur_cmd == tag_token) || (cur_cmd == internal_quantity))
     {
       p = get_avail();
-      mem[p].hh.lh = cur_sym;
+      info(p) = cur_sym;
     }
     else
       goto done;
-    mem[t].hh.rh = p;
+    link(t) = p;
     t = p;
     get_x_next();
   }
 done:
-  cur_exp = mem[h].hh.rh;
-  {
-    mem[h].hh.rh = avail;
-    avail = h;
-    ;
-#ifdef STAT
-    decr(dyn_used);
-#endif /* STAT */
-  }
-  cur_type = 20;
+  cur_exp = link(h);
+  free_avail(h);
+  cur_type = token_list;
 }
 /* 862 */
 void scan_secondary (void)
 {
-  halfword p;
+  pointer p;
   halfword c, d;
-  halfword macname;
+  pointer mac_name;
 
 lab_restart:
-  if ((cur_cmd < type_name) || (cur_cmd > plus_or_minus))
-    bad_exp (804);
+  if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
+    bad_exp(804);
   scan_primary();
 lab_continue:
-  if (cur_cmd <= secondary_binary)
+  if (cur_cmd <= max_secondary_command)
   {
-    if (cur_cmd >= and_command)
+    if (cur_cmd >= min_secondary_command)
     {
       p = stash_cur_exp();
       c = cur_mod;
       d = cur_cmd;
-      if (d == 53)
+      if (d == secondary_primary_macro)
       {
-        macname = cur_sym;
-        incr(mem[c].hh.lh);
+        mac_name = cur_sym;
+        add_mac_ref(c);
       }
       get_x_next();
       scan_primary();
-      if (d != 53)
-       do_binary (p, c);
+      if (d != secondary_primary_macro)
+       do_binary(p, c);
       else
       {
         back_input();
-        binary_mac (p, c, macname);
-        decr(mem[c].hh.lh);
+        binary_mac(p, c, mac_name);
+        decr(ref_count(c));
         get_x_next();
         goto lab_restart;
       }
@@ -19690,38 +19657,38 @@ lab_continue:
 /* 864 */
 void scan_tertiary (void)
 {
-  halfword p;
+  pointer p;
   halfword c, d;
-  halfword macname;
+  halfword mac_name;
 
 lab_restart:
-  if ((cur_cmd < type_name) || (cur_cmd > plus_or_minus))
-    bad_exp (805);
+  if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
+    bad_exp(805);
   scan_secondary();
-  if (cur_type == 8)
+  if (cur_type == future_pen)
     materialize_pen();
 lab_continue:
-  if (cur_cmd <= tertiary_binary)
+  if (cur_cmd <= max_tertiary_command)
   {
-    if (cur_cmd >= plus_or_minus)
+    if (cur_cmd >= min_tertiary_command)
     {
       p = stash_cur_exp();
       c = cur_mod;
       d = cur_cmd;
-      if (d == 44)
+      if (d == tertiary_secondary_macro)
       {
-        macname = cur_sym;
-        incr(mem[c].hh.lh);
+        mac_name = cur_sym;
+        add_mac_ref(c);
       }
       get_x_next();
       scan_secondary();
-      if (d != 44)
-        do_binary (p, c);
+      if (d != tertiary_secondary_macro)
+        do_binary(p, c);
       else
       {
         back_input();
-        binary_mac (p, c, macname);
-        decr(mem[c].hh.lh);
+        binary_mac(p, c, mac_name);
+        decr(ref_count(c));
         get_x_next();
         goto lab_restart;
       }
@@ -20056,13 +20023,13 @@ void get_boolean (void)
 {
   get_x_next();
   scan_expression();
-  if (cur_type != 2)
+  if (cur_type != boolean_type)
   {
     disp_err(null, "Undefined condition will be treated as `false'");
     help2("The expression shown above should have had a definite",
       "true-or-false value. I'm changing it to `false'.");
     put_get_flush_error(31);
-    cur_type = 2;
+    cur_type = boolean_type;
   }
 }
 /* 224 */
@@ -20075,14 +20042,14 @@ void print_capsule (void)
 /* 224 */
 void token_recycle (void)
 {
-  recycle_value (g_pointer);
+  recycle_value(g_pointer);
 }
 /* 1205 */
 void close_files_and_terminate (void)
 {
   integer k;
   integer lh;
-  short lkoffset;
+  short lk_offset;
   halfword p;
   scaled x;
 
@@ -20106,82 +20073,82 @@ void close_files_and_terminate (void)
 #endif /* STAT */
   if ((gf_prev_ptr > 0) || (internal[fontmaking] > 0))
   {
-    rover = 23;
-    mem[rover].hh.rh = 268435455L;
+    rover = lo_mem_stat_max + 1;
+    link(rover) = empty_flag;
     lo_mem_max = hi_mem_min - 1;
-    if (lo_mem_max - rover > 268435455L)
-      lo_mem_max = 268435455L + rover;
-    mem[rover].hh.lh = lo_mem_max - rover;
-    mem[rover + 1].hh.lh = rover;
-    mem[rover + 1].hh.rh = rover;
-    mem[lo_mem_max].hh.rh = 0;
-    mem[lo_mem_max].hh.lh = 0;
-    mem[mem_top - 1].hh.rh = 19;
+    if (lo_mem_max - rover > max_halfword)
+      lo_mem_max = max_halfword + rover;
+    node_size(rover) = lo_mem_max - rover;
+    llink(rover) = rover;
+    rlink(rover) = rover;
+    link(lo_mem_max) = null;
+    info(lo_mem_max) = null;
+    clear_the_list();
     for (k = bc; k <= ec; k++)
     {
       if (char_exists[k])
-        tfm_width[k] = sort_in (tfm_width[k]);
+        tfm_width[k] = sort_in(tfm_width[k]);
     }
-    nw = skimp (255) + 1;
-    dimen_head[1] = mem[mem_top - 1].hh.rh;
+    nw = skimp(255) + 1;
+    dimen_head[1] = link(temp_head);
     if (perturbation >= 4096)
-      tfm_warning (20);
+      tfm_warning(char_wd);
     fix_design_size();
     fix_check_sum();
     if (internal[fontmaking] > 0)
     {
-      mem[mem_top - 1].hh.rh = 19;
+      clear_the_list();
       for (k = bc; k <= ec; k++)
       {
         if (char_exists[k])
         {
           if (tfm_height[k] == 0)
-            tfm_height[k] = 15;
+            tfm_height[k] = zero_val;
           else
-            tfm_height[k] = sort_in (tfm_height[k]);
+            tfm_height[k] = sort_in(tfm_height[k]);
         }
       }
-      nh = skimp (15) + 1;
-      dimen_head[2] = mem[mem_top - 1].hh.rh;
+      nh = skimp(15) + 1;
+      dimen_head[2] = link(temp_head);
       if (perturbation >= 4096)
-        tfm_warning (21);
+        tfm_warning(char_ht);
       mem[mem_top - 1].hh.rh = 19;
       for (k = bc; k <= ec; k++)
       {
         if (char_exists[k])
         {
           if (tfm_depth[k] == 0)
-            tfm_depth[k] = 15;
+            tfm_depth[k] = zero_val;
           else
-            tfm_depth[k] = sort_in (tfm_depth[k]);
+            tfm_depth[k] = sort_in(tfm_depth[k]);
         }
       }
-      nd = skimp (15) + 1;
-      dimen_head[3] = mem[mem_top - 1].hh.rh;
+      nd = skimp(15) + 1;
+      dimen_head[3] = link(temp_head);
       if (perturbation >= 4096)
-        tfm_warning (22);
-      mem[mem_top - 1].hh.rh = 19;
+        tfm_warning(char_dp);
+      clear_the_list();
       for (k = bc; k <= ec; k++)
       {
         if (char_exists[k])
         {
           if (tfm_ital_corr[k] == 0)
-            tfm_ital_corr[k] = 15;
+            tfm_ital_corr[k] = zero_val;
           else
             tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
         }
       }
-      ni = skimp (63) + 1;
-      dimen_head[4] = mem[mem_top - 1].hh.rh;
+      ni = skimp(63) + 1;
+      dimen_head[4] = link(temp_head);
       if (perturbation >= 4096)
-        tfm_warning (23);
-      internal[33] = 0;
+        tfm_warning(char_ic);
+      internal[fontmaking] = 0;
       if (job_name == 0)
         open_log_file();
-      pack_job_name (1045);
-      while (!bopenout (tfm_file))
-        prompt_file_name (1046, 1045);
-      metric_file_name = b_make_name_string (tfm_file);
+      pack_job_name(1045);
+      while (!b_open_out(tfm_file))
+        prompt_file_name(1046, 1045);
+      metric_file_name = b_make_name_string(tfm_file);
       k = header_size;
       while (header_byte[k] < 0)
         decr(k);
@@ -20193,84 +20160,82 @@ void close_files_and_terminate (void)
       {
         bchar = -1;
         lk_started = false;
-        lkoffset = 0;
+        lk_offset = 0;
       }
       else
       {
         lk_started = true;
-        lkoffset = 1;
+        lk_offset = 1;
       }
       k = label_ptr;
-      if (label_loc[k]+ lkoffset > 255)
+      if (label_loc[k]+ lk_offset > 255)
       {
-        lkoffset = 0;
+        lk_offset = 0;
         lk_started = false;
         do {
-          char_remainder[label_char[k]] = lkoffset;
+          char_remainder[label_char[k]] = lk_offset;
           while (label_loc[k - 1] == label_loc[k])
           {
             decr(k);
-            char_remainder[label_char[k]] = lkoffset;
+            char_remainder[label_char[k]] = lk_offset;
           }
-          incr(lkoffset);
+          incr(lk_offset);
           decr(k);
-        } while (!(lkoffset + label_loc[k]< 256));
+        } while (!(lk_offset + label_loc[k] < 256));
       }
-      if (lkoffset > 0)
+      if (lk_offset > 0)
         while (k > 0)
         {
-          char_remainder[label_char[k]] = char_remainder[label_char[k]] + lkoffset;
+          char_remainder[label_char[k]] = char_remainder[label_char[k]] + lk_offset;
           decr(k);
         }
-      if (bch_label < lig_table_size)
+      if (bch_label < undefined_label)
       {
-        lig_kern[nl].b0 = 255;
-        lig_kern[nl].b1 = 0;
-        lig_kern[nl].b2 = ((bch_label + lkoffset) / 256);
-        lig_kern[nl].b3 = ((bch_label + lkoffset) % 256);
+        skip_byte(nl) = qi(255);
+        next_char(nl) = qi(0);
+        op_byte(nl) = qi(((bch_label + lk_offset) / 256));
+        rem_byte(nl) = qi(((bch_label + lk_offset) % 256));
         incr(nl);
       }
-      put2bytes (tfm_file, 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + lkoffset + nk + ne + np);
-      put2bytes (tfm_file, lh);
-      put2bytes (tfm_file, bc);
-      put2bytes (tfm_file, ec);
-      put2bytes (tfm_file, nw);
-      put2bytes (tfm_file, nh);
-      put2bytes (tfm_file, nd);
-      put2bytes (tfm_file, ni);
-      put2bytes (tfm_file, nl + lkoffset);
-      put2bytes (tfm_file, nk);
-      put2bytes (tfm_file, ne);
-      put2bytes (tfm_file, np);
+      tfm_two(6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + lk_offset + nk + ne + np);
+      tfm_two(lh);
+      tfm_two(bc);
+      tfm_two(ec);
+      tfm_two(nw);
+      tfm_two(nh);
+      tfm_two(nd);
+      tfm_two(ni);
+      tfm_two(nl + lk_offset);
+      tfm_two(nk);
+      tfm_two(ne);
+      tfm_two(np);
       for (k = 1; k <= 4 * lh; k++)
       {
         if (header_byte[k]< 0)
           header_byte[k] = 0;
-        putbyte (header_byte[k], tfm_file);
+        tfm_out(header_byte[k]);
       }
       for (k = bc; k <= ec; k++)
       {
         if (!char_exists[k])
-          put4bytes (tfm_file, 0);
+          tfm_four(0);
         else
         {
-          putbyte (mem[tfm_width[k]].hh.lh, tfm_file);
-          putbyte ((mem[tfm_height[k]].hh.lh) * 16 + mem[
-          tfm_depth[k]].hh.lh, tfm_file);
-          putbyte ((mem[tfm_ital_corr[k]].hh.lh) * 4 +
-          char_tag[k], tfm_file);
-          putbyte (char_remainder[k], tfm_file);
+          tfm_out(info(tfm_width[k]));
+          tfm_out((info(tfm_height[k])) * 16 + info(tfm_depth[k]));
+          tfm_out((info(tfm_ital_corr[k])) * 4 + char_tag[k]);
+          tfm_out(char_remainder[k]);
         }
       }
       tfm_changed = 0;
       for (k = 1; k <= 4; k++)
       {
-        put4bytes (tfm_file, 0);
+        tfm_four(0);
         p = dimen_head[k];
-        while (p != 19)
+        while (p != inf_val)
         {
-          put4bytes (tfm_file, dimen_out (mem[p + 1].cint));
-          p = mem[p].hh.rh;
+          tfm_four(dimen_out(value(p)));
+          p = link(p);
         }
       }
       for (k = 0; k <= 255; k++)
@@ -20280,70 +20245,65 @@ void close_files_and_terminate (void)
           print_nl(1048);
           print_int(k);
           print(1049);
-          ll = skip_table[k];
-          do {
-            lll = lig_kern[ll].b0;
-            lig_kern[ll].b0 = 128;
-            ll = ll - lll;
-          } while (!(lll == 0));
+          cancel_skips(skip_table[k]);
         }
       }
       if (lk_started)
       {
-        putbyte (255, tfm_file);
-        putbyte (bchar, tfm_file);
-        put2bytes (tfm_file, 0);
+        tfm_out(255);
+        tfm_out(bchar);
+        tfm_two(0);
       }
       else
       {
-        for (k = 1; k <= lkoffset; k++)
+        for (k = 1; k <= lk_offset; k++)
         {
           ll = label_loc[label_ptr];
           if (bchar < 0)
           {
-            putbyte (254, tfm_file);
-            putbyte (0, tfm_file);
+            tfm_out(254);
+            tfm_out(0);
           }
           else
           {
-            putbyte (255, tfm_file);
-            putbyte (bchar, tfm_file);
+            tfm_out(255);
+            tfm_out(bchar);
           }
-          put2bytes (tfm_file, ll + lkoffset);
+          tfm_two(ll + lk_offset);
           do {
             decr(label_ptr);
-          } while (!(label_loc[label_ptr]< ll));
+          } while (!(label_loc[label_ptr] < ll));
         }
       }
       for (k = 0; k <= nl - 1; k++)
       {
-        tfm_qqqq (lig_kern[k]);
+        tfm_qqqq(lig_kern[k]);
       }
       for (k = 0; k <= nk - 1; k++)
       {
-        put4bytes (tfm_file, dimen_out (kern[k]));
+        tfm_four(dimen_out(kern[k]));
       }
       for (k = 0; k <= ne - 1; k++)
       {
-        tfm_qqqq (exten[k]);
+        tfm_qqqq(exten[k]);
       }
       for (k = 1; k <= np; k++)
       {
         if (k == 1)
         {
           if (abs(param[1]) < fraction_half)
-            put4bytes (tfm_file, param[1]* 16);
+            tfm_four(param[1] * 16);
           else
           {
             incr(tfm_changed);
             if (param[1] > 0)
-              put4bytes (tfm_file, 2147483647L);
+              tfm_four(el_gordo);
             else
-              put4bytes (tfm_file, -2147483647L);
+              tfm_four(-el_gordo);
           }
         }
         else
-          put4bytes (tfm_file, dimen_out (param[k]));
+          tfm_four(dimen_out(param[k]));
       }
       if (tfm_changed > 0)
       {
@@ -20363,29 +20323,29 @@ void close_files_and_terminate (void)
         { putc (' ', log_file);  putc ('\n', log_file); }
         if (bch_label < lig_table_size)
           decr(nl);
-        fprintf (log_file, "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n", "(You used ", (long)nw, "w,", (long)nh, "h,", (long)nd, "d,", (long)ni, "i,", (long)nl, "l,", (long)nk, "k,", (long)ne, "e,", (long)np, "p metric file positions");
-        fprintf (log_file, "%s%s%ld%s%ld%s%ld%s\n", "  out of ", "256w,16h,16d,64i,", (long)lig_table_size, "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
+        fprintf(log_file, "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n", "(You used ", (long)nw, "w,", (long)nh, "h,", (long)nd, "d,", (long)ni, "i,", (long)nl, "l,", (long)nk, "k,", (long)ne, "e,", (long)np, "p metric file positions");
+        fprintf(log_file, "%s%s%ld%s%ld%s%ld%s\n", "  out of ", "256w,16h,16d,64i,", (long)lig_table_size, "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
       }
 #endif /* STAT */
       print_nl(1047);
-      print_file_name (0, metric_file_name, 0);
+      print_file_name(0, metric_file_name, 0);
       print_char('.');
-      b_close (tfm_file);
+      b_close(tfm_file);
     }
     if (gf_prev_ptr > 0)
     {
-      gf_out (post);
-      gf_four (gf_prev_ptr);
+      gf_out(post);
+      gf_four(gf_prev_ptr);
       gf_prev_ptr = gf_offset + gf_ptr - 5;
-      gf_four (internal[design_size] * 16);
+      gf_four(internal[design_size] * 16);
       for (k = 1; k <= 4; k++)
-        gf_out (header_byte[k]);
-      gf_four (internal[hppp]);
-      gf_four (internal[vppp]);
-      gf_four (gf_min_m);
-      gf_four (gf_max_m);
-      gf_four (gf_min_n);
-      gf_four (gf_max_n);
+        gf_out(header_byte[k]);
+      gf_four(internal[hppp]);
+      gf_four(internal[vppp]);
+      gf_four(gf_min_m);
+      gf_four(gf_max_m);
+      gf_four(gf_min_n);
+      gf_four(gf_max_n);
       for (k = 0; k <= 255; k++)
       {
         if (char_exists[k])
@@ -20393,16 +20353,16 @@ void close_files_and_terminate (void)
           x = gf_dx[k] / unity;
           if ((gf_dy[k] == 0) && (x >= 0) && (x < 256) && (gf_dx[k] == x * unity))
           {
-            gf_out (char_loc + 1);
-            gf_out (k);
-            gf_out (x);
+            gf_out(char_loc + 1);
+            gf_out(k);
+            gf_out(x);
           }
           else
           {
-            gf_out (char_loc);
-            gf_out (k);
-            gf_four (gf_dx[k]);
-            gf_four (gf_dy[k]);
+            gf_out(char_loc);
+            gf_out(k);
+            gf_four(gf_dx[k]);
+            gf_four(gf_dy[k]);
           }
           x = mem[tfm_width[k]+ 1].cint;
           if (abs(x) > max_tfm_dimen)
@@ -20420,7 +20380,7 @@ void close_files_and_terminate (void)
       }
       gf_out(post_post);
       gf_four(gf_prev_ptr);
-      gf_out (gf_id_byte);
+      gf_out(gf_id_byte);
       k = 4 + ((gf_buf_size - gf_ptr) % 4);
       while (k > 0)
       {
@@ -20473,10 +20433,12 @@ void final_cleanup (void)
   if (job_name == 0)
     open_log_file();
   while (input_ptr > 0)
+  {
     if ((index > 15))
       end_token_list();
     else
       end_file_reading();
+  }
   while (loop_ptr != 0)
     stop_iteration();
   while (open_parens > 0)
@@ -20494,11 +20456,11 @@ void final_cleanup (void)
       print_int(if_line);
     }
     print(1080);
-    if_line = mem[cond_ptr + 1].cint;
-    cur_if = mem[cond_ptr].hh.b1;
+    if_line = if_line_field(cond_ptr);
+    cur_if = name_type(cond_ptr);
     loop_ptr = cond_ptr;
-    cond_ptr = mem[cond_ptr].hh.rh;
-    freenode(loop_ptr, 2);
+    cond_ptr = link(cond_ptr);
+    free_node(loop_ptr, if_node_size);
   }
   if (history != spotless)
   {
@@ -20678,22 +20640,22 @@ void init_tab (void)
 {
   integer k;
 
-  rover = 23;
-  mem[rover].hh.rh = 268435455;
-  mem[rover].hh.lh = 1000;
-  mem[rover + 1].hh.lh = rover;
-  mem[rover + 1].hh.rh = rover;
+  rover = lo_mem_stat_max + 1;
+  link(rover) = empty_flag;
+  node_size(rover) = 1000;
+  llink(rover) = rover;
+  rlink(rover) = rover;
   lo_mem_max = rover + 1000;
-  mem[lo_mem_max].hh.rh = 0;
-  mem[lo_mem_max].hh.lh = 0;
+  link(lo_mem_max) = null;
+  info(lo_mem_max) = null;
   for (k = mem_top - 2; k <= mem_top; k++)
   {
     mem[k] = mem[lo_mem_max];
   }
-  avail = 0;
+  avail = null;
   mem_end = mem_top;
-  hi_mem_min = mem_top - 2;
-  var_used = 23;
+  hi_mem_min = hi_mem_stat_min;
+  var_used = lo_mem_stat_max + 1 - mem_min;
   dyn_used = mem_top + 1 - hi_mem_min;
   int_name[tracing_titles] = 409;
   int_name[tracing_equations] = 410;
@@ -20736,51 +20698,51 @@ void init_tab (void)
   int_name[turning_check] = 447;
   int_name[warning_check] = 448;
   int_name[boundary_char] = 449;
-  hash_used = 9757;
+  hash_used = frozen_inaccessible;
   st_count = 0;
-  hash[9768].rh = 451;
-  hash[9766].rh = 452;
-  hash[9767].rh = 453;
-  hash[9765].rh = 454;
-  hash[9764].rh = 455;
-  hash[9763].rh = 59;
-  hash[9762].rh = 58;
-  hash[9761].rh = 47;
-  hash[9760].rh = 91;
-  hash[9759].rh = 41;
-  hash[9757].rh = 456;
-  eqtb[9759].lh = 62;
-  mem[19].hh.lh = 9770;
-  mem[19].hh.rh = 0;
-  mem[mem_top].hh.lh = 268435455;
-  mem[3].hh.lh = 0;
-  mem[3].hh.rh = 0;
-  mem[4].hh.lh = 1;
-  mem[4].hh.rh = 0;
-  for (k = 5; k <= 11; k++)
+  text(frozen_bad_vardef) = 449;
+  text(frozen_fi) = 450;
+  text(frozen_end_group) = 451;
+  text(frozen_end_def) = 452;
+  text(frozen_end_for) = 453;
+  text(frozen_semicolon) = 59;
+  text(frozen_colon) = 58;
+  text(frozen_slash) = 47;
+  text(frozen_left_bracket) = 91;
+  text(frozen_right_delimiter) = 41;
+  text(frozen_inaccessible) = 454;
+  eq_type(frozen_right_delimiter) = right_delimiter;
+  attr_loc(end_attr) = hash_end + 1;
+  parent(end_attr) = null;
+  info(sentinel) = max_halfword;
+  ref_count(null_pen) = null;
+  link(null_pen) = null;
+  info(null_pen + 1) = 1;
+  link(null_pen + 1) = null_coords;
+  for (k = null_pen + 2; k <= null_pen + 8; k++)
   {
-    mem[k] = mem[4];
+    mem[k] = mem[null_pen + 1];
   }
-  mem[12].cint = 0;
-  mem[0].hh.rh = 0;
-  mem[0].hh.lh = 0;
-  mem[1].cint = 0;
-  mem[2].cint = 0;
+  max_offset(null_pen) = 0;
+  link(null_coords) = null_coords;
+  knil(null_coords) = null_coords;
+  x_coord(null_coords) = 0;
+  y_coord(null_coords) = 0;
   serial_no = 0;
-  mem[13].hh.rh = 13;
-  mem[14].hh.lh = 13;
-  mem[13].hh.lh = 0;
-  mem[14].hh.rh = 0;
-  mem[21].hh.b1 = 0;
-  mem[21].hh.rh = 9768;
-  eqtb[9768].rh = 21;
-  eqtb[9768].lh = 41;
-  eqtb[9758].lh = 91;
-  hash[9758].rh = 735;
-  mem[17].hh.b1 = 11;
-  mem[20].cint = 1073741824;
-  mem[16].cint = 0;
-  mem[15].hh.lh = 0;
+  link(dep_head) = dep_head;
+  prev_dep(dep_head) = dep_head;
+  info(dep_head) = null;
+  dep_list(dep_head) = null;
+  name_type(bad_vardef) = root;
+  link(bad_vardef) = frozen_bad_vardef;
+  equiv(frozen_bad_vardef) = bad_vardef;
+  eq_type(frozen_bad_vardef) = tag_token;
+  eq_type(frozen_repeat_loop) = repeat_loop + outer_tag;
+  text(frozen_repeat_loop) = 730;
+  name_type(temp_val) = capsule;
+  value(inf_val) = fraction_four;
+  value(zero_val) = 0;
+  info(zero_val) = 0;
   if (iniversion)
     base_ident = 1069;
 }
@@ -20790,12 +20752,13 @@ void init_tab (void)
 void debug_help (void)
 {
   integer k, l, m, n;
+
   while (true)
   {
-    ;
+    wake_up_terminal();
     print_nl(1083);
-    fflush (stdout);
-    read (stdin, m);
+    unpated_terminal();
+    read(stdin, m);
     if (m < 0)
       goto lab_exit;
     else if (m == 0)
@@ -20809,7 +20772,7 @@ void debug_help (void)
       switch (m)
       {
         case 1:
-          print_word (mem[n]);
+          print_word(mem[n]);
           break;
         case 2:
           print_int(mem[n].hh.lh);
@@ -20834,21 +20797,21 @@ void debug_help (void)
           do_show_dependencies();
           break;
         case 9:
-          show_token_list (n, 0, 100000L, 0);
+          show_token_list(n, null, 100000L, 0);
           break;
         case 10:
           slow_print(n);
           break;
         case 11:
-          check_mem (n > 0);
+          check_mem(n > 0);
           break;
         case 12:
-          search_mem (n);
+          search_mem(n);
           break;
         case 13:
           {
-            read (stdin, l);
-            print_cmd_mod (n, l);
+            read(stdin, l);
+            print_cmd_mod(n, l);
           }
           break;
         case 14:
