@@ -54,7 +54,7 @@ void main_program (void)
     bad = 41;
   if (bad > 0)
   {
-    fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long)bad);
+    fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long) bad);
     goto lab_final_end;
   }
   initialize();
@@ -425,7 +425,7 @@ void initialize (void)
   xy_corr[third_octant] = 0;
   x_corr[fourth_octant] = 1;
   y_corr[fourth_octant] = 0;
-  xy_corr[forth_octant] = 1;
+  xy_corr[fourth_octant] = 1;
   x_corr[fifth_octant] = 0;
   y_corr[fifth_octant] = 1;
   xy_corr[fifth_octant] = 1;
@@ -627,7 +627,7 @@ void print_nl (str_number s)
   print(s);
 }
 /* 63 */
-void print_the_digs(eight_bits k)
+void print_the_digs (eight_bits k)
 {
   while (k > 0)
   {
@@ -636,7 +636,7 @@ void print_the_digs(eight_bits k)
   }
 }
 /* 64 */
-void print_int(integer n)
+void print_int (integer n)
 {
   unsigned char k;
   integer m;
@@ -843,7 +843,7 @@ void jump_out (void)
   close_files_and_terminate();
 }
 /* 77 */
-void error(void)
+void error (void)
 {
   ASCII_code c;
   integer s1, s2, s3;
@@ -2083,7 +2083,7 @@ angle n_arg (integer x, integer y)
       case third_octant:
         Result = ninety_deg + z;
         break;
-      case forth_octant:
+      case fourth_octant:
         Result = one_eighty_deg - z;
         break;
       case fifth_octant:
@@ -2690,7 +2690,7 @@ void check_mem (boolean print_locs)
       clobbered = true;
     else if ((mem[p + 1].hh.rh >= lo_mem_max))
       clobbered = true;
-    else if (!((mem[p].hh.rh == 268435455L)) || (mem[p].hh.lh < 2) ||
+    else if (!((mem[p].hh.rh == 268435455)) || (mem[p].hh.lh < 2) ||
       (p + mem[p].hh.lh > lo_mem_max) || (mem[mem[p + 1].hh.rh + 1].hh.lh != p))
       clobbered = true;
     if (clobbered)
@@ -3088,7 +3088,7 @@ pointer id_lookup (integer j, integer l)
     {
       if (length(text(p)) == l)
       {
-        if (str_eq_buf (text(p), j))
+        if (str_eq_buf(text(p), j))
           goto found;
       }
     }
@@ -3098,9 +3098,9 @@ pointer id_lookup (integer j, integer l)
       {
         do {
           if (hash_is_full)
-            overflow("hash size", 9500);
+            overflow("hash size", hash_size);
           decr(hash_used);
-        } while (!(hash[hash_used].rh == 0));
+        } while (!(text(hash_used) == 0));
         next(p) = hash_used;
         p = hash_used;
       }
