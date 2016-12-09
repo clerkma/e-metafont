@@ -7,8 +7,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#pragma warning(disable:4459)
+#pragma warning(disable:4047)
+#pragma warning(disable:4024)
+
 typedef int32_t  integer;
 typedef uint32_t boolean;
+
+const int32_t debug, stat;
 
 /* 11 */
 /*
@@ -121,9 +127,6 @@ EXTERN boolean dumpoption;
 EXTERN boolean dumpline;
 #endif /* INIMF */
 
-EXTERN constcstring dumpname;
-EXTERN integer bounddefault;
-EXTERN constcstring boundname;
 EXTERN integer mainmemory;
 EXTERN integer mem_top;
 //EXTERN integer mem_max;
@@ -179,7 +182,7 @@ EXTERN boolean deletions_allowed;
 EXTERN uint8_t history;
 EXTERN int8_t error_count;
 
-EXTERN str_number help_line[6];
+EXTERN char * help_line[6];
 EXTERN uint8_t help_ptr;
 EXTERN boolean use_err_help;
 EXTERN str_number err_help;
@@ -478,7 +481,7 @@ EXTERN boolean stopatspace;
 #define max_in_open 6 /*{maximum number of input files and error insertions that
   can be going on simultaneously}*/
 #define param_size 150 //{maximum number of simultaneous macro parameters}
-  /* 16 */
+/* 16 */
 #define incr(a) a=a+1 //{increase a variable by unity}
 #define decr(a) a=a-1 //{decrease a variable by unity}
 #define negate(a) a=-a //{change the sign of a variable}
@@ -489,15 +492,15 @@ EXTERN boolean stopatspace;
 #define first_text_char 0 //{ordinal number of the smallest element of |text_char|}
 #define last_text_char 255 //{ordinal number of the largest element of |text_char|}
 /* 26 */
-#define reset_OK(a)
-#define rewrite_OK(a)
+#define reset_OK(a) 
+#define rewrite_OK(a) 
 /* 32 */
-#define t_open_in(a)
-#define t_open_out(a)
+#define t_open_in() 
+#define t_open_out() 
 /* 33 */
-#define update_terminal()
-#define clear_terminal()
-#define wake_up_terminal()
+#define update_terminal() 
+#define clear_terminal() 
+#define wake_up_terminal() 
 /* 35 */
 #define loc cur_input.loc_field //{location of first unread character in |buffer|}
 /* 37 */
@@ -506,30 +509,49 @@ EXTERN boolean stopatspace;
 /* 39 */
 #define length(a) (str_start[a+1]-str_start[a]) /*{the number of characters
   in string number \#}*/
-  /* 40 */
+/* 40 */
 #define cur_length (pool_ptr - str_start[str_ptr])
 /* 41 */
 #define append_char(a) \
-do { str_pool[pool_ptr] = si(a); incr(pool_ptr); } while 0
+do {                          \
+  str_pool[pool_ptr] = si(a); \
+  incr(pool_ptr);             \
+} while (0)
 #define str_room(a) \
-do { if (pool_ptr + a > max_pool_ptr) \
-{ if (pool_ptr + a > pool_size) \
-  overflow("pool size", pool_size - init_pool_ptr); \
-  max_pool_ptr = pool_ptr + a; \
+do {                                                    \
+  if (pool_ptr + a > max_pool_ptr)                      \
+  {                                                     \
+    if (pool_ptr + a > pool_size)                       \
+      overflow("pool size", pool_size - init_pool_ptr); \
+    max_pool_ptr = pool_ptr + a;                        \
+  }                                                     \
 } while (0)
 /* 42 */
 #define max_str_ref 127 //{``infinite'' number of references}
 #define add_str_ref(a) \
-do {if (str_ref[a] < max_str_ref) incr(str_ref[a]);} while (0)
+do {                            \
+  if (str_ref[a] < max_str_ref) \
+    incr(str_ref[a]);           \
+} while (0)
 /* 43 */
 #define delete_str_ref(a) \
-do { if (str_ref[a] < max_str_ref) \
-  if (str_ref[a] > 1) decr(str_ref[a]); else flush_string(a);} while (0)
+do {                            \
+  if (str_ref[a] < max_str_ref) \
+  {                             \
+    if (str_ref[a] > 1)         \
+      decr(str_ref[a]);         \
+    else                        \
+      flush_string(a);          \
+  }                             \
+} while (0)
 /* 48 */
 #define app_lc_hex(a) \
-do {\
-  l = a;\
-  if (l < 10) append_char(l + '0') else append_char(l - 10 + 'a'); \
+do {                            \
+  l = a;                        \
+  if (l < 10)                   \
+    append_char(l + '0');       \
+  else                          \
+    append_char(l - 10 + 'a');  \
 } while (0)
 /* 54 */
 #define no_print 0 //{|selector| setting that makes data disappear}
@@ -541,7 +563,11 @@ do {\
 #define max_selector 5 //{highest selector setting}
 /* 66 */
 #define prompt_input(a) \
-do { wake_up_terminal(); print(a); term_input; } while (0)
+do {                  \
+  wake_up_terminal(); \
+  print(a);           \
+  term_input();       \
+} while (0)
 /* 68 */
 #define batch_mode 0 //{omits all stops and omits terminal output}
 #define nonstop_mode 1 //{omits all stops}
@@ -565,7 +591,7 @@ static inline void mf_help (unsigned int n, ...)
   va_start(help_arg, n);
 
   for (i = n - 1; i > -1; --i)
-    help_line[i] = va_arg(help_arg, (char *));
+    help_line[i] = va_arg(help_arg, char *);
 
   va_end(help_arg);
 }
@@ -578,22 +604,32 @@ static inline void mf_help (unsigned int n, ...)
 #define help6(...)  mf_help(6, __VA_ARGS__)
 /* 88 */
 #define succumb() \
-do {if (interaction == error_stop_mode) \
-interaction = scroll_mode; \
-if (log_opened) error();\
-if (debug) if (interaction > batch_mode) debug_help(); \
-history = fatal_error_stop; jump_out();\
+do {                                      \
+  if (interaction == error_stop_mode)     \
+    interaction = scroll_mode;            \
+  if (log_opened)                         \
+    error();                              \
+  if (debug) if (interaction > batch_mode)\
+   debug_help();                          \
+  history = fatal_error_stop;             \
+  jump_out();                             \
 } while (0)
 /* 91 */
 #define check_interrupt() \
-do { if (interrupt != 0) pause_for_instructions(); } while (0)
+do {                          \
+  if (interrupt != 0)         \
+    pause_for_instructions(); \
+} while (0)
 /* 95 */
 #define el_gordo 017777777777 //{$2^{31}-1$, the largest value that \MF\ likes}
 /* 96 */
 #define half(a) (a)/2
 /* 99 */
 #define check_arith() \
-  do { if (arith_error) clear_arith(); } while (0)
+do {                \
+  if (arith_error)  \
+    clear_arith();  \
+} while (0)
 /* 101 */
 #define quarter_unit 040000 //{$2^{14}$, represents 0.250000}
 #define half_unit 0100000 //{$2^{15}$, represents 0.50000}
@@ -613,8 +649,7 @@ do { if (interrupt != 0) pause_for_instructions(); } while (0)
 #define one_eighty_deg 01320000000 //{$180\cdot2^{20}$, represents $180^\circ$}
 #define three_sixty_deg 02640000000 //{$360\cdot2^{20}$, represents $360^\circ$}
 /* 117 */
-#define return_sign(a) \
-do { Result = a; goto exit; } while (0)
+#define return_sign(a) return(a)
 /* 139 */
 #define negate_x 1
 #define negate_y 2
@@ -629,7 +664,12 @@ do { Result = a; goto exit; } while (0)
 #define eighth_octant (first_octant+negate_y)
 /* 149 */
 #define next_random() \
-do {if (j_random==0) new_randoms() else decr(j_random); } while (0)
+do {                \
+  if (j_random == 0)\
+    new_randoms();  \
+  else              \
+    decr(j_random); \
+} while (0)
 /* 153 */
 #define min_quarterword 0
 #define max_quarterword 255
@@ -645,12 +685,21 @@ do {if (j_random==0) new_randoms() else decr(j_random); } while (0)
 #define info(a) mem[a].hh.lh //{the |info| field of a memory word}
 /* 165 */
 #define fast_get_avail(a) \
-do { a = avail; if (a == null) a = get_avail(); else { avail = link(a); link(a) = null;\
-  if (stat) incr(dyn_used); \
+do {                  \
+  a = avail;          \
+  if (a == null)      \
+    a = get_avail();  \
+  else                \
+  {                   \
+    avail = link(a);  \
+    link(a) = null;   \
+    if (stat)         \
+      incr(dyn_used); \
+  }                   \
 } while (0)
 /* 166 */
 #define empty_flag max_halfword //{the |link| of an empty variable-size node}
-#define is_empty(a) (link(a)==empty_flag) //{tests for empty node}
+#define is_empty(a) (link(a) == empty_flag) //{tests for empty node}
 #define node_size info //{the size field in empty variable-size nodes}
 #define llink(a) info(a+1) //{left link in doubly-linked list of empty nodes}
 #define rlink(a) link(a+1) //{right link in doubly-linked list of empty nodes}
@@ -670,7 +719,7 @@ do { a = avail; if (a == null) a = get_avail(); else { avail = link(a); link(a) 
 #define hold_head (mem_top-2) //{head of a temporary list of another kind}
 #define hi_mem_stat_min (mem_top-2) /*{smallest statically allocated word in
   the one-word |mem|}*/
-  /* 186 */
+/* 186 */
 #define if_test 1 //{conditional text (\&{if})}
 #define fi_or_else 2 //{delimiters for conditionals (\&{elseif}, \&{else}, \&{fi})}
 #define input 3 //{input a source file (\&{input}, \&{endinput})}
@@ -988,7 +1037,7 @@ case unknown_pen: case unknown_picture: case unknown_path
   undelimited `\&{expr} |x| \&{of}~|y|' parameters}*/
 #define suffix_macro 6 //{preface to a macro with an undelimited \&{suffix} parameter}
 #define text_macro 7 //{preface to a macro with an undelimited \&{text} parameter}
-  /* 228 */
+/* 228 */
 #define subscr_head_loc(a) (a+1) //{where |value|, |subscr_head|, and |attr_head| are}
 #define attr_head(a) info(subscr_head_loc(a)) //{pointer to attribute info}
 #define subscr_head(a) link(subscr_head_loc(a)) //{pointer to subscript info}
@@ -1012,18 +1061,17 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define pair_node_size 4 //{the number of words in a pair node}
 #define transform_node_size 12 //{the number of words in a transform node}
 /* 242 */
-#define abort_find() \
-do { Result = null; goto exit; } while (0)
+#define abort_find() return(null)
 /* 250 */
 #define save_node_size 2 //{number of words per non-boundary save-stack node}
 #define saved_equiv(a) mem[a+1].hh //{where an |eqtb| entry gets saved}
 #define save_boundary_item(a) \
-do                                    \
-  {                                   \
-    a = get_avail(); info(a) = 0;     \
-    link(a) = save_ptr; save_ptr = a; \
-  }                                   \
-while (0)
+do {                  \
+  a = get_avail();    \
+  info(a) = 0;        \
+  link(a) = save_ptr; \
+  save_ptr = a;       \
+} while (0)
 /* 255 */
 #define left_type(a) mem[a].hh.b0 //{characterizes the path entering this knot}
 #define right_type(a) mem[a].hh.b1 //{characterizes the path leaving this knot}
@@ -1050,7 +1098,15 @@ while (0)
 #define end_cycle (open+1)
 /* 292 */
 #define reduce_angle(a) \
-do {if (abs(a) > one_eighty_deg) {if (a > 0) a = a - three_sixty_deg; else a = a + three_sixty_deg;}} while (0)
+do {                            \
+  if (abs(a) > one_eighty_deg)  \
+  {                             \
+    if (a > 0)                  \
+      a = a - three_sixty_deg;  \
+    else                        \
+      a = a + three_sixty_deg;  \
+  }                             \
+} while (0)
 /* 309 */
 #define stack_x1 bisect_stack[bisect_ptr] //{stacked value of $X_1$}
 #define stack_x2 bisect_stack[bisect_ptr+1] //{stacked value of $X_2$}
@@ -1088,20 +1144,20 @@ do {if (abs(a) > one_eighty_deg) {if (a > 0) a = a - three_sixty_deg; else a = a
 #define valid_range(a) (abs(a - 4096) < 4096)
 #define empty_edges(a) link(a)==a
 /* 378 */
-#define fast_case_up 60 //{for octants 1 and 4}
-#define fast_case_down 61 //{for octants 5 and 8}
-#define slow_case_up 62 //{for octants 2 and 3}
-#define slow_case_down 63 //{for octants 6 and 7}
+//#define fast_case_up 60 //{for octants 1 and 4}
+//#define fast_case_down 61 //{for octants 5 and 8}
+//#define slow_case_up 62 //{for octants 2 and 3}
+//#define slow_case_down 63 //{for octants 6 and 7}
 /* 387 */
 #define set_two(a,b) \
-do { cur_x = a; cur_y = b; } while (0)
+do {          \
+  cur_x = a;  \
+  cur_y = b;  \
+} while (0)
 /* 391 */
-#define no_crossing() \
-do {Result = fraction_one+1; goto exit;} while (0)
-#define one_crossing() \
-do {Result = fraction_one; goto exit;} while (0)
-#define zero_crossing() \
-do {Result = 0; goto exit;} while (0)
+#define no_crossing() return(fraction_one+1)
+#define one_crossing() return(fraction_one)
+#define zero_crossing() return(0)
 /* 393 */
 #define right_octant right_x //{the octant code before a transition}
 #define left_octant left_x //{the octant after a transition}
@@ -1110,15 +1166,17 @@ do {Result = 0; goto exit;} while (0)
 #define axis 0 //{a transition across the $x'$- or $y'$-axis}
 #define diagonal 1 //{a transition where $y'=\pm x'$}
 /* 394 */
-#define print_two_true(a) \
-do { unskew(a, octant); print_two(cur_x, cur_y); } while (0)
+#define print_two_true(a,b) \
+do {                          \
+  unskew(a, b, octant);       \
+  print_two(cur_x, cur_y);    \
+} while (0)
 /* 403 */
 #define double_path_code 0 //{command modifier for `\&{doublepath}'}
 #define contour_code 1 //{command modifier for `\&{contour}'}
 #define also_code 2 //{command modifier for `\&{also}'}
 /* 410 */
-#define t_of_the_way(a,b) \
-(a - take_fraction(a - b, t))
+#define t_of_the_way(a,b) (a - take_fraction(a - b, t))
 /* 435 */
 #define north_edge(a) y_coord(link(a + fourth_octant))
 #define south_edge(a) y_coord(link(a + first_octant))
@@ -1131,8 +1189,12 @@ do { unskew(a, octant); print_two(cur_x, cur_y); } while (0)
 /* 487 */
 #define add_pen_ref(a) incr(ref_count(a))
 #define delete_pen_ref(a) \
-if (ref_count(a) == null) toss_pen(a); \
-else decr(ref_count(a));
+do {                        \
+  if (ref_count(a) == null) \
+    toss_pen(a);            \
+  else                      \
+    decr(ref_count(a));     \
+} while (0)
 /* 528 */
 #define right_u right_x //{|u| value for a pen edge}
 #define left_v left_x //{|v| value for a pen edge}
@@ -1199,14 +1261,13 @@ else decr(ref_count(a));
 /* 585 */
 #define s_scale 64 //{the serial numbers are multiplied by this factor}
 #define new_indep(a) \
-do                                                            \
-  {                                                           \
-    if (serial_no > el_gordo-s_scale)                         \
-      overflow("independent variables", serial_no / s_scale); \
-    type(a) = independent; serial_no = serial_no + s_scale;   \
-    value(a) = serial_no;                                     \
-  }                                                           \
-while (0)
+do {                                                        \
+  if (serial_no > el_gordo-s_scale)                         \
+    overflow("independent variables", serial_no / s_scale); \
+  type(a) = independent;                                    \
+  serial_no = serial_no + s_scale;                          \
+  value(a) = serial_no;                                     \
+} while (0)
 /* 587 */
 #define dep_list(a) link(value_loc(a))
 //  {half of the |value| field in a |dependent| variable}
@@ -1246,28 +1307,37 @@ while (0)
 #define macro (max_in_open+6) //{|token_type| code for macro replacement texts}
 /* 642 */
 #define begin_pseudoprint() \
-do { \
-  l = tally; tally = 0; selector = pseudo; \
-  trick_count = 1000000; \
+do {                      \
+  l = tally;              \
+  tally = 0;              \
+  selector = pseudo;      \
+  trick_count = 1000000;  \
 } while (0)
 #define set_trick_count() \
-do { \
-  first_count = tally; \
-    trick_count = tally + 1 + error_line - half_error_line; \
-    if (trick_count < error_line) trick_count = error_line; \
+do {                                                      \
+  first_count = tally;                                    \
+  trick_count = tally + 1 + error_line - half_error_line; \
+  if (trick_count < error_line)                           \
+    trick_count = error_line;                             \
 } while (0)
 /* 647 */
 #define push_input() \
-do { if (input_ptr>max_in_stack) \
-    { max_in_stack=input_ptr; \
-    if (input_ptr==stack_size) overflow("input stack size",stack_size); \
-    }\
-  input_stack[input_ptr]=cur_input; \
-  incr(input_ptr); \
+do {                                            \
+  if (input_ptr>max_in_stack)                   \
+  {                                             \
+    max_in_stack=input_ptr;                     \
+    if (input_ptr==stack_size)                  \
+      overflow("input stack size",stack_size);  \
+  }                                             \
+  input_stack[input_ptr]=cur_input;             \
+  incr(input_ptr);                              \
 } while (0)
 /* 648 */
 #define pop_input() \
-do {decr(input_ptr); cur_input=input_stack[input_ptr];} while (0)
+do {                                  \
+  decr(input_ptr);                    \
+  cur_input = input_stack[input_ptr]; \
+} while (0)
 /* 649 */
 #define back_list(a) begin_token_list(a,backed_up) //{backs up a simple token list}
 /* 659 */
@@ -1314,8 +1384,11 @@ do {decr(input_ptr); cur_input=input_stack[input_ptr];} while (0)
 #define MF_area "MFinputs:"
 /* 774 */
 #define append_to_name(a) \
-do { c=a; incr(k); \
-  if (k<=file_name_size) name_of_file[k]=xchr[c]; \
+do {                            \
+  c = a;                        \
+  incr(k);                      \
+  if (k <= file_name_size)      \
+    name_of_file[k] = xchr[c];  \
 } while (0)
 /* 775 */
 #define base_default_length 18 //{length of the |MF_base_default| string}
@@ -1323,15 +1396,15 @@ do { c=a; incr(k); \
 #define base_ext_length 5 //{length of its `\.{.base}' part}
 #define base_extension ".base" //{the extension, as a \.{WEB} constant}
 /* 791 */
-#define set_output_file_name()                      \
-  {                                                 \
-    if (job_name == 0)                              \
-      open_log_file();                              \
-    pack_job_name(gf_ext);                          \
-    while (!bopenout(gf_file))                      \
-      prompt_file_name(756, gf_ext);                \
-    output_file_name = b_make_name_string(gf_file); \
-  }
+#define set_output_file_name()                    \
+do {                                              \
+  if (job_name == 0)                              \
+    open_log_file();                              \
+  pack_job_name(gf_ext);                          \
+  while (!bopenout(gf_file))                      \
+    prompt_file_name(756, gf_ext);                \
+  output_file_name = b_make_name_string(gf_file); \
+} while (0)
 /* 807 */
 #define exp_err(a) disp_err(null, a)
 /* 868 */
@@ -1340,23 +1413,28 @@ do { c=a; incr(k); \
 /* 906 */
 #define three_sixty_units 23592960 //{that's |360*unity|}
 #define boolean_reset(a) \
-do { if (a) cur_exp=true_code;else cur_exp=false_code; } while (0)
+do {                      \
+  if (a)                  \
+    cur_exp = true_code;  \
+  else                    \
+    cur_exp = false_code; \
+ } while (0)
 /* 918 */
 #define type_range(a,b) \
-do {\
-if ((cur_type >= a) && (cur_type <= b)) \
-flush_cur_exp(true_code); \
-else \
-flush_cur_exp(false_code); \
-cur_type = boolean_type;\
+do {                                      \
+  if ((cur_type >= a) && (cur_type <= b)) \
+    flush_cur_exp(true_code);             \
+  else                                    \
+    flush_cur_exp(false_code);            \
+  cur_type = boolean_type;                \
 } while (0)
 #define type_test(a) \
-do { \
-if (cur_type == a) \
-flush_cur_exp(true_code); \
-else \
-flush_cur_exp(false_code); \
-cur_type = boolean_type;\
+do {                            \
+  if (cur_type == a)            \
+    flush_cur_exp(true_code);   \
+  else                          \
+    flush_cur_exp(false_code);  \
+  cur_type = boolean_type;      \
 } while (0)
 /* 1037 */
 #define show_token_code 0 //{show the meaning of a single token}
@@ -1372,6 +1450,10 @@ cur_type = boolean_type;\
 #define lig_tag 1 //{character has a ligature/kerning program}
 #define list_tag 2 //{character has a successor in a charlist}
 #define ext_tag 3 //{character is extensible}
+/* 1079 */
+#define message_code 0
+#define err_message_code 1
+#define err_help_code 2
 /* 1093 */
 #define stop_flag (128+min_quarterword)
 //  {value indicating `\.{STOP}' in a lig/kern program}
@@ -1393,6 +1475,8 @@ cur_type = boolean_type;\
 #define x_height_code 5
 #define quad_code 6
 #define extra_space_code 7
+/* 1096 */
+#define undefined_label lig_table_size
 /* 1101 */
 #define char_list_code 0
 #define lig_table_code 1
@@ -1401,22 +1485,30 @@ cur_type = boolean_type;\
 #define font_dimen_code 4
 /* 1110 */
 #define cancel_skips(a) \
-do {ll=a; \
-do { lll = qo(skip_byte(ll)); skip_byte(ll) = stop_flag; ll = ll - lll; }\
-  while (!(lll==0);\
+do {                            \
+  ll = a;                       \
+  do {                          \
+    lll = qo(skip_byte(ll));    \
+    skip_byte(ll) = stop_flag;  \
+    ll = ll - lll;              \
+  } while (!(lll == 0));        \
 } while (0)
 #define skip_error(a) \
-do { print_err("Too far to skip");\
-  help1("At most 127 lig/kern steps can separate skipto1 from 1::.");\
-  error(); cancel_skips(a);\
+do {                                                                  \
+  print_err("Too far to skip");                                       \
+  help1("At most 127 lig/kern steps can separate skipto1 from 1::."); \
+  error();                                                            \
+  cancel_skips(a);                                                    \
 } while (0)
 /* 1113 */
 #define missing_extensible_punctuation(a) \
-do { missing_err(a); \
-  help1("I'm processing `extensible c: t,m,b,r'."); back_error();\
+do {                                                \
+  missing_err(a);                                   \
+  help1("I'm processing `extensible c: t,m,b,r'."); \
+  back_error();                                     \
 } while (0)
 /* 1117 */
-#define clear_the_list link(temp_head) = inf_val
+#define clear_the_list() link(temp_head) = inf_val
 /* 1128 */
 #define three_bytes 0100000000 //{$2^{24}$}
 /* 1133 */
@@ -1443,10 +1535,17 @@ do { missing_err(a); \
 #define post_post 249 //{postamble ending}
 /* 1155 */
 #define gf_out(a) \
-do { gf_buf[gf_ptr] = a; incr(gf_ptr);\
-if (gf_ptr == gf_limit) gf_swap();} while (0)
+do {                      \
+  gf_buf[gf_ptr] = a;     \
+  incr(gf_ptr);           \
+  if (gf_ptr == gf_limit) \
+    gf_swap();            \
+} while (0)
 /* 1161 */
 #define one_byte(a) ((a >= 0) && (a < 256))
 /* 1163 */
 #define check_gf() \
-do { if (output_file_name == 0) init_gf(); } while (0)
+do {                          \
+  if (output_file_name == 0)  \
+    init_gf();                \
+} while (0)

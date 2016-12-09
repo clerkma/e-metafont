@@ -1,156 +1,5 @@
 #include "mf.h"
 
-/* main */
-void main_program (void)
-{
-  history = fatal_error_stop;
-  t_open_out();
-  if (ready_already == 314159)
-    goto lab_start_of_MF;
-  bad = 0;
-  if ((half_error_line < 30) || (half_error_line > error_line - 15))
-    bad = 1;
-  if (max_print_line < 60)
-    bad = 2;
-  if (gf_buf_size % 8 != 0)
-    bad = 3;
-  if (mem_min + 1100 > mem_top)
-    bad = 4;
-  if (hash_prime > hash_size)
-    bad = 5;
-  if (header_size % 4 != 0)
-    bad = 6;
-  if ((lig_table_size < 255) || (lig_table_size > 32510))
-    bad = 7;
-#ifdef INIMF
-  if (mem_max != mem_top)
-    bad = 10;
-#endif /* INIMF */
-  if (mem_max < mem_top)
-    bad = 10;
-  if ((min_quarterword > 0) || (max_quarterword < 127))
-    bad = 11;
-  if ((min_halfword > 0) || (max_halfword < 32767))
-    bad = 12;
-  if ((min_quarterword < min_halfword) || (max_quarterword > max_halfword))
-    bad = 13;
-  if ((mem_min < min_halfword) || (mem_max >= max_halfword))
-    bad = 14;
-  if (max_strings > max_halfword)
-    bad = 15;
-  if (buf_size > max_halfword)
-    bad = 16;
-  if ((max_quarterword - min_quarterword < 255) || (max_halfword - min_halfword < 65535))
-    bad = 17;
-  if (hash_end + max_internal > max_halfword)
-    bad = 21;
-  if (text_base + param_size > max_halfword)
-    bad = 22;
-  if (15 * move_increment > bistack_size)
-    bad = 31;
-  if (int_packets + 17 * int_increment > bistack_size)
-    bad = 32;
-  if (base_default_length > file_name_size)
-    bad = 41;
-  if (bad > 0)
-  {
-    fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long) bad);
-    goto lab_final_end;
-  }
-  initialize();
-#ifdef INIMF
-  if (iniversion)
-  {
-    if (!get_strings_started())
-      goto lab_final_end;
-    init_tab();
-    init_prim();
-    init_str_ptr = str_ptr;
-    init_pool_ptr = pool_ptr;
-    max_str_ptr = str_ptr;
-    max_pool_ptr = pool_ptr;
-    fix_date_and_time();
-  }
-#endif /* INIMF */
-  ready_already = 314159;
-lab_start_of_MF:
-  selector = term_only;
-  tally = 0;
-  term_offset = 0;
-  file_offset = 0;
-  fputs(stdout, "This is METAFONT, Version 2.7182818");
-  if (base_ident == 0)
-    fprintf(stdout, "%s%s%c\n", " (preloaded base=", dumpname, ')');
-  else
-  {
-    slow_print(base_ident);
-    print_ln();
-  }
-  update_terminal();
-  job_name = 0;
-  log_opened = false;
-  output_file_name = 0;
-  {
-    {
-      input_ptr = 0;
-      max_in_stack = 0;
-      in_open = 0;
-      open_parens = 0;
-      max_buf_stack = 0;
-      param_ptr = 0;
-      max_param_stack = 0;
-      first = 1;
-      start = 1;
-      index = 0;
-      line = 0;
-      name = 0;
-      force_eof = false;
-      if (!init_terminal())
-        goto lab_final_end;
-      limit = last;
-      first = last + 1;
-    }
-    scanner_status = normal;
-    if ((base_ident == 0) || (buffer[loc] == '&'))
-    {
-      if (base_ident != 0)
-        initialize();
-      if (!open_base_file())
-        goto lab_final_end;
-      if (!load_base_file())
-      {
-        w_close(base_file);
-        goto lab_final_end;
-      }
-      w_close(base_file);
-      while ((loc < limit) && (buffer[loc] == ' '))
-        incr(loc);
-    }
-    buffer[limit] = '%';
-    fix_date_and_time();
-    ini_trandoms((internal[time] / unity) + internal[day]);
-    if (interaction == batch_mode)
-      selector = no_print;
-    else
-      selector = term_only;
-    if (loc < limit)
-    {
-      if (buffer[loc] != '\\')
-        start_input();
-    }
-  }
-  history = spotless;
-  if (start_sym > 0)
-  {
-    cur_sym = start_sym;
-    back_input();
-  }
-  main_control();
-  final_cleanup();
-  close_files_and_terminate();
-lab_final_end:
-  ready_already = 0;
-}
 /* 4 */
 void initialize (void)
 {
@@ -382,7 +231,7 @@ void initialize (void)
   char_class[12] = 2;
   next(1) = 0;
   text(1) = 0;
-  eqtb_type(1) = tag_token;
+  eq_type(1) = tag_token;
   equiv(1) = null;
   for (k = 2; k <= hash_end; k++)
   {
@@ -1133,7 +982,7 @@ boolean init_terminal (void)
   }
   while (true)
   {
-    fputs(stdout, "**");
+    fputs("**", stdout);
     fflush(stdout);
     if (!input_ln(stdin, true))
     {
@@ -3592,11 +3441,10 @@ lab_exit:;
 /* 238 */
 boolean interesting (pointer p)
 {
-  boolean Result;
   small_number t;
 
   if (internal[tracing_online] > 0)
-    Result = true;
+    return true;
   else
   {
     t = name_type(p);
@@ -3605,9 +3453,8 @@ boolean interesting (pointer p)
       if (t != capsule)
         t = name_type(link(p - 2 * (t - x_part_sector)));
     }
-    Result = (t != capsule);
+    return (t != capsule);
   }
-  return Result;
 }
 /* 239 */
 pointer new_structure (pointer p)
@@ -4860,7 +4707,7 @@ void flush_cur_exp (scaled v)
 {
   switch (cur_type)
   {
-    case unknown_type:
+    case unknown_types:
     case transform_type:
     case pair_type:
     case dependent:
@@ -8702,7 +8549,7 @@ halfword make_pen (halfword h)
     else
       decr(n);
     if (n >= 255)
-      overflow (/* 579 */ "pen polygon size", 255);
+      overflow("pen polygon size", 255);
     mem[h].hh.lh = n;
   }
   goto found;
@@ -8711,15 +8558,15 @@ not_found:
   if (mc >= 268402688L)
   {
     print_err("Pen too large");
-    help2(/* 574 */ "The cycle you specified has a coordinate of 4095.5 or more.",
-      /* 575 */ "So I've replaced it by the trivial path `(0,0)..cycle'.");
+    help2("The cycle you specified has a coordinate of 4095.5 or more.",
+      "So I've replaced it by the trivial path `(0,0)..cycle'.");
   }
   else
   {
     print_err("Pen cycle must be convex");
-    help3(/* 577 */ "The cycle you specified either has consecutive equal points",
-      /* 578 */ "or turns right or turns through more than 360 degrees.",
-      /* 575 */ "So I've replaced it by the trivial path `(0,0)..cycle'.");
+    help3("The cycle you specified either has consecutive equal points",
+      "or turns right or turns through more than 360 degrees.",
+      "So I've replaced it by the trivial path `(0,0)..cycle'.");
   }
   put_get_error();
 found:
@@ -8794,7 +8641,7 @@ halfword make_path (halfword pen_head)
 void find_offset (scaled x, scaled y, halfword p)
 {
   unsigned char octant;
-  schar s;
+  int8_t s;
   integer n;
   halfword h, w, ww;
 
@@ -9358,7 +9205,7 @@ void fill_envelope (halfword spechead)
     d0 = d1;
     end_round (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2].cint + mem[www + 2].cint);
     if (n1 - n0 >= move_size)
-      overflow (/* 540 */ "move table size", move_size);
+      overflow("move table size", move_size);
     offset_prep (p, h);
     q = p;
     while (mem[q].hh.b1 != 0)
@@ -11821,10 +11668,10 @@ boolean check_outer_validity (void)
         print_err("Forbidden token found");
       }
       print(625);
-      help4(/* 626 */ "I suspect you have forgotten an `enddef',",
-        /* 627 */ "causing me to read past where you wanted me to stop.",
-        /* 628 */ "I'll try to recover; but if the error is serious,",
-        /* 629 */ "you'd better type `E' or `X' now and fix your file.");
+      help4("I suspect you have forgotten an `enddef',",
+        "causing me to read past where you wanted me to stop.",
+        "I'll try to recover; but if the error is serious,",
+        "you'd better type `E' or `X' now and fix your file.");
       switch (scanner_status)
       {
         case 2:
@@ -11874,9 +11721,9 @@ boolean check_outer_validity (void)
     {
       print_err("Incomplete if; all text was ignored after line ");
       print_int(warning_info);
-      help3(/* 619 */ "A forbidden `outer' token occurred in skipped text.",
-        /* 620 */ "This kind of error happens when you say `if...' and forget",
-        /* 621 */ "the matching `fi'. I've inserted a `fi'; this might work.");
+      help3("A forbidden `outer' token occurred in skipped text.",
+        "This kind of error happens when you say `if...' and forget",
+        "the matching `fi'. I've inserted a `fi'; this might work.");
       if (cur_sym == 0)
         help_line[2] = 622;
       cur_sym = 9766;
@@ -11887,6 +11734,7 @@ boolean check_outer_validity (void)
   }
   return Result;
 }
+void firm_up_the_line(void);
 /* 667 */
 void get_next (void)
 {
@@ -11974,7 +11822,7 @@ lab25:
               loc = start;
             }
             else
-              fatal_error (/* 653 */ "*** (job aborted, no legal end found)");
+              fatal_error("*** (job aborted, no legal end found)");
           }
           check_interrupt();
           goto lab25;
@@ -11995,9 +11843,9 @@ lab25:
             {
               loc = limit;
               print_err("Incomplete string token has been flushed");
-              help3(/* 646 */ "Strings should finish on the same line as they began.",
-                /* 647 */ "I've deleted the partial string; you might want to",
-                /* 648 */ "insert another by typing, e.g., `I\"new string\"'.");
+              help3("Strings should finish on the same line as they began.",
+                "I've deleted the partial string; you might want to",
+                "insert another by typing, e.g., `I\"new string\"'.");
               deletions_allowed = false;
               error();
               deletions_allowed = true;
@@ -12011,7 +11859,7 @@ lab25:
                 if (pool_ptr + loc - k > max_pool_ptr)
                 {
                   if (pool_ptr + loc - k > pool_size)
-                    overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
+                    overflow("pool size", pool_size - init_pool_ptr);
                   max_pool_ptr = pool_ptr + loc - k;
                 }
               }
@@ -12042,8 +11890,8 @@ lab25:
       case 20:
         {
           print_err("Text line contains an invalid character");
-          help2(/* 643 */ "A funny symbol that I can't read has just been input.",
-            /* 644 */ "Continue, and I'll forget that it ever happened.");
+          help2("A funny symbol that I can't read has just been input.",
+            "Continue, and I'll forget that it ever happened.");
           deletions_allowed = false;
           error();
           deletions_allowed = true;
@@ -12097,8 +11945,8 @@ lab25:
     else
     {
       print_err("Enormous number has been reduced");
-      help2(/* 650 */ "I can't handle numbers bigger than about 4095.99998;",
-        /* 651 */ "so I've changed your constant to that maximum amount.");
+      help2("I can't handle numbers bigger than about 4095.99998;",
+        "so I've changed your constant to that maximum amount.");
       deletions_allowed = false;
       error();
       deletions_allowed = true;
@@ -12309,7 +12157,7 @@ void make_op_def (void)
   pointer p, q, r;
 
   m = cur_mod;
-  get_symbol;
+  get_symbol();
   q = get_node(token_node_size);
   info(q) = cur_sym;
   value(q) = expr_base;
@@ -12453,8 +12301,8 @@ void scan_def (void)
     if (warning_info == 0)
     {
       print_err("This variable already starts with a macro");
-      help2(/* 683 */ "After `vardef a' you can't say `vardef a.b'.",
-        /* 684 */ "So I'll have to discard this definition.");
+      help2("After `vardef a' you can't say `vardef a.b'.",
+        "So I'll have to discard this definition.");
       error();
       warning_info = 21;
     }
@@ -12482,7 +12330,7 @@ void scan_def (void)
       else
       {
         print_err("Missing parameter type; `expr' will be assumed");
-        help1(/* 686 */ "You should've had `expr' or `suffix' or `text' here.");
+        help1("You should've had `expr' or `suffix' or `text' here.");
         back_error();
         base = 9770;
       }
@@ -12495,7 +12343,7 @@ void scan_def (void)
         mem[p + 1].cint = base + k;
         mem[p].hh.lh = cur_sym;
         if (k == 150)
-          overflow (/* 687 */ "parameter stack size", 150);
+          overflow("parameter stack size", 150);
         incr(k);
         mem[p].hh.rh = r;
         r = p;
@@ -12523,7 +12371,7 @@ void scan_def (void)
         c = 7;
     }
     if (k == 150)
-      overflow (/* 687 */ "parameter stack size", 150);
+      overflow("parameter stack size", 150);
     incr(k);
     get_symbol();
     mem[p].hh.lh = cur_sym;
@@ -12537,7 +12385,7 @@ void scan_def (void)
         c = 5;
         p = get_node (2);
         if (k == 150)
-          overflow (/* 687 */ "parameter stack size", 150);
+          overflow("parameter stack size", 150);
         mem[p + 1].cint = 9770 + k;
         get_symbol();
         mem[p].hh.lh = cur_sym;
@@ -12714,9 +12562,9 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
       {
         print_err("Missing argument to ");
         print_macro_name (arg_list, macro_name);
-        help3(/* 710 */ "That macro has more parameters than you thought.",
-          /* 711 */ "I'll continue by pretending that each missing argument",
-          /* 712 */ "is either zero or null.");
+        help3("That macro has more parameters than you thought.",
+          "I'll continue by pretending that each missing argument",
+          "is either zero or null.");
         if (mem[r].hh.lh >= 9920)
         {
           cur_exp = 0;
@@ -12751,17 +12599,17 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         if (mem[mem[r].hh.rh].hh.lh >= 9770)
         {
           missing_err (44);
-          help3(/* 713 */ "I've finished reading a macro argument and am about to",
-            /* 714 */ "read another; the arguments weren't delimited correctly.",
-            /* 708 */ "You might want to delete some tokens before continuing.");
+          help3("I've finished reading a macro argument and am about to",
+            "read another; the arguments weren't delimited correctly.",
+            "You might want to delete some tokens before continuing.");
           back_error();
           cur_cmd = comma;
         }
         else
         {
           missing_err (hash[rdelim].rh);
-          help2(/* 715 */ "I've gotten to the end of the macro parameter list.",
-            /* 708 */ "You might want to delete some tokens before continuing.");
+          help2("I've gotten to the end of the macro parameter list.",
+            "You might want to delete some tokens before continuing.");
           back_error();
         }
       }
@@ -12796,9 +12644,9 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     print_nl(705);
     slow_print(hash[rdelim].rh);
     print(299);
-    help3(/* 706 */ "I'm going to assume that the comma I just read was a",
-      /* 707 */ "right delimiter, and then I'll begin expanding the macro.",
-      /* 708 */ "You might want to delete some tokens before continuing.");
+    help3("I'm going to assume that the comma I just read was a",
+      "right delimiter, and then I'll begin expanding the macro.",
+      "You might want to delete some tokens before continuing.");
     error();
   }
   if (mem[r].hh.lh != 0)
@@ -12848,7 +12696,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
             missing_err (479);
             print(716);
             print_macro_name (arg_list, macro_name);
-            help1(/* 717 */ "I've got the first argument; will look now for the other.");
+            help1("I've got the first argument; will look now for the other.");
             back_error();
           }
           get_x_next();
@@ -12871,8 +12719,8 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
             if ((cur_cmd != right_delimiter) || (cur_mod != ldelim))
             {
               missing_err (hash[rdelim].rh);
-              help2(/* 715 */ "I've gotten to the end of the macro parameter list.", 
-                /* 708 */ "You might want to delete some tokens before continuing.");
+              help2("I've gotten to the end of the macro parameter list.", 
+                "You might want to delete some tokens before continuing.");
               back_error();
             }
             get_x_next();
@@ -12911,7 +12759,7 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
   {
     max_param_stack = param_ptr + n;
     if (max_param_stack > 150)
-      overflow (/* 687 */ "parameter stack size", 150);
+      overflow("parameter stack size", 150);
   }
   begin_token_list (defref, 21);
   name = macro_name;
@@ -12962,7 +12810,7 @@ void expand (void)
         {
           print_err("Extra ");
           print_cmd_mod (2, cur_mod);
-          help1(/* 725 */ "I'm ignoring this; it doesn't match any if.");
+          help1("I'm ignoring this; it doesn't match any if.");
           error();
         }
       }
@@ -12989,8 +12837,8 @@ void expand (void)
       if (cur_mod == 0)
       {
         print_err("Extra `endfor'");
-        help2(/* 689 */ "I'm not currently working on a for loop,",
-          /* 690 */ "so I had better not try to end anything.");
+        help2("I'm not currently working on a for loop,",
+          "so I had better not try to end anything.");
         error();
       }
       else
@@ -13003,8 +12851,8 @@ void expand (void)
         if (loop_ptr == 0)
         {
           print_err("Lost loop");
-          help2(/* 693 */ "I'm confused; after exiting from a loop, I still seem",
-            /* 694 */ "to want to repeat it. I'll try to forget the problem.");
+          help2("I'm confused; after exiting from a loop, I still seem",
+            "to want to repeat it. I'll try to forget the problem.");
           error();
         }
         else
@@ -13021,7 +12869,7 @@ void expand (void)
           if (loop_ptr == 0)
           {
             print_err("No loop is in progress");
-            help1(/* 696 */ "Why say `exitif' when there's nothing to exit from?");
+            help1("Why say `exitif' when there's nothing to exit from?");
             if (cur_cmd == semicolon)
               error();
             else
@@ -13041,15 +12889,15 @@ void expand (void)
               }
             } while (!(p != 0));
             if (p != mem[loop_ptr].hh.lh)
-              fatal_error (/* 699 */ "*** (loop confusion)");
+              fatal_error("*** (loop confusion)");
             stop_iteration();
           }
         }
         else if (cur_cmd != semicolon)
         {
           missing_err (59);
-          help2(/* 697 */ "After `exitif <boolean exp>' I expect to see a semicolon.",
-            /* 698 */ "I shall pretend that one was there.");
+          help2("After `exitif <boolean exp>' I expect to see a semicolon.",
+            "I shall pretend that one was there.");
           back_error();
         }
       }
@@ -13075,9 +12923,9 @@ void expand (void)
         scan_primary();
         if (cur_type != 4)
         {
-          disp_err (null, /* 700 */ "Not a string");
-          help2(/* 701 */ "I'm going to flush this expression, since",
-            /* 702 */ "scantokens should be followed by a known string.");
+          disp_err(null, "Not a string");
+          help2("I'm going to flush this expression, since",
+            "scantokens should be followed by a known string.");
           put_get_flush_error (0);
         }
         else
@@ -13093,7 +12941,7 @@ void expand (void)
               if (k >= buf_size)
               {
                 max_buf_stack = buf_size;
-                overflow (/* 256 */ "buffer size", buf_size);
+                overflow("buffer size", buf_size);
               }
               max_buf_stack = k + 1;
             }
@@ -13118,7 +12966,6 @@ void expand (void)
       break;
   }
 }
-void firm_up_the_line(void);
 /* 718 */
 void get_x_next (void)
 {
@@ -13498,7 +13345,6 @@ void begin_name (void)
 {
   area_delimiter = 0;
   ext_delimiter = 0;
-  quotedfilename = false;
 }
 /* 771 */
 boolean more_name (ASCII_code c)
@@ -13525,7 +13371,7 @@ boolean more_name (ASCII_code c)
       if (pool_ptr + 1 > max_pool_ptr)
       {
         if (pool_ptr + 1 > pool_size)
-          overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
+          overflow("pool size", pool_size - init_pool_ptr);
         max_pool_ptr = pool_ptr + 1;
       }
     }
@@ -13546,14 +13392,14 @@ void end_name (void)
   if (str_ptr + 3 > max_str_ptr)
   {
     if (str_ptr + 3 > max_strings)
-      overflow (/* 258 */ "number of strings", max_strings - init_str_ptr);
+      overflow("number of strings", max_strings - init_str_ptr);
     max_str_ptr = str_ptr + 3;
   }
   {
     if (pool_ptr + 6 > max_pool_ptr)
     {
       if (pool_ptr + 6 > pool_size)
-        overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
+        overflow("pool size", pool_size - init_pool_ptr);
       max_pool_ptr = pool_ptr + 6;
     }
   }
@@ -13655,43 +13501,22 @@ void pack_file_name (str_number n, str_number a, str_number e)
   pool_pointer j;
 
   k = 0;
-  if (name_of_file)
-    libcfree (name_of_file);
-  name_of_file = xmallocarray (ASCII_code, (str_start[a + 1] - str_start[a]) + (str_start[n + 1] - str_start[n]) + (str_start[e + 1] - str_start[e]) + 1);
   for (j = str_start[a]; j <= str_start[a + 1] - 1; j++)
   {
-    c = str_pool[j];
-    if (!(c == 34))
-    {
-      incr(k);
-      if (k <= maxint)
-        name_of_file[k] = xchr[c];
-    }
+    append_to_name(so(str_pool[j]));
   }
   for (j = str_start[n]; j <= str_start[n + 1] - 1; j++)
   {
-    c = str_pool[j];
-    if (!(c == 34))
-    {
-      incr(k);
-      if (k <= maxint)
-        name_of_file[k] = xchr[c];
-    }
+    append_to_name(so(str_pool[j]));
   }
   for (j = str_start[e]; j <= str_start[e + 1] - 1; j++)
   {
-    c = str_pool[j];
-    if (!(c == 34))
-    {
-      incr(k);
-      if (k <= maxint)
-        name_of_file[k] = xchr[c];
-    }
+    append_to_name(so(str_pool[j]));
   }
-  if (k <= maxint)
+  if (k <= file_name_size)
     name_length = k;
   else
-    name_length = maxint;
+    name_length = file_name_size;
   name_of_file[name_length + 1] = 0;
 }
 /* 778 */
@@ -13701,41 +13526,20 @@ void pack_buffered_name (small_number n, integer a, integer b)
   ASCII_code c;
   integer j;
 
-  if (n + b - a + 6 > maxint)
-    b = a + maxint - n - 6;
+  if (n + b - a + 1 + base_ext_length > file_name_size)
+    b = a + file_name_size - n - 1 - base_ext_length;
   k = 0;
-  if (name_of_file)
-    libcfree (name_of_file);
-  name_of_file = xmallocarray (ASCII_code, n + (b - a + 1) + 6);
   for (j = 1; j <= n; j++)
   {
-    c = xord[ucharcast (MF_base_default[j])];
-    if (!(c == 34))
-    {
-      incr(k);
-      if (k <= maxint)
-        name_of_file[k] = xchr[c];
-    }
+    append_to_name(xord[MF_base_default[j]]);
   }
   for (j = a; j <= b; j++)
   {
-    c = buffer[j];
-    if (!(c == 34))
-    {
-      incr(k);
-      if (k <= maxint)
-        name_of_file[k] = xchr[c];
-    }
+    append_to_name(buffer[j]);
   }
   for (j = base_default_length - 4; j <= base_default_length; j++)
   {
-    c = xord[ucharcast (MF_base_default[j])];
-    if (!(c == 34))
-    {
-      incr(k);
-      if (k <= maxint)
-        name_of_file[k] = xchr[c];
-    }
+    append_to_name(xord[MF_base_default[j]]);
   }
   if (k <= maxint)
     name_length = k;
@@ -13869,7 +13673,7 @@ void open_log_file (void)
   integer k;
   integer l;
   integer m;
-  constcstring months;
+  const char * months;
 
   old_setting = selector;
   if (job_name == 0)
@@ -14575,7 +14379,7 @@ void do_unary (quarterword c)
   {
     begin_diagnostic();
     print_nl(123);
-    print_op (c);
+    print_op(c);
     print_char('(');
     print_exp (0, 0);
     print(842);
@@ -14742,7 +14546,7 @@ void do_unary (quarterword c)
             if (pool_ptr + 1 > max_pool_ptr)
             {
               if (pool_ptr + 1 > pool_size)
-                overflow (/* 257 */ "pool size", pool_size - init_pool_ptr);
+                overflow("pool size", pool_size - init_pool_ptr);
               max_pool_ptr = pool_ptr + 1;
             }
           }
@@ -16013,13 +15817,13 @@ void do_binary (halfword p, quarterword c)
         {
           if (cur_type < 16)
           {
-            disp_err(p, /* 261 */ "");
-            help1(/* 851 */ "The quantities shown above have not been equated.");
+            disp_err(p, "");
+            help1("The quantities shown above have not been equated.");
           }
           else
-            help2(/* 852 */ "Oh dear. I can't decide if the expression above is positive,",
-              /* 853 */ "negative, or zero. So this comparison test won't be `true'.");
-          disp_err (null, /* 854 */ "Unknown relation will be considered false");
+            help2("Oh dear. I can't decide if the expression above is positive,",
+              "negative, or zero. So this comparison test won't be `true'.");
+          disp_err (null, "Unknown relation will be considered false");
           put_get_flush_error (31);
         }
         else switch (c)
@@ -16116,9 +15920,9 @@ void do_binary (halfword p, quarterword c)
         unstash_cur_exp (p);
         if (v == 0)
         {
-          disp_err (null, /* 784 */ "Division by zero");
-          help2(/* 856 */ "You're trying to divide the quantity shown above the error",
-            /* 857 */ "message by zero. I'm going to divide it by one instead.");
+          disp_err(null, "Division by zero");
+          help2("You're trying to divide the quantity shown above the error",
+            "message by zero. I'm going to divide it by one instead.");
           put_get_error();
         }
         else
@@ -16416,7 +16220,6 @@ void gf_string (str_number s, str_number t)
       gf_out(so(str_pool[k]));
   }
 }
-#define one_byte(a) ((a) >= 0) && ((a) < 256)
 /* 1161 */
 void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
 {
@@ -16762,15 +16565,15 @@ void try_eq (halfword l, halfword r)
       print(899);
       print_scaled(mem[p + 1].cint);
       print_char(')');
-      help2(/* 898 */ "The equation I just read contradicts what was said before.",
-        /* 896 */ "But don't worry; continue and I'll just ignore it.");
+      help2("The equation I just read contradicts what was said before.",
+        "But don't worry; continue and I'll just ignore it.");
       put_get_error();
     }
     else if (r == 0)
     {
       print_err("Redundant equation");
-      help2(/* 601 */ "I already knew that this equation was true.",
-        /* 602 */ "But perhaps no harm has been done; let's continue.");
+      help2("I already knew that this equation was true.",
+        "But perhaps no harm has been done; let's continue.");
       put_get_error();
     }
     free_node (p, 2);
@@ -17996,7 +17799,7 @@ eight_bits get_code (void)
   }
   else if (cur_type == string_type)
   {
-    if ((length(cur_exp) == 1)
+    if (length(cur_exp) == 1)
     {
       c = str_pool[str_start[cur_exp]];
       goto found;
@@ -18161,7 +17964,7 @@ void do_tfm_command (void)
                 overflow("kern", max_kerns);
               incr(nk);
             }
-            op_byte(nl) = kern_flag + (k div 256);
+            op_byte(nl) = kern_flag + (k / 256);
             rem_byte(nl) = qi((k % 256));
           }
           lk_started = true;
@@ -18321,10 +18124,10 @@ void store_base_file (void)
   pack_job_name(742);
   while (!w_open_out(base_file))
     prompt_file_name(1074, 742);
-  print_nl(/* 1075 */ "Beginning to dump on file ");
+  print_nl("Beginning to dump on file ");
   slow_print(w_make_name_string(base_file));
   flush_string(str_ptr - 1);
-  print_nl(/* 261 */ "");
+  print_nl("");
   slow_print(base_ident);
   dump_int(1462914374L);
   x = strlen(enginename);
@@ -19778,8 +19581,8 @@ lab_continue:
               scan_primary();
               if ((cur_type != 16) || (cur_exp < three_quarter_unit))
               {
-                disp_err (null, /* 826 */ "Improper tension has been set to 1");
-                help1(/* 827 */ "The expression above should have been a number >=3/4.");
+                disp_err (null, "Improper tension has been set to 1");
+                help1("The expression above should have been a number >=3/4.");
                 put_get_flush_error (unity);
               }
               if (y == 59)
@@ -19794,8 +19597,8 @@ lab_continue:
                 scan_primary();
                 if ((cur_type != 16) || (cur_exp < three_quarter_unit))
                 {
-                  disp_err (null, /* 826 */ "Improper tension has been set to 1");
-                  help1(/* 827 */ "The expression above should have been a number >=3/4.");
+                  disp_err(null, "Improper tension has been set to 1");
+                  help1("The expression above should have been a number >=3/4.");
                   put_get_flush_error (unity);
                 }
                 if (y == 59)
@@ -19836,7 +19639,7 @@ lab_continue:
             if (cur_cmd != path_join)
             {
               missing_err (408);
-              help1(/* 825 */ "A path join command should end with two dots.");
+              help1("A path join command should end with two dots.");
               back_error();
             }
             done:;
@@ -19900,9 +19703,9 @@ lab_continue:
               if ((mem[q + 1].cint != mem[pp + 1].cint) || (mem[q + 2].cint != mem[pp + 2].cint))
               {
                 print_err("Paths don't touch; `&' will be changed to `..'");
-                help3(/* 829 */ "When you join paths `p&q', the ending point of p",
-                  /* 830 */ "must be exactly equal to the starting point of q.",
-                  /* 831 */ "So I'm going to pretend that you said `p..q' instead.");
+                help3("When you join paths `p&q', the ending point of p",
+                  "must be exactly equal to the starting point of q.",
+                  "So I'm going to pretend that you said `p..q' instead.");
                 put_get_error();
                 d = 47;
                 mem[q + 6].cint = unity;
@@ -20832,3 +20635,154 @@ void debug_help (void)
   lab_exit:;
 }
 #endif /* TEXMF_DEBUG */
+/* main */
+void main_program (void)
+{
+  history = fatal_error_stop;
+  t_open_out();
+  if (ready_already == 314159)
+    goto lab_start_of_MF;
+  bad = 0;
+  if ((half_error_line < 30) || (half_error_line > error_line - 15))
+    bad = 1;
+  if (max_print_line < 60)
+    bad = 2;
+  if (gf_buf_size % 8 != 0)
+    bad = 3;
+  if (mem_min + 1100 > mem_top)
+    bad = 4;
+  if (hash_prime > hash_size)
+    bad = 5;
+  if (header_size % 4 != 0)
+    bad = 6;
+  if ((lig_table_size < 255) || (lig_table_size > 32510))
+    bad = 7;
+#ifdef INIMF
+  if (mem_max != mem_top)
+    bad = 10;
+#endif /* INIMF */
+  if (mem_max < mem_top)
+    bad = 10;
+  if ((min_quarterword > 0) || (max_quarterword < 127))
+    bad = 11;
+  if ((min_halfword > 0) || (max_halfword < 32767))
+    bad = 12;
+  if ((min_quarterword < min_halfword) || (max_quarterword > max_halfword))
+    bad = 13;
+  if ((mem_min < min_halfword) || (mem_max >= max_halfword))
+    bad = 14;
+  if (max_strings > max_halfword)
+    bad = 15;
+  if (buf_size > max_halfword)
+    bad = 16;
+  if ((max_quarterword - min_quarterword < 255) || (max_halfword - min_halfword < 65535))
+    bad = 17;
+  if (hash_end + max_internal > max_halfword)
+    bad = 21;
+  if (text_base + param_size > max_halfword)
+    bad = 22;
+  if (15 * move_increment > bistack_size)
+    bad = 31;
+  if (int_packets + 17 * int_increment > bistack_size)
+    bad = 32;
+  if (base_default_length > file_name_size)
+    bad = 41;
+  if (bad > 0)
+  {
+    fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long) bad);
+    goto lab_final_end;
+  }
+  initialize();
+#ifdef INIMF
+  if (iniversion)
+  {
+    if (!get_strings_started())
+      goto lab_final_end;
+    init_tab();
+    init_prim();
+    init_str_ptr = str_ptr;
+    init_pool_ptr = pool_ptr;
+    max_str_ptr = str_ptr;
+    max_pool_ptr = pool_ptr;
+    fix_date_and_time();
+  }
+#endif /* INIMF */
+  ready_already = 314159;
+lab_start_of_MF:
+  selector = term_only;
+  tally = 0;
+  term_offset = 0;
+  file_offset = 0;
+  fputs("This is METAFONT, Version 2.7182818", stdout);
+  if (base_ident == 0)
+    fprintf(stdout, "%s%s%c\n", " (preloaded base=", dump_name, ')');
+  else
+  {
+    slow_print(base_ident);
+    print_ln();
+  }
+  update_terminal();
+  job_name = 0;
+  log_opened = false;
+  output_file_name = 0;
+  {
+    {
+      input_ptr = 0;
+      max_in_stack = 0;
+      in_open = 0;
+      open_parens = 0;
+      max_buf_stack = 0;
+      param_ptr = 0;
+      max_param_stack = 0;
+      first = 1;
+      start = 1;
+      index = 0;
+      line = 0;
+      name = 0;
+      force_eof = false;
+      if (!init_terminal())
+        goto lab_final_end;
+      limit = last;
+      first = last + 1;
+    }
+    scanner_status = normal;
+    if ((base_ident == 0) || (buffer[loc] == '&'))
+    {
+      if (base_ident != 0)
+        initialize();
+      if (!open_base_file())
+        goto lab_final_end;
+      if (!load_base_file())
+      {
+        w_close(base_file);
+        goto lab_final_end;
+      }
+      w_close(base_file);
+      while ((loc < limit) && (buffer[loc] == ' '))
+        incr(loc);
+    }
+    buffer[limit] = '%';
+    fix_date_and_time();
+    ini_trandoms((internal[time] / unity) + internal[day]);
+    if (interaction == batch_mode)
+      selector = no_print;
+    else
+      selector = term_only;
+    if (loc < limit)
+    {
+      if (buffer[loc] != '\\')
+        start_input();
+    }
+  }
+  history = spotless;
+  if (start_sym > 0)
+  {
+    cur_sym = start_sym;
+    back_input();
+  }
+  main_control();
+  final_cleanup();
+  close_files_and_terminate();
+lab_final_end:
+  ready_already = 0;
+}
