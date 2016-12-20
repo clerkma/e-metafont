@@ -15,6 +15,7 @@ typedef int32_t  integer;
 typedef uint32_t boolean;
 
 const int32_t debug, stat;
+const char * enginename;
 
 /* 11 */
 /*

@@ -13541,10 +13541,10 @@ void pack_buffered_name (small_number n, integer a, integer b)
   {
     append_to_name(xord[MF_base_default[j]]);
   }
-  if (k <= maxint)
+  if (k <= file_name_size)
     name_length = k;
   else
-    name_length = maxint;
+    name_length = file_name_size;
   name_of_file[name_length + 1] = 0;
 }
 /* 780 */
