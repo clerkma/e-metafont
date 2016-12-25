@@ -4847,6 +4847,7 @@ lab_exit:;
 small_number und_type (pointer p)
 {
   small_number Result;
+
   switch (type(p))
   {
     case undefined:
@@ -5005,7 +5006,7 @@ pointer copy_knot (pointer p)
 {
   pointer Result;
   pointer q;
-  unsigned char k;
+  uint32_t k;
 
   q = get_node(knot_node_size);
   for (k = 0; k <= knot_node_size - 1; k++)
@@ -5044,7 +5045,7 @@ pointer copy_path (pointer p)
     qq = link(qq);
     pp = link(pp);
   }
-lab_exit:;
+lab_exit:
   return Result;
 }
 /* 266 */
@@ -5078,7 +5079,7 @@ pointer htap_ypoc (pointer p)
     qq = rr;
     pp = link(pp);
   }
-lab_exit:;
+lab_exit:
   return Result;
 }
 /* 296 */
@@ -5401,7 +5402,7 @@ void make_choices (pointer knots)
 
   check_arith();
   if (internal[tracing_choices] > 0)
-    print_path (knots, ", before choices", true);
+    print_path(knots, ", before choices", true);
   p = knots;
   do {
     q = link(p);
@@ -5792,8 +5793,7 @@ void edge_prep (integer ml, integer mr, integer nl, integer nr)
   if (mr > m_max(cur_edges))
     m_max(cur_edges) = mr;
   temp = m_offset(cur_edges) - zero_field;
-  if (!valid_range(m_min(cur_edges) + m_offset(cur_edges) - zero_field) ||
-    !valid_range(m_max(cur_edges) + m_offset(cur_edges) - zero_field))
+  if (!valid_range(m_min(cur_edges) + m_offset(cur_edges) - zero_field) || !valid_range(m_max(cur_edges) + m_offset(cur_edges) - zero_field))
     fix_offset();
   if (empty_edges(cur_edges))
   {
@@ -5840,7 +5840,7 @@ void edge_prep (integer ml, integer mr, integer nl, integer nr)
   }
 }
 /* 334 */
-halfword copy_edges (pointer h)
+pointer copy_edges (pointer h)
 {
   pointer Result;
   pointer p, r;
@@ -5902,7 +5902,11 @@ void y_reflect_edges (void)
   n_pos(cur_edges) = zero_field + zero_field - 1 - n_pos(cur_edges);
   p = link(cur_edges); q = cur_edges; //{we assume that |p<>q|}
   do {
-    r = link(p); link(p) = q; knil(q) = p; q = p; p = r;
+    r = link(p);
+    link(p) = q;
+    knil(q) = p;
+    q = p;
+    p = r;
   } while (!(q == cur_edges));
   last_window_time(cur_edges) = 0;
 }
@@ -5919,16 +5923,22 @@ void x_reflect_edges (void)
   m_offset(cur_edges) = zero_field;
   p = link(cur_edges);
   do {
-    q = sorted(p); r = sentinel;
+    q = sorted(p);
+    r = sentinel;
     while (q != sentinel)
     {
-      s = link(q); link(q) = r; r = q; info(r) = m - info(q); q = s;
+      s = link(q);
+      link(q) = r;
+      r = q;
+      info(r) = m - info(q);
+      q = s;
     }
     sorted(p) = r;
     q = unsorted(p);
     while (q > _void)
     {
-      info(q) = m - info(q); q = link(q);
+      info(q) = m - info(q);
+      q = link(q);
     }
     p = link(p);
   } while (!(p == cur_edges));
@@ -5940,8 +5950,7 @@ void y_scale_edges (integer s)
   pointer p, q, pp, r, rr, ss;
   integer t;
 
-  if ((s*(n_max(cur_edges) + 1 - zero_field) >= 4096) ||
-    (s*(n_min(cur_edges) - zero_field) <= -4096))
+  if ((s * (n_max(cur_edges) + 1 - zero_field) >= 4096) || (s * (n_min(cur_edges) - zero_field) <= -4096))
   {
     print_err("Scaled picture would be too big");
     help3("I can't yscale the picture as requested---it would",
@@ -5951,29 +5960,43 @@ void y_scale_edges (integer s)
   }
   else
   {
-    n_max(cur_edges) = s*(n_max(cur_edges) + 1 - zero_field) - 1 + zero_field;
-    n_min(cur_edges) = s*(n_min(cur_edges) - zero_field) + zero_field;
+    n_max(cur_edges) = s * (n_max(cur_edges) + 1 - zero_field) - 1 + zero_field;
+    n_min(cur_edges) = s * (n_min(cur_edges) - zero_field) + zero_field;
     p = cur_edges;
     do {
-      q = p; p = link(p);
+      q = p;
+      p = link(p);
       for (t = 2; t <= s; t++)
       {
-        pp = get_node(row_node_size); link(q) = pp; knil(p) = pp;
-        link(pp) = p; knil(pp) = q; q = pp;
-        r = sorted(p); rr = sorted_loc(pp);
+        pp = get_node(row_node_size);
+        link(q) = pp;
+        knil(p) = pp;
+        link(pp) = p;
+        knil(pp) = q;
+        q = pp;
+        r = sorted(p);
+        rr = sorted_loc(pp);
         while (r != sentinel)
         {
-          ss = get_avail(); link(rr) = ss; rr = ss; info(rr) = info(r);
+          ss = get_avail();
+          link(rr) = ss;
+          rr = ss;
+          info(rr) = info(r);
           r = link(r);
         }
         link(rr) = sentinel;
-        r = unsorted(p); rr = temp_head;
+        r = unsorted(p);
+        rr = temp_head;
         while (r > _void)
         {
-          ss = get_avail; link(rr) = ss; rr = ss; info(rr) = info(r);
+          ss = get_avail;
+          link(rr) = ss;
+          rr = ss;
+          info(rr) = info(r);
           r = link(r);
         }
-        link(rr) = r; unsorted(pp) = link(temp_head);
+        link(rr) = r;
+        unsorted(pp) = link(temp_head);
       }
     } while (!(link(p) == cur_edges));
     last_window_time(cur_edges) = 0;
@@ -5987,8 +6010,7 @@ void x_scale_edges (integer s)
   unsigned char w;
   integer delta;
 
-  if ((s * (m_max(cur_edges) - zero_field) >= 4096) ||
-    (s * (m_min(cur_edges) - zero_field) <= -4096))
+  if ((s * (m_max(cur_edges) - zero_field) >= 4096) || (s * (m_min(cur_edges) - zero_field) <= -4096))
   {
     print_err("Scaled picture would be too big");
     help3("I can't xscale the picture as requested---it would", 
@@ -6007,12 +6029,18 @@ void x_scale_edges (integer s)
       p = sorted(q);
       while (p != sentinel)
       {
-        t = ho(info(p)); w = t % 8; info(p) = (t - w) * s + w + delta; p = link(p);
+        t = ho(info(p));
+        w = t % 8;
+        info(p) = (t - w) * s + w + delta;
+        p = link(p);
       }
       p = unsorted(q);
       while (p > _void)
       {
-        t = ho(info(p)); w = t % 8; info(p) = (t - w) * s + w + delta; p = link(p);
+        t = ho(info(p));
+        w = t % 8;
+        info(p) = (t - w) * s + w + delta;
+        p = link(p);
       }
       q = link(q);
     } while (!(q == cur_edges));
@@ -6030,15 +6058,20 @@ void negate_edges (pointer h)
     q = unsorted(p);
     while (q > _void)
     {
-      info(q) = 8 - 2 * ((ho(info(q))) % 8) + info(q); q = link(q);
+      info(q) = 8 - 2 * ((ho(info(q))) % 8) + info(q);
+      q = link(q);
     }
     q = sorted(p);
     if (q != sentinel)
     {
       do {
-        info(q) = 8 - 2 * ((ho(info(q))) % 8) + info(q); q = link(q);
+        info(q) = 8 - 2 * ((ho(info(q))) % 8) + info(q);
+        q = link(q);
       } while (!(q == sentinel));
-      u = sorted_loc(p); q = link(u); r = q; s = link(r);
+      u = sorted_loc(p);
+      q = link(u);
+      r = q;
+      s = link(r);
       while (true)
       {
         if (info(s) > info(r))
@@ -6046,11 +6079,17 @@ void negate_edges (pointer h)
           link(u) = q;
           if (s == sentinel)
             goto done;
-          u = r; q = s; r = q; s = link(r);
+          u = r;
+          q = s;
+          r = q;
+          s = link(r);
         }
         else
         {
-          t = s; s = link(t); link(t) = q; q = t;
+          t = s;
+          s = link(t);
+          link(t) = q;
+          q = t;
         }
       }
     done:
@@ -6066,26 +6105,39 @@ void sort_edges (pointer h)
   halfword k;
   pointer p, q, r, s;
 
-  r = unsorted(h); unsorted(h) = null;
-  p = link(r); link(r) = sentinel; link(temp_head) = r;
+  r = unsorted(h);
+  unsorted(h) = null;
+  p = link(r);
+  link(r) = sentinel;
+  link(temp_head) = r;
   while (p > _void)
   {
-    k = info(p); q = temp_head;
+    k = info(p);
+    q = temp_head;
     do {
-      r = q; q = link(r);
+      r = q;
+      q = link(r);
     } while (!(k <= info(q)));
-    link(r) = p; r = link(p); link(p) = q; p = r;
+    link(r) = p;
+    r = link(p);
+    link(p) = q;
+    p = r;
   }
   {
-    r = sorted_loc(h); q = link(r); p = link(temp_head);
+    r = sorted_loc(h);
+    q = link(r);
+    p = link(temp_head);
     while (true)
     {
       k = info(p);
       while (k > info(q))
       {
-        r = q; q = link(r);
+        r = q;
+        q = link(r);
       }
-      link(r) = p; s = link(p); link(p) = q;
+      link(r) = p;
+      s = link(p);
+      link(p) = q;
       if (s == sentinel)
         goto done;
       r = p;
@@ -6107,16 +6159,23 @@ void cull_edges (integer w_lo, integer w_hi, integer w_out, integer w_in)
   pointer n, min_n, max_n;
   pointer min_d, max_d;
 
-  min_d = max_halfword; max_d = min_halfword;
-  min_n = max_halfword; max_n = min_halfword;
-  p = link(cur_edges); n = n_min(cur_edges);
+  min_d = max_halfword;
+  max_d = min_halfword;
+  min_n = max_halfword;
+  max_n = min_halfword;
+  p = link(cur_edges);
+  n = n_min(cur_edges);
   while (p != cur_edges)
   {
     if (unsorted(p) > _void)
       sort_edges(p);
     if (sorted(p) != sentinel)
     {
-      r = temp_head; q = sorted(p); ww = 0; m = 1000000; prev_w = 0;
+      r = temp_head;
+      q = sorted(p);
+      ww = 0;
+      m = 1000000;
+      prev_w = 0;
       while (true)
       {
         if (q == sentinel)
@@ -6415,7 +6474,7 @@ integer total_weight (pointer h)
   Result = n;
   return Result;
 }
-/* 654 */
+/* 372 */
 void begin_edge_tracing (void)
 {
   print_diagnostic("Tracing edges", "", true);
@@ -6428,7 +6487,7 @@ void begin_edge_tracing (void)
 void trace_a_corner (void)
 {
   if (file_offset > max_print_line - 13)
-    print_nl(261);
+    print_nl("");
   print_char('(');
   print_int(trace_x);
   print_char(',');
@@ -6808,14 +6867,30 @@ void skew (scaled x, scaled y, small_number octant)
 {
   switch (octant)
   {
-    case first_octant: set_two(x - y, y); break;
-    case second_octant: set_two(y - x, x); break;
-    case third_octant: set_two(y + x, -x); break;
-    case fourth_octant: set_two(-x - y, y); break;
-    case fifth_octant: set_two(-x + y, -y); break;
-    case sixth_octant: set_two(-y + x, -x); break;
-    case seventh_octant: set_two(-y - x, x); break;
-    case eighth_octant: set_two(x + y, -y); break;
+    case first_octant:
+      set_two(x - y, y);
+      break;
+    case second_octant:
+      set_two(y - x, x);
+      break;
+    case third_octant:
+      set_two(y + x, -x);
+      break;
+    case fourth_octant:
+      set_two(-x - y, y);
+      break;
+    case fifth_octant:
+      set_two(-x + y, -y);
+      break;
+    case sixth_octant:
+      set_two(-y + x, -x);
+      break;
+    case seventh_octant:
+      set_two(-y - x, x);
+      break;
+    case eighth_octant:
+      set_two(x + y, -y);
+      break;
   }
 }
 /* 390 */
@@ -7000,9 +7075,13 @@ void remove_cubic (pointer p)
 {
   pointer q;
 
-  q = link(p); right_type(p) = right_type(q); link(p) = link(q);
-  x_coord(p) = x_coord(q); y_coord(p) = y_coord(q);
-  right_x(p) = right_x(q); right_y(p) = right_y(q);
+  q = link(p);
+  right_type(p) = right_type(q);
+  link(p) = link(q);
+  x_coord(p) = x_coord(q);
+  y_coord(p) = y_coord(q);
+  right_x(p) = right_x(q);
+  right_y(p) = right_y(q);
   free_node(q, knot_node_size);
 }
 /* 410 */
@@ -7011,8 +7090,12 @@ void split_cubic (pointer p, fraction t, scaled xq, scaled yq)
   scaled v;
   pointer q, r;
 
-  q = link(p); r = get_node(knot_node_size); link(p) = r; link(r) = q;
-  left_type(r) = left_type(q); right_type(r) = right_type(p);
+  q = link(p);
+  r = get_node(knot_node_size);
+  link(p) = r;
+  link(r) = q;
+  left_type(r) = left_type(q);
+  right_type(r) = right_type(p);
   v = t_of_the_way(right_x(p), left_x(q));
   right_x(p) = t_of_the_way(x_coord(p), right_x(p));
   left_x(q) = t_of_the_way(left_x(q), xq);
