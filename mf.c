@@ -1,126 +1,117 @@
 #include "mf.h"
 
+
 /* 4 */
 void initialize (void)
 {
-  integer i;
-  integer k;
+  integer i; /* 19 */
+  integer k; /* 130 */
 
-  xchr[32] = ' ';
-  xchr[33] = '!';
-  xchr[34] = '"';
-  xchr[35] = '#';
-  xchr[36] = '$';
-  xchr[37] = '%';
-  xchr[38] = '&';
-  xchr[39] = '\'';
-  xchr[40] = '(';
-  xchr[41] = ')';
-  xchr[42] = '*';
-  xchr[43] = '+';
-  xchr[44] = ',';
-  xchr[45] = '-';
-  xchr[46] = '.';
-  xchr[47] = '/';
-  xchr[48] = '0';
-  xchr[49] = '1';
-  xchr[50] = '2';
-  xchr[51] = '3';
-  xchr[52] = '4';
-  xchr[53] = '5';
-  xchr[54] = '6';
-  xchr[55] = '7';
-  xchr[56] = '8';
-  xchr[57] = '9';
-  xchr[58] = ':';
-  xchr[59] = ';';
-  xchr[60] = '<';
-  xchr[61] = '=';
-  xchr[62] = '>';
-  xchr[63] = '?';
-  xchr[64] = '@';
-  xchr[65] = 'A';
-  xchr[66] = 'B';
-  xchr[67] = 'C';
-  xchr[68] = 'D';
-  xchr[69] = 'E';
-  xchr[70] = 'F';
-  xchr[71] = 'G';
-  xchr[72] = 'H';
-  xchr[73] = 'I';
-  xchr[74] = 'J';
-  xchr[75] = 'K';
-  xchr[76] = 'L';
-  xchr[77] = 'M';
-  xchr[78] = 'N';
-  xchr[79] = 'O';
-  xchr[80] = 'P';
-  xchr[81] = 'Q';
-  xchr[82] = 'R';
-  xchr[83] = 'S';
-  xchr[84] = 'T';
-  xchr[85] = 'U';
-  xchr[86] = 'V';
-  xchr[87] = 'W';
-  xchr[88] = 'X';
-  xchr[89] = 'Y';
-  xchr[90] = 'Z';
-  xchr[91] = '[';
-  xchr[92] = '\\';
-  xchr[93] = ']';
-  xchr[94] = '^';
-  xchr[95] = '_';
-  xchr[96] = '`';
-  xchr[97] = 'a';
-  xchr[98] = 'b';
-  xchr[99] = 'c';
-  xchr[100] = 'd';
-  xchr[101] = 'e';
-  xchr[102] = 'f';
-  xchr[103] = 'g';
-  xchr[104] = 'h';
-  xchr[105] = 'i';
-  xchr[106] = 'j';
-  xchr[107] = 'k';
-  xchr[108] = 'l';
-  xchr[109] = 'm';
-  xchr[110] = 'n';
-  xchr[111] = 'o';
-  xchr[112] = 'p';
-  xchr[113] = 'q';
-  xchr[114] = 'r';
-  xchr[115] = 's';
-  xchr[116] = 't';
-  xchr[117] = 'u';
-  xchr[118] = 'v';
-  xchr[119] = 'w';
-  xchr[120] = 'x';
-  xchr[121] = 'y';
-  xchr[122] = 'z';
-  xchr[123] = '{';
-  xchr[124] = '|';
-  xchr[125] = '}';
-  xchr[126] = '~';
+  xchr[040] = ' ';
+  xchr[041] = '!';
+  xchr[042] = '"';
+  xchr[043] = '#';
+  xchr[044] = '$';
+  xchr[045] = '%';
+  xchr[046] = '&';
+  xchr[047] = '\'';
+  xchr[050] = '(';
+  xchr[051] = ')';
+  xchr[052] = '*';
+  xchr[053] = '+';
+  xchr[054] = ',';
+  xchr[055] = '-';
+  xchr[056] = '.';
+  xchr[057] = '/';
+  xchr[060] = '0';
+  xchr[061] = '1';
+  xchr[062] = '2';
+  xchr[063] = '3';
+  xchr[064] = '4';
+  xchr[065] = '5';
+  xchr[066] = '6';
+  xchr[067] = '7';
+  xchr[070] = '8';
+  xchr[071] = '9';
+  xchr[072] = ':';
+  xchr[073] = ';';
+  xchr[074] = '<';
+  xchr[075] = '=';
+  xchr[076] = '>';
+  xchr[077] = '?';
+  xchr[0100] = '@';
+  xchr[0101] = 'A';
+  xchr[0102] = 'B';
+  xchr[0103] = 'C';
+  xchr[0104] = 'D';
+  xchr[0105] = 'E';
+  xchr[0106] = 'F';
+  xchr[0107] = 'G';
+  xchr[0110] = 'H';
+  xchr[0111] = 'I';
+  xchr[0112] = 'J';
+  xchr[0113] = 'K';
+  xchr[0114] = 'L';
+  xchr[0115] = 'M';
+  xchr[0116] = 'N';
+  xchr[0117] = 'O';
+  xchr[0120] = 'P';
+  xchr[0121] = 'Q';
+  xchr[0122] = 'R';
+  xchr[0123] = 'S';
+  xchr[0124] = 'T';
+  xchr[0125] = 'U';
+  xchr[0126] = 'V';
+  xchr[0127] = 'W';
+  xchr[0130] = 'X';
+  xchr[0131] = 'Y';
+  xchr[0132] = 'Z';
+  xchr[0133] = '[';
+  xchr[0134] = '\\';
+  xchr[0135] = ']';
+  xchr[0136] = '^';
+  xchr[0137] = '_';
+  xchr[0140] = '`';
+  xchr[0141] = 'a';
+  xchr[0142] = 'b';
+  xchr[0143] = 'c';
+  xchr[0144] = 'd';
+  xchr[0145] = 'e';
+  xchr[0146] = 'f';
+  xchr[0147] = 'g';
+  xchr[0150] = 'h';
+  xchr[0151] = 'i';
+  xchr[0152] = 'j';
+  xchr[0153] = 'k';
+  xchr[0154] = 'l';
+  xchr[0155] = 'm';
+  xchr[0156] = 'n';
+  xchr[0157] = 'o';
+  xchr[0160] = 'p';
+  xchr[0161] = 'q';
+  xchr[0162] = 'r';
+  xchr[0163] = 's';
+  xchr[0164] = 't';
+  xchr[0165] = 'u';
+  xchr[0166] = 'v';
+  xchr[0167] = 'w';
+  xchr[0170] = 'x';
+  xchr[0171] = 'y';
+  xchr[0172] = 'z';
+  xchr[0173] = '{';
+  xchr[0174] = '|';
+  xchr[0175] = '}';
+  xchr[0176] = '~';
   for (i = 0; i <= 037; i++)
-  {
     xchr[i] = ' ';
-  }
   for (i = 0177; i <= 0377; i++)
-  {
     xchr[i] = ' ';
-  }
   for (i = first_text_char; i <= last_text_char; i++)
-  {
     xord[chr (i)] = 0177;
-  }
   for (i = 0200; i <= 0377; i++)
-  {
     xord[xchr[i]] = i;
-  }
   for (i = 0; i <= 0176; i++)
-  {
     xord[xchr[i]] = i;
-  }
   interaction = error_stop_mode;
   deletions_allowed = true;
   error_count = 0;
@@ -175,12 +166,12 @@ void initialize (void)
   spec_atan[24] = 4;
   spec_atan[25] = 2;
   spec_atan[26] = 1;
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
   was_mem_end = mem_min;
   was_lo_max = mem_min;
   was_hi_min = mem_max;
   panicking = false;
-#endif /* TEXMF_DEBUG */
+#endif
   for (k = 1; k <= max_given_internal; k++)
     internal[k] = 0;
   int_ptr = max_given_internal;
@@ -241,14 +232,14 @@ void initialize (void)
   big_node_size[transform_type] = transform_node_size;
   big_node_size[pair_type] = pair_node_size;
   save_ptr = null;
-  octant_dir[first_octant] = 548;
-  octant_dir[second_octant] = 549;
-  octant_dir[third_octant] = 550;
-  octant_dir[fourth_octant] = 551;
-  octant_dir[fifth_octant] = 552;
-  octant_dir[sixth_octant] = 553;
-  octant_dir[seventh_octant] = 554;
-  octant_dir[eighth_octant] = 555;
+  octant_dir[first_octant] = "ENE";
+  octant_dir[second_octant] = "NNE";
+  octant_dir[third_octant] = "NNW";
+  octant_dir[fourth_octant] = "WNW";
+  octant_dir[fifth_octant] = "WSW";
+  octant_dir[sixth_octant] = "SSW";
+  octant_dir[seventh_octant] = "SSE";
+  octant_dir[eighth_octant] = "ESE";
   max_rounding_ptr = 0;
   octant_code[1] = first_octant;
   octant_code[2] = second_octant;
@@ -259,9 +250,7 @@ void initialize (void)
   octant_code[7] = seventh_octant;
   octant_code[8] = eighth_octant;
   for (k = 1; k <= 8; k++)
-  {
     octant_number[octant_code[k]] = k;
-  }
   rev_turns = false;
   x_corr[first_octant] = 0;
   y_corr[first_octant] = 0;
@@ -288,9 +277,7 @@ void initialize (void)
   y_corr[eighth_octant] = 1;
   xy_corr[eighth_octant] = 0;
   for (k = 1; k <= 8; k++)
-  {
     z_corr[k] = xy_corr[k] - x_corr[k];
-  }
   screen_started = false;
   screen_OK = false;
   for (k = 0; k <= 15; k++)
@@ -331,7 +318,7 @@ void initialize (void)
   nk = 0;
   ne = 0;
   np = 0;
-  internal[boundary_char] = -65536;
+  internal[boundary_char] = -unity;
   bch_label = undefined_label;
   label_loc[0] = -1;
   label_ptr = 0;
@@ -350,21 +337,21 @@ void print_ln (void)
   {
     case term_and_log:
       {
-        putc('\n', stdout);
-        putc('\n', log_file);
+        wterm_cr();
+        wlog_cr();
         term_offset = 0;
         file_offset = 0;
       }
       break;
     case log_only:
       {
-        putc('\n', log_file);
+        wlog_cr();
         file_offset = 0;
       }
       break;
     case term_only:
       {
-        putc('\n', stdout);
+        wterm_cr();
         term_offset = 0;
       }
       break;
@@ -382,25 +369,25 @@ void print_char (ASCII_code s)
   {
     case term_and_log:
       {
-        putc(xchr[s], stdout);
-        putc(xchr[s], log_file);
+        wterm(xchr[s]);
+        wlog(xchr[s]);
         incr(term_offset);
         incr(file_offset);
         if (term_offset == max_print_line)
         {
-          putc('\n', stdout);
+          wterm_cr();
           term_offset = 0;
         }
         if (file_offset == max_print_line)
         {
-          putc('\n', log_file);
+          wlog_cr();
           file_offset = 0;
         }
       }
       break;
     case log_only:
       {
-        putc(xchr[s], log_file);
+        wlog(xchr[s]);
         incr(file_offset);
         if (file_offset == max_print_line)
           print_ln();
@@ -408,7 +395,7 @@ void print_char (ASCII_code s)
       break;
     case term_only:
       {
-        putc(xchr[s], stdout);
+        wterm(xchr[s]);
         incr(term_offset);
         if (term_offset == max_print_line)
           print_ln();
@@ -436,7 +423,7 @@ void print (integer s)
   pool_pointer j;
 
   if ((s < 0) || (s >= str_ptr))
-    s = 259;
+    s = "???";
   if ((s < 256) && (selector > pseudo))
     print_char(s);
   else
@@ -455,7 +442,7 @@ void slow_print (integer s)
   pool_pointer j;
 
   if ((s < 0) || (s >= str_ptr))
-    s = 259;
+    s = "???";
   if ((s < 256) && (selector > pseudo))
     print_char(s);
   else
@@ -681,9 +668,11 @@ void flush_string (str_number s)
   if (s < str_ptr - 1)
     str_ref[s] = 0;
   else
+  {
     do {
       decr(str_ptr);
     } while (!(str_ref[str_ptr - 1] != 0));
+  }
   pool_ptr = str_start[str_ptr];
 }
 /* 76 */
@@ -753,14 +742,14 @@ void error (void)
             goto lab_continue;
           }
           break;
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
         case 'D':
           {
             debug_help();
             goto lab_continue;
           }
           break;
-#endif /* TEXMF_DEBUG */
+#endif
         case 'E':
           if (file_ptr > 0)
           {
@@ -1451,7 +1440,7 @@ scaled make_scaled (integer p, integer q)
 #ifdef TEXMF_DEBUG
     if (q == 0)
       confusion("/");
-#endif /* TEXMF_DEBUG */
+#endif
     negate(q);
     negative = !negative;
   }
@@ -2912,7 +2901,6 @@ void fix_date_and_time (void)
 /* 205 */
 pointer id_lookup (integer j, integer l)
 {
-  halfword Result;
   integer h;
   pointer p;
   pointer k;
@@ -2966,8 +2954,7 @@ pointer id_lookup (integer j, integer l)
     p = next(p);
   }
 found:
-  Result = p;
-  return Result;
+  return p;
 }
 /* 210 */
 void primitive (str_number s, halfword c, halfword o)
@@ -2992,15 +2979,13 @@ void primitive (str_number s, halfword c, halfword o)
 /* 215 */
 pointer new_num_tok (scaled v)
 {
-  pointer Result;
   pointer p;
 
   p = get_node(token_node_size);
   value(p) = v;
   type(p) = known;
   name_type(p) = token;
-  Result = p;
-  return Result;
+  return p;
 }
 /* 216 */
 void token_recycle(void);
@@ -3062,91 +3047,213 @@ void print_cmd_mod (integer c, integer m)
 {
   switch (c)
   {
-    case add_to_command:print("addto"); break;
-    case assignment:print(":="); break;
-    case at_least:print("atleast"); break;
-    case at_token:print("at"); break;
-    case bchar_label:print("||:"); break;
-    case begin_group:print("begingroup"); break;
-    case colon:print(":"); break;
-    case comma:print(","); break;
-    case controls:print("controls"); break;
-    case cull_command:print("cull"); break;
-    case curl_command:print("curl"); break;
-    case delimiters:print("delimiters"); break;
-    case display_command:print("display"); break;
-    case double_colon:print("::"); break;
-    case end_group:print("endgroup"); break;
-    case every_job_command:print("everyjob"); break;
-    case exit_test:print("exitif"); break;
-    case expand_after:print("expandafter"); break;
-    case from_token:print("from"); break;
-    case in_window:print("inwindow"); break;
-    case interim_command:print("interim"); break;
-    case left_brace:print("{"); break;
-    case left_bracket:print("["); break;
-    case let_command:print("let"); break;
-    case new_internal:print("newinternal"); break;
-    case of_token:print("of"); break;
-    case open_window:print("openwindow"); break;
-    case path_join:print(".."); break;
-    case random_seed:print("randomseed"); break;
-    case relax:print_char("\\");break;
-    case right_brace:print("}"); break;
-    case right_bracket:print("]"); break;
-    case save_command:print("save"); break;
-    case scan_tokens:print("scantokens"); break;
-    case semicolon:print(";"); break;
-    case ship_out_command:print("shipout"); break;
-    case skip_to:print("skipto"); break;
-    case step_token:print("step"); break;
-    case str_op:print("str"); break;
-    case tension:print("tension"); break;
-    case to_token:print("to"); break;
-    case until_token:print("until"); break;
+    case add_to_command:
+      print("addto");
+      break;
+    case assignment:
+      print(":=");
+      break;
+    case at_least:
+      print("atleast");
+      break;
+    case at_token:
+      print("at");
+      break;
+    case bchar_label:
+      print("||:");
+      break;
+    case begin_group:
+      print("begingroup");
+      break;
+    case colon:
+      print(":");
+      break;
+    case comma:
+      print(",");
+      break;
+    case controls:
+      print("controls");
+      break;
+    case cull_command:
+      print("cull");
+      break;
+    case curl_command:
+      print("curl");
+      break;
+    case delimiters:
+      print("delimiters");
+      break;
+    case display_command:
+      print("display");
+      break;
+    case double_colon:
+      print("::");
+      break;
+    case end_group:
+      print("endgroup");
+      break;
+    case every_job_command:
+      print("everyjob");
+      break;
+    case exit_test:
+      print("exitif");
+      break;
+    case expand_after:
+      print("expandafter");
+      break;
+    case from_token:
+      print("from");
+      break;
+    case in_window:
+      print("inwindow");
+      break;
+    case interim_command:
+      print("interim");
+      break;
+    case left_brace:
+      print("{");
+      break;
+    case left_bracket:
+      print("[");
+      break;
+    case let_command:
+      print("let");
+      break;
+    case new_internal:
+      print("newinternal");
+      break;
+    case of_token:
+      print("of");
+      break;
+    case open_window:
+      print("openwindow");
+      break;
+    case path_join:
+      print("..");
+      break;
+    case random_seed:
+      print("randomseed");
+      break;
+    case relax:
+      print_char("\\");
+      break;
+    case right_brace:
+      print("}");
+      break;
+    case right_bracket:
+      print("]");
+      break;
+    case save_command:
+      print("save");
+      break;
+    case scan_tokens:
+      print("scantokens");
+      break;
+    case semicolon:
+      print(";");
+      break;
+    case ship_out_command:
+      print("shipout");
+      break;
+    case skip_to:
+      print("skipto");
+      break;
+    case step_token:
+      print("step");
+      break;
+    case str_op:
+      print("str");
+      break;
+    case tension:
+      print("tension");
+      break;
+    case to_token:
+      print("to");
+      break;
+    case until_token:
+      print("until");
+      break;
     case macro_def:
       if (m <= var_def)
-      if (m == start_def) print("def");
-      else if (m < start_def) print("enddef");
-      else print("vardef");
-      else if (m == secondary_primary_macro) print("primarydef");
-      else if (m == tertiary_secondary_macro) print("secondarydef");
-      else print("tertiarydef");
+        if (m == start_def)
+          print("def");
+        else if (m < start_def)
+          print("enddef");
+        else
+          print("vardef");
+      else if (m == secondary_primary_macro)
+        print("primarydef");
+      else if (m == tertiary_secondary_macro)
+        print("secondarydef");
+      else
+        print("tertiarydef");
       break;
     case iteration:
       if (m <= start_forever)
-        if (m == start_forever) print("forever"); else print("endfor");
-      else if (m == expr_base) print("for"); else print("forsuffixes");
+        if (m == start_forever)
+          print("forever");
+        else
+          print("endfor");
+      else
+        if (m == expr_base)
+          print("for");
+        else
+          print("forsuffixes");
       break;
     case macro_special:
       switch (m)
       {
-        case macro_prefix: print("#@@"); break;
-        case macro_at: print_char("@@"); break;
-        case macro_suffix: print("@@#"); break;
-        default: print("quote"); break;
+        case macro_prefix:
+          print("#@@");
+          break;
+        case macro_at:
+          print_char("@@");
+          break;
+        case macro_suffix:
+          print("@@#");
+          break;
+        default:
+          print("quote");
+          break;
       }
       break;
     case param_type:
       if (m >= expr_base)
-      if (m == expr_base) print("expr");
-      else if (m == suffix_base) print("suffix");
-      else print("text");
-      else if (m < secondary_macro) print("primary");
-      else if (m == secondary_macro) print("secondary");
-      else print("tertiary");
+        if (m == expr_base)
+          print("expr");
+        else if (m == suffix_base)
+          print("suffix");
+        else
+          print("text");
+      else if (m < secondary_macro)
+        print("primary");
+      else if (m == secondary_macro)
+        print("secondary");
+      else
+        print("tertiary");
       break;
     case input:
-      if (m == 0) print("input"); else print("endinput");
+      if (m == 0)
+        print("input");
+      else
+        print("endinput");
       break;
     case if_test:
     case fi_or_else:
       switch (m)
       {
-        case if_code: print("if"); break;
-        case fi_code:print("fi"); break;
-        case else_code:print("else"); break;
-        default: print("elseif"); break;
+        case if_code:
+          print("if");
+          break;
+        case fi_code:
+          print("fi");
+          break;
+        case else_code:
+          print("else");
+          break;
+        default:
+          print("elseif");
+          break;
       }
       break;
     case nullary:
@@ -3167,40 +3274,70 @@ void print_cmd_mod (integer c, integer m)
       print_type(m);
       break;
     case stop:
-      if (m == 0) print("end"); else print("dump");
+      if (m == 0)
+        print("end");
+      else
+        print("dump");
       break;
     case mode_command:
       switch (m)
       {
-        case batch_mode: print("batchmode"); break;
-        case nonstop_mode: print("nonstopmode"); break;
-        case scroll_mode: print("scrollmode"); break;
-        default: print("errorstopmode"); break;
+        case batch_mode:
+          print("batchmode");
+          break;
+        case nonstop_mode:
+          print("nonstopmode");
+          break;
+        case scroll_mode:
+          print("scrollmode");
+          break;
+        default:
+          print("errorstopmode");
+          break;
       }
       break;
     case protection_command:
-      if (m == 0) print("inner"); else print("outer");
+      if (m == 0)
+        print("inner");
+      else
+        print("outer");
       break;
     case show_command:
       switch (m)
       {
-        case show_token_code: print("showtoken"); break;
-        case show_stats_code:print("showstats"); break;
-        case show_code:print("show"); break;
-        case show_var_code:print("showvariable"); break;
-        default: print("showdependencies"); break;
+        case show_token_code:
+          print("showtoken");
+          break;
+        case show_stats_code:
+          print("showstats");
+          break;
+        case show_code:
+          print("show");
+          break;
+        case show_var_code:
+          print("showvariable");
+          break;
+        default:
+          print("showdependencies");
+          break;
       }
       break;
     case left_delimiter:
     case right_delimiter:
       {
-        if (c == left_delimiter) print("lef");
-        else print("righ");
-        print("t delimiter that matches "); slow_print(text(m));
+        if (c == left_delimiter)
+          print("lef");
+        else
+          print("righ");
+        print("t delimiter that matches ");
+        slow_print(text(m));
       }
       break;
     case tag_token:
-      if (m == null) print("tag"); else print("variable");
+      if (m == null)
+        print("tag");
+      else
+        print("variable");
       break;
     case defined_macro:
       print("macro:");
@@ -3209,8 +3346,10 @@ void print_cmd_mod (integer c, integer m)
     case tertiary_secondary_macro:
     case expression_tertiary_macro:
       {
-        print_cmd_mod(macro_def, c); print("'d macro:");
-        print_ln(); show_token_list(link(link(m)), null, 1000, 0);
+        print_cmd_mod(macro_def, c);
+        print("'d macro:");
+        print_ln();
+        show_token_list(link(link(m)), null, 1000, 0);
       }
       break;
     case repeat_loop:
@@ -3220,50 +3359,90 @@ void print_cmd_mod (integer c, integer m)
       slow_print(int_name[m]);
       break;
     case thing_to_add:
-      if (m == contour_code) print("contour");
-      else if (m == double_path_code) print("doublepath");
-      else print("also");
+      if (m == contour_code)
+        print("contour");
+      else if (m == double_path_code)
+        print("doublepath");
+      else
+        print("also");
       break;
     case with_option:
-      if (m == pen_type) print("withpen");
-      else print("withweight");
+      if (m == pen_type)
+        print("withpen");
+      else
+        print("withweight");
       break;
     case cull_op:
-      if (m == drop_code) print("dropping");
-      else print("keeping");
+      if (m == drop_code)
+        print("dropping");
+      else
+        print("keeping");
       break;
     case message_command:
-      if (m < err_message_code) print("message");
-      else if (m == err_message_code) print("errmessage");
-      else print("errhelp");
+      if (m < err_message_code)
+        print("message");
+      else if (m == err_message_code)
+        print("errmessage");
+      else
+        print("errhelp");
       break;
     case tfm_command:
       switch (m)
       {
-        case char_list_code:print("charlist"); break;
-        case lig_table_code:print("ligtable"); break;
-        case extensible_code:print("extensible"); break;
-        case header_byte_code:print("headerbyte"); break;
-        default: print("fontdimen"); break;
+        case char_list_code:
+          print("charlist");
+          break;
+        case lig_table_code:
+          print("ligtable");
+          break;
+        case extensible_code:
+          print("extensible");
+          break;
+        case header_byte_code:
+          print("headerbyte");
+          break;
+        default:
+          print("fontdimen");
+          break;
       }
       break;
     case lig_kern_token:
       switch (m)
       {
-        case 0:print("=:"); break;
-        case 1:print("=:|"); break;
-        case 2:print("|=:"); break;
-        case 3:print("|=:|"); break;
-        case 5:print("=:|>"); break;
-        case 6:print("|=:>"); break;
-        case 7:print("|=:|>"); break;
-        case 11:print("|=:|>>"); break;
-        default: print("kern"); break;
+        case 0:
+          print("=:");
+          break;
+        case 1:
+          print("=:|");
+          break;
+        case 2:
+          print("|=:");
+          break;
+        case 3:
+          print("|=:|");
+          break;
+        case 5:
+          print("=:|>");
+          break;
+        case 6:
+          print("|=:>");
+          break;
+        case 7:
+          print("|=:|>");
+          break;
+        case 11:
+          print("|=:|>>");
+          break;
+        default:
+          print("kern");
+          break;
       }
       break;
     case special_command:
-      if (m == known) print("numspecial");
-      else print("special");
+      if (m == known)
+        print("numspecial");
+      else
+        print("special");
       break;
     default:
       print("[unknown command code!]");
@@ -3278,8 +3457,11 @@ void show_macro (pointer p, integer q, integer l)
   p = link(p);
   while (info(p) > text_macro)
   {
-    r = link(p); link(p) = null;
-    show_token_list(p, null, l, 0); link(p) = r; p = r;
+    r = link(p);
+    link(p) = null;
+    show_token_list(p, null, l, 0);
+    link(p) = r;
+    p = r;
     if (l > 0)
       l = l - tally;
     else
@@ -3293,7 +3475,8 @@ void show_macro (pointer p, integer q, integer l)
     case tertiary_macro:
       {
         print_char("<");
-        print_cmd_mod(param_type, info(p)); print(">->");
+        print_cmd_mod(param_type, info(p));
+        print(">->");
       }
       break;
     case expr_macro:
@@ -3459,7 +3642,6 @@ boolean interesting (pointer p)
 /* 239 */
 pointer new_structure (pointer p)
 {
-  pointer Result;
   pointer q, r;
   
   switch (name_type(p))
@@ -3525,8 +3707,7 @@ pointer new_structure (pointer p)
   name_type(q) = attr;
   link(q) = end_attr;
   attr_loc(q) = collective_subscript;
-  Result = r;
-  return Result;
+  return r;
 }
 /* 242 */
 pointer find_variable (pointer t)
@@ -3812,7 +3993,7 @@ void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
   {
     q = unsorted(p);
     r = sorted(p);
-    if ((q > _void) || (r != mem_top))
+    if ((q > _void) || (r != sentinel))
     {
       print_nl("row ");
       print_int(n + y_off);
@@ -3820,10 +4001,10 @@ void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
       while (q > _void)
       {
         print_weight(q, x_off);
-        q = mem[q].hh.rh;
+        q = link(q);
       }
       print(" |");
-      while (r != mem_top)
+      while (r != sentinel)
       {
         print_weight(r, x_off);
         r = link(r);
@@ -3939,7 +4120,7 @@ void print_dependency (pointer p, small_number t)
     else if (p != pp)
       print_char('+');
     if (t == 17)
-      v = round_fraction (v);
+      v = round_fraction(v);
     if (v != unity)
       print_scaled(v);
     if (type(q) != independent)
@@ -3984,7 +4165,7 @@ halfword stash_cur_exp (void)
       break;
     default:
       {
-        p = get_node (value_node_size);
+        p = get_node(value_node_size);
         name_type(p) = capsule;
         type(p) = cur_type;
         value(p) = cur_exp;
@@ -3993,8 +4174,7 @@ halfword stash_cur_exp (void)
   }
   cur_type = vacuous;
   link(p) = _void;
-  Result = p;
-  return Result;
+  return p;
 }
 /* 800 */
 void unstash_cur_exp (pointer p)
@@ -4013,7 +4193,7 @@ void unstash_cur_exp (pointer p)
     default:
       {
         cur_exp = value(p);
-        free_node (p, value_node_size);
+        free_node(p, value_node_size);
       }
       break;
   }
@@ -4147,7 +4327,7 @@ void print_exp (pointer p, small_number verbosity)
     unstash_cur_exp (p);
 }
 /* 807 */
-void disp_err (halfword p, str_number s)
+void disp_err (pointer p, str_number s)
 {
   if (interaction == error_stop_mode)
     wake_up_terminal();
@@ -4322,7 +4502,7 @@ void val_too_big (scaled x)
   }
 }
 /* 603 */
-void make_known (halfword p, halfword q)
+void make_known (pointer p, pointer q)
 {
   unsigned char t;
 
@@ -4519,7 +4699,7 @@ void recycle_value (pointer p)
         q = v + big_node_size[t];
         do {
           q = q - 2;
-          recycle_value (q);
+          recycle_value(q);
         } while (!(q == v));
         free_node (v, big_node_size[t]);
       }
@@ -5900,7 +6080,8 @@ void y_reflect_edges (void)
   n_min(cur_edges) = zero_field + zero_field - 1 - n_max(cur_edges);
   n_max(cur_edges) = zero_field + zero_field - 1 - p;
   n_pos(cur_edges) = zero_field + zero_field - 1 - n_pos(cur_edges);
-  p = link(cur_edges); q = cur_edges; //{we assume that |p<>q|}
+  p = link(cur_edges);
+  q = cur_edges; //{we assume that |p<>q|}
   do {
     r = link(p);
     link(p) = q;
@@ -6020,9 +6201,9 @@ void x_scale_edges (integer s)
   }
   else if ((m_max(cur_edges) != zero_field) || (m_min(cur_edges) != zero_field))
   {
-    m_max(cur_edges) = s*(m_max(cur_edges) - zero_field) + zero_field;
-    m_min(cur_edges) = s*(m_min(cur_edges) - zero_field) + zero_field;
-    delta = 8 * (zero_field - s*m_offset(cur_edges)) + min_halfword;
+    m_max(cur_edges) = s * (m_max(cur_edges) - zero_field) + zero_field;
+    m_min(cur_edges) = s * (m_min(cur_edges) - zero_field) + zero_field;
+    delta = 8 * (zero_field - s * m_offset(cur_edges)) + min_halfword;
     m_offset(cur_edges) = zero_field;
     q = link(cur_edges);
     do {
@@ -6182,15 +6363,19 @@ void cull_edges (integer w_lo, integer w_hi, integer w_out, integer w_in)
           mm = 1000000;
         else
         {
-          d = ho(info(q)); mm = d / 8; ww = ww + (d % 8) - zero_w;
+          d = ho(info(q));
+          mm = d / 8;
+          ww = ww + (d % 8) - zero_w;
         }
         if (mm > m)
         {
           if (w != prev_w)
           {
-            s = get_avail(); link(r) = s;
+            s = get_avail();
+            link(r) = s;
             info(s) = 8 * m + min_halfword + zero_w + w - prev_w;
-            r = s; prev_w = w;
+            r = s;
+            prev_w = w;
           }
           if (q == sentinel)
             goto done;
@@ -6205,10 +6390,13 @@ void cull_edges (integer w_lo, integer w_hi, integer w_out, integer w_in)
         }
         else
           w = w_out;
-        s = link(q); free_avail(q); q = s;
+        s = link(q);
+        free_avail(q);
+        q = s;
       }
     done:
-      link(r) = sentinel; sorted(p) = link(temp_head);
+      link(r) = sentinel;
+      sorted(p) = link(temp_head);
       if (r != temp_head)
       {
         if (min_n == max_halfword)
@@ -6220,33 +6408,43 @@ void cull_edges (integer w_lo, integer w_hi, integer w_out, integer w_in)
           max_d = info(r);
       }
     }
-    p = link(p); incr(n);
+    p = link(p);
+    incr(n);
   }
   if (min_n > max_n)
   {
     p = link(cur_edges);
     while (p != cur_edges)
     {
-      q = link(p); free_node(p, row_node_size); p = q;
+      q = link(p);
+      free_node(p, row_node_size);
+      p = q;
     }
     init_edges(cur_edges);
   }
   else
   {
-    n = n_min(cur_edges); n_min(cur_edges) = min_n;
+    n = n_min(cur_edges);
+    n_min(cur_edges) = min_n;
     while (min_n > n)
     {
-      p = link(cur_edges); link(cur_edges) = link(p);
+      p = link(cur_edges);
+      link(cur_edges) = link(p);
       knil(link(p)) = cur_edges;
-      free_node(p, row_node_size); incr(n);
+      free_node(p, row_node_size);
+      incr(n);
     }
-    n = n_max(cur_edges); n_max(cur_edges) = max_n;
-    n_pos(cur_edges) = max_n + 1; n_rover(cur_edges) = cur_edges;
+    n = n_max(cur_edges);
+    n_max(cur_edges) = max_n;
+    n_pos(cur_edges) = max_n + 1;
+    n_rover(cur_edges) = cur_edges;
     while (max_n < n)
     {
-      p = knil(cur_edges); knil(cur_edges) = knil(p);
+      p = knil(cur_edges);
+      knil(cur_edges) = knil(p);
       link(knil(p)) = cur_edges;
-      free_node(p, row_node_size); decr(n);
+      free_node(p, row_node_size);
+      decr(n);
     }
     m_min(cur_edges) = ((ho(min_d)) / 8) - m_offset(cur_edges) + zero_field;
     m_max(cur_edges) = ((ho(max_d)) / 8) - m_offset(cur_edges) + zero_field;
@@ -6277,9 +6475,13 @@ void xy_swap_edges (void)
   {
     move[j] = mem_top;
   }
-  p = get_node(row_node_size); sorted(p) = sentinel; unsorted(p) = null;
-  knil(p) = cur_edges; knil(link(cur_edges)) = p; //{the new bottom row}
-  p = get_node(row_node_size); sorted(p) = sentinel;
+  p = get_node(row_node_size);
+  sorted(p) = sentinel;
+  unsorted(p) = null;
+  knil(p) = cur_edges;
+  knil(link(cur_edges)) = p; //{the new bottom row}
+  p = get_node(row_node_size);
+  sorted(p) = sentinel;
   knil(p) = knil(cur_edges); //{the new top row}
   m_magic = m_min(cur_edges) + m_offset(cur_edges) - zero_field;
   n_magic = 8 * n_max(cur_edges) + 8 + zero_w + min_halfword;
@@ -6287,9 +6489,14 @@ void xy_swap_edges (void)
     q = knil(p);
     if (unsorted(q) > _void)
      sort_edges(q);
-    r = sorted(p); free_node(p, row_node_size); p = r;
-    pd = ho(info(p)); pm = pd / 8;
-    r = sorted(q); rd = ho(info(r)); rm = rd / 8; w = 0;
+    r = sorted(p);
+    free_node(p, row_node_size);
+    p = r;
+    pd = ho(info(p));
+    pm = pd / 8;
+    r = sorted(q);
+    rd = ho(info(r));
+    rm = rd / 8; w = 0;
     while (true)
     {
       if (pm < rm)
@@ -6317,25 +6524,35 @@ void xy_swap_edges (void)
             j = m - m_magic;
             for (k = 1; k <= extras; k++)
             {
-              s = get_avail; info(s) = n_magic + xw;
-              link(s) = move[j]; move[j] = s;
+              s = get_avail();
+              info(s) = n_magic + xw;
+              link(s) = move[j];
+              move[j] = s;
             }
-            s = get_avail; info(s) = n_magic + ww;
-            link(s) = move[j]; move[j] = s;
+            s = get_avail();
+            info(s) = n_magic + ww;
+            link(s) = move[j];
+            move[j] = s;
             incr(m);
           } while (!(m == mm));
         }
       }
       if (pd < rd)
       {
-        s = link(p); free_avail(p); p = s; pd = ho(info(p)); pm = pd / 8;
+        s = link(p);
+        free_avail(p);
+        p = s;
+        pd = ho(info(p));
+        pm = pd / 8;
       }
       else
       {
         if (r == sentinel)
           goto done;
         dw = -((rd % 8) - zero_w);
-        r = link(r); rd = ho(info(r)); rm = rd / 8;
+        r = link(r);
+        rd = ho(info(r));
+        rm = rd / 8;
       }
       m = mm;
       w = w + dw;
@@ -6345,7 +6562,8 @@ void xy_swap_edges (void)
     n_magic = n_magic - 8;
   } while (!(knil(p) == cur_edges));
   free_node(p, row_node_size);
-  move[m_spread] = 0; j = 0;
+  move[m_spread] = 0;
+  j = 0;
   while (move[j] == sentinel)
     incr(j);
   if (j == m_spread)
@@ -6359,18 +6577,27 @@ void xy_swap_edges (void)
     jj = m_spread - 1;
     while (move[jj] == sentinel)
       decr(jj);
-    n_min(cur_edges) = j + mm; n_max(cur_edges) = jj + mm; q = cur_edges;
+    n_min(cur_edges) = j + mm;
+    n_max(cur_edges) = jj + mm;
+    q = cur_edges;
     do {
-      p = get_node(row_node_size); link(q) = p; knil(p) = q;
-      sorted(p) = move[j]; unsorted(p) = null; incr(j); q = p;
+      p = get_node(row_node_size);
+      link(q) = p;
+      knil(p) = q;
+      sorted(p) = move[j];
+      unsorted(p) = null;
+      incr(j);
+      q = p;
     } while (!(j > jj));
-    link(q) = cur_edges; knil(cur_edges) = q;
-    n_pos(cur_edges) = n_max(cur_edges) + 1; n_rover(cur_edges) = cur_edges;
+    link(q) = cur_edges;
+    knil(cur_edges) = q;
+    n_pos(cur_edges) = n_max(cur_edges) + 1;
+    n_rover(cur_edges) = cur_edges;
     last_window_time(cur_edges) = 0;
   }
 }
 /* 366 */
-void merge_edges (halfword h)
+void merge_edges (pointer h)
 {
   pointer p, q, r, pp, qq, rr;
   integer n;
@@ -6385,25 +6612,31 @@ void merge_edges (halfword h)
         n_min(h) - zero_field, n_max(h) - zero_field + 1);
     if (m_offset(h) != m_offset(cur_edges))
     {
-      pp = link(h); delta = 8 * (m_offset(cur_edges) - m_offset(h));
+      pp = link(h);
+      delta = 8 * (m_offset(cur_edges) - m_offset(h));
       do {
         qq = sorted(pp);
         while (qq != sentinel)
         {
-          info(qq) = info(qq) + delta; qq = link(qq);
+          info(qq) = info(qq) + delta;
+          qq = link(qq);
         }
         qq = unsorted(pp);
         while (qq > _void)
         {
-          info(qq) = info(qq) + delta; qq = link(qq);
+          info(qq) = info(qq) + delta;
+          qq = link(qq);
         }
         pp = link(pp);
       } while (!(pp == h));
     }
-    n = n_min(cur_edges); p = link(cur_edges); pp = link(h);
+    n = n_min(cur_edges);
+    p = link(cur_edges);
+    pp = link(h);
     while (n < n_min(h))
     {
-      incr(n); p = link(p);
+      incr(n);
+      p = link(p);
     }
     do {
       qq = unsorted(pp);
@@ -6415,15 +6648,19 @@ void merge_edges (halfword h)
         {
           while (link(qq) > _void)
             qq = link(qq);
-          link(qq) = unsorted(p); unsorted(p) = unsorted(pp);
+          link(qq) = unsorted(p);
+          unsorted(p) = unsorted(pp);
         }
       }
-      unsorted(pp) = null; qq = sorted(pp);
+      unsorted(pp) = null;
+      qq = sorted(pp);
       if (qq != sentinel)
       {
         if (unsorted(p) == _void)
           unsorted(p) = null;
-        sorted(pp) = sentinel; r = sorted_loc(p); q = link(r);
+        sorted(pp) = sentinel;
+        r = sorted_loc(p);
+        q = link(r);
         if (q == sentinel)
           sorted(p) = qq;
         else
@@ -6432,9 +6669,12 @@ void merge_edges (halfword h)
             k = info(qq);
             while (k > info(q))
             {
-              r = q; q = link(r);
+              r = q;
+              q = link(r);
             }
-            link(r) = qq; rr = link(qq); link(qq) = q;
+            link(r) = qq;
+            rr = link(qq);
+            link(qq) = q;
             if (rr == sentinel)
               goto done;
             r = qq;
@@ -6442,7 +6682,8 @@ void merge_edges (halfword h)
           }
       }
     done:;
-      pp = link(pp); p = link(p);
+      pp = link(pp);
+      p = link(p);
     } while (!(pp == h));
   }
 }
@@ -6454,19 +6695,22 @@ integer total_weight (pointer h)
   integer n;
   unsigned short m;
 
-  n = 0; p = link(h);
+  n = 0;
+  p = link(h);
   while (p != h)
   {
     q = sorted(p);
     while (q != sentinel)
     {
-      m = ho(info(q)); n = n - ((m % 8) - zero_w)*(m / 8);
+      m = ho(info(q));
+      n = n - ((m % 8) - zero_w) * (m / 8);
       q = link(q);
     }
     q = unsorted(p);
     while (q > 1)
     {
-      m = ho(info(q)); n = n - ((m % 8) - zero_w)*(m / 8);
+      m = ho(info(q));
+      n = n - ((m % 8) - zero_w) * (m / 8);
       q = link(q);
     }
     p = link(p);
@@ -6514,7 +6758,9 @@ void trace_new_edge (pointer r, integer n)
   int8_t w;
   integer m, n0, n1;
 
-  d = ho(info(r)); w = (d % 8) - zero_w; m = (d / 8) - m_offset(cur_edges);
+  d = ho(info(r));
+  w = (d % 8) - zero_w;
+  m = (d / 8) - m_offset(cur_edges);
   if (w == cur_wt)
   {
     n0 = n + 1;
@@ -6598,7 +6844,9 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       y0 = unity - y0;
       while (true)
       {
-        r = get_avail(); link(r) = unsorted(p); unsorted(p) = r;
+        r = get_avail();
+        link(r) = unsorted(p);
+        unsorted(p) = r;
         tx = take_fraction(delx, make_fraction(y0, dely));
         if (ab_vs_cd(delx, y0, dely, tx) < 0)
           decr(tx);
@@ -6608,7 +6856,9 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
           trace_new_edge(r, n);
         if (y1 < unity)
           goto done;
-        p = link(p); y0 = y0 + unity; incr(n);
+        p = link(p);
+        y0 = y0 + unity;
+        incr(n);
       }
       done:;
     }
@@ -6620,7 +6870,8 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       else
         edge_prep(m1, m0, n1, n0);
       decr(n0);
-      n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
+      n = n_pos(cur_edges) - zero_field;
+      p = n_rover(cur_edges);
       if (n != n0)
       {
         if (n < n0)
@@ -6640,7 +6891,9 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       }
       while (true)
       {
-        r = get_avail(); link(r) = unsorted(p); unsorted(p) = r;
+        r = get_avail();
+        link(r) = unsorted(p);
+        unsorted(p) = r;
         tx = take_fraction(delx, make_fraction(y0, dely));
         if (ab_vs_cd(delx, y0, dely, tx) < 0)
           incr(tx);
@@ -6650,11 +6903,13 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
           trace_new_edge(r, n);
         if (y1 >= 0)
           goto done1;
-        p = knil(p); y0 = y0 + unity; decr(n);
+        p = knil(p);
+        y0 = y0 + unity; decr(n);
       }
       done1:;
     }
-    n_rover(cur_edges) = p; n_pos(cur_edges) = n + zero_field;
+    n_rover(cur_edges) = p;
+    n_pos(cur_edges) = n + zero_field;
   }
 }
 /* 378 */
@@ -6675,9 +6930,7 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
 #ifdef TEXMF_DEBUG
   sum = move[0];
   for (k = 1; k <= delta; k++)
-  {
     sum = sum + abs(move[k]);
-  }
   if (sum != m1 - m0)
     confusion("0");
 #endif /* TEXMF_DEBUG */
@@ -6685,51 +6938,68 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
   {
     case first_octant:
       {
-        dx = 8; edge_prep(m0, m1, n0, n1); goto fast_case_up;
+        dx = 8;
+        edge_prep(m0, m1, n0, n1);
+        goto fast_case_up;
       }
       break;
     case second_octant:
       {
-        dx = 8; edge_prep(n0, n1, m0, m1); goto slow_case_up;
+        dx = 8;
+        edge_prep(n0, n1, m0, m1);
+        goto slow_case_up;
       }
       break;
     case third_octant:
       {
-        dx = -8; edge_prep(-n1, -n0, m0, m1); negate(n0);
+        dx = -8;
+        edge_prep(-n1, -n0, m0, m1);
+        negate(n0);
         goto slow_case_up;
       }
       break;
     case fourth_octant:
       {
-        dx = -8; edge_prep(-m1, -m0, n0, n1); negate(m0);
+        dx = -8;
+        edge_prep(-m1, -m0, n0, n1);
+        negate(m0);
         goto fast_case_up;
       }
       break;
     case fifth_octant:
       {
-        dx = -8; edge_prep(-m1, -m0, -n1, -n0); negate(m0);
+        dx = -8;
+        edge_prep(-m1, -m0, -n1, -n0);
+        negate(m0);
         goto fast_case_down;
       }
       break;
     case sixth_octant:
       {
-        dx = -8; edge_prep(-n1, -n0, -m1, -m0); negate(n0);
+        dx = -8;
+        edge_prep(-n1, -n0, -m1, -m0);
+        negate(n0);
         goto slow_case_down;
       }
       break;
     case seventh_octant:
       {
-        dx = 8; edge_prep(n0, n1, -m1, -m0); goto slow_case_down;
+        dx = 8;
+        edge_prep(n0, n1, -m1, -m0);
+        goto slow_case_down;
       }
       break;
     case eighth_octant:
       {
-        dx = 8; edge_prep(m0, m1, -n1, -n0); goto fast_case_down;
+        dx = 8;
+        edge_prep(m0, m1, -n1, -n0);
+        goto fast_case_down;
       }
       break;
   }
 fast_case_up:
-  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
+  n = n_pos(cur_edges) - zero_field;
+  p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
@@ -6752,17 +7022,23 @@ fast_case_up:
     k = 0;
     edge_and_weight = 8 * (m0 + m_offset(cur_edges)) + min_halfword + zero_w - cur_wt;
     do {
-      edge_and_weight = edge_and_weight + dx*move[k];
-      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
+      edge_and_weight = edge_and_weight + dx * move[k];
+      fast_get_avail(r);
+      link(r) = unsorted(p);
+      info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
         trace_new_edge(r, n);
-      unsorted(p) = r; p = link(p); incr(k); incr(n);
+      unsorted(p) = r;
+      p = link(p);
+      incr(k);
+      incr(n);
     } while (!(k == delta));
   }
   goto done;
 fast_case_down:
   n0 = -n0 - 1;
-  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
+  n = n_pos(cur_edges) - zero_field;
+  p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
@@ -6785,18 +7061,25 @@ fast_case_down:
     k = 0;
     edge_and_weight = 8 * (m0 + m_offset(cur_edges)) + min_halfword + zero_w + cur_wt;
     do {
-      edge_and_weight = edge_and_weight + dx*move[k];
-      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
+      edge_and_weight = edge_and_weight + dx * move[k];
+      fast_get_avail(r);
+      link(r) = unsorted(p);
+      info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
         trace_new_edge(r, n);
-      unsorted(p) = r; p = knil(p); incr(k); decr(n);
+      unsorted(p) = r;
+      p = knil(p);
+      incr(k);
+      decr(n);
     } while (!(k == delta));
   }
   goto done;
 slow_case_up:
   edge_and_weight = 8 * (n0 + m_offset(cur_edges)) + min_halfword + zero_w - cur_wt;
-  n0 = m0; k = 0;
-  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
+  n0 = m0;
+  k = 0;
+  n = n_pos(cur_edges) - zero_field;
+  p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
@@ -6818,18 +7101,26 @@ slow_case_up:
     j = move[k];
     while (j > 0)
     {
-      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
+      fast_get_avail(r);
+      link(r) = unsorted(p);
+      info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
         trace_new_edge(r, n);
-      unsorted(p) = r; p = link(p); decr(j); incr(n);
+      unsorted(p) = r;
+      p = link(p);
+      decr(j);
+      incr(n);
     }
-    edge_and_weight = edge_and_weight + dx; incr(k);
+    edge_and_weight = edge_and_weight + dx;
+    incr(k);
   } while (!(k > delta));
   goto done;
 slow_case_down:
   edge_and_weight = 8 * (n0 + m_offset(cur_edges)) + min_halfword + zero_w + cur_wt;
-  n0 = -m0 - 1; k = 0;
-  n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
+  n0 = -m0 - 1;
+  k = 0;
+  n = n_pos(cur_edges) - zero_field;
+  p = n_rover(cur_edges);
   if (n != n0)
   {
     if (n < n0)
@@ -6851,16 +7142,23 @@ slow_case_down:
     j = move[k];
     while (j > 0)
     {
-      fast_get_avail(r); link(r) = unsorted(p); info(r) = edge_and_weight;
+      fast_get_avail(r);
+      link(r) = unsorted(p);
+      info(r) = edge_and_weight;
       if (internal[tracing_edges] > 0)
         trace_new_edge(r, n);
-      unsorted(p) = r; p = knil(p); decr(j); decr(n);
+      unsorted(p) = r;
+      p = knil(p);
+      decr(j);
+      decr(n);
     }
-    edge_and_weight = edge_and_weight + dx; incr(k);
+    edge_and_weight = edge_and_weight + dx;
+    incr(k);
   } while (!(k > delta));
   goto done;
 done:
-  n_pos(cur_edges) = n + zero_field; n_rover(cur_edges) = p;
+  n_pos(cur_edges) = n + zero_field;
+  n_rover(cur_edges) = p;
 }
 /* 387 */
 void skew (scaled x, scaled y, small_number octant)
@@ -6933,19 +7231,26 @@ fraction crossing_point (integer a, integer b, integer c)
     if (b <= 0)
       zero_crossing();
   }
-  d = 1; x0 = a; x1 = a - b; x2 = b - c;
+  d = 1;
+  x0 = a;
+  x1 = a - b;
+  x2 = b - c;
   do {
     x = half(x1 + x2);
     if (x1 - x0 > x0)
     {
-      x2 = x; _double(x0); _double(d);
+      x2 = x;
+      _double(x0);
+      _double(d);
     }
     else
     {
       xx = x1 + x - x0;
       if (xx > x0)
       {
-        x2 = x; _double(x0); _double(d);
+        x2 = x;
+        _double(x0);
+        _double(d);
       }
       else
       {
@@ -6971,7 +7276,9 @@ void print_spec (str_number s)
   small_number octant;
 
   print_diagnostic("Cycle spec", s, true);
-  p = cur_spec; octant = left_octant(p); print_ln();
+  p = cur_spec;
+  octant = left_octant(p);
+  print_ln();
   print_two_true(x_coord(cur_spec), y_coord(cur_spec));
   print(" % beginning in octant `");
   while (true)
@@ -6990,17 +7297,21 @@ void print_spec (str_number s)
         print_two_true(left_x(q), left_y(q));
         print_nl(" ..");
         print_two_true(x_coord(q), y_coord(q));
-        print(" % segment "); print_int(left_type(q) - 1);
+        print(" % segment ");
+        print_int(left_type(q) - 1);
       }
       p = q;
     }
   not_found:
     if (q == cur_spec)
       goto done;
-    p = q; octant = left_octant(p); print_nl("% entering octant `");
+    p = q;
+    octant = left_octant(p);
+    print_nl("% entering octant `");
   }
 done:
-  print_nl(" & cycle"); end_diagnostic(true);
+  print_nl(" & cycle");
+  end_diagnostic(true);
 }
 /* 398 */
 void print_strange (str_number s)
@@ -7023,7 +7334,8 @@ void print_strange (str_number s)
       t = left_type(p);
     }
   } while (!(p == cur_spec));
-  p = cur_spec; q = p;
+  p = cur_spec;
+  q = p;
   do {
     p = link(p);
     if (left_type(p) == endpoint)
@@ -7035,35 +7347,48 @@ void print_strange (str_number s)
     {
       if (left_type(p) != t)
       {
-        t = left_type(p); print_char(" "); print_int(t - 1);
+        t = left_type(p);
+        print_char(" ");
+        print_int(t - 1);
       }
       if (q != null)
       {
         if (left_type(link(q)) == endpoint)
         {
-          print(" ("); print(octant_dir[left_octant(q)]); q = link(q);
+          print(" (");
+          print(octant_dir[left_octant(q)]);
+          q = link(q);
           while (left_type(link(q)) == endpoint)
           {
-            print_char(" "); print(octant_dir[left_octant(q)]); q = link(q);
+            print_char(" ");
+            print(octant_dir[left_octant(q)]);
+            q = link(q);
           }
           print_char(')');
         }
-        print_char(" "); print(octant_dir[left_octant(q)]); q = null;
+        print_char(" ");
+        print(octant_dir[left_octant(q)]);
+        q = null;
       }
     }
     else if (q == null)
       q = p;
     p = link(p);
   } while (!(p == f));
-  print_char(" "); print_int(left_type(p) - 1);
+  print_char(" ");
+  print_int(left_type(p) - 1);
   if (q != null)
   {
     if (left_type(link(q)) == endpoint)
     {
-      print(" ("); print(octant_dir[left_octant(q)]); q = link(q);
+      print(" (");
+      print(octant_dir[left_octant(q)]);
+      q = link(q);
       while (left_type(link(q)) == endpoint)
       {
-        print_char(" "); print(octant_dir[left_octant(q)]); q = link(q);
+        print_char(" ");
+        print(octant_dir[left_octant(q)]);
+        q = link(q);
       }
       print_char(')');
     }
@@ -7116,26 +7441,28 @@ void quadrant_subdivide (void)
   scaled first_x, first_y;
   scaled del1, del2, del3, del, dmax;
   fraction t;
-  scaled destx, desty;
-  boolean constantx;
+  scaled dest_x, dest_y;
+  boolean constant_x;
 
-  p = cur_spec; first_x = x_coord(cur_spec); first_y = y_coord(cur_spec);
+  p = cur_spec;
+  first_x = x_coord(cur_spec);
+  first_y = y_coord(cur_spec);
   do {
 lab_continue:
-    q = mem[p].hh.rh;
+    q = link(p);
     if (q == cur_spec)
     {
-      destx = first_x;
-      desty = first_y;
+      dest_x = first_x;
+      dest_y = first_y;
     }
     else
     {
-      destx = mem[q + 1].cint;
-      desty = mem[q + 2].cint;
+      dest_x = x_coord(q);
+      dest_y = y_coord(q);
     }
-    del1 = mem[p + 5].cint - mem[p + 1].cint;
-    del2 = mem[q + 3].cint - mem[p + 5].cint;
-    del3 = destx - mem[q + 3].cint;
+    del1 = right_x(p) - x_coord(p);
+    del2 = left_x(q) - right_x(p);
+    del3 = dest_x - left_x(q);
     if (del1 != 0)
       del = del1;
     else if (del2 != 0)
@@ -7151,92 +7478,93 @@ lab_continue:
         dmax = abs(del3);
       while (dmax < fraction_half)
       {
-        dmax = dmax + dmax;
-        del1 = del1 + del1;
-        del2 = del2 + del2;
-        del3 = del3 + del3;
+        _double(dmax);
+        _double(del1);
+        _double(del2);
+        _double(del3);
       }
     }
     if (del == 0)
-      constantx = true;
+      constant_x = true;
     else
     {
-      constantx = false;
+      constant_x = false;
       if (del < 0)
       {
-        mem[p + 1].cint = -mem[p + 1].cint;
-        mem[p + 5].cint = -mem[p + 5].cint;
-        mem[q + 3].cint = -mem[q + 3].cint;
-        del1 = -del1;
-        del2 = -del2;
-        del3 = -del3;
-        destx = -destx;
-        mem[p].hh.b1 = 2;
+        negate(x_coord(p));
+        negate(right_x(p));
+        negate(left_x(q));
+        negate(del1);
+        negate(del2);
+        negate(del3);
+        negate(dest_x);
+        right_type(p) = first_octant + negate_x;
       }
-      t = crossing_point (del1, del2, del3);
+      t = crossing_point(del1, del2, del3);
       if (t < fraction_one)
       {
-        split_cubic (p, t, destx, desty);
-        r = mem[p].hh.rh;
-        if (mem[r].hh.b1 > 1)
-          mem[r].hh.b1 = 1;
+        split_cubic(p, t, dest_x, dest_y);
+        r = link(p);
+        if (right_type(r) > negate_x)
+          right_type(r) = first_octant;
         else
-          mem[r].hh.b1 = 2;
-        if (mem[r + 1].cint < mem[p + 1].cint)
-          mem[r + 1].cint = mem[p + 1].cint;
-        mem[r + 3].cint = mem[r + 1].cint;
-        if (mem[p + 5].cint > mem[r + 1].cint)
-          mem[p + 5].cint = mem[r + 1].cint;
-        mem[r + 1].cint = -mem[r + 1].cint;
-        mem[r + 5].cint = mem[r + 1].cint;
-        mem[q + 3].cint = -mem[q + 3].cint;
-        destx = -destx;
-        del2 = del2 - take_fraction (del2 - del3, t);
+          right_type(r) = first_octant + negate_x;
+        if (x_coord(r) < x_coord(p))
+          x_coord(r) = x_coord(p);
+        left_x(r) = x_coord(r);
+        if (right_x(p) > x_coord(r))
+          right_x(p) = x_coord(r);
+        negate(x_coord(r));
+        right_x(r) = x_coord(r);
+        negate(left_x(q));
+        negate(dest_x);
+        del2 = t_of_the_way(del2, del3);
         if (del2 > 0)
           del2 = 0;
-        t = crossing_point (0, -del2, -del3);
+        t = crossing_point(0, -del2, -del3);
         if (t < fraction_one)
         {
-          split_cubic (r, t, destx, desty);
-          s = mem[r].hh.rh;
-          if (mem[s + 1].cint < destx)
-            mem[s + 1].cint = destx;
-          if (mem[s + 1].cint < mem[r + 1].cint)
-            mem[s + 1].cint = mem[r + 1].cint;
-          mem[s].hh.b1 = mem[p].hh.b1;
-          mem[s + 3].cint = mem[s + 1].cint;
-          if (mem[q + 3].cint < destx)
-            mem[q + 3].cint = -destx;
-          else if (mem[q + 3].cint > mem[s + 1].cint)
-            mem[q + 3].cint = -mem[s + 1].cint;
-          else mem[q + 3].cint = -mem[q + 3].cint;
-            mem[s + 1].cint = -mem[s + 1].cint;
-          mem[s + 5].cint = mem[s + 1].cint;
+          split_cubic(r, t, dest_x, dest_y);
+          s = link(r);
+          if (x_coord(s) < dest_x)
+            x_coord(s) = dest_x;
+          if (x_coord(s) < x_coord(r))
+            x_coord(s) = x_coord(r);
+          right_type(s) = right_type(p);
+          left_x(s) = x_coord(s);
+          if (left_x(q) < dest_x)
+            left_x(q) = -dest_x;
+          else if (left_x(q) > x_coord(s))
+            left_x(q) = -x_coord(s);
+          else
+            negate(left_x(q));
+          negate(x_coord(s));
+          right_x(s) = x_coord(s);
         }
         else
         {
-          if (mem[r + 1].cint > destx)
+          if (x_coord(r) > dest_x)
           {
-            mem[r + 1].cint = destx;
-            mem[r + 3].cint = -mem[r + 1].cint;
-            mem[r + 5].cint = mem[r + 1].cint;
+            x_coord(r) = dest_x;
+            left_x(r) = -x_coord(r);
+            right_x(r) = x_coord(r);
           }
-          if (mem[q + 3].cint > destx)
-            mem[q + 3].cint = destx;
-          else if (mem[q + 3].cint < mem[r + 1].cint)
-            mem[q + 3].cint = mem[r + 1].cint;
+          if (left_x(q) > dest_x)
+            left_x(q) = dest_x;
+          else if (left_x(q) < x_coord(r))
+            left_x(q) = x_coord(r);
         }
       }
     }
     pp = p;
     do {
-      qq = mem[pp].hh.rh;
-      abnegate (mem[qq + 1].cint, mem[qq + 2].cint, mem[qq].hh.b1, mem[pp].hh.b1);
-      destx = cur_x;
-      desty = cur_y;
-      del1 = mem[pp + 6].cint - mem[pp + 2].cint;
-      del2 = mem[qq + 4].cint - mem[pp + 6].cint;
-      del3 = desty - mem[qq + 4].cint;
+      qq = link(pp);
+      abnegate(x_coord(qq), y_coord(qq), right_type(qq), right_type(pp));
+      dest_x = cur_x;
+      dest_y = cur_y;
+      del1 = right_y(pp) - y_coord(pp);
+      del2 = left_y(qq) - right_y(pp);
+      del3 = dest_y - left_y(qq);
       if (del1 != 0)
         del = del1;
       else if (del2 != 0)
@@ -7252,114 +7580,114 @@ lab_continue:
           dmax = abs(del3);
         while (dmax < fraction_half)
         {
-          dmax = dmax + dmax;
-          del1 = del1 + del1;
-          del2 = del2 + del2;
-          del3 = del3 + del3;
+          _double(dmax);
+          _double(del1);
+          _double(del2);
+          _double(del3);
         }
       }
       if (del != 0)
       {
         if (del < 0)
         {
-          mem[pp + 2].cint = -mem[pp + 2].cint;
-          mem[pp + 6].cint = -mem[pp + 6].cint;
-          mem[qq + 4].cint = -mem[qq + 4].cint;
-          del1 = -del1;
-          del2 = -del2;
-          del3 = -del3;
-          desty = -desty;
-          mem[pp].hh.b1 = mem[pp].hh.b1 + 2;
+          negate(y_coord(pp));
+          negate(right_y(pp));
+          negate(left_y(qq));
+          negate(del1);
+          negate(del2);
+          negate(del3);
+          negate(dest_y);
+          right_type(pp) = right_type(pp) + negate_y;
         }
-        t = crossing_point (del1, del2, del3);
+        t = crossing_point(del1, del2, del3);
         if (t < fraction_one)
         {
-          split_cubic (pp, t, destx, desty);
-          r = mem[pp].hh.rh;
-          if (mem[r].hh.b1 > 2)
-            mem[r].hh.b1 = mem[r].hh.b1 - 2;
+          split_cubic(pp, t, dest_x, dest_y);
+          r = link(pp);
+          if (right_type(r) > negate_y)
+            right_type(r) = right_type(r) - negate_y;
           else
-            mem[r].hh.b1 = mem[r].hh.b1 + 2;
-          if (mem[r + 2].cint < mem[pp + 2].cint)
-            mem[r + 2].cint = mem[pp + 2].cint;
-          mem[r + 4].cint = mem[r + 2].cint;
-          if (mem[pp + 6].cint > mem[r + 2].cint)
-            mem[pp + 6].cint = mem[r + 2].cint;
-          mem[r + 2].cint = -mem[r + 2].cint;
-          mem[r + 6].cint = mem[r + 2].cint;
-          mem[qq + 4].cint = -mem[qq + 4].cint;
-          desty = -desty;
-          if (mem[r + 1].cint < mem[pp + 1].cint)
-            mem[r + 1].cint = mem[pp + 1].cint;
-          else if (mem[r + 1].cint > destx)
-            mem[r + 1].cint = destx;
-          if (mem[r + 3].cint > mem[r + 1].cint)
+            right_type(r) = right_type(r) + negate_y;
+          if (y_coord(r) < y_coord(pp))
+            y_coord(r) = y_coord(pp);
+          left_y(r) = y_coord(r);
+          if (right_y(pp) > y_coord(r))
+            right_y(pp) = y_coord(r);
+          negate(y_coord(r));
+          right_y(r) = y_coord(r);
+          negate(left_y(qq));
+          negate(dest_y);
+          if (x_coord(r) < x_coord(pp))
+            x_coord(r) = x_coord(pp);
+          else if (x_coord(r) > dest_x)
+            x_coord(r) = dest_x;
+          if (left_x(r) > x_coord(r))
           {
-            mem[r + 3].cint = mem[r + 1].cint;
-            if (mem[pp + 5].cint > mem[r + 1].cint)
-              mem[pp + 5].cint = mem[r + 1].cint;
+            left_x(r) = x_coord(r);
+            if (right_x(pp) > x_coord(r))
+              right_x(pp) = x_coord(r);
           }
-          if (mem[r + 5].cint < mem[r + 1].cint)
+          if (right_x(r) < x_coord(r))
           {
-            mem[r + 5].cint = mem[r + 1].cint;
-            if (mem[qq + 3].cint < mem[r + 1].cint)
-              mem[qq + 3].cint = mem[r + 1].cint;
+            right_x(r) = x_coord(r);
+            if (left_x(qq) < x_coord(r))
+              left_x(qq) = x_coord(r);
           }
-          del2 = del2 - take_fraction (del2 - del3, t);
+          del2 = t_of_the_way(del2, del3);
           if (del2 > 0)
             del2 = 0;
-          t = crossing_point (0, -del2, -del3);
+          t = crossing_point(0, -del2, -del3);
           if (t < fraction_one)
           {
-            split_cubic (r, t, destx, desty);
-            s = mem[r].hh.rh;
-            if (mem[s + 2].cint < desty)
-              mem[s + 2].cint = desty;
-            if (mem[s + 2].cint < mem[r + 2].cint)
-              mem[s + 2].cint = mem[r + 2].cint;
-            mem[s].hh.b1 = mem[pp].hh.b1;
-            mem[s + 4].cint = mem[s + 2].cint;
-            if (mem[qq + 4].cint < desty)
-              mem[qq + 4].cint = -desty;
-            else if (mem[qq + 4].cint > mem[s + 2].cint)
-              mem[qq + 4].cint = -mem[s + 2].cint;
+            split_cubic(r, t, dest_x, dest_y);
+            s = link(r);
+            if (y_coord(s) < dest_y)
+              y_coord(s) = dest_y;
+            if (y_coord(s) < y_coord(r))
+              y_coord(s) = y_coord(r);
+            right_type(s) = right_type(pp);
+            left_y(s) = y_coord(s);
+            if (left_y(qq) < dest_y)
+              left_y(qq) = -dest_y;
+            else if (left_y(qq) > y_coord(s))
+              left_y(qq) = -y_coord(s);
             else
-              mem[qq + 4].cint = -mem[qq + 4].cint;
-            mem[s + 2].cint = -mem[s + 2].cint;
-            mem[s + 6].cint = mem[s + 2].cint;
-            if (mem[s + 1].cint < mem[r + 1].cint)
-              mem[s + 1].cint = mem[r + 1].cint;
-            else if (mem[s + 1].cint > destx)
-              mem[s + 1].cint = destx;
-            if (mem[s + 3].cint > mem[s + 1].cint)
+              negate(left_y(qq));
+            negate(y_coord(s));
+            right_y(s) = y_coord(s);
+            if (x_coord(s) < x_coord(r))
+              x_coord(s) = x_coord(r);
+            else if (x_coord(s) > dest_x)
+              x_coord(s) = dest_x;
+            if (left_x(s) > x_coord(s))
             {
-              mem[s + 3].cint = mem[s + 1].cint;
-              if (mem[r + 5].cint > mem[s + 1].cint)
-                mem[r + 5].cint = mem[s + 1].cint;
+              left_x(s) = x_coord(s);
+              if (right_x(r) > x_coord(s))
+                right_x(r) = x_coord(s);
             }
-            if (mem[s + 5].cint < mem[s + 1].cint)
+            if (right_x(s) < x_coord(s))
             {
-              mem[s + 5].cint = mem[s + 1].cint;
-              if (mem[qq + 3].cint < mem[s + 1].cint)
-                mem[qq + 3].cint = mem[s + 1].cint;
+              right_x(s) = x_coord(s);
+              if (left_x(qq) < x_coord(s))
+                left_x(qq) = x_coord(s);
             }
           }
           else
           {
-            if (mem[r + 2].cint > desty)
+            if (y_coord(r) > dest_y)
             {
-              mem[r + 2].cint = desty;
-              mem[r + 4].cint = -mem[r + 2].cint;
-              mem[r + 6].cint = mem[r + 2].cint;
+              y_coord(r) = dest_y;
+              left_y(r) = -y_coord(r);
+              right_y(r) = y_coord(r);
             }
-            if (mem[qq + 4].cint > desty)
-              mem[qq + 4].cint = desty;
-            else if (mem[qq + 4].cint < mem[r + 2].cint)
-              mem[qq + 4].cint = mem[r + 2].cint;
+            if (left_y(qq) > dest_y)
+              left_y(qq) = dest_y;
+            else if (left_y(qq) < y_coord(r))
+              left_y(qq) = y_coord(r);
           }
         }
       }
-      else if (constantx)
+      else if (constant_x)
       {
         if (q != p)
         {
@@ -7373,30 +7701,30 @@ lab_continue:
           }
         }
       }
-      else if (!odd(mem[pp].hh.b1))
+      else if (!odd(right_type(pp)))
       {
-        mem[pp + 2].cint = -mem[pp + 2].cint;
-        mem[pp + 6].cint = -mem[pp + 6].cint;
-        mem[qq + 4].cint = -mem[qq + 4].cint;
-        del1 = -del1;
-        del2 = -del2;
-        del3 = -del3;
-        desty = -desty;
-        mem[pp].hh.b1 = mem[pp].hh.b1 + 2;
+        negate(y_coord(pp));
+        negate(right_y(pp));
+        negate(left_y(qq));
+        negate(del1);
+        negate(del2);
+        negate(del3);
+        negate(dest_y);
+        right_type(pp) = right_type(pp) + negate_y;
       }
       pp = qq;
     } while (!(pp == q));
-    if (constantx)
+    if (constant_x)
     {
       pp = p;
       do {
-        qq = mem[pp].hh.rh;
-        if (mem[pp].hh.b1 > 2)
+        qq = link(pp);
+        if (right_type(pp) > negate_y)
         {
-          mem[pp].hh.b1 = mem[pp].hh.b1 + 1;
-          mem[pp + 1].cint = -mem[pp + 1].cint;
-          mem[pp + 5].cint = -mem[pp + 5].cint;
-          mem[qq + 3].cint = -mem[qq + 3].cint;
+          right_type(pp) = right_type(pp) + negate_x;
+          negate(x_coord(pp));
+          negate(right_x(pp));
+          negate(left_x(qq));
         }
         pp = qq;
       } while (!(pp == q));
@@ -7408,33 +7736,33 @@ lab_continue:
 /* 419 */
 void octant_subdivide (void)
 {
-  halfword p, q, r, s;
+  pointer p, q, r, s;
   scaled del1, del2, del3, del, dmax;
   fraction t;
-  scaled destx, desty;
+  scaled dest_x, dest_y;
 
   p = cur_spec;
   do {
-    q = mem[p].hh.rh;
-    mem[p + 1].cint = mem[p + 1].cint - mem[p + 2].cint;
-    mem[p + 5].cint = mem[p + 5].cint - mem[p + 6].cint;
-    mem[q + 3].cint = mem[q + 3].cint - mem[q + 4].cint;
+    q = link(p);
+    x_coord(p) = x_coord(p) - y_coord(p);
+    right_x(p) = right_x(p) - right_y(p);
+    left_x(q) = left_x(q) - left_y(q);
     if (q == cur_spec)
     {
-      unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1);
-      skew (cur_x, cur_y, mem[p].hh.b1);
-      destx = cur_x;
-      desty = cur_y;
+      unskew(x_coord(q), y_coord(q), right_type(q));
+      skew(cur_x, cur_y, right_type(p));
+      dest_x = cur_x;
+      dest_y = cur_y;
     }
     else
     {
-      abnegate (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1, mem[p].hh.b1);
-      destx = cur_x - cur_y;
-      desty = cur_y;
+      abnegate(x_coord(q), y_coord(q), right_type(q), right_type(p));
+      dest_x = cur_x - cur_y;
+      dest_y = cur_y;
     }
-    del1 = mem[p + 5].cint - mem[p + 1].cint;
-    del2 = mem[q + 3].cint - mem[p + 5].cint;
-    del3 = destx - mem[q + 3].cint;
+    del1 = right_x(p) - x_coord(p);
+    del2 = left_x(q) - right_x(p);
+    del3 = dest_x - left_x(q);
     if (del1 != 0)
       del = del1;
     else if (del2 != 0)
@@ -7450,152 +7778,152 @@ void octant_subdivide (void)
         dmax = abs(del3);
       while (dmax < fraction_half)
       {
-        dmax = dmax + dmax;
-        del1 = del1 + del1;
-        del2 = del2 + del2;
-        del3 = del3 + del3;
+        _double(dmax);
+        _double(del1);
+        _double(del2);
+        _double(del3);
       }
     }
     if (del != 0)
     {
       if (del < 0)
       {
-        mem[p + 2].cint = mem[p + 1].cint + mem[p + 2].cint;
-        mem[p + 1].cint = -mem[p + 1].cint;
-        mem[p + 6].cint = mem[p + 5].cint + mem[p + 6].cint;
-        mem[p + 5].cint = -mem[p + 5].cint;
-        mem[q + 4].cint = mem[q + 3].cint + mem[q + 4].cint;
-        mem[q + 3].cint = -mem[q + 3].cint;
-        del1 = -del1;
-        del2 = -del2;
-        del3 = -del3;
-        desty = destx + desty;
-        destx = -destx;
-        mem[p].hh.b1 = mem[p].hh.b1 + 4;
+        y_coord(p) = x_coord(p) + y_coord(p);
+        negate(x_coord(p));
+        right_y(p) = right_x(p) + right_y(p);
+        negate(right_x(p));
+        left_y(q) = left_x(q) + left_y(q);
+        negate(left_x(q));
+        negate(del1);
+        negate(del2);
+        negate(del3);
+        dest_y = dest_x + dest_y;
+        negate(dest_x);
+        right_type(p) = right_type(p) + switch_x_and_y;
       }
-      t = crossing_point (del1, del2, del3);
+      t = crossing_point(del1, del2, del3);
       if (t < fraction_one)
       {
-        split_cubic (p, t, destx, desty);
-        r = mem[p].hh.rh;
-        if (mem[r].hh.b1 > 4)
-          mem[r].hh.b1 = mem[r].hh.b1 - 4;
+        split_cubic(p, t, dest_x, dest_y);
+        r = link(p);
+        if (right_type(r) > switch_x_and_y)
+          right_type(r) = right_type(r) - switch_x_and_y;
         else
-          mem[r].hh.b1 = mem[r].hh.b1 + 4;
-        if (mem[r + 2].cint < mem[p + 2].cint)
-          mem[r + 2].cint = mem[p + 2].cint;
-        else if (mem[r + 2].cint > desty)
-          mem[r + 2].cint = desty;
-        if (mem[p + 1].cint + mem[r + 2].cint > destx + desty)
-          mem[r + 2].cint = destx + desty - mem[p + 1].cint;
-        if (mem[r + 4].cint > mem[r + 2].cint)
+          right_type(r) = right_type(r) + switch_x_and_y;
+        if (y_coord(r) < y_coord(p))
+          y_coord(r) = y_coord(p);
+        else if (y_coord(r) > dest_y)
+          y_coord(r) = dest_y;
+        if (x_coord(p) + y_coord(r) > dest_x + dest_y)
+          y_coord(r) = dest_x + dest_y - x_coord(p);
+        if (left_y(r) > y_coord(r))
         {
-          mem[r + 4].cint = mem[r + 2].cint;
-          if (mem[p + 6].cint > mem[r + 2].cint)
-            mem[p + 6].cint = mem[r + 2].cint;
+          left_y(r) = y_coord(r);
+          if (right_y(p) > y_coord(r))
+            right_y(p) = y_coord(r);
         }
-        if (mem[r + 6].cint < mem[r + 2].cint)
+        if (right_y(r) < y_coord(r))
         {
-          mem[r + 6].cint = mem[r + 2].cint;
-          if (mem[q + 4].cint < mem[r + 2].cint)
-            mem[q + 4].cint = mem[r + 2].cint;
+          right_y(r) = y_coord(r);
+          if (left_y(q) < y_coord(r))
+            left_y(q) = y_coord(r);
         }
-        if (mem[r + 1].cint < mem[p + 1].cint)
-          mem[r + 1].cint = mem[p + 1].cint;
-        else if (mem[r + 1].cint + mem[r + 2].cint > destx + desty)
-          mem[r + 1].cint = destx + desty - mem[r + 2].cint;
-        mem[r + 3].cint = mem[r + 1].cint;
-        if (mem[p + 5].cint > mem[r + 1].cint)
-          mem[p + 5].cint = mem[r + 1].cint;
-        mem[r + 2].cint = mem[r + 2].cint + mem[r + 1].cint;
-        mem[r + 6].cint = mem[r + 6].cint + mem[r + 1].cint;
-        mem[r + 1].cint = -mem[r + 1].cint;
-        mem[r + 5].cint = mem[r + 1].cint;
-        mem[q + 4].cint = mem[q + 4].cint + mem[q + 3].cint;
-        mem[q + 3].cint = -mem[q + 3].cint;
-        desty = desty + destx;
-        destx = -destx;
-        if (mem[r + 6].cint < mem[r + 2].cint)
+        if (x_coord(r) < x_coord(p))
+          x_coord(r) = x_coord(p);
+        else if (x_coord(r) + y_coord(r) > dest_x + dest_y)
+          x_coord(r) = dest_x + dest_y - y_coord(r);
+        left_x(r) = x_coord(r);
+        if (right_x(p) > x_coord(r))
+          right_x(p) = x_coord(r);
+        y_coord(r) = y_coord(r) + x_coord(r);
+        right_y(r) = right_y(r) + x_coord(r);
+        negate(x_coord(r));
+        right_x(r) = x_coord(r);
+        left_y(q) = left_y(q) + left_x(q);
+        negate(left_x(q));
+        dest_y = dest_y + dest_x;
+        negate(dest_x);
+        if (right_y(r) < y_coord(r))
         {
-          mem[r + 6].cint = mem[r + 2].cint;
-          if (mem[q + 4].cint < mem[r + 2].cint)
-            mem[q + 4].cint = mem[r + 2].cint;
+          right_y(r) = y_coord(r);
+          if (left_y(q) < y_coord(r))
+            left_y(q) = y_coord(r);
         }
-        del2 = del2 - take_fraction (del2 - del3, t);
+        del2 = t_of_the_way(del2, del3);
         if (del2 > 0)
           del2 = 0;
-        t = crossing_point (0, -del2, -del3);
+        t = crossing_point(0, -del2, -del3);
         if (t < fraction_one)
         {
-          split_cubic (r, t, destx, desty);
-          s = mem[r].hh.rh;
-          if (mem[s + 2].cint < mem[r + 2].cint)
-            mem[s + 2].cint = mem[r + 2].cint;
-          else if (mem[s + 2].cint > desty)
-            mem[s + 2].cint = desty;
-          if (mem[r + 1].cint + mem[s + 2].cint > destx + desty)
-            mem[s + 2].cint = destx + desty - mem[r + 1].cint;
-          if (mem[s + 4].cint > mem[s + 2].cint)
+          split_cubic(r, t, dest_x, dest_y);
+          s = link(r);
+          if (y_coord(s) < y_coord(r))
+            y_coord(s) = y_coord(r);
+          else if (y_coord(s) > dest_y)
+            y_coord(s) = dest_y;
+          if (x_coord(r) + y_coord(s) > dest_x + dest_y)
+            y_coord(s) = dest_x + dest_y - x_coord(r);
+          if (left_y(s) > y_coord(s))
           {
-            mem[s + 4].cint = mem[s + 2].cint;
-            if (mem[r + 6].cint > mem[s + 2].cint)
-              mem[r + 6].cint = mem[s + 2].cint;
+            left_y(s) = y_coord(s);
+            if (right_y(r) > y_coord(s))
+              right_y(r) = y_coord(s);
           }
-          if (mem[s + 6].cint < mem[s + 2].cint)
+          if (right_y(s) < y_coord(s))
           {
-            mem[s + 6].cint = mem[s + 2].cint;
-            if (mem[q + 4].cint < mem[s + 2].cint)
-              mem[q + 4].cint = mem[s + 2].cint;
+            right_y(s) = y_coord(s);
+            if (left_y(q) < y_coord(s))
+              left_y(q) = y_coord(s);
           }
-          if (mem[s + 1].cint + mem[s + 2].cint > destx + desty)
-            mem[s + 1].cint = destx + desty - mem[s + 2].cint;
+          if (x_coord(s) + y_coord(s) > dest_x + dest_y)
+            x_coord(s) = dest_x + dest_y - y_coord(s);
           else
           {
-            if (mem[s + 1].cint < destx)
-              mem[s + 1].cint = destx;
-            if (mem[s + 1].cint < mem[r + 1].cint)
-              mem[s + 1].cint = mem[r + 1].cint;
+            if (x_coord(s) < dest_x)
+              x_coord(s) = dest_x;
+            if (x_coord(s) < x_coord(r))
+              x_coord(s) = x_coord(r);
           }
-          mem[s].hh.b1 = mem[p].hh.b1;
-          mem[s + 3].cint = mem[s + 1].cint;
-          if (mem[q + 3].cint < destx)
+          right_type(s) = right_type(p);
+          left_x(s) = x_coord(s);
+          if (left_x(q) < dest_x)
           {
-            mem[q + 4].cint = mem[q + 4].cint + destx;
-            mem[q + 3].cint = -destx;
+            left_y(q) = left_y(q) + dest_x;
+            left_x(q) = -dest_x;
           }
-          else if (mem[q + 3].cint > mem[s + 1].cint)
+          else if (left_x(q) > x_coord(s))
           {
-            mem[q + 4].cint = mem[q + 4].cint + mem[s + 1].cint;
-            mem[q + 3].cint = -mem[s + 1].cint;
+            left_y(q) = left_y(q) + x_coord(s);
+            left_x(q) = -x_coord(s);
           }
           else
           {
-            mem[q + 4].cint = mem[q + 4].cint + mem[q + 3].cint;
-            mem[q + 3].cint = -mem[q + 3].cint;
+            left_y(q) = left_y(q) + left_x(q);
+            negate(left_x(q));
           }
-          mem[s + 2].cint = mem[s + 2].cint + mem[s + 1].cint;
-          mem[s + 6].cint = mem[s + 6].cint + mem[s + 1].cint;
-          mem[s + 1].cint = -mem[s + 1].cint;
-          mem[s + 5].cint = mem[s + 1].cint;
-          if (mem[s + 6].cint < mem[s + 2].cint)
+          y_coord(s) = y_coord(s) + x_coord(s);
+          right_y(s) = right_y(s) + x_coord(s);
+          negate(x_coord(s));
+          right_x(s) = x_coord(s);
+          if (right_y(s) < y_coord(s))
           {
-            mem[s + 6].cint = mem[s + 2].cint;
-            if (mem[q + 4].cint < mem[s + 2].cint)
-              mem[q + 4].cint = mem[s + 2].cint;
+            right_y(s) = y_coord(s);
+            if (left_y(q) < y_coord(s))
+              left_y(q) = y_coord(s);
           }
         }
         else
         {
-          if (mem[r + 1].cint > destx)
+          if (x_coord(r) > dest_x)
           {
-            mem[r + 1].cint = destx;
-            mem[r + 3].cint = -mem[r + 1].cint;
-            mem[r + 5].cint = mem[r + 1].cint;
+            x_coord(r) = dest_x;
+            left_x(r) = -x_coord(r);
+            right_x(r) = x_coord(r);
           }
-          if (mem[q + 3].cint > destx)
-            mem[q + 3].cint = destx;
-          else if (mem[q + 3].cint < mem[r + 1].cint)
-            mem[q + 3].cint = mem[r + 1].cint;
+          if (left_x(q) > dest_x)
+            left_x(q) = dest_x;
+          else if (left_x(q) < x_coord(r))
+            left_x(q) = x_coord(r);
         }
       }
     }
@@ -7613,7 +7941,9 @@ void make_safe (void)
   before[cur_rounding_ptr] = before[0];
   node_to_round[cur_rounding_ptr] = node_to_round[0];
   do {
-    after[cur_rounding_ptr] = after[0]; all_safe = true; next_a = after[0];
+    after[cur_rounding_ptr] = after[0];
+    all_safe = true;
+    next_a = after[0];
     for (k = 0; k <= cur_rounding_ptr - 1; k++)
     {
       delta_b = before[k + 1] - before[k];
@@ -7652,7 +7982,6 @@ void before_and_after (scaled b, scaled a, pointer p)
 /* 431 */
 scaled good_val (scaled b, scaled o)
 {
-  scaled Result;
   scaled a;
 
   a = b + o;
@@ -7661,25 +7990,21 @@ scaled good_val (scaled b, scaled o)
   else
     a = a + ((-(a + 1)) % cur_gran) - cur_gran + 1 - o;
   if (b - a < a + cur_gran - b)
-    Result = a;
+    return a;
   else
-    Result = a + cur_gran;
-  return Result;
+    return a + cur_gran;
 }
 /* 432 */
 scaled compromise (scaled u, scaled v)
 {
-  scaled Result;
-  
-  Result = half(good_val(u + u, -u - v));
-  return Result;
+  return half(good_val(u + u, -u - v));
 }
 /* 433 */
 void xy_round (void)
 {
-  halfword p, q;
+  pointer p, q;
   scaled b, a;
-  scaled penedge;
+  scaled pen_edge;
   fraction alpha;
 
   cur_gran = abs(internal[granularity]);
@@ -7688,24 +8013,25 @@ void xy_round (void)
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
-    q = mem[p].hh.rh;
-    if (odd(mem[p].hh.b1) != odd(mem[q].hh.b1))
+    q = link(p);
+    if (odd(right_type(p)) != odd(right_type(q)))
     {
-      if (odd(mem[q].hh.b1))
-        b = mem[q + 1].cint;
+      if (odd(right_type(q)))
+        b = x_coord(q);
       else
-        b = -mem[q + 1].cint;
-      if ((abs(mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs(mem[q + 1].cint + mem[q + 3].cint) < 655))
+        b = -x_coord(q);
+      if ((abs(x_coord(q) - right_x(q)) < 655) || (abs(x_coord(q) + left_x(q)) < 655))
       {
-        if (cur_pen == 3)
-          penedge = 0;
+        if (cur_pen == null_pen)
+          pen_edge = 0;
         else if (cur_path_type == double_path_code)
-         penedge = compromise (mem[mem[cur_pen + 5].hh.rh + 2].cint, mem[mem[cur_pen + 7].hh.rh + 2].cint);
-        else if (odd(mem[q].hh.b1))
-          penedge = mem[mem[cur_pen + 7].hh.rh + 2].cint;
+          pen_edge = compromise(east_edge(cur_pen), west_edge(
+            cur_pen));
+        else if (odd(right_type(q)))
+          pen_edge = west_edge(cur_pen);
         else
-          penedge = mem[mem[cur_pen + 5].hh.rh + 2].cint;
-        a = good_val (b, penedge);
+          pen_edge = east_edge(cur_pen);
+        a = good_val(b, pen_edge);
       }
       else
         a = b;
@@ -7716,7 +8042,7 @@ void xy_round (void)
         else
           a = -max_allowed;
       }
-      before_and_after (b, a, q);
+      before_and_after(b, a, q);
     }
     p = q;
   } while (!(p == cur_spec));
@@ -7725,10 +8051,10 @@ void xy_round (void)
     make_safe();
     do {
       decr(cur_rounding_ptr);
-      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
+      if ((after[cur_rounding_ptr] != before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1] != before[cur_rounding_ptr + 1]))
       {
         p = node_to_round[cur_rounding_ptr];
-        if (odd(mem[p].hh.b1))
+        if (odd(right_type(p)))
         {
           b = before[cur_rounding_ptr];
           a = after[cur_rounding_ptr];
@@ -7741,14 +8067,12 @@ void xy_round (void)
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
           alpha = fraction_one;
         else
-          alpha = make_fraction (after[cur_rounding_ptr + 1] - after[
-        cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[
-        cur_rounding_ptr]);
+          alpha = make_fraction(after[cur_rounding_ptr + 1] - after[cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[cur_rounding_ptr]);
         do {
-          mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint - b) + a;
-          mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b) + a;
-          p = mem[p].hh.rh;
-          mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b) + a;
+          x_coord(p) = take_fraction(alpha, x_coord(p) - b) + a;
+          right_x(p) = take_fraction(alpha, right_x(p) - b) + a;
+          p = link(p);
+          left_x(p) = take_fraction(alpha, left_x(p) - b) + a;
         } while (!(p == node_to_round[cur_rounding_ptr + 1]));
       }
     } while (!(cur_rounding_ptr == 0));
@@ -7756,24 +8080,24 @@ void xy_round (void)
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
-    q = mem[p].hh.rh;
-    if ((mem[p].hh.b1 > 2) != (mem[q].hh.b1 > 2))
+    q = link(p);
+    if ((right_type(p) > negate_y) != (right_type(q) > negate_y))
     {
-      if (mem[q].hh.b1 <= 2)
-        b = mem[q + 2].cint;
+      if (right_type(q) <= negate_y)
+        b = y_coord(q);
       else
-        b = -mem[q + 2].cint;
-      if ((abs(mem[q + 2].cint - mem[q + 6].cint) < 655) || (abs(mem[q + 2].cint + mem[q + 4].cint) < 655))
+        b = -y_coord(q);
+      if ((abs(y_coord(q) - right_y(q)) < 655) || (abs(y_coord(q) + left_y(q)) < 655))
       {
-        if (cur_pen == 3)
-          penedge = 0;
+        if (cur_pen == null_pen)
+          pen_edge = 0;
         else if (cur_path_type == double_path_code)
-          penedge = compromise (mem[mem[cur_pen + 2].hh.rh + 2].cint, mem[mem[cur_pen + 1].hh.rh + 2].cint);
-        else if (mem[q].hh.b1 <= 2)
-          penedge = mem[mem[cur_pen + 1].hh.rh + 2].cint;
+          pen_edge = compromise(north_edge(cur_pen), south_edge(cur_pen));
+        else if (right_type(q) <= negate_y)
+          pen_edge = south_edge(cur_pen);
         else
-          penedge = mem[mem[cur_pen + 2].hh.rh + 2].cint;
-        a = good_val (b, penedge);
+          pen_edge = north_edge(cur_pen);
+        a = good_val(b, pen_edge);
       }
       else
         a = b;
@@ -7784,7 +8108,7 @@ void xy_round (void)
         else
           a = -max_allowed;
       }
-      before_and_after (b, a, q);
+      before_and_after(b, a, q);
     }
     p = q;
   } while (!(p == cur_spec));
@@ -7793,10 +8117,10 @@ void xy_round (void)
     make_safe();
     do {
       decr(cur_rounding_ptr);
-      if ((after[cur_rounding_ptr]!= before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1]!= before[cur_rounding_ptr + 1]))
+      if ((after[cur_rounding_ptr] != before[cur_rounding_ptr]) || (after[cur_rounding_ptr + 1] != before[cur_rounding_ptr + 1]))
       {
         p = node_to_round[cur_rounding_ptr];
-        if (mem[p].hh.b1 <= 2)
+        if (right_type(p) <= negate_y)
         {
           b = before[cur_rounding_ptr];
           a = after[cur_rounding_ptr];
@@ -7809,12 +8133,12 @@ void xy_round (void)
         if (before[cur_rounding_ptr] == before[cur_rounding_ptr + 1])
           alpha = fraction_one;
         else
-          alpha = make_fraction (after[cur_rounding_ptr + 1] - after[cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[cur_rounding_ptr]);
+          alpha = make_fraction(after[cur_rounding_ptr + 1] - after[cur_rounding_ptr], before[cur_rounding_ptr + 1] - before[cur_rounding_ptr]);
         do {
-          mem[p + 2].cint = take_fraction (alpha, mem[p + 2].cint - b) + a;
-          mem[p + 6].cint = take_fraction (alpha, mem[p + 6].cint - b) + a;
-          p = mem[p].hh.rh;
-          mem[p + 4].cint = take_fraction (alpha, mem[p + 4].cint - b) + a;
+          y_coord(p) = take_fraction(alpha, y_coord(p) - b) + a;
+          right_y(p) = take_fraction(alpha, right_y(p) - b) + a;
+          p = link(p);
+          left_y(p) = take_fraction(alpha, left_y(p) - b) + a;
         } while (!(p == node_to_round[cur_rounding_ptr + 1]));
       }
     } while (!(cur_rounding_ptr == 0));
@@ -7823,86 +8147,86 @@ void xy_round (void)
 /* 440 */
 void diag_round (void)
 {
-  halfword p, q, pp;
+  pointer p, q, pp;
   scaled b, a, bb, aa, d, c, dd, cc;
-  scaled penedge;
+  scaled pen_edge;
   fraction alpha, beta;
-  scaled nexta;
-  boolean allsafe;
+  scaled next_a;
+  boolean all_safe;
   integer k;
   scaled first_x, first_y;
 
   p = cur_spec;
   cur_rounding_ptr = 0;
   do {
-    q = mem[p].hh.rh;
-    if (mem[p].hh.b1 != mem[q].hh.b1)
+    q = link(p);
+    if (right_type(p) != right_type(q))
     {
-      if (mem[q].hh.b1 > 4)
-        b = -mem[q + 1].cint;
+      if (right_type(q) > switch_x_and_y)
+        b = -x_coord(q);
       else
-        b = mem[q + 1].cint;
-      if (abs(mem[q].hh.b1 - mem[p].hh.b1) == 4)
+        b = x_coord(q);
+      if (abs(right_type(q) - right_type(p)) == switch_x_and_y)
       {
-        if ((abs(mem[q + 1].cint - mem[q + 5].cint) < 655) || (abs(mem[q + 1].cint + mem[q + 3].cint) < 655))
+        if ((abs(x_coord(q) - right_x(q)) < 655) || (abs(x_coord(q) + left_x(q)) < 655))
         {
-          if (cur_pen == 3)
-            penedge = 0;
+          if (cur_pen == null_pen)
+            pen_edge = 0;
           else if (cur_path_type == double_path_code)
-            switch (mem[q].hh.b1)
+            switch (right_type(q))
             {
-              case 1:
-              case 5:
-                penedge = compromise (mem[mem[mem[cur_pen + 1].hh.rh].hh.lh + 1].cint, -mem[mem[mem[cur_pen + 4].hh.rh].hh.lh + 1].cint);
+              case first_octant:
+              case second_octant:
+                pen_edge = compromise(diag_offset(first_octant), -diag_offset(fifth_octant));
                 break;
-              case 4:
-              case 8:
-                penedge = -compromise (mem[mem[mem[cur_pen + 1].hh.rh].hh.lh + 1].cint, -mem[mem[mem[cur_pen + 4].hh.rh].hh.lh + 1].cint);
+              case fifth_octant:
+              case sixth_octant:
+                pen_edge = -compromise(diag_offset(first_octant), -diag_offset(fifth_octant));
                 break;
-              case 6:
-              case 2:
-                penedge = compromise (mem[mem[mem[cur_pen + 2].hh.rh].hh.lh + 1].cint, -mem[mem[mem[cur_pen + 3].hh.rh].hh.lh + 1].cint);
+              case third_octant:
+              case fourth_octant:
+                pen_edge = compromise(diag_offset(fourth_octant), -diag_offset(eighth_octant));
                 break;
-              case 7:
-              case 3:
-                penedge = -compromise (mem[mem[mem[cur_pen + 2].hh.rh].hh.lh + 1].cint, -mem[mem[mem[cur_pen + 3].hh.rh].hh.lh + 1].cint);
+              case seventh_octant:
+              case eighth_octant:
+                pen_edge = -compromise(diag_offset(fourth_octant), -diag_offset(eighth_octant));
                 break;
             }
-            else if (mem[q].hh.b1 <= 4)
-              penedge = mem[mem[mem[cur_pen + mem[q].hh.b1].hh.rh].hh.lh + 1].cint;
-            else
-              penedge = -mem[mem[mem[cur_pen + mem[q].hh.b1].hh.rh].hh.lh + 1].cint;
-            if (odd(mem[q].hh.b1))
-              a = good_val (b, penedge + half(cur_gran));
-            else
-              a = good_val (b - 1, penedge + half(cur_gran));
-          }
+          else if (right_type(q) <= switch_x_and_y)
+            pen_edge = diag_offset(right_type(q));
+          else
+            pen_edge = -diag_offset(right_type(q));
+          if (odd(right_type(q)))
+            a = good_val(b, pen_edge + half(cur_gran));
+          else
+            a = good_val(b - 1, pen_edge + half(cur_gran));
+        }
         else
           a = b;
       }
       else
         a = b;
-      before_and_after (b, a, q);
+      before_and_after(b, a, q);
     }
     p = q;
   } while (!(p == cur_spec));
   if (cur_rounding_ptr > 0)
   {
     p = node_to_round[0];
-    first_x = mem[p + 1].cint;
-    first_y = mem[p + 2].cint;
+    first_x = x_coord(p);
+    first_y = y_coord(p);
     before[cur_rounding_ptr] = before[0];
     node_to_round[cur_rounding_ptr] = node_to_round[0];
     do {
       after[cur_rounding_ptr] = after[0];
-      allsafe = true;
-      nexta = after[0];
+      all_safe = true;
+      next_a = after[0];
       for (k = 0; k <= cur_rounding_ptr - 1; k++)
       {
-        a = nexta;
+        a = next_a;
         b = before[k];
-        nexta = after[k + 1];
-        aa = nexta;
+        next_a = after[k + 1];
+        aa = next_a;
         bb = before[k + 1];
         if ((a != b) || (aa != bb))
         {
@@ -7911,15 +8235,15 @@ void diag_round (void)
           if (aa == bb)
           {
             if (pp == node_to_round[0])
-              unskew (first_x, first_y, mem[pp].hh.b1);
+              unskew(first_x, first_y, right_type(pp));
             else
-              unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[pp].hh.b1);
-            skew (cur_x, cur_y, mem[p].hh.b1);
+              unskew(x_coord(pp), y_coord(pp), right_type(pp));
+            skew(cur_x, cur_y, right_type(p));
             bb = cur_x;
             aa = bb;
             dd = cur_y;
             cc = dd;
-            if (mem[p].hh.b1 > 4)
+            if (right_type(p) > switch_x_and_y)
             {
               b = -b;
               a = -a;
@@ -7927,7 +8251,7 @@ void diag_round (void)
           }
           else
           {
-            if (mem[p].hh.b1 > 4)
+            if (right_type(p) > switch_x_and_y)
             {
               bb = -bb;
               aa = -aa;
@@ -7937,10 +8261,10 @@ void diag_round (void)
             if (pp == node_to_round[0])
               dd = first_y - bb;
             else
-              dd = mem[pp + 2].cint - bb;
+              dd = y_coord(pp) - bb;
             if (odd(aa - bb))
             {
-              if (mem[p].hh.b1 > 4)
+              if (right_type(p) > switch_x_and_y)
                 cc = dd - half(aa - bb + 1);
               else
                 cc = dd - half(aa - bb - 1);
@@ -7948,10 +8272,10 @@ void diag_round (void)
             else
               cc = dd - half(aa - bb);
           }
-          d = mem[p + 2].cint;
+          d = y_coord(p);
           if (odd(a - b))
           {
-            if (mem[p].hh.b1 > 4)
+            if (right_type(p) > switch_x_and_y)
               c = d - half(a - b - 1);
             else
               c = d - half(a - b + 1);
@@ -7960,7 +8284,7 @@ void diag_round (void)
             c = d - half(a - b);
           if ((aa < a) || (cc < c) || (aa - a > 2 * (bb - b)) || (cc - c > 2 * (dd - d)))
           {
-            allsafe = false;
+            all_safe = false;
             after[k] = before[k];
             if (k == cur_rounding_ptr - 1)
               after[0] = before[0];
@@ -7969,7 +8293,7 @@ void diag_round (void)
           }
         }
       }
-    } while (!(allsafe));
+    } while (!(all_safe));
     for (k = 0; k <= cur_rounding_ptr - 1; k++)
     {
       a = after[k];
@@ -7983,15 +8307,15 @@ void diag_round (void)
         if (aa == bb)
         {
           if (pp == node_to_round[0])
-            unskew (first_x, first_y, mem[pp].hh.b1);
+            unskew(first_x, first_y, right_type(pp));
           else
-            unskew (mem[pp + 1].cint, mem[pp + 2].cint, mem[pp].hh.b1);
-          skew (cur_x, cur_y, mem[p].hh.b1);
+            unskew(x_coord(pp), y_coord(pp), right_type(pp));
+          skew(cur_x, cur_y, right_type(p));
           bb = cur_x;
           aa = bb;
           dd = cur_y;
           cc = dd;
-          if (mem[p].hh.b1 > 4)
+          if (right_type(p) > switch_x_and_y)
           {
             b = -b;
             a = -a;
@@ -7999,7 +8323,7 @@ void diag_round (void)
         }
         else
         {
-          if (mem[p].hh.b1 > 4)
+          if (right_type(p) > switch_x_and_y)
           {
             bb = -bb;
             aa = -aa;
@@ -8009,10 +8333,10 @@ void diag_round (void)
           if (pp == node_to_round[0])
             dd = first_y - bb;
           else
-            dd = mem[pp + 2].cint - bb;
+            dd = y_coord(pp) - bb;
           if (odd(aa - bb))
           {
-            if (mem[p].hh.b1 > 4)
+            if (right_type(p) > switch_x_and_y)
               cc = dd - half(aa - bb + 1);
             else
               cc = dd - half(aa - bb - 1);
@@ -8020,10 +8344,10 @@ void diag_round (void)
           else
             cc = dd - half(aa - bb);
         }
-        d = mem[p + 2].cint;
+        d = y_coord(p);
         if (odd(a - b))
         {
-          if (mem[p].hh.b1 > 4)
+          if (right_type(p) > switch_x_and_y)
             c = d - half(a - b - 1);
           else
             c = d - half(a - b + 1);
@@ -8033,50 +8357,50 @@ void diag_round (void)
         if (b == bb)
           alpha = fraction_one;
         else
-          alpha = make_fraction (aa - a, bb - b);
+          alpha = make_fraction(aa - a, bb - b);
         if (d == dd)
           beta = fraction_one;
         else
-          beta = make_fraction (cc - c, dd - d);
+          beta = make_fraction(cc - c, dd - d);
         do {
-          mem[p + 1].cint = take_fraction (alpha, mem[p + 1].cint - b) + a;
-          mem[p + 2].cint = take_fraction (beta, mem[p + 2].cint - d) + c;
-          mem[p + 5].cint = take_fraction (alpha, mem[p + 5].cint - b) + a;
-          mem[p + 6].cint = take_fraction (beta, mem[p + 6].cint - d) + c;
-          p = mem[p].hh.rh;
-          mem[p + 3].cint = take_fraction (alpha, mem[p + 3].cint - b) + a;
-          mem[p + 4].cint = take_fraction (beta, mem[p + 4].cint - d) + c;
+          x_coord(p) = take_fraction(alpha, x_coord(p) - b) + a;
+          y_coord(p) = take_fraction(beta, y_coord(p) - d) + c;
+          right_x(p) = take_fraction(alpha, right_x(p) - b) + a;
+          right_y(p) = take_fraction(beta, right_y(p) - d) + c;
+          p = link(p);
+          left_x(p) = take_fraction(alpha, left_x(p) - b) + a;
+          left_y(p) = take_fraction(beta, left_y(p) - d) + c;
         } while (!(p == pp));
       }
     }
   }
 }
 /* 451 */
-void new_boundary (halfword p, small_number octant)
+void new_boundary (pointer p, small_number octant)
 {
-  halfword q, r;
+  pointer q, r;
 
-  q = mem[p].hh.rh;
-  r = get_node (7);
-  mem[r].hh.rh = q;
-  mem[p].hh.rh = r;
-  mem[r].hh.b0 = mem[q].hh.b0;
-  mem[r + 3].cint = mem[q + 3].cint;
-  mem[r + 4].cint = mem[q + 4].cint;
-  mem[r].hh.b1 = 0;
-  mem[q].hh.b0 = 0;
-  mem[r + 5].cint = octant;
-  mem[q + 3].cint = mem[q].hh.b1;
-  unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1);
-  skew (cur_x, cur_y, octant);
-  mem[r + 1].cint = cur_x;
-  mem[r + 2].cint = cur_y;
+  q = link(p);
+  r = get_node(knot_node_size);
+  link(r) = q;
+  link(p) = r;
+  left_type(r) = left_type(q);
+  left_x(r) = left_x(q);
+  left_y(r) = left_y(q);
+  right_type(r) = endpoint;
+  left_type(q) = endpoint;
+  right_octant(r) = octant;
+  left_octant(q) = right_type(q);
+  unskew(x_coord(q), y_coord(q), right_type(q));
+  skew(cur_x, cur_y, octant);
+  x_coord(r) = cur_x;
+  y_coord(r) = cur_y;
 }
 /* 402 */
-halfword make_spec (halfword h, scaled safetymargin, integer tracing)
+pointer make_spec (pointer h, scaled safety_margin, integer tracing)
 {
-  halfword Result;
-  halfword p, q, r, s;
+  pointer Result;
+  pointer p, q, r, s;
   integer k;
   integer chopped;
   small_number o1, o2;
@@ -8086,94 +8410,22 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
 
   cur_spec = h;
   if (tracing > 0)
-    print_path (cur_spec, 559, true);
-  max_allowed = 268402687L - safetymargin;
+    print_path(cur_spec, 559, true);
+  max_allowed = fraction_one - half_unit - 1 - safety_margin;
   p = cur_spec;
   k = 1;
   chopped = 0;
   dmax = half(max_allowed);
   do {
-    if (abs(mem[p + 3].cint) >= dmax)
-    {
-      if (abs(mem[p + 3].cint) > max_allowed)
-      {
-        chopped = 1;
-        if (mem[p + 3].cint > 0)
-          mem[p + 3].cint = max_allowed;
-        else
-          mem[p + 3].cint = -max_allowed;
-      }
-      else if (chopped == 0)
-        chopped = -1;
-    }
-    if (abs(mem[p + 4].cint) >= dmax)
-    {
-      if (abs(mem[p + 4].cint) > max_allowed)
-      {
-        chopped = 1;
-        if (mem[p + 4].cint > 0)
-          mem[p + 4].cint = max_allowed;
-        else
-          mem[p + 4].cint = -max_allowed;
-      }
-      else if (chopped == 0)
-        chopped = -1;
-    }
-    if (abs(mem[p + 1].cint) >= dmax)
-    {
-      if (abs(mem[p + 1].cint) > max_allowed)
-      {
-        chopped = 1;
-        if (mem[p + 1].cint > 0)
-          mem[p + 1].cint = max_allowed;
-        else
-          mem[p + 1].cint = -max_allowed;
-      }
-      else if (chopped == 0)
-        chopped = -1;
-    }
-    if (abs(mem[p + 2].cint) >= dmax)
-    {
-      if (abs(mem[p + 2].cint) > max_allowed)
-      {
-        chopped = 1;
-        if (mem[p + 2].cint > 0)
-          mem[p + 2].cint = max_allowed;
-        else
-          mem[p + 2].cint = -max_allowed;
-      }
-      else if (chopped == 0)
-        chopped = -1;
-    }
-    if (abs(mem[p + 5].cint) >= dmax)
-    {
-      if (abs(mem[p + 5].cint) > max_allowed)
-      {
-        chopped = 1;
-        if (mem[p + 5].cint > 0)
-          mem[p + 5].cint = max_allowed;
-        else
-          mem[p + 5].cint = -max_allowed;
-      }
-      else if (chopped == 0)
-        chopped = -1;
-    }
-    if (abs(mem[p + 6].cint) >= dmax)
-    {
-      if (abs(mem[p + 6].cint) > max_allowed)
-      {
-        chopped = 1;
-        if (mem[p + 6].cint > 0)
-          mem[p + 6].cint = max_allowed;
-        else
-          mem[p + 6].cint = -max_allowed;
-      }
-      else if (chopped == 0)
-        chopped = -1;
-    }
-    p = mem[p].hh.rh;
-    mem[p].hh.b0 = k;
-    if (k < 255)
+    procrustes(left_x(p));
+    procrustes(left_y(p));
+    procrustes(x_coord(p));
+    procrustes(y_coord(p));
+    procrustes(right_x(p));
+    procrustes(right_y(p));
+    p = link(p);
+    left_type(p) = k;
+    if (k < max_quarterword)
       incr(k);
     else
       k = 1;
@@ -8195,48 +8447,41 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
     diag_round();
   p = cur_spec;
   do {
-    lab_continue: q = mem[p].hh.rh;
+  lab_continue:
+    q = link(p);
     if (p != q)
     {
-      if (mem[p + 1].cint == mem[p + 5].cint)
-      {
-        if (mem[p + 2].cint == mem[p + 6].cint)
-        {
-          if (mem[p + 1].cint == mem[q + 3].cint)
-          {
-            if (mem[p + 2].cint == mem[q + 4].cint)
+      if (x_coord(p) == right_x(p))
+        if (y_coord(p) == right_y(p))
+          if (x_coord(p) == left_x(q))
+            if (y_coord(p) == left_y(q))
             {
-              unskew (mem[q + 1].cint, mem[q + 2].cint, mem[q].hh.b1);
-              skew (cur_x, cur_y, mem[p].hh.b1);
-              if (mem[p + 1].cint == cur_x)
-              {
-                if (mem[p + 2].cint == cur_y)
+              unskew(x_coord(q), y_coord(q), right_type(q));
+              skew(cur_x, cur_y, right_type(p));
+              if (x_coord(p) == cur_x)
+                if (y_coord(p) == cur_y)
                 {
-                  remove_cubic (p);
+                  remove_cubic(p);
                   if (q != cur_spec)
                     goto lab_continue;
                   cur_spec = p;
                   q = p;
                 }
-              }
             }
-          }
-        }
-      }
     }
     p = q;
   } while (!(p == cur_spec));
   turning_number = 0;
   p = cur_spec;
-  q = mem[p].hh.rh;
+  q = link(p);
   do {
-    r = mem[q].hh.rh;
-    if ((mem[p].hh.b1 != mem[q].hh.b1) || (q == r))
+    r = link(q);
+    if ((right_type(p) != right_type(q)) || (q == r))
     {
-      new_boundary (p, mem[p].hh.b1);
-      s = mem[p].hh.rh;
-      o1 = octant_number[mem[p].hh.b1];
-      o2 = octant_number[mem[q].hh.b1];
+      new_boundary(p, right_type(p));
+      s = link(p);
+      o1 = octant_number[right_type(p)];
+      o2 = octant_number[right_type(q)];
       switch (o2 - o1)
       {
         case 1:
@@ -8256,82 +8501,74 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
         case 5:
         case -3:
           {
-            dx1 = mem[s + 1].cint - mem[s + 3].cint;
-            dy1 = mem[s + 2].cint - mem[s + 4].cint;
+            dx1 = x_coord(s) - left_x(s);
+            dy1 = y_coord(s) - left_y(s);
             if (dx1 == 0)
-            {
               if (dy1 == 0)
               {
-                dx1 = mem[s + 1].cint - mem[p + 5].cint;
-                dy1 = mem[s + 2].cint - mem[p + 6].cint;
+                dx1 = x_coord(s) - right_x(p);
+                dy1 = y_coord(s) - right_y(p);
                 if (dx1 == 0)
-                {
                   if (dy1 == 0)
                   {
-                    dx1 = mem[s + 1].cint - mem[p + 1].cint;
-                    dy1 = mem[s + 2].cint - mem[p + 2].cint;
+                    dx1 = x_coord(s) - x_coord(p);
+                    dy1 = y_coord(s) - y_coord(p);
                   }
-                }
               }
-            }
             dmax = abs(dx1);
             if (abs(dy1) > dmax)
               dmax = abs(dy1);
             while (dmax < fraction_one)
             {
-              dmax = dmax + dmax;
-              dx1 = dx1 + dx1;
-              dy1 = dy1 + dy1;
+              _double(dmax);
+              _double(dx1);
+              _double(dy1);
             }
-            dx2 = mem[q + 5].cint - mem[q + 1].cint;
-            dy2 = mem[q + 6].cint - mem[q + 2].cint;
+            dx2 = right_x(q) - x_coord(q);
+            dy2 = right_y(q) - y_coord(q);
             if (dx2 == 0)
-            {
               if (dy2 == 0)
               {
-                dx2 = mem[r + 3].cint - mem[q + 1].cint;
-                dy2 = mem[r + 4].cint - mem[q + 2].cint;
+                dx2 = left_x(r) - x_coord(q);
+                dy2 = left_y(r) - y_coord(q);
                 if (dx2 == 0)
-                {
                   if (dy2 == 0)
                   {
-                    if (mem[r].hh.b1 == 0)
+                    if (right_type(r) == endpoint)
                     {
-                      cur_x = mem[r + 1].cint;
-                      cur_y = mem[r + 2].cint;
+                      cur_x = x_coord(r);
+                      cur_y = y_coord(r);
                     }
                     else
                     {
-                      unskew (mem[r + 1].cint, mem[r + 2].cint, mem[r].hh.b1);
-                      skew (cur_x, cur_y, mem[q].hh.b1);
+                      unskew(x_coord(r), y_coord(r), right_type(r));
+                      skew(cur_x, cur_y, right_type(q));
                     }
-                    dx2 = cur_x - mem[q + 1].cint;
-                    dy2 = cur_y - mem[q + 2].cint;
+                    dx2 = cur_x - x_coord(q);
+                    dy2 = cur_y - y_coord(q);
                   }
-                }
               }
-            }
             dmax = abs(dx2);
             if (abs(dy2) > dmax)
               dmax = abs(dy2);
             while (dmax < fraction_one)
             {
-              dmax = dmax + dmax;
-              dx2 = dx2 + dx2;
-              dy2 = dy2 + dy2;
+              _double(dmax);
+              _double(dx2);
+              _double(dy2);
             }
-            unskew (dx1, dy1, mem[p].hh.b1);
-            del = pyth_add (cur_x, cur_y);
-            dx1 = make_fraction (cur_x, del);
-            dy1 = make_fraction (cur_y, del);
-            unskew (dx2, dy2, mem[q].hh.b1);
-            del = pyth_add (cur_x, cur_y);
-            dx2 = make_fraction (cur_x, del);
-            dy2 = make_fraction (cur_y, del);
-            del = take_fraction (dx1, dy2) - take_fraction (dx2, dy1);
-            if (del > 4684844L)
+            unskew(dx1, dy1, right_type(p));
+            del = pyth_add(cur_x, cur_y);
+            dx1 = make_fraction(cur_x, del);
+            dy1 = make_fraction(cur_y, del);
+            unskew(dx2, dy2, right_type(q));
+            del = pyth_add(cur_x, cur_y);
+            dx2 = make_fraction(cur_x, del);
+            dy2 = make_fraction(cur_y, del);
+            del = take_fraction(dx1, dy2) - take_fraction(dx2, dy1);
+            if (del > 4684844)
               clockwise = false;
-            else if (del < -4684844L)
+            else if (del < -4684844)
               clockwise = true;
             else
               clockwise = rev_turns;
@@ -8360,35 +8597,35 @@ halfword make_spec (halfword h, scaled safetymargin, integer tracing)
           incr(o1);
         if (o1 == o2)
           goto done;
-        new_boundary (s, octant_code[o1]);
-        s = mem[s].hh.rh;
-        mem[s + 3].cint = mem[s + 5].cint;
+        new_boundary(s, octant_code[o1]);
+        s = link(s);
+        left_octant(s) = right_octant(s);
       }
 done:
       if (q == r)
       {
-        q = mem[q].hh.rh;
+        q = link(q);
         r = q;
         p = s;
-        mem[s].hh.rh = q;
-        mem[q + 3].cint = mem[q + 5].cint;
-        mem[q].hh.b0 = 0;
-        free_node (cur_spec, 7);
+        link(s) = q;
+        left_octant(q) = right_octant(q);
+        left_type(q) = endpoint;
+        free_node(cur_spec, knot_node_size);
         cur_spec = q;
       }
-      p = mem[p].hh.rh;
+      p = link(p);
       do {
-        s = mem[p].hh.rh;
-        o1 = octant_number[mem[p + 5].cint];
-        o2 = octant_number[mem[s + 3].cint];
+        s = link(p);
+        o1 = octant_number[right_octant(p)];
+        o2 = octant_number[left_octant(s)];
         if (abs(o1 - o2) == 1)
         {
           if (o2 < o1)
             o2 = o1;
           if (odd(o2))
-            mem[p + 6].cint = 0;
+            right_transition(p) = axis;
           else
-            mem[p + 6].cint = 1;
+            right_transition(p) = diagonal;
         }
         else
         {
@@ -8396,17 +8633,17 @@ done:
             incr(turning_number);
           else
             decr(turning_number);
-          mem[p + 6].cint = 0;
+          right_transition(p) = axis;
         }
-        mem[s + 4].cint = mem[p + 6].cint;
+        left_transition(s) = right_transition(p);
         p = s;
       } while (!(p == q));
     }
     p = q;
     q = r;
   } while (!(p == cur_spec));
-  while (mem[cur_spec].hh.b0 != 0)
-    cur_spec = mem[cur_spec].hh.rh;
+  while (left_type(cur_spec) != endpoint)
+    cur_spec = link(cur_spec);
   if (tracing > 0)
   {
     if ((internal[autorounding] <= 0) || (chopped != 0))
@@ -8432,7 +8669,7 @@ void end_round (scaled x, scaled y)
     d1 = 0;
 }
 /* 465 */
-void fill_spec (halfword h)
+void fill_spec (pointer h)
 {
   pointer p, q, r, s;
 
@@ -8488,19 +8725,19 @@ void dup_offset (pointer w)
   link(w) = r;
 }
 /* 477 */
-halfword make_pen (halfword h)
+pointer make_pen (pointer h)
 {
   halfword Result;
   small_number o, oo, k;
-  halfword p;
-  halfword q, r, s, w, hh;
+  pointer p;
+  pointer q, r, s, w, hh;
   integer n;
   scaled dx, dy;
   scaled mc;
 
   q = h;
-  r = mem[q].hh.rh;
-  mc = abs(mem[h + 1].cint);
+  r = link(q);
+  mc = abs(x_coord(h));
   if (q == r)
   {
     hh = h;
@@ -8659,7 +8896,7 @@ found:
   return Result;
 }
 /* 486 */
-halfword trivial_knot (scaled x, scaled y)
+pointer trivial_knot (scaled x, scaled y)
 {
   pointer Result;
   pointer p;
@@ -8677,7 +8914,7 @@ halfword trivial_knot (scaled x, scaled y)
   return Result;
 }
 /* 484 */
-halfword make_path (halfword pen_head)
+pointer make_path (pointer pen_head)
 {
   pointer Result;
   pointer p;
@@ -8721,12 +8958,12 @@ halfword make_path (halfword pen_head)
   return Result;
 }
 /* 488 */
-void find_offset (scaled x, scaled y, halfword p)
+void find_offset (scaled x, scaled y, pointer p)
 {
   unsigned char octant;
   int8_t s;
   integer n;
-  halfword h, w, ww;
+  pointer h, w, ww;
 
   if (x > 0)
     octant = 1;
@@ -8805,9 +9042,9 @@ void split_for_offset (pointer p, fraction t)
     x_coord(r) = x_coord(q);
 }
 /* 497 */
-void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1, integer x2, integer y0, integer y1, integer y2, boolean rising, integer n)
+void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, integer x2, integer y0, integer y1, integer y2, boolean rising, integer n)
 {
-  halfword ww;
+  pointer ww;
   scaled du, dv;
   integer t0, t1, t2;
   fraction t;
@@ -8833,16 +9070,16 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
     if (abs(du) >= abs(dv))
     {
       s = make_fraction (dv, du);
-      t0 = take_fraction (x0, s) - y0;
-      t1 = take_fraction (x1, s) - y1;
-      t2 = take_fraction (x2, s) - y2;
+      t0 = take_fraction(x0, s) - y0;
+      t1 = take_fraction(x1, s) - y1;
+      t2 = take_fraction(x2, s) - y2;
     }
     else
     {
-      s = make_fraction (du, dv);
-      t0 = x0 - take_fraction (y0, s);
-      t1 = x1 - take_fraction (y1, s);
-      t2 = x2 - take_fraction (y2, s);
+      s = make_fraction(du, dv);
+      t0 = x0 - take_fraction(y0, s);
+      t1 = x1 - take_fraction(y1, s);
+      t2 = x2 - take_fraction(y2, s);
     }
     t = crossing_point (t0, t1, t2);
     if (t >= fraction_one)
@@ -8882,12 +9119,12 @@ void fin_offset_prep (halfword p, halfword k, halfword w, integer x0, integer x1
   lab_exit:;
 }
 /* 491 */
-void offset_prep (halfword c, halfword h)
+void offset_prep (pointer c, pointer h)
 {
   halfword n;
-  halfword p, q, r, lh, ww;
+  pointer p, q, r, lh, ww;
   halfword k;
-  halfword w;
+  pointer w;
   integer x0, x1, x2, y0, y1, y2;
   integer t0, t1, t2;
   integer du, dv, dx, dy;
@@ -9090,13 +9327,13 @@ void skew_line_edges (pointer p, pointer w, pointer ww)
   }
 }
 /* 518 */
-void dual_moves (halfword h, halfword p, halfword q)
+void dual_moves (pointer h, pointer p, pointer q)
 {
-  halfword r, s;
+  pointer r, s;
   integer m, n;
   integer mm0, mm1;
   integer k;
-  halfword w, ww;
+  pointer w, ww;
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
 
@@ -9228,15 +9465,15 @@ void dual_moves (halfword h, halfword p, halfword q)
   }
 }
 /* 506 */
-void fill_envelope (halfword spechead)
+void fill_envelope (pointer spechead)
 {
-  halfword p, q, r, s;
-  halfword h;
-  halfword www;
+  pointer p, q, r, s;
+  pointer h;
+  pointer www;
   integer m, n;
   integer mm0, mm1;
   integer k;
-  halfword w, ww;
+  pointer w, ww;
   integer smoothbot, smoothtop;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
 
@@ -9431,11 +9668,11 @@ void fill_envelope (halfword spechead)
   toss_knot_list (spechead);
 }
 /* 527 */
-halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
+pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
 {
-  halfword Result;
-  halfword p, q, r, s;
-  halfword h;
+  pointer Result;
+  pointer p, q, r, s;
+  pointer h;
   integer alpha, beta, gamma, delta;
   integer c, d;
   integer u, v;
@@ -9680,11 +9917,11 @@ halfword make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
   return Result;
 }
 /* 539 */
-scaled find_direction_time (scaled x, scaled y, halfword h)
+scaled find_direction_time (scaled x, scaled y, pointer h)
 {
   scaled Result;
   scaled max;
-  halfword p, q;
+  pointer p, q;
   scaled n;
   scaled tt;
   scaled x1, x2, x3, y1, y2, y3;
@@ -9888,9 +10125,9 @@ scaled find_direction_time (scaled x, scaled y, halfword h)
   return Result;
 }
 /* 556 */
-void cubic_intersection (halfword p, halfword pp)
+void cubic_intersection (pointer p, pointer pp)
 {
-  halfword q, qq;
+  pointer q, qq;
 
   time_to_go = 5000;
   max_t = 2;
@@ -10650,7 +10887,7 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
 /* 577 */
 void disp_edges (window_number k)
 {
-  halfword p, q;
+  pointer p, q;
   boolean alreadythere;
   integer r;
   screen_col n;
@@ -10794,11 +11031,11 @@ fraction max_coef (pointer p)
   return Result;
 }
 /* 597 */
-halfword p_plus_q (halfword p, halfword q, small_number t)
+pointer p_plus_q (pointer p, pointer q, small_number t)
 {
-  halfword Result;
-  halfword pp, qq;
-  halfword r, s;
+  pointer Result;
+  pointer pp, qq;
+  pointer r, s;
   integer threshold;
   integer v;
 
@@ -10863,10 +11100,10 @@ halfword p_plus_q (halfword p, halfword q, small_number t)
   return Result;
 }
 /* 599 */
-halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boolean v_is_scaled)
+pointer p_times_v (pointer p, integer v, small_number t0, small_number t1, boolean v_is_scaled)
 {
-  halfword Result;
-  halfword r, s;
+  pointer Result;
+  pointer r, s;
   integer w;
   integer threshold;
   boolean scalingdown;
@@ -10914,10 +11151,10 @@ halfword p_times_v (halfword p, integer v, small_number t0, small_number t1, boo
   return Result;
 }
 /* 601 */
-halfword p_with_x_becoming_q (halfword p, halfword x, halfword q, small_number t)
+pointer p_with_x_becoming_q (pointer p, pointer x, pointer q, small_number t)
 {
-  halfword Result;
-  halfword r, s;
+  pointer Result;
+  pointer r, s;
   integer v;
   integer sx;
 
@@ -11006,14 +11243,14 @@ pointer copy_dep_list (pointer p)
   return Result;
 }
 /* 610 */
-void linear_eq (halfword p, small_number t)
+void linear_eq (pointer p, small_number t)
 {
-  halfword q, r, s;
-  halfword x;
+  pointer q, r, s;
+  pointer x;
   integer n;
   integer v;
-  halfword prevr;
-  halfword finalnode;
+  pointer prevr;
+  pointer finalnode;
   integer w;
 
   q = p;
@@ -11427,7 +11664,7 @@ void show_context (void)
   done: cur_input = input_stack[input_ptr];
 }
 /* 649 */
-void begin_token_list (halfword p, quarterword t)
+void begin_token_list (pointer p, quarterword t)
 {
   {
     if (input_ptr > max_in_stack)
@@ -11518,9 +11755,9 @@ void install (pointer r, pointer q)
   }
 }
 /* 855 */
-void make_exp_copy (halfword p)
+void make_exp_copy (pointer p)
 {
-  halfword q, r, t;
+  pointer q, r, t;
 
 lab_restart:
   cur_type = mem[p].hh.b0;
@@ -11685,21 +11922,12 @@ void ins_error (void)
 /* 654 */
 void begin_file_reading (void)
 {
-  if (in_open == 15)
-    overflow("text input levels", 15);
+  if (in_open == max_in_open)
+    overflow("text input levels", max_in_open);
   if (first == buf_size)
     overflow("buffer size", buf_size);
   incr(in_open);
-  {
-    if (input_ptr > max_in_stack)
-    {
-      max_in_stack = input_ptr;
-      if (input_ptr == stack_size)
-        overflow("input stack size", stack_size);
-    }
-    input_stack[input_ptr] = cur_input;
-    incr(input_ptr);
-  }
+  push_input();
   index = in_open;
   line_stack[index] = line;
   start = first;
@@ -11713,7 +11941,7 @@ void end_file_reading (void)
   if (index != in_open)
     confusion("endinput");
   if (name > 2)
-    a_close(input_file[index]);
+    a_close(cur_file);
   pop_input();
   decr(in_open);
 }
@@ -11723,12 +11951,13 @@ void clear_for_error_prompt (void)
   while (file_state && terminal_input && (input_ptr > 0) && (loc == limit))
     end_file_reading();
   print_ln();
+  clear_terminal();
 }
 /* 661 */
 boolean check_outer_validity (void)
 {
   boolean Result;
-  halfword p;
+  pointer p;
 
   if (scanner_status == 0)
     Result = true;
@@ -12266,16 +12495,16 @@ void make_op_def (void)
   get_x_next();
 }
 /* 1032 */
-void check_delimiter (pointer ldelim, pointer rdelim)
+void check_delimiter (pointer l_delim, pointer r_delim)
 {
   if (cur_cmd == right_delimiter)
   {
-    if (cur_mod == ldelim)
+    if (cur_mod == l_delim)
       goto lab_exit;
   }
-  if (cur_sym != rdelim)
+  if (cur_sym != r_delim)
   {
-    missing_err(hash[rdelim].rh);
+    missing_err(text(r_delim));
     help2("I found no right delimiter to match a left one. So I've",
       "put one in, behind the scenes; this may fix the problem.");
     back_error();
@@ -12283,7 +12512,7 @@ void check_delimiter (pointer ldelim, pointer rdelim)
   else
   {
     print_err("The token `");
-    slow_print(hash[rdelim].rh);
+    slow_print(text(r_delim));
     print(925);
     help3("Strange: This token has lost its former meaning!",
       "I'll read it as a right delimiter this time;",
@@ -12353,9 +12582,9 @@ void scan_def (void)
   unsigned char n;
   unsigned char k;
   unsigned char c;
-  halfword r;
-  halfword q;
-  halfword p;
+  pointer r;
+  pointer q;
+  pointer p;
   halfword base;
   halfword ldelim, rdelim;
 
@@ -12594,11 +12823,11 @@ done:
 /* 720 */
 void macro_call (halfword defref, halfword arg_list, halfword macro_name)
 {
-  halfword r;
-  halfword p, q;
+  pointer r;
+  pointer p, q;
   integer n;
-  halfword ldelim, rdelim;
-  halfword tail;
+  pointer ldelim, rdelim;
+  pointer tail;
 
   r = mem[defref].hh.rh;
   incr(mem[defref].hh.lh);
@@ -12865,7 +13094,7 @@ void stop_iteration(void);
 /* 707 */
 void expand (void)
 {
-  halfword p;
+  pointer p;
   integer k;
   pool_pointer j;
 
@@ -13052,7 +13281,7 @@ void expand (void)
 /* 718 */
 void get_x_next (void)
 {
-  halfword save_exp;
+  pointer save_exp;
 
   get_next();
   if (cur_cmd < display_command)
@@ -13069,13 +13298,13 @@ void get_x_next (void)
   }
 }
 /* 737 */
-void stack_argument (halfword p)
+void stack_argument (pointer p)
 {
   if (param_ptr == max_param_stack)
   {
     incr(max_param_stack);
-    if (max_param_stack > 150)
-      overflow("parameter stack size", 150);
+    if (max_param_stack > param_size)
+      overflow("parameter stack size", param_size);
   }
   param_stack[param_ptr] = p;
   incr(param_ptr);
@@ -13155,9 +13384,9 @@ void check_colon (void)
 /* 748 */
 void conditional (void)
 {
-  halfword savecond_ptr;
+  pointer savecond_ptr;
   unsigned char new_if_limit;
-  halfword p;
+  pointer p;
 
   {
     p = get_node (2);
@@ -13585,17 +13814,11 @@ void pack_file_name (str_number n, str_number a, str_number e)
 
   k = 0;
   for (j = str_start[a]; j <= str_start[a + 1] - 1; j++)
-  {
     append_to_name(so(str_pool[j]));
-  }
   for (j = str_start[n]; j <= str_start[n + 1] - 1; j++)
-  {
     append_to_name(so(str_pool[j]));
-  }
   for (j = str_start[e]; j <= str_start[e + 1] - 1; j++)
-  {
     append_to_name(so(str_pool[j]));
-  }
   if (k <= file_name_size)
     name_length = k;
   else
@@ -13613,17 +13836,11 @@ void pack_buffered_name (small_number n, integer a, integer b)
     b = a + file_name_size - n - 1 - base_ext_length;
   k = 0;
   for (j = 1; j <= n; j++)
-  {
     append_to_name(xord[MF_base_default[j]]);
-  }
   for (j = a; j <= b; j++)
-  {
     append_to_name(buffer[j]);
-  }
   for (j = base_default_length - 4; j <= base_default_length; j++)
-  {
     append_to_name(xord[MF_base_default[j]]);
-  }
   if (k <= file_name_size)
     name_length = k;
   else
@@ -13641,10 +13858,7 @@ str_number make_name_string (void)
   else
   {
     for (k = 1; k <= name_length; k++)
-    {
-      str_pool[pool_ptr] = xord[name_of_file[k]];
-      incr(pool_ptr);
-    }
+      append_char(xord[name_of_file[k]]);
     Result = make_string();
   }
   k = 1;
@@ -13690,7 +13904,7 @@ void scan_file_name (void)
   {
     if ((buffer[loc] == 59) || (buffer[loc] == 37))
       goto done;
-    if (!more_name (buffer[loc]))
+    if (!more_name(buffer[loc]))
       goto done;
     incr(loc);
   }
@@ -13703,7 +13917,7 @@ void pack_job_name (str_number s)
   cur_area = 261;
   cur_ext = s;
   cur_name = job_name;
-  pack_file_name (cur_name, cur_area, cur_ext);
+  pack_file_name(cur_name, cur_area, cur_ext);
 }
 /* 786 */
 void prompt_file_name (str_number s, str_number e)
@@ -13712,7 +13926,7 @@ void prompt_file_name (str_number s, str_number e)
   str_number saved_cur_name;
 
   if (interaction == scroll_mode)
-    ;
+    wake_up_terminal();
   if (s == 743)
     print_err("I can't find file `");
   else
@@ -13760,21 +13974,18 @@ void open_log_file (void)
 
   old_setting = selector;
   if (job_name == 0)
-    job_name = getjob_name (750);
-  pack_job_name (751);
-  recorderchangefilename (stringcast (name_of_file + 1));
-  pack_job_name (752);
-  while (!aopenout (log_file))
+    job_name = getjob_name(750);
+  pack_job_name(751);
+  while (!a_open_out(log_file))
   {
     selector = term_only;
-    prompt_file_name (754, 752);
+    prompt_file_name(754, 752);
   }
-  texmflogname = a_make_name_string (log_file);
+  texmflogname = a_make_name_string(log_file);
   selector = log_only;
   log_opened = true;
   {
-    Fputs(log_file, "This is METAFONT, Version 2.7182818");
-    Fputs(log_file, versionstring);
+    fputs(log_file, "This is METAFONT, Version 2.7182818");
     slow_print(base_ident);
     print(755);
     print_int(round_unscaled(internal[day]));
@@ -13783,32 +13994,30 @@ void open_log_file (void)
     m = round_unscaled(internal[month]);
     for (k = 3 * m - 2; k <= 3 * m; k++)
     {
-      putc (months[k], log_file);
+      wlog(months[k], log_file);
     }
     print_char(' ');
     print_int(round_unscaled(internal[year]));
     print_char(' ');
     m = round_unscaled(internal[time]);
-    print_dd (m / 60);
+    print_dd(m / 60);
     print_char(':');
-    print_dd (m % 60);
+    print_dd(m % 60);
   }
   input_stack[input_ptr] = cur_input;
   print_nl(753);
   l = input_stack[0].limit_field - 1;
   for (k = 1; k <= l; k++)
-  {
     print(buffer[k]);
-  }
   print_ln();
   selector = old_setting + 2;
 }
 /* 793 */
 void start_input (void)
 {
-  while ((index > 15) && (loc == 0))
+  while (token_state && (loc == null))
     end_token_list();
-  if ((index > 15))
+  if (token_state)
   {
     print_err("File names can't appear within macros");
     help3("Sorry...I've converted what follows to tokens,",
@@ -13816,7 +14025,7 @@ void start_input (void)
       "Please delete the tokens and insert the name again.");
     error();
   }
-  if ((index <= 15))
+  if (file_state)
     scan_file_name();
   else
   {
@@ -13824,7 +14033,7 @@ void start_input (void)
     cur_ext = 261;
     cur_area = 261;
   }
-  pack_file_name(cur_name, cur_area, cur_ext);
+  pack_cur_name();
   while (true)
   {
     begin_file_reading();
@@ -13833,8 +14042,6 @@ void start_input (void)
       cur_ext = 261;
       pack_file_name(cur_name, cur_area, cur_ext);
     }
-    if (kpseinnameok (stringcast (name_of_file + 1)) && aopenin (input_file[index], kpsemfformat))
-      goto done;
     end_file_reading();
     prompt_file_name(743, 747);
   }
@@ -13856,10 +14063,10 @@ done:
   fflush (stdout);
   {
     line = 1;
-    if (inputln(input_file[index], false))
-      ;
+    if (input_ln(input_file[index], false))
+      do_nothing();
     firm_up_the_line();
-    buffer[limit] = 37;
+    buffer[limit] = '%';
     first = limit + 1;
     loc = start;
   }
@@ -13867,7 +14074,7 @@ done:
 /* 824 */
 void bad_exp (str_number s)
 {
-  unsigned char saveflag;
+  unsigned char save_flag;
 
   print_err(s);
   print(770);
@@ -13882,10 +14089,10 @@ void bad_exp (str_number s)
   cur_cmd = numeric_token;
   cur_mod = 0;
   ins_error();
-  saveflag = var_flag;
+  save_flag = var_flag;
   var_flag = 0;
   get_x_next();
-  var_flag = saveflag;
+  var_flag = save_flag;
 }
 /* 827 */
 void stash_in (pointer p)
@@ -13934,14 +14141,14 @@ void back_expr (void)
 /* 849 */
 void bad_sub_script (void)
 {
-  disp_err (null, "Improper subscript has been replaced by zero");
+  disp_err(null, "Improper subscript has been replaced by zero");
   help3("A bracketed subscript must have a known numeric value;",
     "unfortunately, what I found was the value that appears just",
     "above this error message. So I'll try a zero subscript.");
   flush_error(0);
 }
 /* 851 */
-void obliterated (halfword q)
+void obliterated (pointer q)
 {
   print_err("Variable ");
   show_token_list(q, null, 1000, 0);
@@ -15755,10 +15962,10 @@ void find_point (scaled v, quarterword c)
   }
 }
 /* 922 */
-void do_binary (halfword p, quarterword c)
+void do_binary (pointer p, quarterword c)
 {
-  halfword q, r, rr;
-  halfword oldp, oldexp;
+  pointer q, r, rr;
+  pointer oldp, oldexp;
   integer v;
  
   check_arith();
