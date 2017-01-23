@@ -8727,7 +8727,7 @@ void dup_offset (pointer w)
 /* 477 */
 pointer make_pen (pointer h)
 {
-  halfword Result;
+  pointer Result;
   small_number o, oo, k;
   pointer p;
   pointer q, r, s, w, hh;
@@ -8741,62 +8741,58 @@ pointer make_pen (pointer h)
   if (q == r)
   {
     hh = h;
-    mem[h].hh.b1 = 0;
-    if (mc < abs(mem[h + 2].cint))
-      mc = abs(mem[h + 2].cint);
+    right_type(h) = 0;
+    if (mc < abs(y_coord(h)))
+      mc = abs(y_coord(h));
   }
   else
   {
     o = 0;
-    hh = 0;
+    hh = null;
     while (true)
     {
-      s = mem[r].hh.rh;
-      if (mc < abs(mem[r + 1].cint))
-        mc = abs(mem[r + 1].cint);
-      if (mc < abs(mem[r + 2].cint))
-        mc = abs(mem[r + 2].cint);
-      dx = mem[r + 1].cint - mem[q + 1].cint;
-      dy = mem[r + 2].cint - mem[q + 2].cint;
+      s = link(r);
+      if (mc < abs(x_coord(r)))
+        mc = abs(x_coord(r));
+      if (mc < abs(y_coord(r)))
+        mc = abs(y_coord(r));
+      dx = x_coord(r) - x_coord(q);
+      dy = y_coord(r) - y_coord(q);
       if (dx == 0)
-      {
         if (dy == 0)
           goto not_found;
-      }
-      if (ab_vs_cd (dx, mem[s + 2].cint - mem[r + 2].cint, dy, mem[s + 1].cint - mem[r + 1].cint) < 0)
+      if (ab_vs_cd(dx, y_coord(s) - y_coord(r), dy, x_coord(s) - x_coord(r)) < 0)
         goto not_found;
       if (dx > 0)
-        octant = 1;
+        octant = first_octant;
       else if (dx == 0)
       {
         if (dy > 0)
-          octant = 1;
+          octant = first_octant;
         else
-          octant = 2;
+          octant = first_octant + negate_x;
       }
       else
       {
-        dx = -dx;
-        octant = 2;
+        negate(dx);
+        octant = first_octant + negate_x;
       }
       if (dy < 0)
       {
-        dy = -dy;
-        octant = octant + 2;
+        negate(dy);
+        octant = octant + negate_y;
       }
       else if (dy == 0)
-      {
-        if (octant > 1)
-          octant = 4;
-      }
+        if (octant > first_octant)
+          octant = first_octant + negate_x + negate_y;
       if (dx < dy)
-        octant = octant + 4;
-      mem[q].hh.b1 = octant;
+        octant = octant + switch_x_and_y;
+      right_type(q) = octant;
       oo = octant_number[octant];
       if (o > oo)
       {
-        if (hh != 0)
-        goto not_found;
+        if (hh != null)
+          goto not_found;
         hh = q;
       }
       o = oo;
@@ -8807,14 +8803,14 @@ pointer make_pen (pointer h)
     }
     done:;
   }
-  if (mc >= 268402688L)
+  if (mc >= fraction_one - half_unit)
     goto not_found;
-  p = get_node (10);
+  p = get_node(pen_node_size);
   q = hh;
-  mem[p + 9].cint = mc;
-  mem[p].hh.lh = 0;
-  if (mem[q].hh.rh != q)
-    mem[p].hh.rh = 1;
+  max_offset(p) = mc;
+  ref_count(p) = null;
+  if (link(q) != q)
+    link(p) = null + 1;
   for (k = 1; k <= 8; k++)
   {
     octant = octant_code[k];
@@ -8822,60 +8818,60 @@ pointer make_pen (pointer h)
     h = p + octant;
     while (true)
     {
-      r = get_node (3);
-      skew (mem[q + 1].cint, mem[q + 2].cint, octant);
-      mem[r + 1].cint = cur_x;
-      mem[r + 2].cint = cur_y;
+      r = get_node(coord_node_size);
+      skew(x_coord(q), y_coord(q), octant);
+      x_coord(r) = cur_x;
+      y_coord(r) = cur_y;
       if (n == 0)
-        mem[h].hh.rh = r;
+        link(h) = r;
       else if (odd(k))
       {
-        mem[w].hh.rh = r;
-        mem[r].hh.lh = w;
+        link(w) = r;
+        knil(r) = w;
       }
       else
       {
-        mem[w].hh.lh = r;
-        mem[r].hh.rh = w;
+        knil(w) = r;
+        link(r) = w;
       }
       w = r;
-      if (mem[q].hh.b1 != octant)
+      if (right_type(q) != octant)
         goto done1;
-      q = mem[q].hh.rh;
+      q = link(q);
       incr(n);
     }
   done1:
-    r = mem[h].hh.rh;
+    r = link(h);
     if (odd(k))
     {
-      mem[w].hh.rh = r;
-      mem[r].hh.lh = w;
+      link(w) = r;
+      knil(r) = w;
     }
     else
     {
-      mem[w].hh.lh = r;
-      mem[r].hh.rh = w;
-      mem[h].hh.rh = w;
+      knil(w) = r;
+      link(r) = w;
+      link(h) = w;
       r = w;
     }
-    if ((mem[r + 2].cint != mem[mem[r].hh.rh + 2].cint) || (n == 0))
+    if ((y_coord(r) != y_coord(link(r))) || (n == 0))
     {
-      dup_offset (r);
+      dup_offset(r);
       incr(n);
     }
-    r = mem[r].hh.lh;
-    if (mem[r + 1].cint != mem[mem[r].hh.lh + 1].cint)
-      dup_offset (r);
+    r = knil(r);
+    if (x_coord(r) != x_coord(knil(r)))
+      dup_offset(r);
     else
       decr(n);
-    if (n >= 255)
-      overflow("pen polygon size", 255);
-    mem[h].hh.lh = n;
+    if (n >= max_quarterword)
+      overflow("pen polygon size", max_quarterword);
+    info(h) = n;
   }
   goto found;
 not_found:
-  p = 3;
-  if (mc >= 268402688L)
+  p = null_pen;
+  if (mc >= fraction_one - half_unit)
   {
     print_err("Pen too large");
     help2("The cycle you specified has a coordinate of 4095.5 or more.",
@@ -8891,7 +8887,7 @@ not_found:
   put_get_error();
 found:
   if (internal[tracing_pens] > 0)
-    print_pen (p, 572, true);
+    print_pen(p, 572, true);
   Result = p;
   return Result;
 }
@@ -8966,11 +8962,9 @@ void find_offset (scaled x, scaled y, pointer p)
   pointer h, w, ww;
 
   if (x > 0)
-    octant = 1;
+    octant = first_octant;
   else if (x == 0)
-  {
     if (y <= 0)
-    {
       if (y == 0)
       {
         cur_x = 0;
@@ -8978,29 +8972,27 @@ void find_offset (scaled x, scaled y, pointer p)
         goto lab_exit;
       }
       else
-        octant = 2;
-    }
+        octant = first_octant + negate_x;
     else
-      octant = 1;
-  }
+      octant = first_octant;
   else
   {
     x = -x;
     if (y == 0)
-      octant = 4;
+      octant = first_octant + negate_x + negate_y;
     else
-      octant = 2;
+      octant = first_octant + negate_x;
   }
   if (y < 0)
   {
-    octant = octant + 2;
+    octant = octant + negate_y;
     y = -y;
   }
   if (x >= y)
     x = x - y;
   else
   {
-    octant = octant + 4;
+    octant = octant + switch_x_and_y;
     x = y - x;
     y = y - x;
   }
@@ -9009,18 +9001,19 @@ void find_offset (scaled x, scaled y, pointer p)
   else
     s = 1;
   h = p + octant;
-  w = mem[mem[h].hh.rh].hh.rh;
-  ww = mem[w].hh.rh;
-  n = mem[h].hh.lh;
+  w = link(link(h));
+  ww = link(w);
+  n = info(h);
   while (n > 1)
   {
-    if (ab_vs_cd (x, mem[ww + 2].cint - mem[w + 2].cint, y, mem[ww + 1].cint - mem[w + 1].cint) != s)
+    if (ab_vs_cd(x, y_coord(ww) - y_coord(w), y, x_coord(ww) - x_coord(w)) != s)
       goto done;
     w = ww;
-    ww = mem[w].hh.rh;
+    ww = link(w);
     decr(n);
   }
-  done: unskew (mem[w + 1].cint, mem[w + 2].cint, octant);
+done:
+  unskew(x_coord(w), y_coord(w), octant);
   lab_exit:;
 }
 /* 493 */
@@ -9053,23 +9046,23 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
 
   while (true)
   {
-    mem[p].hh.b1 = k;
+    right_type(p) = k;
     if (rising)
     {
       if (k == n)
         goto lab_exit;
       else
-        ww = mem[w].hh.rh;
+        ww = link(w);
     }
     else if (k == 1)
       goto lab_exit;
     else
-      ww = mem[w].hh.lh;
-    du = mem[ww + 1].cint - mem[w + 1].cint;
-    dv = mem[ww + 2].cint - mem[w + 2].cint;
+      ww = knil(w);
+    du = x_coord(ww) - x_coord(w);
+    dv = y_coord(ww) - y_coord(w);
     if (abs(du) >= abs(dv))
     {
-      s = make_fraction (dv, du);
+      s = make_fraction(dv, du);
       t0 = take_fraction(x0, s) - y0;
       t1 = take_fraction(x1, s) - y1;
       t2 = take_fraction(x2, s) - y2;
@@ -9081,33 +9074,33 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
       t1 = x1 - take_fraction(y1, s);
       t2 = x2 - take_fraction(y2, s);
     }
-    t = crossing_point (t0, t1, t2);
+    t = crossing_point(t0, t1, t2);
     if (t >= fraction_one)
       goto lab_exit;
     {
-      split_for_offset (p, t);
-      mem[p].hh.b1 = k;
-      p = mem[p].hh.rh;
-      v = x0 - take_fraction (x0 - x1, t);
-      x1 = x1 - take_fraction (x1 - x2, t);
-      x0 = v - take_fraction (v - x1, t);
-      v = y0 - take_fraction (y0 - y1, t);
-      y1 = y1 - take_fraction (y1 - y2, t);
-      y0 = v - take_fraction (v - y1, t);
-      t1 = t1 - take_fraction (t1 - t2, t);
+      split_for_offset(p, t);
+      right_type(p) = k;
+      p = link(p);
+      v = t_of_the_way(x0, x1);
+      x1 = t_of_the_way(x1, x2);
+      x0 = t_of_the_way(v, x1);
+      v = t_of_the_way(y0, y1);
+      y1 = t_of_the_way(y1, y2);
+      y0 = t_of_the_way(v, y1);
+      t1 = t_of_the_way(t1, t2);
       if (t1 > 0)
         t1 = 0;
-      t = crossing_point (0, -t1, -t2);
+      t = crossing_point(0, -t1, -t2);
       if (t < fraction_one)
       {
-        split_for_offset (p, t);
-        mem[mem[p].hh.rh].hh.b1 = k;
-        v = x1 - take_fraction (x1 - x2, t);
-        x1 = x0 - take_fraction (x0 - x1, t);
-        x2 = x1 - take_fraction (x1 - v, t);
-        v = y1 - take_fraction (y1 - y2, t);
-        y1 = y0 - take_fraction (y0 - y1, t);
-        y2 = y1 - take_fraction (y1 - v, t);
+        split_for_offset(p, t);
+        right_type(link(p)) = k;
+        v = t_of_the_way(x1, x2);
+        x1 = t_of_the_way(x0, x1);
+        x2 = t_of_the_way(x1, v);
+        v = t_of_the_way(y1, y2);
+        y1 = t_of_the_way(y0, y1);
+        y2 = t_of_the_way(y1, v);
       }
     }
     if (rising)
@@ -9128,80 +9121,76 @@ void offset_prep (pointer c, pointer h)
   integer x0, x1, x2, y0, y1, y2;
   integer t0, t1, t2;
   integer du, dv, dx, dy;
-  integer lmax_coef;
+  integer max_coef;
   integer x0a, x1a, x2a, y0a, y1a, y2a;
   fraction t;
   fraction s;
 
   p = c;
-  n = mem[h].hh.lh;
-  lh = mem[h].hh.rh;
-  while (mem[p].hh.b1 != 0)
+  n = info(h);
+  lh = link(h);
+  while (right_type(p) != endpoint)
   {
-    q = mem[p].hh.rh;
+    q = link(p);
     if (n <= 1)
-      mem[p].hh.b1 = 1;
+      right_type(p) = 1;
     else
     {
-      x0 = mem[p + 5].cint - mem[p + 1].cint;
-      x2 = mem[q + 1].cint - mem[q + 3].cint;
-      x1 = mem[q + 3].cint - mem[p + 5].cint;
-      y0 = mem[p + 6].cint - mem[p + 2].cint;
-      y2 = mem[q + 2].cint - mem[q + 4].cint;
-      y1 = mem[q + 4].cint - mem[p + 6].cint;
-      lmax_coef = abs(x0);
-      if (abs(x1) > lmax_coef)
-        lmax_coef = abs(x1);
-      if (abs(x2) > lmax_coef)
-        lmax_coef = abs(x2);
-      if (abs(y0) > lmax_coef)
-        lmax_coef = abs(y0);
-      if (abs(y1) > lmax_coef)
-        lmax_coef = abs(y1);
-      if (abs(y2) > lmax_coef)
-        lmax_coef = abs(y2);
-      if (lmax_coef == 0)
+      x0 = right_x(p) - x_coord(p);
+      x2 = x_coord(q) - left_x(q);
+      x1 = left_x(q) - right_x(p);
+      y0 = right_y(p) - y_coord(p);
+      y2 = y_coord(q) - left_y(q);
+      y1 = left_y(q) - right_y(p);
+      max_coef = abs(x0);
+      if (abs(x1) > max_coef)
+        max_coef = abs(x1);
+      if (abs(x2) > max_coef)
+        max_coef = abs(x2);
+      if (abs(y0) > max_coef)
+        max_coef = abs(y0);
+      if (abs(y1) > max_coef)
+        max_coef = abs(y1);
+      if (abs(y2) > max_coef)
+        max_coef = abs(y2);
+      if (max_coef == 0)
         goto not_found;
-      while (lmax_coef < fraction_half)
+      while (max_coef < fraction_half)
       {
-        lmax_coef = lmax_coef + lmax_coef;
-        x0 = x0 + x0;
-        x1 = x1 + x1;
-        x2 = x2 + x2;
-        y0 = y0 + y0;
-        y1 = y1 + y1;
-        y2 = y2 + y2;
+        _double(max_coef);
+        _double(x0);
+        _double(x1);
+        _double(x2);
+        _double(y0);
+        _double(y1);
+        _double(y2);
       }
       dx = x0;
       dy = y0;
       if (dx == 0)
-      {
         if (dy == 0)
         {
           dx = x1;
           dy = y1;
           if (dx == 0)
-          {
             if (dy == 0)
             {
               dx = x2;
               dy = y2;
             }
-          }
         }
-      }
       if (dx == 0)
-        fin_offset_prep (p, n, mem[mem[lh].hh.lh].hh.lh, -x0, -x1, -x2 , -y0, -y1, -y2, false, n);
+        fin_offset_prep(p, n, knil(knil(lh)), -x0, -x1, -x2, -y0, -y1, -y2, false, n);
       else
       {
         k = 1;
-        w = mem[lh].hh.rh;
+        w = link(lh);
         while (true)
         {
           if (k == n)
             goto done;
-          ww = mem[w].hh.rh;
-          if (ab_vs_cd (dy, abs(mem[ww + 1].cint - mem[w + 1].cint), dx, abs(mem[ww + 2].cint - mem[w + 2].cint)) >= 0)
+          ww = link(w);
+          if (ab_vs_cd(dy, abs(x_coord(ww) - x_coord(w)), dx, abs(y_coord(ww) - y_coord(w))) >= 0)
           {
             incr(k);
             w = ww;
@@ -9211,89 +9200,79 @@ void offset_prep (pointer c, pointer h)
         }
         done:;
         if (k == 1)
-          t = 268435457L;
+          t = fraction_one + 1;
         else
         {
-          ww = mem[w].hh.lh;
-          du = mem[ww + 1].cint - mem[w + 1].cint;
-          dv = mem[ww + 2].cint - mem[w + 2].cint;
+          ww = knil(w);
+          du = x_coord(ww) - x_coord(w);
+          dv = y_coord(ww) - y_coord(w);
           if (abs(du) >= abs(dv))
           {
-            s = make_fraction (dv, du);
-            t0 = take_fraction (x0, s) - y0;
-            t1 = take_fraction (x1, s) - y1;
-            t2 = take_fraction (x2, s) - y2;
+            s = make_fraction(dv, du);
+            t0 = take_fraction(x0, s) - y0;
+            t1 = take_fraction(x1, s) - y1;
+            t2 = take_fraction(x2, s) - y2;
           }
           else
           {
-            s = make_fraction (du, dv);
-            t0 = x0 - take_fraction (y0, s);
-            t1 = x1 - take_fraction (y1, s);
-            t2 = x2 - take_fraction (y2, s);
+            s = make_fraction(du, dv);
+            t0 = x0 - take_fraction(y0, s);
+            t1 = x1 - take_fraction(y1, s);
+            t2 = x2 - take_fraction(y2, s);
           }
-          t = crossing_point (-t0, -t1, -t2);
+          t = crossing_point(-t0, -t1, -t2);
         }
         if (t >= fraction_one)
-          fin_offset_prep (p, k, w, x0, x1, x2, y0, y1, y2, true, n);
+          fin_offset_prep(p, k, w, x0, x1, x2, y0, y1, y2, true, n);
         else
         {
-          split_for_offset (p, t);
-          r = mem[p].hh.rh;
-          x1a = x0 - take_fraction (x0 - x1, t);
-          x1 = x1 - take_fraction (x1 - x2, t);
-          x2a = x1a - take_fraction (x1a - x1, t);
-          y1a = y0 - take_fraction (y0 - y1, t);
-          y1 = y1 - take_fraction (y1 - y2, t);
-          y2a = y1a - take_fraction (y1a - y1, t);
-          fin_offset_prep (p, k, w, x0, x1a, x2a, y0, y1a, y2a, true, n);
+          split_for_offset(p, t);
+          r = link(p);
+          x1a = t_of_the_way(x0, x1);
+          x1 = t_of_the_way(x1, x2);
+          x2a = t_of_the_way(x1a, x1);
+          y1a = t_of_the_way(y0, y1);
+          y1 = t_of_the_way(y1, y2);
+          y2a = t_of_the_way(y1a, y1);
+          fin_offset_prep(p, k, w, x0, x1a, x2a, y0, y1a, y2a, true, n);
           x0 = x2a;
           y0 = y2a;
           t1 = t1 - take_fraction (t1 - t2, t);
           if (t1 < 0)
             t1 = 0;
-          t = crossing_point (0, t1, t2);
+          t = crossing_point(0, t1, t2);
           if (t < fraction_one)
           {
-            split_for_offset (r, t);
-            x1a = x1 - take_fraction (x1 - x2, t);
-            x1 = x0 - take_fraction (x0 - x1, t);
-            x0a = x1 - take_fraction (x1 - x1a, t);
-            y1a = y1 - take_fraction (y1 - y2, t);
-            y1 = y0 - take_fraction (y0 - y1, t);
-            y0a = y1 - take_fraction (y1 - y1a, t);
-            fin_offset_prep (mem[r].hh.rh, k, w, x0a, x1a, x2, y0a, y1a, y2, true, n);
+            split_for_offset(r, t);
+            x1a = t_of_the_way(x1, x2);
+            x1 = t_of_the_way(x0, x1);
+            x0a = t_of_the_way(x1, x1a);
+            y1a = t_of_the_way(y1, y2);
+            y1 = t_of_the_way(y0, y1);
+            y0a = t_of_the_way(y1, y1a);
+            fin_offset_prep(link(r), k, w, x0a, x1a, x2, y0a, y1a, y2, true, n);
             x2 = x0a;
             y2 = y0a;
           }
-          fin_offset_prep (r, k - 1, ww, -x0, -x1, -x2, -y0, -y1, -y2 , false, n);
+          fin_offset_prep(r, k - 1, ww, -x0, -x1, -x2, -y0, -y1, -y2 , false, n);
         }
       }
       not_found:;
     }
     do {
-      r = mem[p].hh.rh;
-      if (mem[p + 1].cint == mem[p + 5].cint)
-      {
-        if (mem[p + 2].cint == mem[p + 6].cint)
-        {
-          if (mem[p + 1].cint == mem[r + 3].cint)
-          {
-            if (mem[p + 2].cint == mem[r + 4].cint)
-            {
-              if (mem[p + 1].cint == mem[r + 1].cint)
-              {
-                if (mem[p + 2].cint == mem[r + 2].cint)
+      r = link(p);
+      if (x_coord(p) == right_x(p))
+        if (y_coord(p) == right_y(p))
+          if (x_coord(p) == left_x(r))
+            if (y_coord(p) == left_y(r))
+              if (x_coord(p) == x_coord(r))
+                if (y_coord(p) == y_coord(r))
                 {
-                  remove_cubic (p);
+                  remove_cubic(p);
                   if (r == q)
                     q = p;
                   r = p;
                 }
-              }
-            }
-          }
-        }
-      }
       p = r;
     } while (!(p == q));
   }
@@ -9334,18 +9313,16 @@ void dual_moves (pointer h, pointer p, pointer q)
   integer mm0, mm1;
   integer k;
   pointer w, ww;
-  integer smoothbot, smoothtop;
+  integer smooth_bot, smooth_top;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
 
-  k = mem[h].hh.lh + 1;
-  ww = mem[h].hh.rh;
-  w = mem[ww].hh.lh;
-  mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[octant]);
-  mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[octant]);
+  k = info(h) + 1;
+  ww = link(h);
+  w = knil(ww);
+  mm0 = floor_unscaled(x_coord(p) + x_coord(w) - xy_corr[octant]);
+  mm1 = floor_unscaled(x_coord(q) + x_coord(ww) - xy_corr[octant]);
   for (n = 1; n <= n1 - n0 + 1; n++)
-  {
     env_move[n] = mm1;
-  }
   env_move[0] = mm0;
   move_ptr = 0;
   m = mm0;
@@ -9353,31 +9330,30 @@ void dual_moves (pointer h, pointer p, pointer q)
   while (true)
   {
     if (r == q)
-      smoothtop = move_ptr;
-    while (mem[r].hh.b1 != k)
+      smooth_top = move_ptr;
+    while (right_type(r) != k)
     {
-      xx = mem[r + 1].cint + mem[w + 1].cint;
-      yy = mem[r + 2].cint + mem[w + 2].cint + half_unit;
-      ;
+      xx = x_coord(r) + x_coord(w);
+      yy = y_coord(r) + y_coord(w) + half_unit;
 #ifdef STAT
       if (internal[tracing_edges] > unity)
       {
         print_nl(586);
         print_int(k);
         print(587);
-        unskew (xx, yy - half_unit, octant);
-        print_two (cur_x, cur_y);
+        unskew(xx, yy - half_unit, octant);
+        print_two(cur_x, cur_y);
       }
 #endif /* STAT */
-      if (mem[r].hh.b1 < k)
+      if (right_type(r) < k)
       {
         decr(k);
-        w = mem[w].hh.lh;
-        xp = mem[r + 1].cint + mem[w + 1].cint;
-        yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
+        w = knil(w);
+        xp = x_coord(r) + x_coord(w);
+        yp = y_coord(r) + y_coord(w) + half_unit;
         if (yp != yy)
         {
-          ty = floorscaled (yy - y_corr[octant]);
+          ty = floor_scaled(yy - y_corr[octant]);
           dely = yp - yy;
           yy = yy - ty;
           ty = yp - y_corr[octant] - ty;
@@ -9389,17 +9365,18 @@ void dual_moves (pointer h, pointer p, pointer q)
             {
               if (m < env_move[move_ptr])
                 env_move[move_ptr] = m;
-              tx = take_fraction (delx, make_fraction (yy, dely));
-              if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] > 0)
+              tx = take_fraction(delx, make_fraction(yy, dely));
+              if (ab_vs_cd(tx, dely, delx, yy) + xy_corr[octant] > 0)
                 decr(tx);
-              m = floorunscaled (xx + tx);
+              m = floor_unscaled(xx + tx);
               ty = ty - unity;
               incr(move_ptr);
               if (ty < unity)
                 goto done1;
               yy = yy + unity;
             }
-            done1: if (m < env_move[move_ptr])
+          done1:
+            if (m < env_move[move_ptr])
               env_move[move_ptr] = m;
           }
         }
@@ -9407,34 +9384,35 @@ void dual_moves (pointer h, pointer p, pointer q)
       else
       {
         incr(k);
-        w = mem[w].hh.rh;
-        xp = mem[r + 1].cint + mem[w + 1].cint;
-        yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
+        w = link(w);
+        xp = x_coord(r) + x_coord(w);
+        yp = y_coord(r) + y_coord(w) + half_unit;
       }
-      ;
 #ifdef STAT
       if (internal[tracing_edges] > unity)
       {
         print(584);
-        unskew (xp, yp - half_unit, octant);
-        print_two (cur_x, cur_y);
+        unskew(xp, yp - half_unit, octant);
+        print_two(cur_x, cur_y);
         print_nl(261);
       }
 #endif /* STAT */
-      m = floorunscaled (xp - xy_corr[octant]);
-      move_ptr = floorunscaled (yp - y_corr[octant]) - n0;
+      m = floor_unscaled(xp - xy_corr[octant]);
+      move_ptr = floor_unscaled(yp - y_corr[octant]) - n0;
       if (m < env_move[move_ptr])
         env_move[move_ptr] = m;
     }
     if (r == p)
-      smoothbot = move_ptr;
+      smooth_bot = move_ptr;
     if (r == q)
       goto done;
     move[move_ptr] = 1;
     n = move_ptr;
-    s = mem[r].hh.rh;
-    make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint ,
-    mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + half_unit, mem[r + 6].cint + mem[w + 2].cint + half_unit, mem[s + 4].cint + mem[w + 2].cint + half_unit, mem[s + 2].cint + mem[w + 2].cint + half_unit, xy_corr[octant], y_corr[octant]);
+    s = link(r);
+    make_moves(x_coord(r) + x_coord(w), right_x(r) + x_coord(w), left_x(s) + x_coord(w),
+      x_coord(s) + x_coord(w), y_coord(r) + y_coord(w) + half_unit, right_y(r) +
+      y_coord(w) + half_unit, left_y(s) + y_coord(w) + half_unit, y_coord(s) + y_coord(w)
+      + half_unit, xy_corr[octant], y_corr[octant]);
     do {
       if (m < env_move[n])
         env_move[n] = m;
@@ -9445,27 +9423,25 @@ void dual_moves (pointer h, pointer p, pointer q)
   }
   done:
   ;
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
   if ((m != mm1) || (move_ptr != n1 - n0))
     confusion("2");
-#endif /* TEXMF_DEBUG */
+#endif
   move[0] = d0 + env_move[1] - mm0;
   for (n = 1; n <= move_ptr; n++)
-  {
     move[n] = env_move[n + 1] - env_move[n]+ 1;
-  }
   move[move_ptr] = move[move_ptr] - d1;
   if (internal[smoothing] > 0)
-    smooth_moves (smoothbot, smoothtop);
-  move_to_edges (m0, n0, m1, n1);
-  if (mem[q + 6].cint == 1)
+    smooth_moves(smooth_bot, smooth_top);
+  move_to_edges(m0, n0, m1, n1);
+  if (right_transition(q) == diagonal)
   {
-    w = mem[h].hh.rh;
-    skew_line_edges (q, w, mem[w].hh.lh);
+    w = link(h);
+    skew_line_edges(q, w, knil(w));
   }
 }
 /* 506 */
-void fill_envelope (pointer spechead)
+void fill_envelope (pointer spec_head)
 {
   pointer p, q, r, s;
   pointer h;
@@ -9474,106 +9450,100 @@ void fill_envelope (pointer spechead)
   integer mm0, mm1;
   integer k;
   pointer w, ww;
-  integer smoothbot, smoothtop;
+  integer smooth_bot, smooth_top;
   scaled xx, yy, xp, yp, delx, dely, tx, ty;
 
   if (internal[tracing_edges] > 0)
     begin_edge_tracing();
-  p = spechead;
+  p = spec_head;
   do {
-    octant = mem[p + 3].cint;
+    octant = left_octant(p);
     h = cur_pen + octant;
     q = p;
-    while (mem[q].hh.b1 != 0)
-      q = mem[q].hh.rh;
-    w = mem[h].hh.rh;
-    if (mem[p + 4].cint == 1)
-      w = mem[w].hh.lh;
+    while (right_type(q) != endpoint)
+      q = link(q);
+    w = link(h);
+    if (left_transition(p) == diagonal)
+      w = knil(w);
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
       print_nl(580);
       print(octant_dir[octant]);
       print(558);
-      print_int(mem[h].hh.lh);
-      if (mem[h].hh.lh != 1)
+      print_int(info(h));
+      if (info(h) != 1)
         print(581);
       else
         print(582);
       print(583);
-      unskew (mem[p + 1].cint + mem[w + 1].cint, mem[p + 2].cint + mem[w + 2].cint, octant);
-      print_two (cur_x, cur_y);
-      ww = mem[h].hh.rh;
-      if (mem[q + 6].cint == 1)
-        ww = mem[ww].hh.lh;
+      print_two_true(x_coord(p) + x_coord(w), y_coord(p) + y_coord(w));
+      ww = link(h);
+      if (right_transition(q) == diagonal)
+        ww = knil(ww);
       print(584);
-      unskew (mem[q + 1].cint + mem[ww + 1].cint, mem[q + 2].cint + mem[ww + 2].cint, octant);
-      print_two (cur_x, cur_y);
+      print_two_true(x_coord(q) + x_coord(ww), y_coord(q) + y_coord(ww));
     }
 #endif /* STAT */
-    ww = mem[h].hh.rh;
+    ww = link(h);
     www = ww;
     if (odd(octant_number[octant]))
-      www = mem[www].hh.lh;
+      www = knil(www);
     else
-      ww = mem[ww].hh.lh;
+      ww = knil(ww);
     if (w != ww)
-      skew_line_edges (p, w, ww);
-    end_round (mem[p + 1].cint + mem[ww + 1].cint, mem[p + 2].cint + mem[ww + 2].cint);
+      skew_line_edges(p, w, ww);
+    end_round(x_coord(p) + x_coord(ww), y_coord(p) + y_coord(ww));
     m0 = m1;
     n0 = n1;
     d0 = d1;
-    end_round (mem[q + 1].cint + mem[www + 1].cint, mem[q + 2].cint + mem[www + 2].cint);
+    end_round(x_coord(q) + x_coord(www), y_coord(q) + y_coord(www));
     if (n1 - n0 >= move_size)
       overflow("move table size", move_size);
-    offset_prep (p, h);
+    offset_prep(p, h);
     q = p;
-    while (mem[q].hh.b1 != 0)
-      q = mem[q].hh.rh;
+    while (right_type(q) != endpoint)
+      q = link(q);
     if (odd(octant_number[octant]))
     {
       k = 0;
-      w = mem[h].hh.rh;
-      ww = mem[w].hh.lh;
-      mm0 = floorunscaled (mem[p + 1].cint + mem[w + 1].cint - xy_corr[octant]);
-      mm1 = floorunscaled (mem[q + 1].cint + mem[ww + 1].cint - xy_corr[octant]);
+      w = link(h);
+      ww = knil(w);
+      mm0 = floor_unscaled(x_coord(p) + x_coord(w) - xy_corr[octant]);
+      mm1 = floor_unscaled(x_coord(q) + x_coord(ww) - xy_corr[octant]);
       for (n = 0; n <= n1 - n0; n++)
-      {
         env_move[n] = mm0;
-      }
       env_move[n1 - n0] = mm1;
       move_ptr = 0;
       m = mm0;
       r = p;
-      mem[q].hh.b1 = mem[h].hh.lh + 1;
+      right_type(q) = info(h) + 1;
       while (true)
       {
         if (r == q)
-          smoothtop = move_ptr;
-        while (mem[r].hh.b1 != k)
+          smooth_top = move_ptr;
+        while (right_type(r) != k)
         {
-          xx = mem[r + 1].cint + mem[w + 1].cint;
-          yy = mem[r + 2].cint + mem[w + 2].cint + half_unit;
-          ;
+          xx = x_coord(r) + x_coord(w);
+          yy = y_coord(r) + y_coord(w) + half_unit;
 #ifdef STAT
           if (internal[tracing_edges] > unity)
           {
             print_nl(586);
             print_int(k);
             print(587);
-            unskew (xx, yy - half_unit, octant);
-            print_two (cur_x, cur_y);
+            print_two_true(xx, yy - half_unit);
           }
 #endif /* STAT */
-          if (mem[r].hh.b1 > k)
+          if (right_type(r) > k)
           {
             incr(k);
-            w = mem[w].hh.rh;
-            xp = mem[r + 1].cint + mem[w + 1].cint;
-            yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
+            w = link(w);
+            xp = x_coord(r) + x_coord(w);
+            yp = y_coord(r) + y_coord(w) + half_unit;
             if (yp != yy)
             {
-              ty = floorscaled (yy - y_corr[octant]);
+              ty = floor_scaled(yy - y_corr[octant]);
               dely = yp - yy;
               yy = yy - ty;
               ty = yp - y_corr[octant] - ty;
@@ -9583,10 +9553,10 @@ void fill_envelope (pointer spechead)
                 yy = unity - yy;
                 while (true)
                 {
-                  tx = take_fraction (delx, make_fraction (yy, dely));
-                  if (ab_vs_cd (tx, dely, delx, yy) + xy_corr[octant] > 0)
+                  tx = take_fraction(delx, make_fraction (yy, dely));
+                  if (ab_vs_cd(tx, dely, delx, yy) + xy_corr[octant] > 0)
                     decr(tx);
-                  m = floorunscaled (xx + tx);
+                  m = floor_unscaled(xx + tx);
                   if (m > env_move[move_ptr])
                     env_move[move_ptr] = m;
                   ty = ty - unity;
@@ -9602,33 +9572,34 @@ void fill_envelope (pointer spechead)
           else
           {
             decr(k);
-            w = mem[w].hh.lh;
-            xp = mem[r + 1].cint + mem[w + 1].cint;
-            yp = mem[r + 2].cint + mem[w + 2].cint + half_unit;
+            w = knil(w);
+            xp = x_coord(r) + x_coord(w);
+            yp = y_coord(r) + y_coord(w) + half_unit;
           }
-          ;
 #ifdef STAT
           if (internal[tracing_edges] > unity)
           {
             print(584);
-            unskew (xp, yp - half_unit, octant);
-            print_two (cur_x, cur_y);
+            print_two_true(xp, yp - half_unit);
             print_nl(261);
           }
 #endif /* STAT */
-          m = floorunscaled (xp - xy_corr[octant]);
-          move_ptr = floorunscaled (yp - y_corr[octant]) - n0;
+          m = floor_unscaled(xp - xy_corr[octant]);
+          move_ptr = floor_unscaled(yp - y_corr[octant]) - n0;
           if (m > env_move[move_ptr])
             env_move[move_ptr] = m;
         }
         if (r == p)
-          smoothbot = move_ptr;
+          smooth_bot = move_ptr;
         if (r == q)
           goto done;
         move[move_ptr] = 1;
         n = move_ptr;
-        s = mem[r].hh.rh;
-        make_moves (mem[r + 1].cint + mem[w + 1].cint, mem[r + 5].cint + mem[w + 1].cint, mem[s + 3].cint + mem[w + 1].cint, mem[s + 1].cint + mem[w + 1].cint, mem[r + 2].cint + mem[w + 2].cint + half_unit, mem[r + 6].cint + mem[w + 2].cint + half_unit, mem[s + 4].cint + mem[w + 2].cint + half_unit, mem[s + 2].cint + mem[w + 2].cint + half_unit, xy_corr[octant], y_corr[octant]);
+        s = link(r);
+        make_moves(x_coord(r) + x_coord(w), right_x(r) + x_coord(w), left_x(s) + x_coord(w),
+          x_coord(s) + x_coord(w), y_coord(r) + y_coord(w) + half_unit, right_y(r) +
+          y_coord(w) + half_unit, left_y(s) + y_coord(w) + half_unit, y_coord(s) + y_coord(w) + half_unit,
+          xy_corr[octant], y_corr[octant]);
         do {
           m = m + move[n] - 1;
           if (m > env_move[n])
@@ -9637,35 +9608,32 @@ void fill_envelope (pointer spechead)
         } while (!(n > move_ptr));
         r = s;
       }
-      done:
-      ;
+    done:;
 #ifdef TEXMF_DEBUG
       if ((m != mm1) || (move_ptr != n1 - n0))
         confusion("1");
 #endif /* TEXMF_DEBUG */
       move[0] = d0 + env_move[0] - mm0;
       for (n = 1; n <= move_ptr; n++)
-      {
         move[n] = env_move[n] - env_move[n - 1]+ 1;
-      }
       move[move_ptr] = move[move_ptr] - d1;
       if (internal[smoothing] > 0)
-        smooth_moves (smoothbot, smoothtop);
-      move_to_edges (m0, n0, m1, n1);
-      if (mem[q + 6].cint == 0)
+        smooth_moves(smooth_bot, smooth_top);
+      move_to_edges(m0, n0, m1, n1);
+      if (right_transition(q) == axis)
       {
-        w = mem[h].hh.rh;
-        skew_line_edges (q, mem[w].hh.lh, w);
+        w = link(h);
+        skew_line_edges(q, knil(w), w);
       }
     }
     else
-      dual_moves (h, p, q);
-    mem[q].hh.b1 = 0;
-    p = mem[q].hh.rh;
-  } while (!(p == spechead));
+      dual_moves(h, p, q);
+    right_type(q) = endpoint;
+    p = link(q);
+  } while (!(p == spec_head));
   if (internal[tracing_edges] > 0)
     end_edge_tracing();
-  toss_knot_list (spechead);
+  toss_knot_list(spec_head);
 }
 /* 527 */
 pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
