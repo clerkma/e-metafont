@@ -9668,29 +9668,29 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
   {
     symmetric = false;
     n_sin_cos(theta);
-    gamma = take_fraction (major_axis, n_sin);
-    delta = take_fraction (minor_axis, n_cos);
-    beta = pyth_add (gamma, delta);
-    alpha = make_fraction (gamma, beta);
-    alpha = take_fraction (major_axis, alpha);
-    alpha = take_fraction (alpha, n_cos);
+    gamma = take_fraction(major_axis, n_sin);
+    delta = take_fraction(minor_axis, n_cos);
+    beta = pyth_add(gamma, delta);
+    alpha = make_fraction(gamma, beta);
+    alpha = take_fraction(major_axis, alpha);
+    alpha = take_fraction(alpha, n_cos);
     alpha = (alpha + half_unit) / unity;
-    gamma = take_fraction (minor_axis, n_sin);
-    gamma = pyth_add (take_fraction (major_axis, n_cos), gamma);
+    gamma = take_fraction(minor_axis, n_sin);
+    gamma = pyth_add(take_fraction(major_axis, n_cos), gamma);
   }
   beta = (beta + half_unit) / unity;
   gamma = (gamma + half_unit) / unity;
-  p = get_node (7);
-  q = get_node (7);
-  r = get_node (7);
+  p = get_node(knot_node_size);
+  q = get_node(knot_node_size);
+  r = get_node(knot_node_size);
   if (symmetric)
-    s = 0;
+    s = null;
   else
-    s = get_node (7);
+    s = get_node(knot_node_size);
   h = p;
-  mem[p].hh.rh = q;
-  mem[q].hh.rh = r;
-  mem[r].hh.rh = s;
+  link(p) = q;
+  link(q) = r;
+  link(r) = s;
   if (beta == 0)
     beta = 1;
   if (gamma == 0)
@@ -9702,40 +9702,40 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     else
       alpha = 1 - gamma;
   }
-  mem[p + 1].cint = -alpha * half_unit;
-  mem[p + 2].cint = -beta * half_unit;
-  mem[q + 1].cint = gamma * half_unit;
-  mem[q + 2].cint = mem[p + 2].cint;
-  mem[r + 1].cint = mem[q + 1].cint;
-  mem[p + 5].cint = 0;
-  mem[q + 3].cint = -half_unit;
-  mem[q + 5].cint = half_unit;
-  mem[r + 3].cint = 0;
-  mem[r + 5].cint = 0;
-  mem[p + 6].cint = beta;
-  mem[q + 6].cint = gamma;
-  mem[r + 6].cint = beta;
-  mem[q + 4].cint = gamma + alpha;
+  x_coord(p) = -alpha * half_unit;
+  y_coord(p) = -beta*half_unit;
+  x_coord(q) = gamma * half_unit;
+  y_coord(q) = y_coord(p);
+  x_coord(r) = x_coord(q);
+  right_u(p) = 0;
+  left_v(q) = -half_unit;
+  right_u(q) = half_unit;
+  left_v(r) = 0;
+  right_u(r) = 0;
+  right_class(p) = beta;
+  right_class(q) = gamma;
+  right_class(r) = beta;
+  left_length(q) = gamma + alpha;
   if (symmetric)
   {
-    mem[r + 2].cint = 0;
-    mem[r + 4].cint = beta;
+    y_coord(r) = 0;
+    left_length(r) = beta;
   }
   else
   {
-    mem[r + 2].cint = -mem[p + 2].cint;
-    mem[r + 4].cint = beta + beta;
-    mem[s + 1].cint = -mem[p + 1].cint;
-    mem[s + 2].cint = mem[r + 2].cint;
-    mem[s + 3].cint = half_unit;
-    mem[s + 4].cint = gamma - alpha;
+    y_coord(r) = -y_coord(p);
+    left_length(r) = beta + beta;
+    x_coord(s) = -x_coord(p);
+    y_coord(s) = y_coord(r);
+    left_v(s) = half_unit;
+    left_length(s) = gamma - alpha;
   }
   while (true)
   {
-    u = mem[p + 5].cint + mem[q + 5].cint;
-    v = mem[q + 3].cint + mem[r + 3].cint;
-    c = mem[p + 6].cint + mem[q + 6].cint;
-    delta = pyth_add (u, v);
+    u = right_u(p) + right_u(q);
+    v = left_v(q) + left_v(r);
+    c = right_class(p) + right_class(q);
+    delta = pyth_add(u, v);
     if (major_axis == minor_axis)
       d = major_axis;
     else
@@ -9747,12 +9747,12 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
       }
       else
       {
-        alpha = take_fraction (u, n_cos) + take_fraction (v, n_sin);
-        beta = take_fraction (v, n_cos) - take_fraction (u, n_sin);
+        alpha = take_fraction(u, n_cos) + take_fraction(v, n_sin);
+        beta = take_fraction(v, n_cos) - take_fraction(u, n_sin);
       }
-      alpha = make_fraction (alpha, delta);
-      beta = make_fraction (beta, delta);
-      d = pyth_add (take_fraction (major_axis, alpha), take_fraction (minor_axis, beta));
+      alpha = make_fraction(alpha, delta);
+      beta = make_fraction(beta, delta);
+      d = pyth_add(take_fraction(major_axis, alpha), take_fraction(minor_axis, beta));
     }
     alpha = abs(u);
     beta = abs(v);
@@ -9762,7 +9762,7 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
       beta = abs(u);
     }
     if (internal[fillin] != 0)
-      d = d - take_fraction (internal[fillin], make_fraction (beta + beta, delta));
+      d = d - take_fraction(internal[fillin], make_fraction(beta + beta, delta));
     d = take_fraction ((d + 4) / 8, delta);
     alpha = alpha / half_unit;
     if (d < alpha)
@@ -9770,59 +9770,59 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     delta = c - d;
     if (delta > 0)
     {
-      if (delta > mem[r + 4].cint)
-        delta = mem[r + 4].cint;
-      if (delta >= mem[q + 4].cint)
+      if (delta > left_length(r))
+        delta = left_length(r);
+      if (delta >= left_length(q))
       {
-        delta = mem[q + 4].cint;
-        mem[p + 6].cint = c - delta;
-        mem[p + 5].cint = u;
-        mem[q + 3].cint = v;
-        mem[q + 1].cint = mem[q + 1].cint - delta * mem[r + 3].cint;
-        mem[q + 2].cint = mem[q + 2].cint + delta * mem[q + 5].cint;
-        mem[r + 4].cint = mem[r + 4].cint - delta;
+        delta = left_length(q);
+        right_class(p) = c - delta;
+        right_u(p) = u;
+        left_v(q) = v;
+        x_coord(q) = x_coord(q) - delta * left_v(r);
+        y_coord(q) = y_coord(q) + delta * right_u(q);
+        left_length(r) = left_length(r) - delta;
       }
       else
       {
-        s = get_node (7);
-        mem[p].hh.rh = s;
-        mem[s].hh.rh = q;
-        mem[s + 1].cint = mem[q + 1].cint + delta * mem[q + 3].cint;
-        mem[s + 2].cint = mem[q + 2].cint - delta * mem[p + 5].cint;
-        mem[q + 1].cint = mem[q + 1].cint - delta * mem[r + 3].cint;
-        mem[q + 2].cint = mem[q + 2].cint + delta * mem[q + 5].cint;
-        mem[s + 3].cint = mem[q + 3].cint;
-        mem[s + 5].cint = u;
-        mem[q + 3].cint = v;
-        mem[s + 6].cint = c - delta;
-        mem[s + 4].cint = mem[q + 4].cint - delta;
-        mem[q + 4].cint = delta;
-        mem[r + 4].cint = mem[r + 4].cint - delta;
+        s = get_node(knot_node_size);
+        link(p) = s;
+        link(s) = q;
+        x_coord(s) = x_coord(q) + delta * left_v(q);
+        y_coord(s) = y_coord(q) - delta * right_u(p);
+        x_coord(q) = x_coord(q) - delta * left_v(r);
+        y_coord(q) = y_coord(q) + delta * right_u(q);
+        left_v(s) = left_v(q);
+        right_u(s) = u;
+        left_v(q) = v;
+        right_class(s) = c - delta;
+        left_length(s) = left_length(q) - delta;
+        left_length(q) = delta;
+        left_length(r) = left_length(r) - delta;
       }
     }
     else
       p = q;
     while (true)
     {
-      q = mem[p].hh.rh;
-      if (q == 0)
+      q = link(p);
+      if (q == null)
         goto done;
-      if (mem[q + 4].cint == 0)
+      if (left_length(q) == 0)
       {
-        mem[p].hh.rh = mem[q].hh.rh;
-        mem[p + 6].cint = mem[q + 6].cint;
-        mem[p + 5].cint = mem[q + 5].cint;
-        free_node (q, 7);
+        link(p) = link(q);
+        right_class(p) = right_class(q);
+        right_u(p) = right_u(q);
+        free_node(q, knot_node_size);
       }
       else
       {
-        r = mem[q].hh.rh;
-        if (r == 0)
+        r = link(q);
+        if (r == null)
           goto done;
-        if (mem[r + 4].cint == 0)
+        if (left_length(r) == 0)
         {
-          mem[p].hh.rh = r;
-          free_node (q, 7);
+          link(p) = r;
+          free_node(q, knot_node_size);
           p = r;
         }
         else
@@ -9834,53 +9834,53 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
   done:;
   if (symmetric)
   {
-    s = 0;
+    s = null;
     q = h;
     while (true)
     {
-      r = get_node (7);
-      mem[r].hh.rh = s;
+      r = get_node(knot_node_size);
+      link(r) = s;
       s = r;
-      mem[s + 1].cint = mem[q + 1].cint;
-      mem[s + 2].cint = -mem[q + 2].cint;
+      x_coord(s) = x_coord(q);
+      y_coord(s) = -y_coord(q);
       if (q == p)
         goto done1;
-      q = mem[q].hh.rh;
-      if (mem[q + 2].cint == 0)
+      q = link(q);
+      if (y_coord(q) == 0)
         goto done1;
     }
   done1:
-    if ((mem[p].hh.rh != 0))
-      free_node (mem[p].hh.rh, 7);
-    mem[p].hh.rh = s;
-    beta = -mem[h + 2].cint;
-    while (mem[p + 2].cint != beta)
-      p = mem[p].hh.rh;
-    q = mem[p].hh.rh;
+    if ((link(p) != null))
+      free_node(link(p), knot_node_size);
+    link(p) = s;
+    beta = -y_coord(h);
+    while (y_coord(p) != beta)
+      p = link(p);
+    q = link(p);
   }
-  if (q != 0)
+  if (q != null)
   {
-    if (mem[h + 5].cint == 0)
+    if (right_u(h) == 0)
     {
       p = h;
-      h = mem[h].hh.rh;
-      free_node (p, 7);
-      mem[q + 1].cint = -mem[h + 1].cint;
+      h = link(h);
+      free_node(p, knot_node_size);
+      x_coord(q) = -x_coord(h);
     }
     p = q;
   }
   else
     q = p;
-  r = mem[h].hh.rh;
+  r = link(h);
   do {
-    s = get_node (7);
-    mem[p].hh.rh = s;
+    s = get_node(knot_node_size);
+    link(p) = s;
     p = s;
-    mem[p + 1].cint = -mem[r + 1].cint;
-    mem[p + 2].cint = -mem[r + 2].cint;
-    r = mem[r].hh.rh;
+    x_coord(p) = -x_coord(r);
+    y_coord(p) = -y_coord(r);
+    r = link(r);
   } while (!(r == q));
-  mem[p].hh.rh = h;
+  link(p) = h;
   Result = h;
   return Result;
 }
@@ -9898,7 +9898,7 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
 
   if (abs(x) < abs(y))
   {
-    x = make_fraction (x, abs(y));
+    x = make_fraction(x, abs(y));
     if (y > 0)
       y = fraction_one;
     else
@@ -9911,7 +9911,7 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
   }
   else
   {
-    y = make_fraction (y, abs(x));
+    y = make_fraction(y, abs(x));
     if (x > 0)
       x = fraction_one;
     else
@@ -9921,16 +9921,16 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
   p = h;
   while (true)
   {
-    if (mem[p].hh.b1 == 0)
+    if (right_type(p) == endpoint)
       goto not_found;
-    q = mem[p].hh.rh;
+    q = link(p);
     tt = 0;
-    x1 = mem[p + 5].cint - mem[p + 1].cint;
-    x2 = mem[q + 3].cint - mem[p + 5].cint;
-    x3 = mem[q + 1].cint - mem[q + 3].cint;
-    y1 = mem[p + 6].cint - mem[p + 2].cint;
-    y2 = mem[q + 4].cint - mem[p + 6].cint;
-    y3 = mem[q + 2].cint - mem[q + 4].cint;
+    x1 = right_x(p) - x_coord(p);
+    x2 = left_x(q) - right_x(p);
+    x3 = x_coord(q) - left_x(q);
+    y1 = right_y(p) - y_coord(p);
+    y2 = left_y(q) - right_y(p);
+    y3 = y_coord(q) - left_y(q);
     max = abs(x1);
     if (abs(x2) > max)
       max = abs(x2);
@@ -9946,90 +9946,66 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
       goto found;
     while (max < fraction_half)
     {
-      max = max + max;
-      x1 = x1 + x1;
-      x2 = x2 + x2;
-      x3 = x3 + x3;
-      y1 = y1 + y1;
-      y2 = y2 + y2;
-      y3 = y3 + y3;
+      _double(max);
+      _double(x1);
+      _double(x2);
+      _double(x3);
+      _double(y1);
+      _double(y2);
+      _double(y3);
     }
     t = x1;
-    x1 = take_fraction (x1, x) + take_fraction (y1, y);
-    y1 = take_fraction (y1, x) - take_fraction (t, y);
+    x1 = take_fraction(x1, x) + take_fraction(y1, y);
+    y1 = take_fraction(y1, x) - take_fraction(t, y);
     t = x2;
-    x2 = take_fraction (x2, x) + take_fraction (y2, y);
-    y2 = take_fraction (y2, x) - take_fraction (t, y);
+    x2 = take_fraction(x2, x) + take_fraction(y2, y);
+    y2 = take_fraction(y2, x) - take_fraction(t, y);
     t = x3;
-    x3 = take_fraction (x3, x) + take_fraction (y3, y);
-    y3 = take_fraction (y3, x) - take_fraction (t, y);
+    x3 = take_fraction(x3, x) + take_fraction(y3, y);
+    y3 = take_fraction(y3, x) - take_fraction(t, y);
     if (y1 == 0)
-    {
       if (x1 >= 0)
         goto found;
-    }
     if (n > 0)
     {
-      theta = n_arg (x1, y1);
+      theta = n_arg(x1, y1);
       if (theta >= 0)
-      {
         if (phi <= 0)
-        {
           if (phi >= theta - one_eighty_deg)
-          goto found;
-        }
-      }
+            goto found;
       if (theta <= 0)
-      {
         if (phi >= 0)
-        {
           if (phi <= theta + one_eighty_deg)
             goto found;
-        }
-      }
       if (p == h)
         goto not_found;
     }
     if ((x3 != 0) || (y3 != 0))
-      phi = n_arg (x3, y3);
+      phi = n_arg(x3, y3);
     if (x1 < 0)
-    {
       if (x2 < 0)
-      {
         if (x3 < 0)
           goto done;
-      }
-    }
-    if (ab_vs_cd (y1, y3, y2, y2) == 0)
+    if (ab_vs_cd(y1, y3, y2, y2) == 0)
     {
-      if (ab_vs_cd (y1, y2, 0, 0) < 0)
+      if (ab_vs_cd(y1, y2, 0, 0) < 0)
       {
-        t = make_fraction (y1, y1 - y2);
-        x1 = x1 - take_fraction (x1 - x2, t);
-        x2 = x2 - take_fraction (x2 - x3, t);
-        if (x1 - take_fraction (x1 - x2, t) >= 0)
-        {
-          tt = (t + 2048) / 4096;
-          goto found;
-        }
+        t = make_fraction(y1, y1 - y2);
+        x1 = t_of_the_way(x1, x2);
+        x2 = t_of_the_way(x2, x3);
+        if (t_of_the_way(x1, x2) >= 0)
+          we_found_it();
       }
       else if (y3 == 0)
-      {
         if (y1 == 0)
         {
-          t = crossing_point (-x1, -x2, -x3);
+          t = crossing_point(-x1, -x2, -x3);
           if (t <= fraction_one)
+            we_found_it();
+          if (ab_vs_cd(x1, x3, x2, x2) <= 0)
           {
-            tt = (t + 2048) / 4096;
-            goto found;
-          }
-          if (ab_vs_cd (x1, x3, x2, x2) <= 0)
-          {
-            t = make_fraction (x1, x1 - x2);
-            {
-              tt = (t + 2048) / 4096;
-              goto found;
-            }
+            t = make_fraction(x1, x1 - x2);
+            we_found_it();
           }
         }
         else if (x3 >= 0)
@@ -10037,11 +10013,9 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
           tt = unity;
           goto found;
         }
-      }
       goto done;
     }
     if (y1 <= 0)
-    {
       if (y1 < 0)
       {
         y1 = -y1;
@@ -10053,43 +10027,38 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
         y2 = -y2;
         y3 = -y3;
       }
-    }
-    t = crossing_point (y1, y2, y3);
+    t = crossing_point(y1, y2, y3);
     if (t > fraction_one)
       goto done;
-    y2 = y2 - take_fraction (y2 - y3, t);
-    x1 = x1 - take_fraction (x1 - x2, t);
-    x2 = x2 - take_fraction (x2 - x3, t);
-    x1 = x1 - take_fraction (x1 - x2, t);
+    y2 = t_of_the_way(y2, y3);
+    x1 = t_of_the_way(x1, x2);
+    x2 = t_of_the_way(x2, x3);
+    x1 = t_of_the_way(x1, x2);
     if (x1 >= 0)
-    {
-      tt = (t + 2048) / 4096;
-      goto found;
-    }
+      we_found_it();
     if (y2 > 0)
       y2 = 0;
     tt = t;
-    t = crossing_point (0, -y2, -y3);
+    t = crossing_point(0, -y2, -y3);
     if (t > fraction_one)
       goto done;
-    x1 = x1 - take_fraction (x1 - x2, t);
-    x2 = x2 - take_fraction (x2 - x3, t);
-    if (x1 - take_fraction (x1 - x2, t) >= 0)
+    x1 = t_of_the_way(x1, x2);
+    x2 = t_of_the_way(x2, x3);
+    if (t_of_the_way(x1, x2) >= 0)
     {
-      t = tt - take_fraction (tt - fraction_one, t);
-      {
-        tt = (t + 2048) / 4096;
-        goto found;
-      }
+      t = t_of_the_way(tt, fraction_one);
+      we_found_it();
     }
-    done:;
+  done:;
     p = q;
     n = n + unity;
   }
-  not_found: Result = -unity;
+not_found:
+  Result = -unity;
   goto lab_exit;
-  found: Result = n + tt;
-  lab_exit:;
+found:
+  Result = n + tt;
+lab_exit:;
   return Result;
 }
 /* 556 */
@@ -10097,205 +10066,42 @@ void cubic_intersection (pointer p, pointer pp)
 {
   pointer q, qq;
 
-  time_to_go = 5000;
+  time_to_go = max_patience;
   max_t = 2;
-  q = mem[p].hh.rh;
-  qq = mem[pp].hh.rh;
-  bisect_ptr = 20;
-  bisect_stack[bisect_ptr - 5] = mem[p + 5].cint - mem[p + 1].cint;
-  bisect_stack[bisect_ptr - 4] = mem[q + 3].cint - mem[p + 5].cint;
-  bisect_stack[bisect_ptr - 3] = mem[q + 1].cint - mem[q + 3].cint;
-  if (bisect_stack[bisect_ptr - 5]< 0)
-  {
-    if (bisect_stack[bisect_ptr - 3] >= 0)
-    {
-      if (bisect_stack[bisect_ptr - 4]< 0)
-        bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5]+ bisect_stack[bisect_ptr - 4];
-      else
-        bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-      if (bisect_stack[bisect_ptr - 1] < 0)
-        bisect_stack[bisect_ptr - 1] = 0;
-    }
-    else
-    {
-      bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-      if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr - 5])
-        bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-      if (bisect_stack[bisect_ptr - 1]< 0)
-        bisect_stack[bisect_ptr - 1] = 0;
-    }
-  }
-  else if (bisect_stack[bisect_ptr - 3]<= 0)
-  {
-    if (bisect_stack[bisect_ptr - 4] > 0)
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-    else
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-    if (bisect_stack[bisect_ptr - 2] > 0)
-      bisect_stack[bisect_ptr - 2] = 0;
-  }
-  else
-  {
-    bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-    if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5])
-      bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-    bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-    if (bisect_stack[bisect_ptr - 2] > 0)
-      bisect_stack[bisect_ptr - 2] = 0;
-  }
-  bisect_stack[bisect_ptr - 10] = mem[p + 6].cint - mem[p + 2].cint;
-  bisect_stack[bisect_ptr - 9] = mem[q + 4].cint - mem[p + 6].cint;
-  bisect_stack[bisect_ptr - 8] = mem[q + 2].cint - mem[q + 4].cint;
-  if (bisect_stack[bisect_ptr - 10]< 0)
-  {
-    if (bisect_stack[bisect_ptr - 8] >= 0)
-    {
-      if (bisect_stack[bisect_ptr - 9] < 0)
-        bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-      else
-        bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-      if (bisect_stack[bisect_ptr - 6] < 0)
-        bisect_stack[bisect_ptr - 6] = 0;
-    }
-    else
-    {
-      bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-      if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr - 10])
-        bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-      if (bisect_stack[bisect_ptr - 6]< 0)
-        bisect_stack[bisect_ptr - 6] = 0;
-    }
-  }
-  else if (bisect_stack[bisect_ptr - 8]<= 0)
-  {
-    if (bisect_stack[bisect_ptr - 9] > 0)
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-    else
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-    if (bisect_stack[bisect_ptr - 7] > 0)
-      bisect_stack[bisect_ptr - 7] = 0;
-  }
-  else
-  {
-    bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-    if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr - 10])
-      bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-    bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-    if (bisect_stack[bisect_ptr - 7] > 0)
-      bisect_stack[bisect_ptr - 7] = 0;
-  }
-  bisect_stack[bisect_ptr - 15] = mem[pp + 5].cint - mem[pp + 1].cint;
-  bisect_stack[bisect_ptr - 14] = mem[qq + 3].cint - mem[pp + 5].cint;
-  bisect_stack[bisect_ptr - 13] = mem[qq + 1].cint - mem[qq + 3].cint;
-  if (bisect_stack[bisect_ptr - 15]< 0)
-  {
-    if (bisect_stack[bisect_ptr - 13] >= 0)
-    {
-      if (bisect_stack[bisect_ptr - 14]< 0)
-        bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-      else
-        bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-      if (bisect_stack[bisect_ptr - 11] < 0)
-        bisect_stack[bisect_ptr - 11] = 0;
-    }
-    else
-    {
-      bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-      if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr - 15])
-        bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-      if (bisect_stack[bisect_ptr - 11] < 0)
-        bisect_stack[bisect_ptr - 11] = 0;
-    }
-  }
-  else if (bisect_stack[bisect_ptr - 13]<= 0)
-  {
-    if (bisect_stack[bisect_ptr - 14] > 0)
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-    else
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
-    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-    if (bisect_stack[bisect_ptr - 12] > 0)
-      bisect_stack[bisect_ptr - 12] = 0;
-  }
-  else
-  {
-    bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14] + bisect_stack[bisect_ptr - 13];
-    if (bisect_stack[bisect_ptr - 11] < bisect_stack[bisect_ptr - 15])
-      bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
-    bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-    if (bisect_stack[bisect_ptr - 12] > 0)
-      bisect_stack[bisect_ptr - 12] = 0;
-  }
-  bisect_stack[bisect_ptr - 20] = mem[pp + 6].cint - mem[pp + 2].cint;
-  bisect_stack[bisect_ptr - 19] = mem[qq + 4].cint - mem[pp + 6].cint;
-  bisect_stack[bisect_ptr - 18] = mem[qq + 2].cint - mem[qq + 4].cint;
-  if (bisect_stack[bisect_ptr - 20]< 0)
-  {
-    if (bisect_stack[bisect_ptr - 18] >= 0)
-    {
-      if (bisect_stack[bisect_ptr - 19]< 0)
-        bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-      else
-        bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-      if (bisect_stack[bisect_ptr - 16] < 0)
-        bisect_stack[bisect_ptr - 16] = 0;
-    }
-    else
-    {
-      bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-      if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr - 20])
-        bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-      if (bisect_stack[bisect_ptr - 16] < 0)
-        bisect_stack[bisect_ptr - 16] = 0;
-    }
-  }
-  else if (bisect_stack[bisect_ptr - 18]<= 0)
-  {
-    if (bisect_stack[bisect_ptr - 19] > 0)
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-    else
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
-    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-    if (bisect_stack[bisect_ptr - 17] > 0)
-      bisect_stack[bisect_ptr - 17] = 0;
-  }
-  else
-  {
-    bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-    if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr - 20])
-      bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
-    bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-    if (bisect_stack[bisect_ptr - 17] > 0)
-      bisect_stack[bisect_ptr - 17] = 0;
-  }
-  delx = mem[p + 1].cint - mem[pp + 1].cint;
-  dely = mem[p + 2].cint - mem[pp + 2].cint;
+  q = link(p);
+  qq = link(pp);
+  bisect_ptr = int_packets;
+  u1r = right_x(p) - x_coord(p);
+  u2r = left_x(q) - right_x(p);
+  u3r = x_coord(q) - left_x(q);
+  set_min_max(ur_packet);
+  v1r = right_y(p) - y_coord(p);
+  v2r = left_y(q) - right_y(p);
+  v3r = y_coord(q) - left_y(q);
+  set_min_max(vr_packet);
+  x1r = right_x(pp) - x_coord(pp);
+  x2r = left_x(qq) - right_x(pp);
+  x3r = x_coord(qq) - left_x(qq);
+  set_min_max(xr_packet);
+  y1r = right_y(pp) - y_coord(pp);
+  y2r = left_y(qq) - right_y(pp);
+  y3r = y_coord(qq) - left_y(qq);
+  set_min_max(yr_packet);
+  delx = x_coord(p) - x_coord(pp);
+  dely = y_coord(p) - y_coord(pp);
   tol = 0;
-  uv = bisect_ptr;
-  xy = bisect_ptr;
+  uv = r_packets;
+  xy = r_packets;
   three_l = 0;
   cur_t = 1;
   cur_tt = 1;
   while (true)
   {
   lab_continue:
-    if (delx - tol <= bisect_stack[xy - 11] - bisect_stack[uv - 2])
-    {
-      if (delx + tol >= bisect_stack[xy - 12] - bisect_stack[uv - 1])
-      {
-        if (dely - tol <= bisect_stack[xy - 16] - bisect_stack[uv - 7])
-        {
-          if (dely + tol >= bisect_stack[xy - 17] - bisect_stack[uv - 6])
+    if (delx - tol <= stack_max(x_packet(xy)) - stack_min(u_packet(uv)))
+      if (delx + tol >= stack_min(x_packet(xy)) - stack_max(u_packet(uv)))
+        if (dely - tol <= stack_max(y_packet(xy)) - stack_min(v_packet(uv)))
+          if (dely + tol >= stack_min(y_packet(xy)) - stack_max(v_packet(uv)))
           {
             if (cur_t >= max_t)
             {
@@ -10305,390 +10111,67 @@ void cubic_intersection (pointer p, pointer pp)
                 cur_tt = half(cur_tt + 1);
                 goto lab_exit;
               }
-              max_t = max_t + max_t;
+              _double(max_t);
               appr_t = cur_t;
               appr_tt = cur_tt;
             }
-            bisect_stack[bisect_ptr] = delx;
-            bisect_stack[bisect_ptr + 1] = dely;
-            bisect_stack[bisect_ptr + 2] = tol;
-            bisect_stack[bisect_ptr + 3] = uv;
-            bisect_stack[bisect_ptr + 4] = xy;
-            bisect_ptr = bisect_ptr + 45;
-            cur_t = cur_t + cur_t;
-            cur_tt = cur_tt + cur_tt;
-            bisect_stack[bisect_ptr - 25] = bisect_stack[uv - 5];
-            bisect_stack[bisect_ptr - 3] = bisect_stack[uv - 3];
-            bisect_stack[bisect_ptr - 24] = half(bisect_stack[bisect_ptr - 25]+ bisect_stack[uv - 4]);
-            bisect_stack[bisect_ptr - 4] = half(bisect_stack[bisect_ptr - 3]+ bisect_stack[uv - 4]);
-            bisect_stack[bisect_ptr - 23] = half(bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 4]);
-            bisect_stack[bisect_ptr - 5] = bisect_stack[bisect_ptr - 23];
-            if (bisect_stack[bisect_ptr - 25]< 0)
-            {
-              if (bisect_stack[bisect_ptr - 23] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 24] < 0)
-                  bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
-                else
-                  bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25];
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
-                if (bisect_stack[bisect_ptr - 21]< 0)
-                  bisect_stack[bisect_ptr - 21] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25]+ bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
-                if (bisect_stack[bisect_ptr - 22] > bisect_stack[bisect_ptr - 25])
-                  bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25];
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
-                if (bisect_stack[bisect_ptr - 21] < 0)
-                  bisect_stack[bisect_ptr - 21] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 23]<= 0)
-            {
-              if (bisect_stack[bisect_ptr - 24] > 0)
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
-              else
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25];
-              bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
-              if (bisect_stack[bisect_ptr - 22] > 0)
-                bisect_stack[bisect_ptr - 22] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24]+ bisect_stack[bisect_ptr - 23];
-              if (bisect_stack[bisect_ptr - 21]< bisect_stack[bisect_ptr - 25])
-                bisect_stack[bisect_ptr - 21] = bisect_stack[bisect_ptr - 25];
-              bisect_stack[bisect_ptr - 22] = bisect_stack[bisect_ptr - 25] + bisect_stack[bisect_ptr - 24];
-              if (bisect_stack[bisect_ptr - 22] > 0)
-                bisect_stack[bisect_ptr - 22] = 0;
-            }
-            if (bisect_stack[bisect_ptr - 5]< 0)
-            {
-              if (bisect_stack[bisect_ptr - 3] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 4]< 0)
-                  bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-                else
-                  bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-                if (bisect_stack[bisect_ptr - 1] < 0)
-                  bisect_stack[bisect_ptr - 1] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-                if (bisect_stack[bisect_ptr - 2] > bisect_stack[bisect_ptr - 5])
-                  bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5];
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-                if (bisect_stack[bisect_ptr - 1] < 0)
-                  bisect_stack[bisect_ptr - 1] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 3]<= 0)
-            {
-              if (bisect_stack[bisect_ptr - 4] > 0)
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-              else
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-              bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-              if (bisect_stack[bisect_ptr - 2] > 0)
-                bisect_stack[bisect_ptr - 2] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4]+ bisect_stack[bisect_ptr - 3];
-              if (bisect_stack[bisect_ptr - 1]< bisect_stack[bisect_ptr - 5])
-                bisect_stack[bisect_ptr - 1] = bisect_stack[bisect_ptr - 5];
-              bisect_stack[bisect_ptr - 2] = bisect_stack[bisect_ptr - 5] + bisect_stack[bisect_ptr - 4];
-              if (bisect_stack[bisect_ptr - 2] > 0)
-                bisect_stack[bisect_ptr - 2] = 0;
-            }
-            bisect_stack[bisect_ptr - 30] = bisect_stack[uv - 10];
-            bisect_stack[bisect_ptr - 8] = bisect_stack[uv - 8];
-            bisect_stack[bisect_ptr - 29] = half(bisect_stack[bisect_ptr - 30]+ bisect_stack[uv - 9]);
-            bisect_stack[bisect_ptr - 9] = half(bisect_stack[bisect_ptr - 8] + bisect_stack[uv - 9]);
-            bisect_stack[bisect_ptr - 28] = half(bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 9]);
-            bisect_stack[bisect_ptr - 10] = bisect_stack[bisect_ptr - 28];
-            if (bisect_stack[bisect_ptr - 30] < 0)
-            {
-              if (bisect_stack[bisect_ptr - 28] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 29]< 0)
-                  bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30]+ bisect_stack[bisect_ptr - 29];
-                else
-                  bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30];
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
-                if (bisect_stack[bisect_ptr - 26] < 0)
-                  bisect_stack[bisect_ptr - 26] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
-                if (bisect_stack[bisect_ptr - 27] > bisect_stack[bisect_ptr - 30])
-                  bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30];
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30]+ bisect_stack[bisect_ptr - 29];
-                if (bisect_stack[bisect_ptr - 26] < 0)
-                  bisect_stack[bisect_ptr - 26] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 28] <= 0)
-            {
-              if (bisect_stack[bisect_ptr - 29] > 0)
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29];
-              else
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30];
-              bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
-              if (bisect_stack[bisect_ptr - 27] > 0)
-                bisect_stack[bisect_ptr - 27] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29]+ bisect_stack[bisect_ptr - 28];
-              if (bisect_stack[bisect_ptr - 26]< bisect_stack[bisect_ptr - 30])
-                bisect_stack[bisect_ptr - 26] = bisect_stack[bisect_ptr - 30];
-              bisect_stack[bisect_ptr - 27] = bisect_stack[bisect_ptr - 30] + bisect_stack[bisect_ptr - 29];
-              if (bisect_stack[bisect_ptr - 27] > 0)
-                bisect_stack[bisect_ptr - 27] = 0;
-            }
-            if (bisect_stack[bisect_ptr - 10] < 0)
-            {
-              if (bisect_stack[bisect_ptr - 8] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 9] < 0)
-                 bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-                else
-                  bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-                if (bisect_stack[bisect_ptr - 6] < 0)
-                  bisect_stack[bisect_ptr - 6] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-                if (bisect_stack[bisect_ptr - 7] > bisect_stack[bisect_ptr - 10])
-                  bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10];
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-                if (bisect_stack[bisect_ptr - 6] < 0)
-                  bisect_stack[bisect_ptr - 6] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 8] <= 0)
-            {
-              if (bisect_stack[bisect_ptr - 9] > 0)
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-              else
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-              bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-              if (bisect_stack[bisect_ptr - 7] > 0)
-                bisect_stack[bisect_ptr - 7] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9]+ bisect_stack[bisect_ptr - 8];
-              if (bisect_stack[bisect_ptr - 6]< bisect_stack[bisect_ptr - 10])
-                bisect_stack[bisect_ptr - 6] = bisect_stack[bisect_ptr - 10];
-              bisect_stack[bisect_ptr - 7] = bisect_stack[bisect_ptr - 10] + bisect_stack[bisect_ptr - 9];
-              if (bisect_stack[bisect_ptr - 7] > 0)
-                bisect_stack[bisect_ptr - 7] = 0;
-            }
-            bisect_stack[bisect_ptr - 35] = bisect_stack[xy - 15];
-            bisect_stack[bisect_ptr - 13] = bisect_stack[xy - 13];
-            bisect_stack[bisect_ptr - 34] = half(bisect_stack[bisect_ptr - 35]+ bisect_stack[xy - 14]);
-            bisect_stack[bisect_ptr - 14] = half(bisect_stack[bisect_ptr - 13]+ bisect_stack[xy - 14]);
-            bisect_stack[bisect_ptr - 33] = half(bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 14]);
-            bisect_stack[bisect_ptr - 15] = bisect_stack[bisect_ptr - 33];
-            if (bisect_stack[bisect_ptr - 35] < 0)
-            {
-              if (bisect_stack[bisect_ptr - 33] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 34] < 0)
-                  bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]+ bisect_stack[bisect_ptr - 34];
-                else
-                  bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35];
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
-                if (bisect_stack[bisect_ptr - 31] < 0)
-                  bisect_stack[bisect_ptr - 31] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35]+ bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
-                if (bisect_stack[bisect_ptr - 32] > bisect_stack[bisect_ptr - 35])
-                  bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35];
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34];
-                if (bisect_stack[bisect_ptr - 31] < 0)
-                  bisect_stack[bisect_ptr - 31] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 33] <= 0)
-            {
-              if (bisect_stack[bisect_ptr - 34] > 0)
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34];
-              else
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35];
-              bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
-              if (bisect_stack[bisect_ptr - 32] > 0)
-                bisect_stack[bisect_ptr - 32] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34]+ bisect_stack[bisect_ptr - 33];
-              if (bisect_stack[bisect_ptr - 31]< bisect_stack[bisect_ptr - 35])
-                bisect_stack[bisect_ptr - 31] = bisect_stack[bisect_ptr - 35];
-              bisect_stack[bisect_ptr - 32] = bisect_stack[bisect_ptr - 35] + bisect_stack[bisect_ptr - 34];
-              if (bisect_stack[bisect_ptr - 32] > 0)
-                bisect_stack[bisect_ptr - 32] = 0;
-            }
-            if (bisect_stack[bisect_ptr - 15] < 0)
-            {
-              if (bisect_stack[bisect_ptr - 13] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 14] < 0)
-                  bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-                else
-                  bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-                if (bisect_stack[bisect_ptr - 11] < 0)
-                  bisect_stack[bisect_ptr - 11] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15]+ bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-                if (bisect_stack[bisect_ptr - 12] > bisect_stack[bisect_ptr - 15])
-                  bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15];
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-                if (bisect_stack[bisect_ptr - 11] < 0)
-                  bisect_stack[bisect_ptr - 11] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 13]<= 0)
-            {
-              if (bisect_stack[bisect_ptr - 14] > 0)
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-              else
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
-              bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-              if (bisect_stack[bisect_ptr - 12] > 0)
-                bisect_stack[bisect_ptr - 12] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14]+ bisect_stack[bisect_ptr - 13];
-              if (bisect_stack[bisect_ptr - 11]< bisect_stack[bisect_ptr - 15])
-                bisect_stack[bisect_ptr - 11] = bisect_stack[bisect_ptr - 15];
-              bisect_stack[bisect_ptr - 12] = bisect_stack[bisect_ptr - 15] + bisect_stack[bisect_ptr - 14];
-              if (bisect_stack[bisect_ptr - 12] > 0)
-                bisect_stack[bisect_ptr - 12] = 0;
-            }
-            bisect_stack[bisect_ptr - 40] = bisect_stack[xy - 20];
-            bisect_stack[bisect_ptr - 18] = bisect_stack[xy - 18];
-            bisect_stack[bisect_ptr - 39] = half(bisect_stack[bisect_ptr - 40] + bisect_stack[xy - 19]);
-            bisect_stack[bisect_ptr - 19] = half(bisect_stack[bisect_ptr - 18] + bisect_stack[xy - 19]);
-            bisect_stack[bisect_ptr - 38] = half(bisect_stack[bisect_ptr - 39] + bisect_stack[bisect_ptr - 19]);
-            bisect_stack[bisect_ptr - 20] = bisect_stack[bisect_ptr - 38];
-            if (bisect_stack[bisect_ptr - 40] < 0)
-            {
-              if (bisect_stack[bisect_ptr - 38] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 39] < 0)
-                  bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39];
-                else
-                  bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40];
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
-                if (bisect_stack[bisect_ptr - 36] < 0)
-                  bisect_stack[bisect_ptr - 36] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40]+ bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
-                if (bisect_stack[bisect_ptr - 37] > bisect_stack[bisect_ptr - 40])
-                  bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40];
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40]+ bisect_stack[bisect_ptr - 39];
-                if (bisect_stack[bisect_ptr - 36] < 0)
-                  bisect_stack[bisect_ptr - 36] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 38]<= 0)
-            {
-              if (bisect_stack[bisect_ptr - 39] > 0)
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39];
-              else
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40];
-              bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
-              if (bisect_stack[bisect_ptr - 37] > 0)
-                bisect_stack[bisect_ptr - 37] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39]+ bisect_stack[bisect_ptr - 38];
-              if (bisect_stack[bisect_ptr - 36]< bisect_stack[bisect_ptr - 40])
-                bisect_stack[bisect_ptr - 36] = bisect_stack[bisect_ptr - 40];
-              bisect_stack[bisect_ptr - 37] = bisect_stack[bisect_ptr - 40] + bisect_stack[bisect_ptr - 39];
-              if (bisect_stack[bisect_ptr - 37] > 0)
-                bisect_stack[bisect_ptr - 37] = 0;
-            }
-            if (bisect_stack[bisect_ptr - 20] < 0)
-            {
-              if (bisect_stack[bisect_ptr - 18] >= 0)
-              {
-                if (bisect_stack[bisect_ptr - 19] < 0)
-                  bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-                else
-                  bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-                if (bisect_stack[bisect_ptr - 16] < 0)
-                  bisect_stack[bisect_ptr - 16] = 0;
-              }
-              else
-              {
-                bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-                if (bisect_stack[bisect_ptr - 17] > bisect_stack[bisect_ptr - 20])
-                  bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20];
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-                if (bisect_stack[bisect_ptr - 16] < 0)
-                  bisect_stack[bisect_ptr - 16] = 0;
-              }
-            }
-            else if (bisect_stack[bisect_ptr - 18]<= 0)
-            {
-              if (bisect_stack[bisect_ptr - 19] > 0)
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-              else
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
-              bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19] + bisect_stack[bisect_ptr - 18];
-              if (bisect_stack[bisect_ptr - 17] > 0)
-                bisect_stack[bisect_ptr - 17] = 0;
-            }
-            else
-            {
-              bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19]+ bisect_stack[bisect_ptr - 18];
-              if (bisect_stack[bisect_ptr - 16]< bisect_stack[bisect_ptr - 20])
-                bisect_stack[bisect_ptr - 16] = bisect_stack[bisect_ptr - 20];
-              bisect_stack[bisect_ptr - 17] = bisect_stack[bisect_ptr - 20] + bisect_stack[bisect_ptr - 19];
-              if (bisect_stack[bisect_ptr - 17] > 0)
-                bisect_stack[bisect_ptr - 17] = 0;
-            }
-            uv = bisect_ptr - 20;
-            xy = bisect_ptr - 20;
-            delx = delx + delx;
-            dely = dely + dely;
+            stack_dx = delx;
+            stack_dy = dely;
+            stack_tol = tol;
+            stack_uv = uv;
+            stack_xy = xy;
+            bisect_ptr = bisect_ptr + int_increment;
+            _double(cur_t);
+            _double(cur_tt);
+            u1l = stack_1(u_packet(uv));
+            u3r = stack_3(u_packet(uv));
+            u2l = half(u1l + stack_2(u_packet(uv)));
+            u2r = half(u3r + stack_2(u_packet(uv)));
+            u3l = half(u2l + u2r);
+            u1r = u3l;
+            set_min_max(ul_packet);
+            set_min_max(ur_packet);
+            v1l = stack_1(v_packet(uv));
+            v3r = stack_3(v_packet(uv));
+            v2l = half(v1l + stack_2(v_packet(uv)));
+            v2r = half(v3r + stack_2(v_packet(uv)));
+            v3l = half(v2l + v2r);
+            v1r = v3l;
+            set_min_max(vl_packet);
+            set_min_max(vr_packet);
+            x1l = stack_1(x_packet(xy));
+            x3r = stack_3(x_packet(xy));
+            x2l = half(x1l + stack_2(x_packet(xy)));
+            x2r = half(x3r + stack_2(x_packet(xy)));
+            x3l = half(x2l + x2r);
+            x1r = x3l;
+            set_min_max(xl_packet);
+            set_min_max(xr_packet);
+            y1l = stack_1(y_packet(xy));
+            y3r = stack_3(y_packet(xy));
+            y2l = half(y1l + stack_2(y_packet(xy)));
+            y2r = half(y3r + stack_2(y_packet(xy)));
+            y3l = half(y2l + y2r);
+            y1r = y3l;
+            set_min_max(yl_packet);
+            set_min_max(yr_packet);
+            uv = l_packets;
+            xy = l_packets;
+            _double(delx);
+            _double(dely);
             tol = tol - three_l + tol_step;
-            tol = tol + tol;
+            _double(tol);
             three_l = three_l + tol_step;
             goto lab_continue;
           }
-        }
-      }
-    }
     if (time_to_go > 0)
       decr(time_to_go);
     else
     {
       while (appr_t < unity)
       {
-        appr_t = appr_t + appr_t;
-        appr_tt = appr_tt + appr_tt;
+        _double(appr_t);
+        _double(appr_tt);
       }
       cur_t = appr_t;
       cur_tt = appr_tt;
@@ -10696,47 +10179,39 @@ void cubic_intersection (pointer p, pointer pp)
     }
   not_found:
     if (odd(cur_tt))
-    {
       if (odd(cur_t))
       {
         cur_t = half(cur_t);
         cur_tt = half(cur_tt);
         if (cur_t == 0)
           goto lab_exit;
-        bisect_ptr = bisect_ptr - 45;
+        bisect_ptr = bisect_ptr - int_increment;
         three_l = three_l - tol_step;
-        delx = bisect_stack[bisect_ptr];
-        dely = bisect_stack[bisect_ptr + 1];
-        tol = bisect_stack[bisect_ptr + 2];
-        uv = bisect_stack[bisect_ptr + 3];
-        xy = bisect_stack[bisect_ptr + 4];
+        delx = stack_dx;
+        dely = stack_dy;
+        tol = stack_tol;
+        uv = stack_uv;
+        xy = stack_xy;
         goto not_found;
       }
       else
       {
         incr(cur_t);
-        delx = delx + bisect_stack[uv - 5]+ bisect_stack[uv - 4]+
-        bisect_stack[uv - 3];
-        dely = dely + bisect_stack[uv - 10]+ bisect_stack[uv - 9]+
-        bisect_stack[uv - 8];
-        uv = uv + 20;
+        delx = delx + stack_1(u_packet(uv)) + stack_2(u_packet(uv)) + stack_3(u_packet(uv));
+        dely = dely + stack_1(v_packet(uv)) + stack_2(v_packet(uv)) + stack_3(v_packet(uv));
+        uv = uv + int_packets;
         decr(cur_tt);
-        xy = xy - 20;
-        delx = delx + bisect_stack[xy - 15]+ bisect_stack[xy - 14]+
-        bisect_stack[xy - 13];
-        dely = dely + bisect_stack[xy - 20]+ bisect_stack[xy - 19]+
-        bisect_stack[xy - 18];
+        xy = xy - int_packets;
+        delx = delx + stack_1(x_packet(xy)) + stack_2(x_packet(xy)) + stack_3(x_packet(xy));
+        dely = dely + stack_1(y_packet(xy)) + stack_2(y_packet(xy)) + stack_3(y_packet(xy));
       }
-    }
     else
     {
       incr(cur_tt);
       tol = tol + three_l;
-      delx = delx - bisect_stack[xy - 15] - bisect_stack[xy - 14] -
-      bisect_stack[xy - 13];
-      dely = dely - bisect_stack[xy - 20] - bisect_stack[xy - 19] -
-      bisect_stack[xy - 18];
-      xy = xy + 20;
+      delx = delx - stack_1(x_packet(xy)) - stack_2(x_packet(xy)) - stack_3(x_packet(xy));
+      dely = dely - stack_1(y_packet(xy)) - stack_2(y_packet(xy)) - stack_3(y_packet(xy));
+      xy = xy + int_packets;
     }
   }
   lab_exit:;
@@ -10794,7 +10269,7 @@ void path_intersection (pointer h, pointer hh)
   } while (!(tol_step > 3));
   cur_t = -unity;
   cur_tt = -unity;
-  lab_exit:;
+lab_exit:;
 }
 /* 574 */
 void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y)
@@ -10806,11 +10281,11 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   else
     r0 = round_unscaled(r0);
   r1 = round_unscaled(r1);
-  if (r1 > screendepth)
-    r1 = screendepth;
+  if (r1 > screen_depth)
+    r1 = screen_depth;
   if (r1 < r0)
   {
-    if (r0 > screendepth)
+    if (r0 > screen_depth)
       r0 = r1;
     else
       r1 = r0;
@@ -10820,11 +10295,11 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   else
     c0 = round_unscaled(c0);
   c1 = round_unscaled(c1);
-  if (c1 > screenwidth)
-    c1 = screenwidth;
+  if (c1 > screen_width)
+    c1 = screen_width;
   if (c1 < c0)
   {
-    if (c0 > screenwidth)
+    if (c0 > screen_width)
       c0 = c1;
     else
       c1 = c0;
@@ -10842,150 +10317,135 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   {
     if (!screen_started)
     {
-      screen_OK = initscreen();
+      screen_OK = init_screen();
       screen_started = true;
     }
   }
   if (screen_OK)
   {
-    blankrectangle (c0, c1, r0, r1);
-    updatescreen();
+    blank_rectangle(c0, c1, r0, r1);
+    update_screen();
   }
 }
 /* 577 */
 void disp_edges (window_number k)
 {
   pointer p, q;
-  boolean alreadythere;
+  boolean already_there;
   integer r;
   screen_col n;
   integer w, ww;
   pixel_color b;
   integer m, mm;
   integer d;
-  integer madjustment;
-  integer rightedge;
-  screen_col mincol;
+  integer m_adjustment;
+  integer right_edge;
+  screen_col min_col;
 
   if (screen_OK)
-  {
     if (left_col[k] < right_col[k])
-    {
       if (top_row[k] < bot_row[k])
       {
-        alreadythere = false;
-        if (mem[cur_edges + 3].hh.rh == k)
-        {
-          if (mem[cur_edges + 4].cint == window_time[k])
-            alreadythere = true;
-        }
-        if (!alreadythere)
-          blankrectangle (left_col[k], right_col[k], top_row[k],
-        bot_row[k]);
-        madjustment = m_window[k] - mem[cur_edges + 3].hh.lh;
-        rightedge = 8 * (right_col[k] - madjustment);
-        mincol = left_col[k];
-        p = mem[cur_edges].hh.rh;
-        r = n_window[k] - (mem[cur_edges + 1].hh.lh - 4096);
+        already_there = false;
+        if (last_window(cur_edges) == k)
+          if (last_window_time(cur_edges) == window_time[k])
+            already_there = true;
+        if (!already_there)
+          blank_rectangle(left_col[k], right_col[k], top_row[k], bot_row[k]);
+        m_adjustment = m_window[k] - m_offset(cur_edges);
+        right_edge = 8 * (right_col[k] - m_adjustment);
+        min_col = left_col[k];
+        p = link(cur_edges);
+        r = n_window[k] - (n_min(cur_edges) - zero_field);
         while ((p != cur_edges) && (r >= top_row[k]))
         {
           if (r < bot_row[k])
           {
-            if (mem[p + 1].hh.lh > 1)
-              sort_edges (p);
-            else if (mem[p + 1].hh.lh == 1)
+            if (unsorted(p) > _void)
+              sort_edges(p);
+            else if (unsorted(p) == _void)
             {
-              if (alreadythere)
+              if (already_there)
                 goto done;
             }
-            mem[p + 1].hh.lh = 1;
+            unsorted(p) = _void;
             n = 0;
             ww = 0;
             m = -1;
             w = 0;
-            q = mem[p + 1].hh.rh;
-            row_transition[0] = mincol;
+            q = sorted(p);
+            row_transition[0] = min_col;
             while (true)
             {
-              if (q == mem_top)
-                d = rightedge;
+              if (q == sentinel)
+                d = right_edge;
               else
-                d = mem[q].hh.lh;
-              mm = (d / 8) + madjustment;
+                d = ho(info(q));
+              mm = (d / 8) + m_adjustment;
               if (mm != m)
               {
                 if (w <= 0)
                 {
                   if (ww > 0)
-                  {
-                    if (m > mincol)
+                    if (m > min_col)
                     {
                       if (n == 0)
-                      {
-                        if (alreadythere)
+                        if (already_there)
                         {
-                          b = 0;
+                          b = white;
                           incr(n);
                         }
                         else
-                          b = 1;
-                      }
+                          b = black;
                       else
                         incr(n);
                       row_transition[n] = m;
                     }
-                  }
                 }
                 else if (ww <= 0)
-                {
-                  if (m > mincol)
+                  if (m > min_col)
                   {
                     if (n == 0)
                       b = 1;
                     incr(n);
                     row_transition[n] = m;
                   }
-                }
                 m = mm;
                 w = ww;
               }
-              if (d >= rightedge)
+              if (d >= right_edge)
                 goto found;
-              ww = ww + (d % 8) - 4;
-              q = mem[q].hh.rh;
+              ww = ww + (d % 8) - zero_w;
+              q = link(q);
             }
-            found: if (alreadythere || (ww > 0))
+          found:
+            if (already_there || (ww > 0))
             {
               if (n == 0)
-              {
                 if (ww > 0)
-                  b = 1;
+                  b = black;
                 else
-                  b = 0;
-              }
+                  b = white;
               incr(n);
               row_transition[n] = right_col[k];
             }
             else if (n == 0)
               goto done;
-            paintrow (r, b, row_transition, n);
+            paint_row(r, b, row_transition, n);
             done:;
           }
-          p = mem[p].hh.rh;
+          p = link(p);
           decr(r);
         }
-        updatescreen();
+        update_screen();
         incr(window_time[k]);
-        mem[cur_edges + 3].hh.rh = k;
-        mem[cur_edges + 4].cint = window_time[k];
+        last_window(cur_edges) = k;
+        last_window_time(cur_edges) = window_time[k];
       }
-    }
-  }
 }
 /* 495 */
 fraction max_coef (pointer p)
 {
-  fraction Result;
   fraction x;
 
   x = 0;
@@ -10995,8 +10455,7 @@ fraction max_coef (pointer p)
       x = abs(value(p));
     p = link(p);
   }
-  Result = x;
-  return Result;
+  return x;
 }
 /* 597 */
 pointer p_plus_q (pointer p, pointer q, small_number t)
@@ -11007,144 +10466,138 @@ pointer p_plus_q (pointer p, pointer q, small_number t)
   integer threshold;
   integer v;
 
-  if (t == 17)
-    threshold = 2685;
+  if (t == dependent)
+    threshold = fraction_threshold;
   else
-    threshold = 8;
-  r = mem_top - 1;
-  pp = mem[p].hh.lh;
-  qq = mem[q].hh.lh;
+    threshold = scaled_threshold;
+  r = temp_head;
+  pp = info(p);
+  qq = info(q);
   while (true) if (pp == qq)
   {
-    if (pp == 0)
+    if (pp == null)
       goto done;
     else
     {
-      v = mem[p + 1].cint + mem[q + 1].cint;
-      mem[p + 1].cint = v;
+      v = value(p) + value(q);
+      value(p) = v;
       s = p;
-      p = mem[p].hh.rh;
-      pp = mem[p].hh.lh;
+      p = link(p);
+      pp = info(p);
       if (abs(v) < threshold)
-        free_node (s, 2);
+        free_node(s, dep_node_size);
       else
       {
-        if (abs(v) >= 626349397L)
-        {
+        if (abs(v) >= coef_bound)
           if (watch_coefs)
           {
-            mem[qq].hh.b0 = 0;
+            type(qq) = independent_needing_fix;
             fix_needed = true;
           }
-        }
-        mem[r].hh.rh = s;
+        link(r) = s;
         r = s;
       }
-      q = mem[q].hh.rh;
-      qq = mem[q].hh.lh;
+      q = link(q);
+      qq = info(q);
     }
   }
-  else if (mem[pp + 1].cint < mem[qq + 1].cint)
+  else if (value(pp) < value(qq))
   {
-    s = get_node (2);
-    mem[s].hh.lh = qq;
-    mem[s + 1].cint = mem[q + 1].cint;
-    q = mem[q].hh.rh;
-    qq = mem[q].hh.lh;
-    mem[r].hh.rh = s;
+    s = get_node(dep_node_size);
+    info(s) = qq;
+    value(s) = value(q);
+    q = link(q);
+    qq = info(q);
+    link(r) = s;
     r = s;
   }
   else
   {
-    mem[r].hh.rh = p;
+    link(r) = p;
     r = p;
-    p = mem[p].hh.rh;
-    pp = mem[p].hh.lh;
+    p = link(p);
+    pp = info(p);
   }
-  done: mem[p + 1].cint = slow_add (mem[p + 1].cint, mem[q + 1].cint);
-  mem[r].hh.rh = p;
+done:
+  value(p) = slow_add(value(p), value(q));
+  link(r) = p;
   dep_final = p;
-  Result = mem[mem_top - 1].hh.rh;
-  return Result;
+  return link(temp_head);
 }
 /* 599 */
 pointer p_times_v (pointer p, integer v, small_number t0, small_number t1, boolean v_is_scaled)
 {
-  pointer Result;
   pointer r, s;
   integer w;
   integer threshold;
-  boolean scalingdown;
+  boolean scaling_down;
 
   if (t0 != t1)
-    scalingdown = true;
+    scaling_down = true;
   else
-    scalingdown = !v_is_scaled;
-  if (t1 == 17)
-    threshold = 1342;
+    scaling_down = !v_is_scaled;
+  if (t1 == dependent)
+    threshold = half_fraction_threshold;
   else
-    threshold = 4;
-  r = mem_top - 1;
-  while (mem[p].hh.lh != 0)
+    threshold = half_scaled_threshold;
+  r = temp_head;
+  while (info(p) != 0)
   {
-    if (scalingdown)
-      w = take_fraction (v, mem[p + 1].cint);
+    if (scaling_down)
+      w = take_fraction(v, value(p));
     else
-      w = take_scaled (v, mem[p + 1].cint);
+      w = take_scaled(v, value(p));
     if (abs(w) <= threshold)
     {
-      s = mem[p].hh.rh;
-      free_node (p, 2);
+      s = link(p);
+      free_node(p, dep_node_size);
       p = s;
     }
     else
     {
-      if (abs(w) >= 626349397L)
+      if (abs(w) >= coef_bound)
       {
         fix_needed = true;
-        mem[mem[p].hh.lh].hh.b0 = 0;
+        type(info(p)) = independent_needing_fix;
       }
-      mem[r].hh.rh = p;
+      link(r) = p;
       r = p;
-      mem[p + 1].cint = w;
-      p = mem[p].hh.rh;
+      value(p) = w;
+      p = link(p);
     }
   }
-  mem[r].hh.rh = p;
+  link(r) = p;
   if (v_is_scaled)
-    mem[p + 1].cint = take_scaled (mem[p + 1].cint, v);
+    value(p) = take_scaled(value(p), v);
   else
-    mem[p + 1].cint = take_fraction (mem[p + 1].cint, v);
-  Result = mem[mem_top - 1].hh.rh;
-  return Result;
+    value(p) = take_fraction(value(p), v);
+  return link(temp_head);
 }
 /* 601 */
 pointer p_with_x_becoming_q (pointer p, pointer x, pointer q, small_number t)
 {
-  pointer Result;
   pointer r, s;
   integer v;
   integer sx;
 
   s = p;
-  r = mem_top - 1;
-  sx = mem[x + 1].cint;
-  while (mem[mem[s].hh.lh + 1].cint > sx)
+  r = temp_head;
+  sx = value(x);
+  while (value(info(s)) > sx)
   {
     r = s;
-    s = mem[s].hh.rh;
+    s = link(s);
   }
-  if (mem[s].hh.lh != x)
-    Result = p;
+  if (info(s) != x)
+    return p;
   else
   {
-    mem[mem_top - 1].hh.rh = p;
-    mem[r].hh.rh = mem[s].hh.rh;
-    v = mem[s + 1].cint;
-    free_node (s, 2);
-    Result = p_plus_fq (mem[mem_top - 1].hh.rh, v, q, t, 17);
+    link(temp_head) = p;
+    link(r) = link(s);
+    v = value(s);
+    free_node(s, dep_node_size);
+    return p_plus_fq(link(temp_head), v, q, t, dependent);
   }
-  return Result;
 }
 /* 606 */
 void new_dep (pointer q, pointer p)
@@ -11161,38 +10614,32 @@ void new_dep (pointer q, pointer p)
 /* 607 */
 pointer const_dependency (scaled v)
 {
-  pointer Result;
-
   dep_final = get_node(dep_node_size);
   value(dep_final) = v;
   info(dep_final) = null;
-  Result = dep_final;
-  return Result;
+  return dep_final;
 }
 /* 608 */
 pointer single_dependency (pointer p)
 {
-  pointer Result;
   pointer q;
   integer m;
 
   m = value(p) % s_scale;
   if (m > 28)
-    Result = const_dependency(0);
+    return const_dependency(0);
   else
   {
     q = get_node(dep_node_size);
     value(q) = two_to_the[28 - m];
     info(q) = p;
     link(q) = const_dependency(0);
-    Result = q;
+    return q;
   }
-  return Result;
 }
 /* 609 */
 pointer copy_dep_list (pointer p)
 {
-  pointer Result;
   pointer q;
 
   q = get_node(dep_node_size);
@@ -11207,8 +10654,8 @@ pointer copy_dep_list (pointer p)
     dep_final = link(dep_final);
     p = link(p);
   }
-  done: Result = q;
-  return Result;
+done:
+  return q;
 }
 /* 610 */
 void linear_eq (pointer p, small_number t)
@@ -11217,58 +10664,58 @@ void linear_eq (pointer p, small_number t)
   pointer x;
   integer n;
   integer v;
-  pointer prevr;
-  pointer finalnode;
+  pointer prev_r;
+  pointer final_node;
   integer w;
 
   q = p;
-  r = mem[p].hh.rh;
-  v = mem[q + 1].cint;
-  while (mem[r].hh.lh != 0)
+  r = link(p);
+  v = value(q);
+  while (info(r) != 0)
   {
-    if (abs(mem[r + 1].cint) > abs(v))
+    if (abs(value(r)) > abs(v))
     {
       q = r;
-      v = mem[r + 1].cint;
+      v = value(r);
     }
-    r = mem[r].hh.rh;
+    r = link(r);
   }
-  x = mem[q].hh.lh;
-  n = mem[x + 1].cint % 64;
-  s = mem_top - 1;
-  mem[s].hh.rh = p;
+  x = info(q);
+  n = value(x) % s_scale;
+  s = temp_head;
+  link(s) = p;
   r = p;
   do {
     if (r == q)
     {
-      mem[s].hh.rh = mem[r].hh.rh;
-      free_node (r, 2);
+      link(s) = link(r);
+      free_node(r, dep_node_size);
     }
     else
     {
-      w = make_fraction (mem[r + 1].cint, v);
-      if (abs(w) <= 1342)
+      w = make_fraction(value(r), v);
+      if (abs(w) <= half_fraction_threshold)
       {
-        mem[s].hh.rh = mem[r].hh.rh;
-        free_node (r, 2);
+        link(s) = link(r);
+        free_node(r, dep_node_size);
       }
       else
       {
-        mem[r + 1].cint = -w;
+        value(r) = -w;
         s = r;
       }
     }
-    r = mem[s].hh.rh;
-  } while (!(mem[r].hh.lh == 0));
-  if (t == 18)
-    mem[r + 1].cint = -make_scaled (mem[r + 1].cint, v);
+    r = link(s);
+  } while (!(info(r) == null));
+  if (t == proto_dependent)
+    value(r) = -make_scaled(value(r), v);
   else if (v != -fraction_one)
-    mem[r + 1].cint = -make_fraction (mem[r + 1].cint, v);
-  finalnode = r;
-  p = mem[mem_top - 1].hh.rh;
+    value(r) = -make_fraction(value(r), v);
+  final_node = r;
+  p = link(temp_head);
   if (internal[tracing_equations] > 0)
   {
-    if (interesting (x))
+    if (interesting(x))
     {
       begin_diagnostic();
       print_nl(597);
@@ -11281,78 +10728,74 @@ void linear_eq (pointer p, small_number t)
       }
       print_char('=');
       print_dependency(p, 17);
-      end_diagnostic (false);
+      end_diagnostic(false);
     }
   }
-  prevr = 13;
-  r = mem[13].hh.rh;
-  while (r != 13)
+  prev_r = dep_head;
+  r = link(dep_head);
+  while (r != dep_head)
   {
-    s = mem[r + 1].hh.rh;
-    q = p_with_x_becoming_q (s, x, p, mem[r].hh.b0);
-    if (mem[q].hh.lh == 0)
-      make_known (r, q);
+    s = dep_list(r);
+    q = p_with_x_becoming_q(s, x, p, type(r));
+    if (info(q) == null)
+      make_known(r, q);
     else
     {
-      mem[r + 1].hh.rh = q;
+      dep_list(r) = q;
       do {
-        q = mem[q].hh.rh;
-      } while (!(mem[q].hh.lh == 0));
-      prevr = q;
+        q = link(q);
+      } while (!(info(q) == null));
+      prev_r = q;
     }
-    r = mem[prevr].hh.rh;
+    r = link(prev_r);
   }
   if (n > 0)
   {
-    s = mem_top - 1;
-    mem[mem_top - 1].hh.rh = p;
+    s = temp_head;
+    link(temp_head) = p;
     r = p;
     do {
       if (n > 30)
         w = 0;
       else
-        w = mem[r + 1].cint / two_to_the[n];
-      if ((abs(w) <= 1342) && (mem[r].hh.lh != 0))
+        w = value(r) / two_to_the[n];
+      if ((abs(w) <= half_fraction_threshold) && (info(r) != null))
       {
-        mem[s].hh.rh = mem[r].hh.rh;
-        free_node (r, 2);
+        link(s) = link(r);
+        free_node(r, dep_node_size);
       }
       else
       {
-        mem[r + 1].cint = w;
+        value(r) = w;
         s = r;
       }
-      r = mem[s].hh.rh;
-    } while (!(mem[s].hh.lh == 0));
-    p = mem[mem_top - 1].hh.rh;
+      r = link(s);
+    } while (!(info(s) == null));
+    p = link(temp_head);
   }
-  if (mem[p].hh.lh == 0)
+  if (info(p) == null)
   {
-    mem[x].hh.b0 = 16;
-    mem[x + 1].cint = mem[p + 1].cint;
-    if (abs(mem[x + 1].cint) >= fraction_one)
-      val_too_big (mem[x + 1].cint);
-    free_node (p, 2);
+    type(x) = known;
+    value(x) = value(p);
+    if (abs(value(x)) >= fraction_one)
+      val_too_big(value(x));
+    free_node(p, dep_node_size);
     if (cur_exp == x)
-    {
-      if (cur_type == 19)
+      if (cur_type == independent)
       {
-        cur_exp = mem[x + 1].cint;
-        cur_type = 16;
-        free_node (x, 2);
+        cur_exp = value(x);
+        cur_type = known;
+        free_node(x, value_node_size);
       }
-    }
   }
   else
   {
-    mem[x].hh.b0 = 17;
-    dep_final = finalnode;
-    new_dep (x, p);
+    type(x) = dependent;
+    dep_final = final_node;
+    new_dep(x, p);
     if (cur_exp == x)
-    {
-      if (cur_type == 19)
-        cur_type = 17;
-    }
+      if (cur_type == independent)
+        cur_type = dependent;
   }
   if (fix_needed)
     fix_dependencies();
@@ -11360,7 +10803,6 @@ void linear_eq (pointer p, small_number t)
 /* 619 */
 pointer new_ring_entry (pointer p)
 {
-  pointer Result;
   pointer q;
 
   q = get_node(value_node_size);
@@ -11371,8 +10813,7 @@ pointer new_ring_entry (pointer p)
   else
     value(q) = value(p);
   value(p) = q;
-  Result = q;
-  return Result;
+  return q;
 }
 /* 621 */
 void non_linear_eq (integer v, pointer p, boolean flush_p)
@@ -11466,15 +10907,15 @@ void show_context (void)
   while (true)
   {
     cur_input = input_stack[file_ptr];
-    if ((file_ptr == input_ptr) || (index <= 15) || (index != 19) || (loc != 0))
+    if ((file_ptr == input_ptr) || file_state || (token_type != backed_up) || (loc != null))
     {
       tally = 0;
       old_setting = selector;
-      if ((index <= 15))
+      if (file_state)
       {
         if (name <= 1)
         {
-          if ((name == 0) && (file_ptr == 0))
+          if (terminal_input && (file_ptr == 0))
             print_nl(604);
           else
             print_nl(605);
@@ -11487,78 +10928,68 @@ void show_context (void)
           print_int(line);
         }
         print_char(' ');
-        {
-          l = tally;
-          tally = 0;
-          selector = pseudo;
-          trick_count = 1000000L;
-        }
+        begin_pseudoprint();
         if (limit > 0)
         {
           for (i = start; i <= limit - 1; i++)
           {
             if (i == loc)
-            {
-              first_count = tally;
-              trick_count = tally + 1 + error_line - half_error_line;
-              if (trick_count < error_line)
-                trick_count = error_line;
-            }
+              set_trick_count();
             print(buffer[i]);
           }
         }
       }
       else
       {
-        switch (index)
+        switch (token_type)
         {
-          case 16:
+          case forever_text:
             print_nl(608);
             break;
-          case 17:
+          case loop_text:
             {
               print_nl(613);
-              p = param_stack[limit];
-              if (p != 0)
+              p = param_stack[param_start];
+              if (p != null)
               {
-                if (mem[p].hh.rh == 1)
-                  print_exp (p, 0);
+                if (link(p) == _void)
+                  print_exp(p, 0);
                 else
-                  show_token_list (p, 0, 20, tally);
+                  show_token_list(p, null, 20, tally);
               }
               print(614);
             }
             break;
-          case 18:
+          case parameter:
             print_nl(609);
             break;
-          case 19:
-            if (loc == 0)
+          case backed_up:
+            if (loc == null)
               print_nl(610);
             else
               print_nl(611);
             break;
-          case 20:
+          case inserted:
             print_nl(612);
             break;
-          case 21:
+          case macro:
             {
               print_ln();
-              if (name != 0)
-                slow_print(hash[name].rh);
+              if (name != null)
+                slow_print(text(name));
               else
               {
-                p = param_stack[limit];
-                if (p == 0)
-                  show_token_list (param_stack[limit + 1], 0, 20, tally);
+                p = param_stack[param_start];
+                if (p == null)
+                  show_token_list(param_stack[param_start + 1], null, 20, tally);
                 else
                 {
                   q = p;
-                  while (mem[q].hh.rh != 0)
-                    q = mem[q].hh.rh;
-                  mem[q].hh.rh = param_stack[limit + 1];
-                  show_token_list (p, 0, 20, tally);
-                  mem[q].hh.rh = 0;
+                  while (link(q) != null)
+                    q = link(q);
+                  link(q) = param_stack[param_start + 1];
+                  show_token_list(p, null, 20, tally);
+                  link(q) = null;
                 }
               }
               print(501);
@@ -11568,25 +10999,15 @@ void show_context (void)
             print_nl(63);
             break;
         }
-        {
-          l = tally;
-          tally = 0;
-          selector = pseudo;
-          trick_count = 1000000L;
-        }
-        if (index != 21)
-          show_token_list (start, loc, 100000L, 0);
+        begin_pseudoprint();
+        if (index != macro)
+          show_token_list(start, loc, 100000, 0);
         else
-          show_macro (start, loc, 100000L);
+          show_macro(start, loc, 100000);
       }
       selector = old_setting;
-      if (trick_count == 1000000L)
-      {
-        first_count = tally;
-        trick_count = tally + 1 + error_line - half_error_line;
-        if (trick_count < error_line)
-          trick_count = error_line;
-      }
+      if (trick_count == 1000000)
+        set_trick_count();
       if (tally < trick_count)
         m = tally - first_count;
       else
@@ -11603,47 +11024,33 @@ void show_context (void)
         n = half_error_line;
       }
       for (q = p; q <= first_count - 1; q++)
-      {
         print_char(trick_buf[q % error_line]);
-      }
       print_ln();
       for (q = 1; q <= n; q++)
-      {
         print_char(' ');
-      }
       if (m + n <= error_line)
         p = first_count + m;
       else
         p = first_count + (error_line - n - 3);
       for (q = first_count; q <= p - 1; q++)
-      {
         print_char(trick_buf[q % error_line]);
-      }
       if (m + n > error_line)
         print(276);
     }
-    if ((index <= 15))
+    if (file_state)
     {
       if ((name > 2) || (file_ptr == 0))
         goto done;
     }
     decr(file_ptr);
   }
-  done: cur_input = input_stack[input_ptr];
+done:
+  cur_input = input_stack[input_ptr];
 }
 /* 649 */
 void begin_token_list (pointer p, quarterword t)
 {
-  {
-    if (input_ptr > max_in_stack)
-    {
-      max_in_stack = input_ptr;
-      if (input_ptr == stack_size)
-        overflow("input stack size", stack_size);
-    }
-    input_stack[input_ptr] = cur_input;
-    incr(input_ptr);
-  }
+  push_input();
   start = p;
   index = t;
   limit = param_ptr;
@@ -11655,7 +11062,6 @@ void end_token_list (void)
   pointer p;
 
   if (index >= backed_up)
-  {
     if (index <= inserted)
     {
       flush_token_list(start);
@@ -11663,7 +11069,6 @@ void end_token_list (void)
     }
     else
       delete_mac_ref(start);
-  }
   while (param_ptr > limit)
   {
     decr(param_ptr);
@@ -11684,7 +11089,7 @@ done:
   check_interrupt();
 }
 /* 856 */
-void encapsulate (halfword p)
+void encapsulate (pointer p)
 {
   cur_exp = get_node(value_node_size);
   type(cur_exp) = cur_type;
@@ -11728,91 +11133,78 @@ void make_exp_copy (pointer p)
   pointer q, r, t;
 
 lab_restart:
-  cur_type = mem[p].hh.b0;
+  cur_type = type(p);
   switch (cur_type)
   {
-    case 1:
-    case 2:
-    case 16:
-      cur_exp = mem[p + 1].cint;
+    case vacuous:
+    case boolean_type:
+    case known:
+      cur_exp = value(p);
       break;
-    case 3:
-    case 5:
-    case 7:
-    case 12:
-    case 10:
-      cur_exp = new_ring_entry (p);
+    case unknown_types:
+      cur_exp = new_ring_entry(p);
       break;
-    case 4:
+    case string_type:
       {
-        cur_exp = mem[p + 1].cint;
-        {
-          if (str_ref[cur_exp] < 127)
-            incr(str_ref[cur_exp]);
-        }
+        cur_exp = value(p);
+        add_str_ref(cur_exp);
       }
       break;
-    case 6:
+    case pen_type:
       {
-        cur_exp = mem[p + 1].cint;
-        incr(mem[cur_exp].hh.lh);
+        cur_exp = value(p);
+        add_pen_ref(cur_exp);
       }
       break;
-    case 11:
-      cur_exp = copy_edges (mem[p + 1].cint);
+    case picture_type:
+      cur_exp = copy_edges(value(p));
       break;
-    case 9:
-    case 8:
-      cur_exp = copy_path (mem[p + 1].cint);
+    case path_type:
+    case future_pen:
+      cur_exp = copy_path(value(p));
       break;
-    case 13:
-    case 14:
+    case transform_type:
+    case pair_type:
       {
-        if (mem[p + 1].cint == 0)
-          init_big_node (p);
-        t = get_node (2);
-        mem[t].hh.b1 = 11;
-        mem[t].hh.b0 = cur_type;
-        init_big_node (t);
-        q = mem[p + 1].cint + big_node_size[cur_type];
-        r = mem[t + 1].cint + big_node_size[cur_type];
+        if (value(p) == null)
+          init_big_node(p);
+        t = get_node(value_node_size);
+        name_type(t) = capsule;
+        type(t) = cur_type;
+        init_big_node(t);
+        q = value(p) + big_node_size[cur_type];
+        r = value(t) + big_node_size[cur_type];
         do {
           q = q - 2;
           r = r - 2;
-          install (r, q);
-        } while (!(q == mem[p + 1].cint));
+          install(r, q);
+        } while (!(q == value(p)));
         cur_exp = t;
       }
       break;
-    case 17:
-    case 18:
-      encapsulate (copy_dep_list (mem[p + 1].hh.rh));
+    case dependent:
+    case proto_dependent:
+      encapsulate(copy_dep_list(dep_list(p)));
       break;
-    case 15:
+    case numeric_type:
       {
-        {
-          if (serial_no > 2147483583L)
-            overflow("independent variables", serial_no / 64);
-          mem[p].hh.b0 = 19;
-          serial_no = serial_no + 64;
-          mem[p + 1].cint = serial_no;
-        }
+        new_indep(p);
         goto lab_restart;
       }
       break;
-    case 19:
+    case independent:
       {
-        q = single_dependency (p);
+        q = single_dependency(p);
         if (q == dep_final)
         {
-          cur_type = 16;
+          cur_type = known;
           cur_exp = 0;
-          free_node (q, 2);
+          free_node(q, dep_node_size);
         }
         else
         {
-          cur_type = 17;
-          encapsulate (q);
+          cur_type = dependent;
+          encapsulate(q);
         }
       }
       break;
@@ -11824,7 +11216,6 @@ lab_restart:
 /* 651 */
 pointer cur_tok (void)
 {
-  pointer Result;
   pointer p;
   small_number save_type;
   integer save_exp;
@@ -11857,8 +11248,7 @@ pointer cur_tok (void)
     fast_get_avail(p);
     info(p) = cur_sym;
   }
-  Result = p;
-  return Result;
+  return p;
 }
 /* 652 */
 void back_input (void)
@@ -11924,21 +11314,20 @@ void clear_for_error_prompt (void)
 /* 661 */
 boolean check_outer_validity (void)
 {
-  boolean Result;
   pointer p;
 
-  if (scanner_status == 0)
-    Result = true;
+  if (scanner_status == normal)
+    return true;
   else
   {
     deletions_allowed = false;
     if (cur_sym != 0)
     {
       p = get_avail();
-      mem[p].hh.lh = cur_sym;
-      begin_token_list (p, 19);
+      info(p) = cur_sym;
+      back_list(p);
     }
-    if (scanner_status > 1)
+    if (scanner_status > skipping)
     {
       runaway();
       if (cur_sym == 0)
@@ -11954,44 +11343,44 @@ boolean check_outer_validity (void)
         "you'd better type `E' or `X' now and fix your file.");
       switch (scanner_status)
       {
-        case 2:
+        case flushing:
           {
             print(630);
             help_line[3] = 631;
-            cur_sym = 9763;
+            cur_sym = frozen_semicolon;
           }
           break;
-        case 3:
+        case absorbing:
           {
             print(632);
             help_line[3] = 633;
             if (warning_info == 0)
-              cur_sym = 9767;
+              cur_sym = frozen_end_group;
             else
             {
-              cur_sym = 9759;
-              eqtb[9759].rh = warning_info;
+              cur_sym = frozen_right_delimiter;
+              equiv(frozen_right_delimiter) = warning_info;
             }
           }
           break;
-        case 4:
-        case 5:
+        case var_defining:
+        case op_defining:
           {
             print(634);
-            if (scanner_status == 5)
-              slow_print(hash[warning_info].rh);
+            if (scanner_status == op_defining)
+              slow_print(text(warning_info));
             else
               print_variable_name(warning_info);
-            cur_sym = 9765;
+            cur_sym = frozen_end_def;
           }
           break;
-        case 6:
+        case loop_defining:
           {
             print(635);
-            slow_print(hash[warning_info].rh);
+            slow_print(text(warning_info));
             print(636);
             help_line[3] = 637;
-            cur_sym = 9764;
+            cur_sym = frozen_end_for;
           }
           break;
       }
@@ -12006,13 +11395,12 @@ boolean check_outer_validity (void)
         "the matching `fi'. I've inserted a `fi'; this might work.");
       if (cur_sym == 0)
         help_line[2] = 622;
-      cur_sym = 9766;
+      cur_sym = frozen_fi;
       ins_error();
     }
     deletions_allowed = true;
-    Result = false;
+    return false;
   }
-  return Result;
 }
 void firm_up_the_line(void);
 /* 667 */
@@ -12033,25 +11421,25 @@ lab25:
     cclass = char_class[c];
     switch (cclass)
     {
-      case 0:
+      case digit_class:
         goto lab85;
         break;
-      case 1:
+      case period_class:
         {
           cclass = char_class[buffer[loc]];
-          if (cclass > 1)
+          if (cclass > period_class)
             goto lab25;
-          else if (cclass < 1)
+          else if (cclass < period_class)
           {
             n = 0;
             goto lab86;
           }
         }
         break;
-      case 2:
+      case space_class:
         goto lab25;
         break;
-      case 3:
+      case percent_class:
         {
           if (name > 2)
           {
@@ -12059,7 +11447,7 @@ lab25:
             first = start;
             if (!force_eof)
             {
-              if (inputln (input_file[index], true))
+              if (input_ln(input_file[index], true))
                 firm_up_the_line();
               else
                 force_eof = true;
@@ -12068,10 +11456,10 @@ lab25:
             {
               print_char(')');
               decr(open_parens);
-              fflush (stdout);
+              update_terminal();
               force_eof = false;
               end_file_reading();
-              if (check_outer_validity ())
+              if (check_outer_validity())
                 goto lab_restart;
               else
                 goto lab_restart;
@@ -12087,7 +11475,7 @@ lab25:
               end_file_reading();
               goto lab_restart;
             }
-            if (selector < 2)
+            if (selector < log_only)
               open_log_file();
             if (interaction > nonstop_mode)
             {
@@ -12108,7 +11496,7 @@ lab25:
           goto lab25;
         }
         break;
-      case 4:
+      case string_class:
         {
           if (buffer[loc] == 34)
             cur_mod = 261;
@@ -12135,19 +11523,9 @@ lab25:
               cur_mod = buffer[k];
             else
             {
-              {
-                if (pool_ptr + loc - k > max_pool_ptr)
-                {
-                  if (pool_ptr + loc - k > pool_size)
-                    overflow("pool size", pool_size - init_pool_ptr);
-                  max_pool_ptr = pool_ptr + loc - k;
-                }
-              }
+              str_room(loc - k);
               do {
-                {
-                  str_pool[pool_ptr] = buffer[k];
-                  incr(pool_ptr);
-                }
+                append_char(buffer[k]);
                 incr(k);
               } while (!(k == loc));
               cur_mod = make_string();
@@ -12158,16 +11536,13 @@ lab25:
           goto lab_exit;
         }
         break;
-      case 5:
-      case 6:
-      case 7:
-      case 8:
+      case isolated_classes:
         {
           k = loc - 1;
           goto found;
         }
         break;
-      case 20:
+      case invalid_class:
         {
           print_err("Text line contains an invalid character");
           help2("A funny symbol that I can't read has just been input.",
@@ -12179,7 +11554,7 @@ lab25:
         }
         break;
       default:
-        ;
+        do_nothing();
         break;
     }
     k = loc - 1;
@@ -12188,17 +11563,15 @@ lab25:
     goto found;
   lab85:
     n = c - 48;
-    while (char_class[buffer[loc]] == 0)
+    while (char_class[buffer[loc]] == digit_class)
     {
       if (n < 4096)
         n = 10 * n + buffer[loc] - 48;
       incr(loc);
     }
     if (buffer[loc] == 46)
-    {
       if (char_class[buffer[loc + 1]] == 0)
         goto done;
-    }
     f = 0;
     goto lab87;
   done:
@@ -12230,49 +11603,44 @@ lab25:
       deletions_allowed = false;
       error();
       deletions_allowed = true;
-      cur_mod = 268435455L;
+      cur_mod = 268435455;
     }
     cur_cmd = numeric_token;
     goto lab_exit;
   found:
-    cur_sym = id_lookup (k, loc - k);
+    cur_sym = id_lookup(k, loc - k);
   }
   else if (loc >= hi_mem_min)
   {
-    cur_sym = mem[loc].hh.lh;
-    loc = mem[loc].hh.rh;
-    if (cur_sym >= 9770)
-    {
-      if (cur_sym >= 9920)
+    cur_sym = info(loc);
+    loc = link(loc);
+    if (cur_sym >= expr_base)
+      if (cur_sym >= suffix_base)
       {
-        if (cur_sym >= 10070)
-        cur_sym = cur_sym - 150;
-        begin_token_list (param_stack[limit + cur_sym - (9920)], 18);
+        if (cur_sym >= text_base)
+          cur_sym = cur_sym - param_size;
+        begin_token_list(param_stack[param_start + cur_sym - (suffix_base)], parameter);
         goto lab_restart;
       }
       else
       {
         cur_cmd = capsule_token;
-        cur_mod = param_stack[limit + cur_sym - (9770)];
+        cur_mod = param_stack[param_start + cur_sym - (expr_base)];
         cur_sym = 0;
         goto lab_exit;
       }
-    }
   }
-  else if (loc > 0)
+  else if (loc > null)
   {
-    if (mem[loc].hh.b1 == 12)
+    if (name_type(loc) == token)
     {
-      cur_mod = mem[loc + 1].cint;
-      if (mem[loc].hh.b0 == 16)
+      cur_mod = value(loc);
+      if (type(loc) == known)
         cur_cmd = numeric_token;
       else
       {
         cur_cmd = string_token;
-        {
-          if (str_ref[cur_mod]< 127)
-            incr(str_ref[cur_mod]);
-        }
+        add_str_ref(cur_mod);
       }
     }
     else
@@ -12280,7 +11648,7 @@ lab25:
       cur_mod = loc;
       cur_cmd = capsule_token;
     }
-    loc = mem[loc].hh.rh;
+    loc = link(loc);
     goto lab_exit;
   }
   else
@@ -12288,11 +11656,11 @@ lab25:
     end_token_list();
     goto lab_restart;
   }
-  cur_cmd = eqtb[cur_sym].lh;
-  cur_mod = eqtb[cur_sym].rh;
+  cur_cmd = eq_type(cur_sym);
+  cur_mod = equiv(cur_sym);
   if (cur_cmd >= outer_tag)
   {
-    if (check_outer_validity ())
+    if (check_outer_validity())
       cur_cmd = cur_cmd - outer_tag;
     else
       goto lab_restart;
@@ -12321,9 +11689,7 @@ void firm_up_the_line (void)
       if (last > first)
       {
         for (k = first; k <= last - 1; k++)
-        {
           buffer[k + start - first] = buffer[k];
-        }
         limit = start + last - first;
       }
     }
@@ -12332,7 +11698,6 @@ void firm_up_the_line (void)
 /* 685 */
 pointer scan_toks (command_code terminator, pointer subst_list, pointer tail_end, small_number suffix_count)
 {
-  pointer Result;
   pointer p;
   pointer q;
   integer balance;
@@ -12384,8 +11749,7 @@ pointer scan_toks (command_code terminator, pointer subst_list, pointer tail_end
 done:
   link(p) = tail_end;
   flush_node_list(subst_list);
-  Result = link(hold_head);
-  return Result;
+  return link(hold_head);
 }
 /* 691 */
 void get_symbol (void)
@@ -12492,7 +11856,6 @@ void check_delimiter (pointer l_delim, pointer r_delim)
 /* 1011 */
 pointer scan_declared_variable (void)
 {
-  pointer Result;
   pointer x;
   pointer h, t;
   pointer l;
@@ -12540,8 +11903,7 @@ done:
     clear_symbol(x, false);
   if (equiv(x) == null)
     new_root(x);
-  Result = h;
-  return Result;
+  return h;
 }
 /* 697 */
 void scan_def (void)
@@ -12554,122 +11916,122 @@ void scan_def (void)
   pointer q;
   pointer p;
   halfword base;
-  halfword ldelim, rdelim;
+  pointer l_delim, r_delim;
 
   m = cur_mod;
-  c = 0;
-  mem[mem_top - 2].hh.rh = 0;
+  c = general_macro;
+  link(hold_head) = null;
   q = get_avail();
-  mem[q].hh.lh = 0;
-  r = 0;
-  if (m == 1)
+  ref_count(q) = null;
+  r = null;
+  if (m == start_def)
   {
     get_clear_symbol();
     warning_info = cur_sym;
     get_next();
-    scanner_status = 5;
+    scanner_status = op_defining;
     n = 0;
-    eqtb[warning_info].lh = 10;
-    eqtb[warning_info].rh = q;
+    eq_type(warning_info) = defined_macro;
+    equiv(warning_info) = q;
   }
   else
   {
     p = scan_declared_variable();
-    flush_variable (eqtb[mem[p].hh.lh].rh, mem[p].hh.rh, true);
-    warning_info = find_variable (p);
-    flush_list (p);
-    if (warning_info == 0)
+    flush_variable(equiv(info(p)), link(p), true);
+    warning_info = find_variable(p);
+    flush_list(p);
+    if (warning_info == null)
     {
       print_err("This variable already starts with a macro");
       help2("After `vardef a' you can't say `vardef a.b'.",
         "So I'll have to discard this definition.");
       error();
-      warning_info = 21;
+      warning_info = bad_vardef;
     }
-    scanner_status = 4;
+    scanner_status = var_defining;
     n = 2;
     if (cur_cmd == macro_special)
     {
-      if (cur_mod == 3)
+      if (cur_mod == macro_suffix)
       {
         n = 3;
         get_next();
       }
     }
-    mem[warning_info].hh.b0 = 20 + n;
-    mem[warning_info + 1].cint = q;
+    type(warning_info) = unsuffixed_macro - 2 + n;
+    value(warning_info) = q;
   }
   k = n;
   if (cur_cmd == left_delimiter)
     do {
-      ldelim = cur_sym;
-      rdelim = cur_mod;
+      l_delim = cur_sym;
+      r_delim = cur_mod;
       get_next();
-      if ((cur_cmd == param_type) && (cur_mod >= 9770))
+      if ((cur_cmd == param_type) && (cur_mod >= expr_base))
         base = cur_mod;
       else
       {
         print_err("Missing parameter type; `expr' will be assumed");
         help1("You should've had `expr' or `suffix' or `text' here.");
         back_error();
-        base = 9770;
+        base = expr_base;
       }
       do {
-        mem[q].hh.rh = get_avail();
-        q = mem[q].hh.rh;
-        mem[q].hh.lh = base + k;
+        link(q) = get_avail();
+        q = link(q);
+        info(q) = base + k;
         get_symbol();
-        p = get_node (2);
-        mem[p + 1].cint = base + k;
-        mem[p].hh.lh = cur_sym;
-        if (k == 150)
-          overflow("parameter stack size", 150);
+        p = get_node(token_node_size);
+        value(p) = base + k;
+        info(p) = cur_sym;
+        if (k == param_size)
+          overflow("parameter stack size", param_size);
         incr(k);
-        mem[p].hh.rh = r;
+        link(p) = r;
         r = p;
         get_next();
       } while (!(cur_cmd != comma));
-      check_delimiter (ldelim, rdelim);
+      check_delimiter(l_delim, r_delim);
       get_next();
     } while (!(cur_cmd != left_delimiter));
   if (cur_cmd == param_type)
   {
-    p = get_node (2);
-    if (cur_mod < 9770)
+    p = get_node(token_node_size);
+    if (cur_mod < expr_base)
     {
       c = cur_mod;
-      mem[p + 1].cint = 9770 + k;
+      value(p) = expr_base + k;
     }
     else
     {
-      mem[p + 1].cint = cur_mod + k;
-      if (cur_mod == 9770)
-        c = 4;
-      else if (cur_mod == 9920)
-        c = 6;
+      value(p) = cur_mod + k;
+      if (cur_mod == expr_base)
+        c = expr_macro;
+      else if (cur_mod == suffix_base)
+        c = suffix_macro;
       else
-        c = 7;
+        c = text_macro;
     }
-    if (k == 150)
-      overflow("parameter stack size", 150);
+    if (k == param_size)
+      overflow("parameter stack size", param_size);
     incr(k);
     get_symbol();
-    mem[p].hh.lh = cur_sym;
-    mem[p].hh.rh = r;
+    info(p) = cur_sym;
+    link(p) = r;
     r = p;
     get_next();
-    if (c == 4)
+    if (c == expr_macro)
     {
       if (cur_cmd == of_token)
       {
-        c = 5;
-        p = get_node (2);
-        if (k == 150)
-          overflow("parameter stack size", 150);
-        mem[p + 1].cint = 9770 + k;
+        c = of_macro;
+        p = get_node(token_node_size);
+        if (k == param_size)
+          overflow("parameter stack size", param_size);
+        value(p) = expr_base + k;
         get_symbol();
-        mem[p].hh.lh = cur_sym;
-        mem[p].hh.rh = r;
+        info(p) = cur_sym;
+        link(p) = r;
         r = p;
         get_next();
       }
@@ -12677,22 +12039,22 @@ void scan_def (void)
   }
   check_equals();
   p = get_avail();
-  mem[p].hh.lh = c;
-  mem[q].hh.rh = p;
-  if (m == 1)
-    mem[p].hh.rh = scan_toks (16, r, 0, n);
+  info(p) = c;
+  link(q) = p;
+  if (m == start_def)
+    link(p) = scan_toks(macro_def, r, null, n);
   else
   {
     q = get_avail();
-    mem[q].hh.lh = bg_loc;
-    mem[p].hh.rh = q;
+    info(q) = bg_loc;
+    link(p) = q;
     p = get_avail();
-    mem[p].hh.lh = eg_loc;
-    mem[q].hh.rh = scan_toks (16, r, p, n);
+    info(p) = eg_loc;
+    link(q) = scan_toks(macro_def, r, p, n);
   }
-  if (warning_info == 21)
-    flush_token_list (mem[22].cint);
-  scanner_status = 0;
+  if (warning_info == bad_vardef)
+    flush_token_list(value(bad_vardef));
+  scanner_status = normal;
   get_x_next();
 }
 void scan_primary(void);
@@ -12789,26 +12151,26 @@ done:
   scanner_status = normal;
 }
 /* 720 */
-void macro_call (halfword defref, halfword arg_list, halfword macro_name)
+void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
 {
   pointer r;
   pointer p, q;
   integer n;
-  pointer ldelim, rdelim;
+  pointer l_delim, r_delim;
   pointer tail;
 
-  r = mem[defref].hh.rh;
-  incr(mem[defref].hh.lh);
-  if (arg_list == 0)
+  r = link(def_ref);
+  add_mac_ref(def_ref);
+  if (arg_list == null)
     n = 0;
   else
   {
     n = 1;
     tail = arg_list;
-    while (mem[tail].hh.rh != 0)
+    while (link(tail) != 0)
     {
       incr(n);
-      tail = mem[tail].hh.rh;
+      tail = link(tail);
     }
   }
   if (internal[tracing_macros] > 0)
@@ -12818,22 +12180,22 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
     print_macro_name (arg_list, macro_name);
     if (n == 3)
       print(665);
-    show_macro (defref, 0, 100000L);
-    if (arg_list != 0)
+    show_macro(def_ref, 0, 100000);
+    if (arg_list != null)
     {
       n = 0;
       p = arg_list;
       do {
-        q = mem[p].hh.lh;
-        print_arg (q, n, 0);
+        q = info(p);
+        print_arg(q, n, 0);
         incr(n);
-        p = mem[p].hh.rh;
-      } while (!(p == 0));
+        p = link(p);
+      } while (!(p == null));
     }
-    end_diagnostic (false);
+    end_diagnostic(false);
   }
-  cur_cmd = semicolon;
-  while (mem[r].hh.lh >= 9770)
+  cur_cmd = comma + 1;
+  while (info(r) >= expr_base)
   {
     if (cur_cmd != comma)
     {
@@ -12845,40 +12207,39 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         help3("That macro has more parameters than you thought.",
           "I'll continue by pretending that each missing argument",
           "is either zero or null.");
-        if (mem[r].hh.lh >= 9920)
+        if (info(r) >= suffix_base)
         {
-          cur_exp = 0;
-          cur_type = 20;
+          cur_exp = null;
+          cur_type = token_list;
         }
         else
         {
           cur_exp = 0;
-          cur_type = 16;
+          cur_type = known;
         }
         back_error();
         cur_cmd = right_delimiter;
         goto found;
       }
-      ldelim = cur_sym;
-      rdelim = cur_mod;
+      l_delim = cur_sym;
+      r_delim = cur_mod;
     }
-    if (mem[r].hh.lh >= 10070)
-      scan_text_arg (ldelim, rdelim);
+    if (info(r) >= text_base)
+      scan_text_arg(l_delim, r_delim);
     else
     {
       get_x_next();
-      if (mem[r].hh.lh >= 9920)
+      if (info(r) >= suffix_base)
         scan_suffix();
       else
         scan_expression();
     }
     if (cur_cmd != comma)
-    {
-      if ((cur_cmd != right_delimiter) || (cur_mod != ldelim))
+      if ((cur_cmd != right_delimiter) || (cur_mod != l_delim))
       {
-        if (mem[mem[r].hh.rh].hh.lh >= 9770)
+        if (info(link(r)) >= expr_base)
         {
-          missing_err (44);
+          missing_err(44);
           help3("I've finished reading a macro argument and am about to",
             "read another; the arguments weren't delimited correctly.",
             "You might want to delete some tokens before continuing.");
@@ -12887,95 +12248,92 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
         }
         else
         {
-          missing_err (hash[rdelim].rh);
+          missing_err(text(r_delim));
           help2("I've gotten to the end of the macro parameter list.",
             "You might want to delete some tokens before continuing.");
           back_error();
         }
       }
-    }
   found:
     {
       p = get_avail();
-      if (cur_type == 20)
-        mem[p].hh.lh = cur_exp;
+      if (cur_type == token_list)
+        info(p) = cur_exp;
       else
-        mem[p].hh.lh = stash_cur_exp();
+        info(p) = stash_cur_exp();
       if (internal[tracing_macros] > 0)
       {
         begin_diagnostic();
-        print_arg (mem[p].hh.lh, n, mem[r].hh.lh);
-        end_diagnostic (false);
+        print_arg(info(p), n, info(r));
+        end_diagnostic(false);
       }
-      if (arg_list == 0)
+      if (arg_list == null)
         arg_list = p;
       else
-        mem[tail].hh.rh = p;
+        link(tail) = p;
       tail = p;
       incr(n);
     }
-    r = mem[r].hh.rh;
+    r = link(r);
   }
   if (cur_cmd == comma)
   {
     print_err("Too many arguments to ");
-    print_macro_name (arg_list, macro_name);
+    print_macro_name(arg_list, macro_name);
     print_char(';');
     print_nl(705);
-    slow_print(hash[rdelim].rh);
+    slow_print(text(r_delim));
     print(299);
     help3("I'm going to assume that the comma I just read was a",
       "right delimiter, and then I'll begin expanding the macro.",
       "You might want to delete some tokens before continuing.");
     error();
   }
-  if (mem[r].hh.lh != 0)
+  if (info(r) != general_macro)
   {
-    if (mem[r].hh.lh < 7)
+    if (info(r) < text_macro)
     {
       get_x_next();
-      if (mem[r].hh.lh != 6)
-      {
+      if (info(r) != suffix_macro)
         if ((cur_cmd == equals) || (cur_cmd == assignment))
           get_x_next();
-      }
     }
-    switch (mem[r].hh.lh)
+    switch (info(r))
     {
-      case 1:
+      case primary_macro:
         scan_primary();
         break;
-      case 2:
+      case secondary_macro:
         scan_secondary();
         break;
-      case 3:
+      case tertiary_macro:
         scan_tertiary();
         break;
-      case 4:
+      case expr_macro:
         scan_expression();
         break;
-      case 5:
+      case of_macro:
         {
           scan_expression();
           p = get_avail();
-          mem[p].hh.lh = stash_cur_exp();
+          info(p) = stash_cur_exp();
           if (internal[tracing_macros] > 0)
           {
             begin_diagnostic();
-            print_arg (mem[p].hh.lh, n, 0);
-            end_diagnostic (false);
+            print_arg(info(p), n, 0);
+            end_diagnostic(false);
           }
-          if (arg_list == 0)
+          if (arg_list == null)
             arg_list = p;
           else
-            mem[tail].hh.rh = p;
+            link(tail) = p;
           tail = p;
           incr(n);
           if (cur_cmd != of_token)
           {
             missing_err (479);
             print(716);
-            print_macro_name (arg_list, macro_name);
+            print_macro_name(arg_list, macro_name);
             help1("I've got the first argument; will look now for the other.");
             back_error();
           }
@@ -12983,22 +12341,22 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
           scan_primary();
         }
         break;
-      case 6:
+      case suffix_macro:
         {
           if (cur_cmd != left_delimiter)
-            ldelim = 0;
+            l_delim = null;
           else
           {
-            ldelim = cur_sym;
-            rdelim = cur_mod;
+            l_delim = cur_sym;
+            r_delim = cur_mod;
             get_x_next();
           }
           scan_suffix();
-          if (ldelim != 0)
+          if (l_delim != null)
           {
-            if ((cur_cmd != right_delimiter) || (cur_mod != ldelim))
+            if ((cur_cmd != right_delimiter) || (cur_mod != l_delim))
             {
-              missing_err (hash[rdelim].rh);
+              missing_err(text(r_delim));
               help2("I've gotten to the end of the macro parameter list.", 
                 "You might want to delete some tokens before continuing.");
               back_error();
@@ -13007,52 +12365,52 @@ void macro_call (halfword defref, halfword arg_list, halfword macro_name)
           }
         }
         break;
-      case 7:
-        scan_text_arg (0, 0);
+      case text_macro:
+        scan_text_arg(0, 0);
         break;
     }
     back_input();
     {
       p = get_avail();
-      if (cur_type == 20)
-        mem[p].hh.lh = cur_exp;
+      if (cur_type == token_list)
+        info(p) = cur_exp;
       else
-        mem[p].hh.lh = stash_cur_exp();
+        info(p) = stash_cur_exp();
       if (internal[tracing_macros] > 0)
       {
         begin_diagnostic();
-        print_arg (mem[p].hh.lh, n, mem[r].hh.lh);
-        end_diagnostic (false);
+        print_arg(info(p), n, info(r));
+        end_diagnostic(false);
       }
-      if (arg_list == 0)
+      if (arg_list == null)
         arg_list = p;
       else
-        mem[tail].hh.rh = p;
+        link(tail) = p;
       tail = p;
       incr(n);
     }
   }
-  r = mem[r].hh.rh;
-  while ((index > 15) && (loc == 0))
+  r = link(r);
+  while (token_state && (loc == null))
     end_token_list();
   if (param_ptr + n > max_param_stack)
   {
     max_param_stack = param_ptr + n;
-    if (max_param_stack > 150)
-      overflow("parameter stack size", 150);
+    if (max_param_stack > param_size)
+      overflow("parameter stack size", param_size);
   }
-  begin_token_list (defref, 21);
+  begin_token_list(def_ref, macro);
   name = macro_name;
   loc = r;
   if (n > 0)
   {
     p = arg_list;
     do {
-      param_stack[param_ptr] = mem[p].hh.lh;
+      param_stack[param_ptr] = info(p);
       incr(param_ptr);
-      p = mem[p].hh.rh;
-    } while (!(p == 0));
-    flush_list (arg_list);
+      p = link(p);
+    } while (!(p == null));
+    flush_list(arg_list);
   }
 }
 void get_boolean(void); void pass_text(void);
@@ -13067,10 +12425,8 @@ void expand (void)
   pool_pointer j;
 
   if (internal[tracing_commands] > unity)
-  {
     if (cur_cmd != defined_macro)
-      show_cmd_mod (cur_cmd, cur_mod);
-  }
+      show_cmd_mod(cur_cmd, cur_mod);
   switch (cur_cmd)
   {
     case if_test:
@@ -13078,32 +12434,31 @@ void expand (void)
       break;
     case fi_or_else:
       if (cur_mod > if_limit)
-      {
-        if (if_limit == 1)
+        if (if_limit == if_code)
         {
-          missing_err (58);
+          missing_err(58);
           back_input();
-          cur_sym = 9762;
+          cur_sym = frozen_colon;
           ins_error();
         }
         else
         {
           print_err("Extra ");
-          print_cmd_mod (2, cur_mod);
+          print_cmd_mod(fi_or_else, cur_mod);
           help1("I'm ignoring this; it doesn't match any if.");
           error();
         }
-      }
       else
       {
-        while (cur_mod != 2) pass_text();
+        while (cur_mod != fi_code)
+          pass_text();
         {
           p = cond_ptr;
-          if_line = mem[p + 1].cint;
-          cur_if = mem[p].hh.b1;
-          if_limit = mem[p].hh.b0;
-          cond_ptr = mem[p].hh.rh;
-          free_node (p, 2);
+          if_line = if_line_field(p);
+          cur_if = name_type(p);
+          if_limit = type(p);
+          cond_ptr = link(p);
+          free_node(p, if_node_size);
         }
       }
       break;
@@ -13126,9 +12481,9 @@ void expand (void)
       break;
     case repeat_loop:
       {
-        while ((index > 15) && (loc == 0))
+        while (token_state && (loc == null))
           end_token_list();
-        if (loop_ptr == 0)
+        if (loop_ptr == null)
         {
           print_err("Lost loop");
           help2("I'm confused; after exiting from a loop, I still seem",
@@ -13143,10 +12498,9 @@ void expand (void)
       {
         get_boolean();
         if (internal[tracing_commands] > unity)
-          show_cmd_mod (33, cur_exp);
-        if (cur_exp == 30)
-        {
-          if (loop_ptr == 0)
+          show_cmd_mod(nullary, cur_exp);
+        if (cur_exp == true_code)
+          if (loop_ptr == null)
           {
             print_err("No loop is in progress");
             help1("Why say `exitif' when there's nothing to exit from?");
@@ -13157,25 +12511,24 @@ void expand (void)
           }
           else
           {
-            p = 0;
+            p = null;
             do {
-              if ((index <= 15))
+              if (file_state)
                 end_file_reading();
               else
               {
-                if (index <= 17)
+                if (token_type <= loop_text)
                   p = start;
                 end_token_list();
               }
-            } while (!(p != 0));
-            if (p != mem[loop_ptr].hh.lh)
+            } while (!(p != null));
+            if (p != info(loop_ptr))
               fatal_error("*** (loop confusion)");
             stop_iteration();
           }
-        }
         else if (cur_cmd != semicolon)
         {
-          missing_err (59);
+          missing_err(59);
           help2("After `exitif <boolean exp>' I expect to see a semicolon.",
             "I shall pretend that one was there.");
           back_error();
@@ -13194,28 +12547,28 @@ void expand (void)
           expand();
         else
           back_input();
-        begin_token_list (p, 19);
+        back_list(p);
       }
       break;
     case scan_tokens:
       {
         get_x_next();
         scan_primary();
-        if (cur_type != 4)
+        if (cur_type != string_type)
         {
           disp_err(null, "Not a string");
           help2("I'm going to flush this expression, since",
             "scantokens should be followed by a known string.");
-          put_get_flush_error (0);
+          put_get_flush_error(0);
         }
         else
         {
           back_input();
-          if ((str_start[cur_exp + 1] - str_start[cur_exp]) > 0)
+          if (length(cur_exp) > 0)
           {
             begin_file_reading();
             name = 2;
-            k = first + (str_start[cur_exp + 1] - str_start[cur_exp]);
+            k = first + length(cur_exp);
             if (k >= max_buf_stack)
             {
               if (k >= buf_size)
@@ -13229,20 +12582,20 @@ void expand (void)
             limit = k;
             while (first < limit)
             {
-              buffer[first] = str_pool[j];
+              buffer[first] = so(str_pool[j]);
               incr(j);
               incr(first);
             }
             buffer[limit] = 37;
             first = limit + 1;
             loc = start;
-            flush_cur_exp (0);
+            flush_cur_exp(0);
           }
         }
       }
       break;
     case defined_macro:
-      macro_call (cur_mod, 0, cur_sym);
+      macro_call(cur_mod, null, cur_sym);
       break;
   }
 }
@@ -13262,7 +12615,7 @@ void get_x_next (void)
         expand();
       get_next();
     } while (!(cur_cmd >= display_command));
-    unstash_cur_exp (save_exp);
+    unstash_cur_exp(save_exp);
   }
 }
 /* 737 */
@@ -13282,37 +12635,27 @@ void pass_text (void)
 {
   integer l;
 
-  scanner_status = 1;
+  scanner_status = skipping;
   l = 0;
   warning_info = line;
   while (true)
   {
     get_next();
     if (cur_cmd <= fi_or_else)
-    {
       if (cur_cmd < fi_or_else)
         incr(l);
       else
       {
         if (l == 0)
           goto done;
-        if (cur_mod == 2)
+        if (cur_mod == fi_code)
           decr(l);
       }
-    }
     else if (cur_cmd == string_token)
-    {
-      if (str_ref[cur_mod] < 127)
-      {
-        if (str_ref[cur_mod] > 1)
-          decr(str_ref[cur_mod]);
-        else
-          flush_string (cur_mod);
-      }
-    }
+      delete_str_ref(cur_mod);
   }
 done:
-  scanner_status = 0;
+  scanner_status = normal;
 }
 /* 746 */
 void change_if_limit (small_number l, pointer p)
@@ -13328,9 +12671,9 @@ void change_if_limit (small_number l, pointer p)
     {
       if (q == null)
         confusion("if");
-      if (mem[q].hh.rh == p)
+      if (link(q) == p)
       {
-        mem[q].hh.b0 = l;
+        type(q) = l;
         goto lab_exit;
       }
       q = link(q);
@@ -13352,73 +12695,74 @@ void check_colon (void)
 /* 748 */
 void conditional (void)
 {
-  pointer savecond_ptr;
+  pointer save_cond_ptr;
   unsigned char new_if_limit;
   pointer p;
 
   {
-    p = get_node (2);
-    mem[p].hh.rh = cond_ptr;
-    mem[p].hh.b0 = if_limit;
-    mem[p].hh.b1 = cur_if;
-    mem[p + 1].cint = if_line;
+    p = get_node(if_node_size);
+    link(p) = cond_ptr;
+    type(p) = if_limit;
+    name_type(p) = cur_if;
+    if_line_field(p) = if_line;
     cond_ptr = p;
-    if_limit = 1;
+    if_limit = if_code;
     if_line = line;
-    cur_if = 1;
+    cur_if = if_code;
   }
-  savecond_ptr = cond_ptr;
-  lab_reswitch: get_boolean();
-  new_if_limit = 4;
+  save_cond_ptr = cond_ptr;
+lab_reswitch:
+  get_boolean();
+  new_if_limit = else_if_code;
   if (internal[tracing_commands] > unity)
   {
     begin_diagnostic();
-    if (cur_exp == 30)
+    if (cur_exp == true_code)
       print(722);
     else
       print(723);
-    end_diagnostic (false);
+    end_diagnostic(false);
   }
 found:
   check_colon();
-  if (cur_exp == 30)
+  if (cur_exp == true_code)
   {
-    change_if_limit (new_if_limit, savecond_ptr);
+    change_if_limit(new_if_limit, save_cond_ptr);
     goto lab_exit;
   }
   while (true)
   {
     pass_text();
-    if (cond_ptr == savecond_ptr)
+    if (cond_ptr == save_cond_ptr)
       goto done;
-    else if (cur_mod == 2)
+    else if (cur_mod == fi_code)
     {
       p = cond_ptr;
-      if_line = mem[p + 1].cint;
-      cur_if = mem[p].hh.b1;
-      if_limit = mem[p].hh.b0;
-      cond_ptr = mem[p].hh.rh;
-      free_node (p, 2);
+      if_line = if_line_field(p);
+      cur_if = name_type(p);
+      if_limit = type(p);
+      cond_ptr = link(p);
+      free_node(p, if_node_size);
     }
   }
 done:
   cur_if = cur_mod;
   if_line = line;
-  if (cur_mod == 2)
+  if (cur_mod == fi_code)
   {
     p = cond_ptr;
-    if_line = mem[p + 1].cint;
-    cur_if = mem[p].hh.b1;
-    if_limit = mem[p].hh.b0;
-    cond_ptr = mem[p].hh.rh;
-    free_node (p, 2);
+    if_line = if_line_field(p);
+    cur_if = name_type(p);
+    if_limit = type(p);
+    cond_ptr = link(p);
+    free_node(p, if_node_size);
   }
-  else if (cur_mod == 4)
+  else if (cur_mod == else_if_code)
     goto lab_reswitch;
   else
   {
-    cur_exp = 30;
-    new_if_limit = 2;
+    cur_exp = true_code;
+    new_if_limit = fi_code;
     get_x_next();
     goto found;
   }
@@ -14639,186 +13983,168 @@ void do_unary (quarterword c)
     print_nl(123);
     print_op(c);
     print_char('(');
-    print_exp (0, 0);
+    print_exp(0, 0);
     print(842);
     end_diagnostic(false);
   }
   switch (c)
   {
-    case 69:
-      if (cur_type < 14)
-      {
-        if (cur_type != 11)
-          bad_unary (69);
-      }
+    case plus:
+      if (cur_type < pair_type)
+        if (cur_type != picture_type)
+          bad_unary(plus);
       break;
-    case 70:
+    case minus:
       switch (cur_type)
       {
-        case 14:
-        case 19:
+        case pair_type:
+        case independent:
           {
             q = cur_exp;
-            make_exp_copy (q);
-            if (cur_type == 17)
-              negate_dep_list (mem[cur_exp + 1].hh.rh);
-            else if (cur_type == 14)
+            make_exp_copy(q);
+            if (cur_type == dependent)
+              negate_dep_list(dep_list(cur_exp));
+            else if (cur_type == pair_type)
             {
-              p = mem[cur_exp + 1].cint;
-              if (mem[p].hh.b0 == 16)
-                mem[p + 1].cint = -mem[p + 1].cint;
+              p = value(cur_exp);
+              if (type(x_part_loc(p)) == known)
+                negate(value(x_part_loc(p)));
               else
-                negate_dep_list (mem[p + 1].hh.rh);
-              if (mem[p + 2].hh.b0 == 16)
-                mem[p + 3].cint = -mem[p + 3].cint;
+                negate_dep_list(dep_list(x_part_loc(p)));
+              if (type(y_part_loc(p)) == known)
+                negate(value(y_part_loc(p)));
               else
-                negate_dep_list (mem[p + 3].hh.rh);
+                negate_dep_list(dep_list(y_part_loc(p)));
             }
-            recycle_value (q);
-            free_node (q, 2);
+            recycle_value(q);
+            free_node(q, value_node_size);
           }
           break;
-        case 17:
-        case 18:
-          negate_dep_list (mem[cur_exp + 1].hh.rh);
+        case dependent:
+        case proto_dependent:
+          negate_dep_list(dep_list(cur_exp));
           break;
-        case 16:
-          cur_exp = -cur_exp;
+        case known:
+          negate(cur_exp);
           break;
-        case 11:
-          negate_edges (cur_exp);
+        case picture_type:
+          negate_edges(cur_exp);
           break;
         default:
-          bad_unary (70);
+          bad_unary(minus);
           break;
       }
       break;
-    case 41:
-      if (cur_type != 2)
-        bad_unary (41);
+    case not_op:
+      if (cur_type != boolean_type)
+        bad_unary(not_op);
       else
-        cur_exp = 61 - cur_exp;
+        cur_exp = true_code + false_code - cur_exp;
       break;
-    case 59:
-    case 60:
-    case 61:
-    case 62:
-    case 63:
-    case 64:
-    case 65:
-    case 38:
-    case 66:
-      if (cur_type != 16)
-        bad_unary (c);
+    case sqrt_op:
+    case m_exp_op:
+    case m_log_op:
+    case sin_d_op:
+    case cos_d_op:
+    case floor_op:
+    case uniform_deviate:
+    case odd_op:
+    case char_exists_op:
+      if (cur_type != known)
+        bad_unary(c);
       else switch (c)
       {
-        case 59:
-          cur_exp = square_rt (cur_exp);
+        case sqrt_op:
+          cur_exp = square_rt(cur_exp);
           break;
-        case 60:
-          cur_exp = m_exp (cur_exp);
+        case m_exp_op:
+          cur_exp = m_exp(cur_exp);
           break;
-        case 61:
-          cur_exp = m_log (cur_exp);
+        case m_log_op:
+          cur_exp = m_log(cur_exp);
           break;
-        case 62:
-        case 63:
+        case sin_d_op:
+        case cos_d_op:
           {
-            n_sin_cos((cur_exp % 23592960L) * 16);
-            if (c == 62)
-              cur_exp = round_fraction (n_sin);
+            n_sin_cos((cur_exp % three_sixty_units) * 16);
+            if (c == sin_d_op)
+              cur_exp = round_fraction(n_sin);
             else
-              cur_exp = round_fraction (n_cos);
+              cur_exp = round_fraction(n_cos);
           }
           break;
-        case 64:
-          cur_exp = floorscaled (cur_exp);
+        case floor_op:
+          cur_exp = floor_scaled(cur_exp);
           break;
-        case 65:
-          cur_exp = unif_rand (cur_exp);
+        case uniform_deviate:
+          cur_exp = unif_rand(cur_exp);
           break;
-        case 38:
+        case odd_op:
           {
-            if (odd(round_unscaled(cur_exp)))
-              cur_exp = 30;
-            else
-              cur_exp = 31;
-            cur_type = 2;
+            boolean_reset(odd(round_unscaled(cur_exp)));
+            cur_type = boolean_type;
           }
           break;
-        case 66:
+        case char_exists_op:
           {
             cur_exp = round_unscaled(cur_exp) % 256;
             if (cur_exp < 0)
               cur_exp = cur_exp + 256;
-            if (char_exists[cur_exp])
-              cur_exp = 30;
-            else
-              cur_exp = 31;
-            cur_type = 2;
+            boolean_reset(char_exists[cur_exp]);
+            cur_type = boolean_type;
           }
           break;
       }
       break;
-    case 67:
-      if (nice_pair (cur_exp, cur_type))
+    case angle_op:
+      if (nice_pair(cur_exp, cur_type))
       {
-        p = mem[cur_exp + 1].cint;
-        x = n_arg (mem[p + 1].cint, mem[p + 3].cint);
+        p = value(cur_exp);
+        x = n_arg(value(x_part_loc(p)), value(y_part_loc(p)));
         if (x >= 0)
-          flush_cur_exp ((x + 8) / 16);
+          flush_cur_exp((x + 8) / 16);
         else
-          flush_cur_exp (-((-x + 8) / 16));
+          flush_cur_exp(-((-x + 8) / 16));
       }
       else
-        bad_unary (67);
+        bad_unary(angle_op);
       break;
-    case 53:
-    case 54:
-      if ((cur_type <= 14) && (cur_type >= 13))
-        take_part (c);
+    case x_part:
+    case y_part:
+      if ((cur_type <= pair_type) && (cur_type >= transform_type))
+        take_part(c);
       else
-        bad_unary (c);
+        bad_unary(c);
       break;
-    case 55:
-    case 56:
-    case 57:
-    case 58:
-      if (cur_type == 13)
-        take_part (c);
+    case xx_part:
+    case xy_part:
+    case yx_part:
+    case yy_part:
+      if (cur_type == transform_type)
+        take_part(c);
       else
-        bad_unary (c);
+        bad_unary(c);
       break;
-    case 50:
-      if (cur_type != 16)
-        bad_unary (50);
+    case char_op:
+      if (cur_type != known)
+        bad_unary(char_op);
       else
       {
         cur_exp = round_unscaled(cur_exp) % 256;
-        cur_type = 4;
+        cur_type = string_type;
         if (cur_exp < 0)
           cur_exp = cur_exp + 256;
-        if ((str_start[cur_exp + 1] - str_start[cur_exp]) != 1)
+        if (length(cur_exp) != 1)
         {
-          {
-            if (pool_ptr + 1 > max_pool_ptr)
-            {
-              if (pool_ptr + 1 > pool_size)
-                overflow("pool size", pool_size - init_pool_ptr);
-              max_pool_ptr = pool_ptr + 1;
-            }
-          }
-          {
-            str_pool[pool_ptr] = cur_exp;
-            incr(pool_ptr);
-          }
+          str_room(1);
+          append_char(cur_exp);
           cur_exp = make_string();
         }
       }
       break;
-    case 42:
-      if (cur_type != 16)
-        bad_unary (42);
+    case decimal:
+      if (cur_type != known)
+        bad_unary(decimal);
       else
       {
         old_setting = selector;
@@ -14826,165 +14152,123 @@ void do_unary (quarterword c)
         print_scaled(cur_exp);
         cur_exp = make_string();
         selector = old_setting;
-        cur_type = 4;
+        cur_type = string_type;
       }
       break;
-    case 47:
-    case 48:
-    case 49:
-      if (cur_type != 4)
-        bad_unary (c);
+    case oct_op:
+    case hex_op:
+    case ASCII_op:
+      if (cur_type != string_type)
+        bad_unary(c);
       else
-        str_to_num (c);
+        str_to_num(c);
       break;
-    case 51:
-      if (cur_type == 4)
-        flush_cur_exp ((str_start[cur_exp + 1] - str_start[cur_exp]) * unity);
-      else if (cur_type == 9)
-        flush_cur_exp (path_length ());
-      else if (cur_type == 16)
+    case length_op:
+      if (cur_type == string_type)
+        flush_cur_exp(length(cur_exp) * unity);
+      else if (cur_type == path_type)
+        flush_cur_exp(path_length());
+      else if (cur_type == known)
         cur_exp = abs(cur_exp);
-      else if (nice_pair (cur_exp, cur_type))
-        flush_cur_exp (pyth_add (mem[mem[cur_exp + 1].cint + 1].cint, mem[mem[cur_exp + 1].cint + 3].cint));
+      else if (nice_pair(cur_exp, cur_type))
+        flush_cur_exp(pyth_add(value(x_part_loc(value(cur_exp))), value(y_part_loc(value(cur_exp)))));
       else
-        bad_unary (c);
+        bad_unary(c);
       break;
-    case 52:
-      if (cur_type == 14)
-        flush_cur_exp (0);
-      else if (cur_type != 9)
-        bad_unary (52);
-      else if (mem[cur_exp].hh.b0 == 0)
-        flush_cur_exp (0);
+    case turning_op:
+      if (cur_type == pair_type)
+        flush_cur_exp(0);
+      else if (cur_type != path_type)
+        bad_unary(turning_op);
+      else if (left_type(cur_exp) == endpoint)
+        flush_cur_exp(0);
       else
       {
-        cur_pen = 3;
+        cur_pen = null_pen;
         cur_path_type = contour_code;
-        cur_exp = make_spec (cur_exp, -1879080960L, 0);
-        flush_cur_exp (turning_number * unity);
+        cur_exp = make_spec(cur_exp, fraction_one - half_unit - 1 - el_gordo, 0);
+        flush_cur_exp(turning_number * unity);
       }
       break;
-    case 2:
+    case boolean_type:
+      type_range(boolean_type, unknown_boolean);
+      break;
+    case string_type:
+      type_range(string_type, unknown_string);
+      break;
+    case pen_type:
+      type_range(pen_type, future_pen);
+      break;
+    case path_type:
+      type_range(path_type, unknown_path);
+      break;
+    case picture_type:
+      type_range(picture_type, unknown_picture);
+      break;
+    case transform_type:
+    case pair_type:
+      type_test(c);
+      break;
+    case numeric_type:
+      type_range(known, independent);
+      break;
+    case known_op:
+    case unknown_op:
+      test_known(c);
+      break;
+    case cycle_op:
       {
-        if ((cur_type >= 2) && (cur_type <= 3))
-          flush_cur_exp (30);
+        if (cur_type != path_type)
+          flush_cur_exp(false_code);
+        else if (left_type(cur_exp) != endpoint)
+          flush_cur_exp(true_code);
         else
-          flush_cur_exp (31);
-        cur_type = 2;
+          flush_cur_exp(false_code);
+        cur_type = boolean_type;
       }
       break;
-    case 4:
+    case make_pen_op:
       {
-        if ((cur_type >= 4) && (cur_type <= 5))
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 6:
-      {
-        if ((cur_type >= 6) && (cur_type <= 8))
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 9:
-      {
-        if ((cur_type >= 9) && (cur_type <= 10))
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 11:
-      {
-        if ((cur_type >= 11) && (cur_type <= 12))
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 13:
-    case 14:
-      {
-        if (cur_type == c)
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 15:
-      {
-        if ((cur_type >= 16) && (cur_type <= 19))
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 39:
-    case 40:
-      test_known (c);
-      break;
-    case 68:
-      {
-        if (cur_type != 9)
-          flush_cur_exp (31);
-        else if (mem[cur_exp].hh.b0 != 0)
-          flush_cur_exp (30);
-        else
-          flush_cur_exp (31);
-        cur_type = 2;
-      }
-      break;
-    case 45:
-      {
-        if (cur_type == 14)
+        if (cur_type == pair_type)
           pair_to_path();
-        if (cur_type == 9)
-          cur_type = 8;
+        if (cur_type == path_type)
+          cur_type = future_pen;
         else
-          bad_unary (45);
+          bad_unary(make_pen_op);
       }
       break;
-    case 44 :
+    case make_path_op:
       {
-        if (cur_type == 8)
+        if (cur_type == future_pen)
           materialize_pen();
-        if (cur_type != 6)
-          bad_unary (44);
+        if (cur_type != pen_type)
+          bad_unary(make_path_op);
         else
         {
-          flush_cur_exp (make_path (cur_exp));
-          cur_type = 9;
+          flush_cur_exp(make_path(cur_exp));
+          cur_type = path_type;
         }
       }
       break;
-    case 46:
-      if (cur_type != 11)
-        bad_unary (46);
+    case total_weight_op:
+      if (cur_type != picture_type)
+        bad_unary(total_weight_op);
       else
-        flush_cur_exp (total_weight (cur_exp));
+        flush_cur_exp(total_weight(cur_exp));
       break;
-    case 43:
-      if (cur_type == 9)
+    case reverse:
+      if (cur_type == path_type)
       {
-        p = htap_ypoc (cur_exp);
-        if (mem[p].hh.b1 == 0)
-          p = mem[p].hh.rh;
-        toss_knot_list (cur_exp);
+        p = htap_ypoc(cur_exp);
+        if (right_type(p) == endpoint)
+          p = link(p);
+        toss_knot_list(cur_exp);
         cur_exp = p;
       }
-      else if (cur_type == 14)
+      else if (cur_type == pair_type)
         pair_to_path();
       else
-        bad_unary (43);
+        bad_unary(reverse);
       break;
   }
   check_arith();
@@ -15666,13 +14950,9 @@ void cat (pointer p)
   b = cur_exp;
   str_room(length(a) + length(b));
   for (k = str_start[a]; k <= str_start[a + 1] - 1; k++)
-  {
     append_char(so(str_pool[k]));
-  }
   for (k = str_start[b]; k <= str_start[b + 1] - 1; k++)
-  {
     append_char(so(str_pool[k]));
-  }
   cur_exp = make_string();
   delete_str_ref(b);
 }
@@ -15714,16 +14994,12 @@ void chop_string (pointer p)
   if (reversed)
   {
     for (k = str_start[s] + b - 1; k <= str_start[s] + a; k--)
-    {
       append_char(so(str_pool[k]));
-    }
   }
   else
   {
     for (k = str_start[s] + a; k <= str_start[s] + b - 1; k++)
-    {
       append_char(so(str_pool[k]));
-    }
   }
   cur_exp = make_string();
   delete_str_ref(s);
@@ -15797,7 +15073,7 @@ void chop_path (pointer p)
   }
   else
   {
-    pp = copy_knot (q);
+    pp = copy_knot(q);
     qq = pp;
     do {
       q = link(q);
@@ -15933,7 +15209,7 @@ void find_point (scaled v, quarterword c)
 void do_binary (pointer p, quarterword c)
 {
   pointer q, r, rr;
-  pointer oldp, oldexp;
+  pointer old_p, old_exp;
   integer v;
  
   check_arith();
@@ -15941,139 +15217,138 @@ void do_binary (pointer p, quarterword c)
   {
     begin_diagnostic();
     print_nl(850);
-    print_exp (p, 0);
+    print_exp(p, 0);
     print_char(')');
-    print_op (c);
+    print_op(c);
     print_char('(');
-    print_exp (0, 0);
+    print_exp(0, 0);
     print(842);
-    end_diagnostic (false);
+    end_diagnostic(false);
   }
-  switch (mem[p].hh.b0)
+  switch (type(p))
   {
-    case 13:
-    case 14:
-      oldp = tarnished (p);
+    case transform_type:
+    case pair_type:
+      old_p = tarnished(p);
       break;
-    case 19:
-      oldp = 1;
+    case independent:
+      old_p = _void;
       break;
     default:
-      oldp = 0;
+      old_p = null;
       break;
   }
-  if (oldp != 0)
+  if (old_p != null)
   {
-    q = stash_cur_exp();
-    oldp = p;
-    make_exp_copy (oldp);
-    p = stash_cur_exp();
-    unstash_cur_exp (q);
+    q = stash_cur_exp;
+    old_p = p;
+    make_exp_copy(old_p);
+    p = stash_cur_exp;
+    unstash_cur_exp(q);
   }
   switch (cur_type)
   {
-    case 13:
-    case 14:
-      oldexp = tarnished (cur_exp);
+    case transform_type:
+    case pair_type:
+      old_exp = tarnished(cur_exp);
       break;
-    case 19:
-      oldexp = 1;
+    case independent:
+      old_exp = _void;
       break;
     default:
-      oldexp = 0;
+      old_exp = null;
       break;
   }
-  if (oldexp != 0)
+  if (old_exp != null)
   {
-    oldexp = cur_exp;
-    make_exp_copy (oldexp);
+    old_exp = cur_exp;
+    make_exp_copy(old_exp);
   }
   switch (c)
   {
-    case 69:
-    case 70:
-      if ((cur_type < 14) || (mem[p].hh.b0 < 14))
-      {
-        if ((cur_type == 11) && (mem[p].hh.b0 == 11))
+    case plus:
+    case minus:
+      if ((cur_type < pair_type) || (type(p) < pair_type))
+        if ((cur_type == picture_type) && (type(p) == picture_type))
         {
-          if (c == 70)
-            negate_edges (cur_exp);
+          if (c == minus)
+            negate_edges(cur_exp);
           cur_edges = cur_exp;
-          merge_edges (mem[p + 1].cint);
+          merge_edges(value(p));
         }
         else
-          bad_binary (p, c);
-      }
-      else if (cur_type == 14)
+          bad_binary(p, c);
+      else if (cur_type == pair_type)
       {
-        if (mem[p].hh.b0 != 14)
-          bad_binary (p, c);
+        if (type(p) !=  pair_type)
+          bad_binary(p, c);
         else
         {
-          q = mem[p + 1].cint;
-          r = mem[cur_exp + 1].cint;
-          add_or_sub_tract (q, r, c);
-          add_or_sub_tract (q + 2, r + 2, c);
+          q = value(p);
+          r = value(cur_exp);
+          add_or_subtract(x_part_loc(q), x_part_loc(r), c);
+          add_or_subtract(y_part_loc(q), y_part_loc(r), c);
         }
       }
-      else if (mem[p].hh.b0 == 14)
-        bad_binary (p, c);
+      else if (type(p) == pair_type)
+        bad_binary(p, c);
       else
-        add_or_sub_tract (p, 0, c);
+        add_or_sub_tract(p, null, c);
       break;
-    case 77:
-    case 78:
-    case 79:
-    case 80:
-    case 81:
-    case 82:
+    case less_than:
+    case less_or_equal:
+    case greater_than:
+    case greater_or_equal:
+    case equal_to:
+    case unequal_to:
       {
-        if ((cur_type > 14) && (mem[p].hh.b0 > 14))
-          add_or_sub_tract (p, 0, 70);
-        else if (cur_type != mem[p].hh.b0)
+        if ((cur_type > pair_type) && (type(p) > pair_type))
+          add_or_subtract(p, null, minus);
+        else if (cur_type != type(p))
         {
-          bad_binary (p, c);
+          bad_binary(p, c);
           goto done;
         }
-        else if (cur_type == 4)
-          flush_cur_exp (str_vs_str (mem[p + 1].cint, cur_exp));
-        else if ((cur_type == 5) || (cur_type == 3))
+        else if (cur_type == string_type)
+          flush_cur_exp(str_vs_str(value(p), cur_exp));
+        else if ((cur_type == unknown_string) || (cur_type == unknown_boolean))
         {
-          q = mem[cur_exp + 1].cint;
+          q = value(cur_exp);
           while ((q != cur_exp) && (q != p))
-            q = mem[q + 1].cint;
+            q = value(q);
           if (q == p)
-            flush_cur_exp (0);
+            flush_cur_exp(0);
         }
-        else if ((cur_type == 14) || (cur_type == 13))
+        else if ((cur_type == pair_type) || (cur_type == transform_type))
         {
-          q = mem[p + 1].cint;
-          r = mem[cur_exp + 1].cint;
+          q = value(p);
+          r = value(cur_exp);
           rr = r + big_node_size[cur_type] - 2;
           while (true)
           {
-            add_or_sub_tract (q, r, 70);
-            if (mem[r].hh.b0 != 16)
+            add_or_subtract(q, r, minus);
+            if (type(r) != known)
               goto done1;
-            if (mem[r + 1].cint != 0)
+            if (value(r) != 0)
               goto done1;
             if (r == rr)
               goto done1;
             q = q + 2;
             r = r + 2;
           }
-          done1: take_part (53 + half(r - mem[cur_exp + 1].cint));
+        done1:
+          take_part(x_part + half(r - value(cur_exp)));
         }
-        else if (cur_type == 2)
-          flush_cur_exp (cur_exp - mem[p + 1].cint);
+        else if (cur_type == boolean_type)
+          flush_cur_exp(cur_exp - value(p));
         else
         {
-          bad_binary (p, c);
+          bad_binary(p, c);
           goto done;
         }
-        if (cur_type != 16)
+        if (cur_type != known)
         {
-          if (cur_type < 16)
+          if (cur_type < known)
           {
             disp_err(p, "");
             help1("The quantities shown above have not been equated.");
@@ -16081,101 +15356,83 @@ void do_binary (pointer p, quarterword c)
           else
             help2("Oh dear. I can't decide if the expression above is positive,",
               "negative, or zero. So this comparison test won't be `true'.");
-          disp_err (null, "Unknown relation will be considered false");
-          put_get_flush_error (31);
+          disp_err(null, "Unknown relation will be considered false");
+          put_get_flush_error(false_code);
         }
         else switch (c)
         {
-          case 77:
-            if (cur_exp < 0)
-              cur_exp = 30;
-            else
-              cur_exp = 31;
+          case less_than:
+            boolean_reset(cur_exp < 0);
             break;
-          case 78:
-            if (cur_exp <= 0)
-              cur_exp = 30;
-            else
-              cur_exp = 31;
+          case less_or_equal:
+            boolean_reset(cur_exp <= 0);
             break;
-          case 79:
-            if (cur_exp > 0)
-              cur_exp = 30;
-            else
-              cur_exp = 31;
+          case greater_than:
+            boolean_reset(cur_exp > 0);
             break;
-          case 80 :
-            if (cur_exp >= 0)
-              cur_exp = 30;
-            else
-              cur_exp = 31;
+          case greater_or_equal:
+            boolean_reset(cur_exp >= 0);
             break;
-          case 81 :
-            if (cur_exp == 0)
-              cur_exp = 30;
-            else
-              cur_exp = 31;
+          case equal_to:
+            boolean_reset(cur_exp == 0);
             break;
-          case 82 :
-            if (cur_exp != 0)
-              cur_exp = 30;
-            else
-              cur_exp = 31;
+          case unequal_to:
+            boolean_reset(cur_exp != 0);
             break;
         }
-        cur_type = 2;
+        cur_type = boolean_type;
         done:;
       }
       break;
-    case 76:
-    case 75:
-      if ((mem[p].hh.b0 != 2) || (cur_type != 2))
-        bad_binary (p, c);
-      else if (mem[p + 1].cint == c - 45)
-        cur_exp = mem[p + 1].cint;
+    case and_op:
+    case or_op:
+      if ((type(p) != boolean_type) || (cur_type != boolean_type))
+        bad_binary(p, c);
+      else if (value(p) == c + false_code - and_op)
+        cur_exp = value(p);
       break;
-    case 71:
-      if ((cur_type < 14) || (mem[p].hh.b0 < 14))
-        bad_binary (p, 71);
-      else if ((cur_type == 16) || (mem[p].hh.b0 == 16))
+    case times:
+      if ((cur_type < pair_type) || (type(p) < pair_type))
+        bad_binary(p, times);
+      else if ((cur_type == known) || (type(p) == known))
       {
-        if (mem[p].hh.b0 == 16)
+        if (type(p) == known)
         {
-          v = mem[p + 1].cint;
-          free_node (p, 2);
+          v = value(p);
+          free_node(p, value_node_size);
         }
         else
         {
           v = cur_exp;
-          unstash_cur_exp (p);
+          unstash_cur_exp(p);
         }
-        if (cur_type == 16)
-          cur_exp = take_scaled (cur_exp, v);
-        else if (cur_type == 14)
+        if (cur_type == known)
+          cur_exp = take_scaled(cur_exp, v);
+        else if (cur_type == pair_type)
         {
-          p = mem[cur_exp + 1].cint;
-          dep_mult (p, v, true);
-          dep_mult (p + 2, v, true);
+          p = value(cur_exp);
+          dep_mult(x_part_loc(p), v, true);
+          dep_mult(y_part_loc(p), v, true);
         }
         else
-          dep_mult (0, v, true);
+          dep_mult(null, v, true);
         goto lab_exit;
       }
-      else if ((nice_pair (p, mem[p].hh.b0) && (cur_type > 14)) || (nice_pair (cur_exp, cur_type) && (mem[p].hh.b0 > 14)))
+      else if ((nice_pair(p, type(p)) && (cur_type > pair_type)) || (nice_pair(cur_exp, cur_type) && (type(p) > pair_type)))
       {
-        hard_times (p);
+        hard_times(p);
         goto lab_exit;
       }
       else
-        bad_binary (p, 71);
+        bad_binary(p, times);
       break;
-    case 72:
-      if ((cur_type != 16) || (mem[p].hh.b0 < 14))
-        bad_binary (p, 72);
+    case over:
+      if ((cur_type != known) || (type(p) < pair_type))
+        bad_binary(p, over);
       else
       {
         v = cur_exp;
-        unstash_cur_exp (p);
+        unstash_cur_exp(p);
         if (v == 0)
         {
           disp_err(null, "Division by zero");
@@ -16185,144 +15442,144 @@ void do_binary (pointer p, quarterword c)
         }
         else
         {
-          if (cur_type == 16)
-            cur_exp = make_scaled (cur_exp, v);
-          else if (cur_type == 14)
+          if (cur_type == known)
+            cur_exp = make_scaled(cur_exp, v);
+          else if (cur_type == pair_type)
           {
-            p = mem[cur_exp + 1].cint;
-            dep_div (p, v);
-            dep_div (p + 2, v);
+            p = value(cur_exp);
+            dep_div(x_part_loc(p), v);
+            dep_div(y_part_loc(p), v);
           }
           else
-            dep_div (0, v);
+            dep_div(null, v);
         }
         goto lab_exit;
       }
       break;
-    case 73:
-    case 74:
-      if ((cur_type == 16) && (mem[p].hh.b0 == 16))
+    case pythag_add:
+    case pythag_sub:
+      if ((cur_type == known) && (type(p) == known))
       {
-        if (c == 73)
-          cur_exp = pyth_add (mem[p + 1].cint, cur_exp);
+        if (c == pythag_add)
+          cur_exp = pyth_add(value(p), cur_exp);
         else
-          cur_exp = pyth_sub (mem[p + 1].cint, cur_exp);
+          cur_exp = pyth_sub(value(p), cur_exp);
       }
       else
-        bad_binary (p, c);
+        bad_binary(p, c);
       break;
-    case 84:
-    case 85:
-    case 86:
-    case 87:
-    case 88:
-    case 89:
-    case 90:
-    case 91:
-      if ((mem[p].hh.b0 == 9) || (mem[p].hh.b0 == 8) || (mem[p].hh.b0 == 6))
+    case rotated_by:
+    case slanted_by:
+    case scaled_by:
+    case shifted_by:
+    case transformed_by:
+    case x_scaled:
+    case y_scaled:
+    case z_scaled:
+      if ((type(p) == path_type) || (type(p) == future_pen) || (type(p) == pen_type))
       {
-        path_trans (p, c);
+        path_trans(p, c);
         goto lab_exit;
       }
-      else if ((mem[p].hh.b0 == 14) || (mem[p].hh.b0 == 13))
-        big_trans (p, c);
-      else if (mem[p].hh.b0 == 11)
+      else if ((type(p) == pair_type) || (type(p) == transform_type))
+        big_trans(p, c);
+      else if (type(p) == picture_type)
       {
-        edges_trans (p, c);
+        edges_trans(p, c);
         goto lab_exit;
       }
       else
-        bad_binary (p, c);
+        bad_binary(p, c);
       break;
-    case 83:
-      if ((cur_type == 4) && (mem[p].hh.b0 == 4))
-        cat (p);
+    case concatenate:
+      if ((cur_type == string_type) && (type(p) == string_type))
+        cat(p);
       else
-        bad_binary (p, 83);
+        bad_binary(p, concatenate);
       break;
-    case 94:
-      if (nice_pair (p, mem[p].hh.b0) && (cur_type == 4))
-        chop_string (mem[p + 1].cint);
+    case substring_of:
+      if (nice_pair(p, type(p)) && (cur_type == string_type))
+        chop_string(value(p));
       else
-        bad_binary (p, 94);
+        bad_binary(p, substring_of);
       break;
-    case 95:
+    case subpath_of:
       {
-        if (cur_type == 14)
+        if (cur_type == pair_type)
           pair_to_path();
-        if (nice_pair (p, mem[p].hh.b0) && (cur_type == 9))
-          chop_path (mem[p + 1].cint);
+        if (nice_pair(p, type(p)) && (cur_type == path_type))
+          chop_path(value(p));
         else
-          bad_binary (p, 95);
+          bad_binary(p, subpath_of);
       }
       break;
-    case 97:
-    case 98:
-    case 99:
+    case point_of:
+    case precontrol_of:
+    case postcontrol_of:
       {
-        if (cur_type == 14)
+        if (cur_type == pair_type)
           pair_to_path();
-        if ((cur_type == 9) && (mem[p].hh.b0 == 16))
-          find_point (mem[p + 1].cint, c);
+        if ((cur_type == path_type) && (type(p) == known))
+          find_point(value(p), c);
         else
-          bad_binary (p, c);
+          bad_binary(p, c);
       }
       break;
-    case 100:
+    case pen_offset_of:
       {
-        if (cur_type == 8)
+        if (cur_type == future_pen)
           materialize_pen();
-        if ((cur_type == 6) && nice_pair (p, mem[p].hh.b0))
-          set_up_offset (mem[p + 1].cint);
+        if ((cur_type == pen_type) && nice_pair(p, type(p)))
+          set_up_offset(value(p));
         else
-          bad_binary (p, 100);
+          bad_binary(p, pen_offset_of);
       }
       break;
-    case 96:
+    case direction_time_of:
       {
-        if (cur_type == 14)
+        if (cur_type == pair_type)
           pair_to_path();
-        if ((cur_type == 9) && nice_pair (p, mem[p].hh.b0))
-          set_up_direction_time (mem[p + 1].cint);
+        if ((cur_type == path_type) && nice_pair(p, type(p)))
+          set_up_direction_time(value(p));
         else
-          bad_binary (p, 96);
+          bad_binary(p, direction_time_of);
       }
       break;
-    case 92:
+    case intersect:
       {
-        if (mem[p].hh.b0 == 14)
+        if (type(p) == pair_type)
         {
           q = stash_cur_exp();
-          unstash_cur_exp (p);
+          unstash_cur_exp(p);
           pair_to_path();
           p = stash_cur_exp();
-          unstash_cur_exp (q);
+          unstash_cur_exp(q);
         }
-        if (cur_type == 14)
+        if (cur_type == pair_type)
           pair_to_path();
-        if ((cur_type == 9) && (mem[p].hh.b0 == 9))
+        if ((cur_type == path_type) && (type(p) == path_type))
         {
-          path_intersection (mem[p + 1].cint, cur_exp);
-          pair_value (cur_t, cur_tt);
+          path_intersection(value(p), cur_exp);
+          pair_value(cur_t, cur_tt);
         }
         else
-          bad_binary (p, 92);
+          bad_binary(p, intersect);
       }
       break;
   }
-  recycle_value (p);
-  free_node (p, 2);
+  recycle_value(p);
+  free_node(p, value_node_size);
 lab_exit:
   check_arith();
-  if (oldp != 0)
+  if (old_p != null)
   {
-    recycle_value (oldp);
-    free_node (oldp, 2);
+    recycle_value(old_p);
+    free_node(old_p, value_node_size);
   }
-  if (oldexp != 0)
+  if (old_exp != null)
   {
-    recycle_value (oldexp);
-    free_node (oldexp, 2);
+    recycle_value(old_exp);
+    free_node(old_exp, value_node_size);
   }
 }
 /* 944 */
@@ -16553,16 +15810,16 @@ void init_gf (void)
   print(1054);
   print_int(round_unscaled(internal[year]));
   print_char('.');
-  print_dd (round_unscaled(internal[month]));
+  print_dd(round_unscaled(internal[month]));
   print_char('.');
-  print_dd (round_unscaled(internal[day]));
+  print_dd(round_unscaled(internal[day]));
   print_char(':');
   t = round_unscaled(internal[time]);
   print_dd(t / 60);
   print_dd(t % 60);
   selector = old_setting;
   gf_out(cur_length);
-  gf_string(0, make_string ());
+  gf_string(0, make_string());
   decr(str_ptr);
   pool_ptr = str_start[str_ptr];
   gf_prev_ptr = gf_offset + gf_ptr;
@@ -16580,8 +15837,7 @@ void ship_out (eight_bits c)
   integer cur_min_m;
   integer x_off, y_off;
 
-  if (output_file_name == 0)
-    init_gf();
+  check_gf();
   f = round_unscaled(internal[char_ext]);
   x_off = round_unscaled(internal[x_offset]);
   y_off = round_unscaled(internal[y_offset]);
@@ -16620,22 +15876,22 @@ void ship_out (eight_bits c)
   n = n_max(cur_edges) - zero_field;
   while (p != cur_edges)
   {
-    if (mem[p + 1].hh.lh > 1)
+    if (unsorted(p) > _void)
       sort_edges(p);
-    q = mem[p + 1].hh.rh;
+    q = sorted(p);
     w = 0;
     prev_m = -fraction_one;
     ww = 0;
     prev_w = 0;
     m = prev_m;
     do {
-      if (q == mem_top)
+      if (q == sentinel)
         mm = fraction_one;
       else
       {
-        d = mem[q].hh.lh;
+        d = ho(info(q));
         mm = d / 8;
-        ww = ww + (d % 8) - 4;
+        ww = ww + (d % 8) - zero_w;
       }
       if (mm != m)
       {
@@ -16647,64 +15903,66 @@ void ship_out (eight_bits c)
             {
               if (prev_n == 4096)
               {
-                gf_boc (mem[cur_edges + 2].hh.lh + x_off - 4096, mem[cur_edges + 2].hh.rh + x_off - 4096, mem[cur_edges + 1].hh.lh + y_off - 4096, n + y_off);
-                cur_min_m = mem[cur_edges + 2].hh.lh - 4096 + mem[cur_edges + 3].hh.lh;
+                gf_boc(m_min(cur_edges) + x_off - zero_field, m_max(cur_edges) + x_off - zero_field,
+                  n_min(cur_edges) + y_off - zero_field, n + y_off);
+                cur_min_m = m_min(cur_edges) - zero_field + m_offset(cur_edges);
               }
               else if (prev_n > n + 1)
               {
                 delta = prev_n - n - 1;
                 if (delta < 0400)
                 {
-                  gf_out (skip1);
-                  gf_out (delta);
+                  gf_out(skip1);
+                  gf_out(delta);
                 }
                 else
                 {
-                  gf_out (skip1 + 1);
-                  gf_two (delta);
+                  gf_out(skip1 + 1);
+                  gf_two(delta);
                 }
               }
               else
               {
                 delta = m - cur_min_m;
                 if (delta > max_new_row)
-                  gf_out (skip0);
+                  gf_out(skip0);
                 else
                 {
-                  gf_out (new_row_0 + delta);
+                  gf_out(new_row_0 + delta);
                   goto done;
                 }
               }
-              gf_paint (m - cur_min_m);
-              done: prev_n = n;
+              gf_paint(m - cur_min_m);
+            done:
+              prev_n = n;
             }
             else
-              gf_paint (m - prev_m);
+              gf_paint(m - prev_m);
             prev_m = m;
             prev_w = w;
           }
         }
         else if (w <= 0)
         {
-          gf_paint (m - prev_m);
+          gf_paint(m - prev_m);
           prev_m = m;
           prev_w = w;
         }
         m = mm;
       }
       w = ww;
-      q = mem[q].hh.rh;
+      q = link(q);
     } while (!(mm == fraction_one));
     if (w != 0)
       print_nl(1058);
-    if (prev_m - mem[cur_edges + 3].hh.lh + x_off > gf_max_m)
-      gf_max_m = prev_m - mem[cur_edges + 3].hh.lh + x_off;
-    p = mem[p].hh.lh;
+    if (prev_m - m_offset(cur_edges) + x_off > gf_max_m)
+      gf_max_m = prev_m - m_offset(cur_edges) + x_off;
+    p = knil(p);
     decr(n);
   }
   if (prev_n == 4096)
   {
-    gf_boc (0, 0, 0, 0);
+    gf_boc(0, 0, 0, 0);
     if (gf_max_m < 0)
       gf_max_m = 0;
     if (gf_min_n > 0)
@@ -16712,143 +15970,144 @@ void ship_out (eight_bits c)
   }
   else if (prev_n + y_off < gf_min_n)
     gf_min_n = prev_n + y_off;
-  gf_out (eoc);
+  gf_out(eoc);
   gf_prev_ptr = gf_offset + gf_ptr;
   incr(total_chars);
   print_char(']');
-  fflush (stdout);
+  fflush(stdout);
   if (internal[tracing_output] > 0)
-    print_edges (1057, true, x_off, y_off);
+    print_edges(1057, true, x_off, y_off);
 }
 /* 1006 */
-void try_eq (halfword l, halfword r)
+void try_eq (pointer l, pointer r)
 {
-  halfword p;
+  pointer p;
   unsigned char t;
-  halfword q;
-  halfword pp;
+  pointer q;
+  pointer pp;
   unsigned char tt;
   boolean copied;
 
-  t = mem[l].hh.b0;
-  if (t == 16)
+  t = type(l);
+  if (t == known)
   {
-    t = 17;
-    p = const_dependency (-mem[l + 1].cint);
+    t = dependent;
+    p = const_dependency(-value(l));
     q = p;
   }
-  else if (t == 19)
+  else if (t == independent)
   {
-    t = 17;
-    p = single_dependency (l);
-    mem[p + 1].cint = -mem[p + 1].cint;
+    t = dependent;
+    p = single_dependency(l);
+    negate(value(p));
     q = dep_final;
   }
   else
   {
-    p = mem[l + 1].hh.rh;
+    p = dep_list(l);
     q = p;
     while (true)
     {
-      mem[q + 1].cint = -mem[q + 1].cint;
-      if (mem[q].hh.lh == 0)
+      negate(value(q));
+      if (info(q) == null)
         goto done;
-      q = mem[q].hh.rh;
+      q = link(q);
     }
-    done: mem[mem[l + 1].hh.lh].hh.rh = mem[q].hh.rh;
-    mem[mem[q].hh.rh + 1].hh.lh = mem[l + 1].hh.lh;
-    mem[l].hh.b0 = 16;
+  done:
+    link(prev_dep(l)) = link(q);
+    prev_dep(link(q)) = prev_dep(l);
+    type(l) = known;
   }
-  if (r == 0)
+  if (r == null)
   {
-    if (cur_type == 16)
+    if (cur_type == known)
     {
-      mem[q + 1].cint = mem[q + 1].cint + cur_exp;
+      value(q) = value(q) + cur_exp;
       goto done1;
     }
     else
     {
       tt = cur_type;
-      if (tt == 19)
-        pp = single_dependency (cur_exp);
+      if (tt == independent)
+        pp = single_dependency(cur_exp);
       else
-        pp = mem[cur_exp + 1].hh.rh;
+        pp = dep_list(cur_exp);
     }
   }
-  else if (mem[r].hh.b0 == 16)
+  else if (type(r) == known)
   {
-    mem[q + 1].cint = mem[q + 1].cint + mem[r + 1].cint;
+    value(q) = value(q) + value(r);
     goto done1;
   }
   else
   {
-    tt = mem[r].hh.b0;
-    if (tt == 19)
-      pp = single_dependency (r);
+    tt = type(r);
+    if (tt == independent)
+      pp = single_dependency(r);
     else
-      pp = mem[r + 1].hh.rh;
+      pp = dep_list(r);
   }
-  if (tt != 19)
+  if (tt != independent)
     copied = false;
   else
   {
     copied = true;
-    tt = 17;
+    tt = dependent;
   }
   watch_coefs = false;
   if (t == tt)
-    p = p_plus_q (p, pp, t);
-  else if (t == 18)
-    p = p_plus_fq (p, unity, pp, 18, 17);
+    p = p_plus_q(p, pp, t);
+  else if (t == proto_dependent)
+    p = p_plus_fq(p, unity, pp, proto_dependent, dependent);
   else
   {
     q = p;
-    while (mem[q].hh.lh != 0)
+    while (info(q) != null)
     {
-      mem[q + 1].cint = round_fraction (mem[q + 1].cint);
-      q = mem[q].hh.rh;
+      value(q) = round_fraction(value(q));
+      q = link(q);
     }
-    t = 18;
-    p = p_plus_q (p, pp, t);
+    t = proto_dependent;
+    p = p_plus_q(p, pp, t);
   }
   watch_coefs = true;
   if (copied)
-    flush_node_list (pp);
+    flush_node_list(pp);
   done1:;
-  if (mem[p].hh.lh == 0)
+  if (info(p) == null)
   {
-    if (abs(mem[p + 1].cint) > 64)
+    if (abs(value(p)) > 64)
     {
       print_err("Inconsistent equation");
       print(899);
-      print_scaled(mem[p + 1].cint);
+      print_scaled(value(p));
       print_char(')');
       help2("The equation I just read contradicts what was said before.",
         "But don't worry; continue and I'll just ignore it.");
       put_get_error();
     }
-    else if (r == 0)
+    else if (r == null)
     {
       print_err("Redundant equation");
       help2("I already knew that this equation was true.",
         "But perhaps no harm has been done; let's continue.");
       put_get_error();
     }
-    free_node (p, 2);
+    free_node(p, dep_node_size);
   }
   else
   {
-    linear_eq (p, t);
-    if (r == 0)
+    linear_eq(p, t);
+    if (r == null)
     {
-      if (cur_type != 16)
+      if (cur_type != known)
       {
-        if (mem[cur_exp].hh.b0 == 16)
+        if (type(cur_exp) == known)
         {
           pp = cur_exp;
-          cur_exp = mem[cur_exp + 1].cint;
-          cur_type = 16;
-          free_node (pp, 2);
+          cur_exp = value(cur_exp);
+          cur_type = known;
+          free_node(pp, value_node_size);
         }
       }
     }
@@ -17060,7 +16319,7 @@ void do_assignment (void)
       else
       {
         disp_err(null, "Internal quantity `");
-        slow_print(int_name[mem[lhs].hh.lh - (9769)]);
+        slow_print(int_name[info(lhs) - (hash_end)]);
         print(888);
         help2("I can't set an internal quantity to anything but a known",
           "numeric value, so I'll have to ignore this assignment.");
@@ -17154,7 +16413,7 @@ void do_random_seed (void)
   }
   get_x_next();
   scan_expression();
-  if (cur_type != 16)
+  if (cur_type != known)
   {
     disp_err(null, "Unknown value will be ignored");
     help2("Your expression was too random for me to handle,",
@@ -17521,7 +16780,7 @@ boolean scan_with (void)
       help_line[1] = 966;
     put_get_flush_error(0);
   }
-  else if (cur_type == 6)
+  else if (cur_type == pen_type)
     result = true;
   else
   {
@@ -17539,9 +16798,9 @@ boolean scan_with (void)
   return Result;
 }
 /* 1057 */
-void find_edges_var (halfword t)
+void find_edges_var (pointer t)
 {
-  halfword p;
+  pointer p;
 
   p = find_variable(t);
   cur_edges = null;
@@ -17742,7 +17001,6 @@ void do_add_to (void)
 /* 1098 */
 scaled tfm_check (small_number m)
 {
-  scaled Result;
   if (abs(internal[m]) >= fraction_half)
   {
     print_err("Enormous ");
@@ -17751,13 +17009,12 @@ scaled tfm_check (small_number m)
     help1("Font metric dimensions must be less than 2048pt.");
     put_get_error();
     if (internal[m] > 0)
-      Result = fraction_half - 1;
+      return fraction_half - 1;
     else
-      Result = 1 - fraction_half;
+      return 1 - fraction_half;
   }
   else
-    Result = internal[m];
-  return Result;
+    return internal[m];
 }
 /* 1070 */
 void do_ship_out (void)
@@ -17814,7 +17071,7 @@ void do_ship_out (void)
 /* 1071 */
 void do_display (void)
 {
-  halfword e;
+  pointer e;
 
   get_x_next();
   var_flag = in_window;
@@ -17860,12 +17117,11 @@ void do_display (void)
 /* 1072 */
 boolean get_pair (command_code c)
 {
-  boolean Result;
   pointer p;
   boolean b;
 
   if (cur_cmd != c)
-    Result = false;
+    return false;
   else
   {
     get_x_next();
@@ -17880,9 +17136,8 @@ boolean get_pair (command_code c)
     else
       b = false;
     flush_cur_exp(0);
-    Result = b;
+    return b;
   }
-  return Result;
 }
 /* 1073 */
 void do_open_window (void)
@@ -19760,74 +19015,74 @@ lab_continue:
 /* 868 */
 void scan_expression (void)
 {
-  halfword p, q, r, pp, qq;
+  pointer p, q, r, pp, qq;
   halfword c, d;
-  unsigned char myvar_flag;
-  halfword macname;
-  boolean cyclehit;
+  unsigned char my_var_flag;
+  halfword mac_name;
+  boolean cycle_hit;
   scaled x, y;
   unsigned char t;
 
-  myvar_flag = var_flag;
+  my_var_flag = var_flag;
 lab_restart:
-  if ((cur_cmd < type_name) || (cur_cmd > plus_or_minus))
-    bad_exp (808);
+  if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
+    bad_exp(808);
   scan_tertiary();
 lab_continue:
   if (cur_cmd <= equals)
   {
     if (cur_cmd >= left_brace)
     {
-      if ((cur_cmd != equals) || (myvar_flag != 77))
+      if ((cur_cmd != equals) || (my_var_flag != assignment))
       {
         p = stash_cur_exp();
         c = cur_mod;
         d = cur_cmd;
-        if (d == 49)
+        if (d == expression_tertiary_macro)
         {
-          macname = cur_sym;
-          incr(mem[c].hh.lh);
+          mac_name = cur_sym;
+          add_mac_ref(c);
         }
-        if ((d < 48) || ((d == 48) && ((mem[p].hh.b0 == 14) || (mem[p].hh.b0 == 9))))
+        if ((d < ampersand) || ((d == ampersand) && ((type(p) == pair_type) || (type(p) == path_type))))
         {
-          cyclehit = false;
+          cycle_hit = false;
           {
-            unstash_cur_exp (p);
-            if (cur_type == 14)
+            unstash_cur_exp(p);
+            if (cur_type == pair_type)
               p = new_knot();
-            else if (cur_type == 9)
+            else if (cur_type == path_type)
               p = cur_exp;
             else
               goto lab_exit;
             q = p;
-            while (mem[q].hh.rh != p)
-              q = mem[q].hh.rh;
-            if (mem[p].hh.b0 != 0)
+            while (link(q) != p)
+              q = link(q);
+            if (left_type(p) != endpoint)
             {
-              r = copy_knot (p);
-              mem[q].hh.rh = r;
+              r = copy_knot(p);
+              link(q) = r;
               q = r;
             }
-            mem[p].hh.b0 = 4;
-            mem[q].hh.b1 = 4;
+            left_type(p) = open;
+            right_type(q) = open;
           }
         lab25:
           if (cur_cmd == left_brace)
           {
             t = scan_direction();
-            if (t != 4)
+            if (t != open)
             {
-              mem[q].hh.b1 = t;
-              mem[q + 5].cint = cur_exp;
-              if (mem[q].hh.b0 == 4)
+              right_type(q) = t;
+              right_given(q) = cur_exp;
+              if (left_type(q) == open)
               {
-                mem[q].hh.b0 = t;
-                mem[q + 3].cint = cur_exp;
+                left_type(q) = t;
+                left_given(q) = cur_exp;
               }
             }
           }
           d = cur_cmd;
-          if (d == 47)
+          if (d == path_join)
           {
             get_x_next();
             if (cur_cmd == tension)
@@ -19837,15 +19092,15 @@ lab_continue:
               if (cur_cmd == at_least)
                 get_x_next();
               scan_primary();
-              if ((cur_type != 16) || (cur_exp < three_quarter_unit))
+              if ((cur_type != known) || (cur_exp < three_quarter_unit))
               {
-                disp_err (null, "Improper tension has been set to 1");
+                disp_err(null, "Improper tension has been set to 1");
                 help1("The expression above should have been a number >=3/4.");
-                put_get_flush_error (unity);
+                put_get_flush_error(unity);
               }
-              if (y == 59)
-                cur_exp = -cur_exp;
-              mem[q + 6].cint = cur_exp;
+              if (y == at_least)
+                negate(cur_exp);
+              right_tension(q) = cur_exp;
               if (cur_cmd == and_command)
               {
                 get_x_next();
@@ -19853,30 +19108,30 @@ lab_continue:
                 if (cur_cmd == at_least)
                   get_x_next();
                 scan_primary();
-                if ((cur_type != 16) || (cur_exp < three_quarter_unit))
+                if ((cur_type != known) || (cur_exp < three_quarter_unit))
                 {
                   disp_err(null, "Improper tension has been set to 1");
                   help1("The expression above should have been a number >=3/4.");
-                  put_get_flush_error (unity);
+                  put_get_flush_error(unity);
                 }
-                if (y == 59)
-                  cur_exp = -cur_exp;
+                if (y == at_least)
+                  negate(cur_exp);
               }
               y = cur_exp;
             }
             else if (cur_cmd == controls)
             {
-              mem[q].hh.b1 = 1;
-              t = 1;
+              right_type(q) = explicit;
+              t = explicit;
               get_x_next();
               scan_primary();
               known_pair();
-              mem[q + 5].cint = cur_x;
-              mem[q + 6].cint = cur_y;
+              right_x(q) = cur_x;
+              right_y(q) = cur_y;
               if (cur_cmd != and_command)
               {
-                x = mem[q + 5].cint;
-                y = mem[q + 6].cint;
+                x = right_x(q);
+                y = right_y(q);
               }
               else
               {
@@ -19889,47 +19144,47 @@ lab_continue:
             }
             else
             {
-              mem[q + 6].cint = unity;
+              right_tension(q) = unity;
               y = unity;
               back_input();
               goto done;
             }
             if (cur_cmd != path_join)
             {
-              missing_err (408);
+              missing_err(408);
               help1("A path join command should end with two dots.");
               back_error();
             }
             done:;
           }
-          else if (d != 48)
+          else if (d != ampersand)
             goto lab26;
           get_x_next();
           if (cur_cmd == left_brace)
           {
             t = scan_direction();
-            if (mem[q].hh.b1 != 1)
+            if (right_type(q) != explicit)
               x = cur_exp;
             else
-              t = 1;
+              t = explicit;
           }
-          else if (mem[q].hh.b1 != 1)
+          else if (right_type(q) != explicit)
           {
-            t = 4;
+            t = open;
             x = 0;
           }
           if (cur_cmd == cycle)
           {
-            cyclehit = true;
+            cycle_hit = true;
             get_x_next();
             pp = p;
             qq = p;
-            if (d == 48)
+            if (d == ampersand)
             {
               if (p == q)
               {
-                d = 47;
-                mem[q + 6].cint = unity;
+                d = path_join;
+                right_tension(q) = unity;
                 y = unity;
               }
             }
@@ -19938,137 +19193,137 @@ lab_continue:
           {
             scan_tertiary();
             {
-              if (cur_type != 9)
+              if (cur_type != path_type)
                 pp = new_knot();
               else
                 pp = cur_exp;
               qq = pp;
-              while (mem[qq].hh.rh != pp)
-                qq = mem[qq].hh.rh;
-              if (mem[pp].hh.b0 != 0)
+              while (link(qq) != pp)
+                qq = link(qq);
+              if (left_type(pp) != endpoint)
               {
-                r = copy_knot (pp);
-                mem[qq].hh.rh = r;
+                r = copy_knot(pp);
+                link(qq) = r;
                 qq = r;
               }
-              mem[pp].hh.b0 = 4;
-              mem[qq].hh.b1 = 4;
+              left_type(pp) = open;
+              right_type(qq) = open;
             }
           }
           {
-            if (d == 48)
+            if (d == ampersand)
             {
-              if ((mem[q + 1].cint != mem[pp + 1].cint) || (mem[q + 2].cint != mem[pp + 2].cint))
+              if ((x_coord(q) != x_coord(pp)) || (y_coord(q) != y_coord(pp)))
               {
                 print_err("Paths don't touch; `&' will be changed to `..'");
                 help3("When you join paths `p&q', the ending point of p",
                   "must be exactly equal to the starting point of q.",
                   "So I'm going to pretend that you said `p..q' instead.");
                 put_get_error();
-                d = 47;
-                mem[q + 6].cint = unity;
+                d = path_join;
+                right_tension(q) = unity;
                 y = unity;
               }
             }
-            if (mem[pp].hh.b1 == 4)
+            if (right_type(pp) == open)
             {
-              if ((t == 3) || (t == 2))
+              if ((t == curl) || (t == given))
               {
-                mem[pp].hh.b1 = t;
-                mem[pp + 5].cint = x;
+                right_type(pp) = t;
+                right_given(pp) = x;
               }
             }
-            if (d == 48)
+            if (d == ampersand)
             {
-              if (mem[q].hh.b0 == 4)
+              if (left_type(q) == open)
               {
-                if (mem[q].hh.b1 == 4)
+                if (right_type(q) == open)
                 {
-                  mem[q].hh.b0 = 3;
-                  mem[q + 3].cint = unity;
+                  left_type(q) = curl;
+                  left_curl(q) = unity;
                 }
               }
-              if (mem[pp].hh.b1 == 4)
+              if (right_type(pp) == open)
               {
-                if (t == 4)
+                if (t == open)
                 {
-                  mem[pp].hh.b1 = 3;
-                  mem[pp + 5].cint = unity;
+                  right_type(pp) = curl;
+                  right_curl(pp) = unity;
                 }
               }
-              mem[q].hh.b1 = mem[pp].hh.b1;
-              mem[q].hh.rh = mem[pp].hh.rh;
-              mem[q + 5].cint = mem[pp + 5].cint;
-              mem[q + 6].cint = mem[pp + 6].cint;
-              free_node (pp, 7);
+              right_type(q) = right_type(pp);
+              link(q) = link(pp);
+              right_x(q) = right_x(pp);
+              right_y(q) = right_y(pp);
+              free_node(pp, knot_node_size);
               if (qq == pp)
                 qq = q;
             }
             else
             {
-              if (mem[q].hh.b1 == 4)
+              if (right_type(q) == open)
               {
-                if ((mem[q].hh.b0 == 3) || (mem[q].hh.b0 == 2))
+                if ((left_type(q) == curl) || (left_type(q) == given))
                 {
-                  mem[q].hh.b1 = mem[q].hh.b0;
-                  mem[q + 5].cint = mem[q + 3].cint;
+                  right_type(q) = left_type(q);
+                  right_given(q) = left_given(q);
                 }
               }
-              mem[q].hh.rh = pp;
-              mem[pp + 4].cint = y;
-              if (t != 4)
+              link(q) = pp;
+              left_y(pp) = y;
+              if (t != open)
               {
-                mem[pp + 3].cint = x;
-                mem[pp].hh.b0 = t;
+                left_x(pp) = x;
+                left_type(pp) = t;
               }
             }
             q = qq;
           }
-          if (cur_cmd >= left_brace)
+          if (cur_cmd >= min_expression_command)
           {
             if (cur_cmd <= ampersand)
             {
-              if (!cyclehit)
+              if (!cycle_hit)
                 goto lab25;
             }
           }
         lab26:
-          if (cyclehit)
+          if (cycle_hit)
           {
-            if (d == 48)
+            if (d == ampersand)
               p = q;
           }
           else
           {
-            mem[p].hh.b0 = 0;
-            if (mem[p].hh.b1 == 4)
+            left_type(p) = endpoint;
+            if (right_type(p) == open)
             {
-              mem[p].hh.b1 = 3;
-              mem[p + 5].cint = unity;
+              right_type(p) = curl;
+              right_curl(p) = unity;
             }
-            mem[q].hh.b1 = 0;
-            if (mem[q].hh.b0 == 4)
+            right_type(q) = endpoint;
+            if (left_type(q) == open)
             {
-              mem[q].hh.b0 = 3;
-              mem[q + 3].cint = unity;
+              left_type(q) = curl;
+              left_curl(q) = unity;
             }
-            mem[q].hh.rh = p;
+            link(q) = p;
           }
-          make_choices (p);
-          cur_type = 9;
+          make_choices(p);
+          cur_type = path_type;
           cur_exp = p;
         }
         else
         {
           get_x_next();
           scan_tertiary();
-          if (d != 49)
-            do_binary (p, c);
+          if (d != expression_tertiary_macro)
+            do_binary(p, c);
           else
           {
             back_input();
-            binary_mac (p, c, macname);
-            decr(mem[c].hh.lh);
+            binary_mac(p, c, mac_name);
+            decr(ref_count(c));
             get_x_next();
             goto lab_restart;
           }
@@ -20124,11 +19379,11 @@ void close_files_and_terminate (void)
       fprintf (log_file, "%c%ld%s", ' ', (long)max_str_ptr - init_str_ptr, " string");
       if (max_str_ptr != init_str_ptr + 1)
         putc ('s', log_file);
-      fprintf (log_file, "%s%ld\n", " out of ", (long)max_strings - init_str_ptr);
-      fprintf (log_file, "%c%ld%s%ld\n", ' ', (long)max_pool_ptr - init_pool_ptr, " string characters out of ", (long)pool_size - init_pool_ptr);
-      fprintf (log_file, "%c%ld%s%ld\n", ' ', (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2, " words of memory out of ", (long)mem_end + 1);
-      fprintf (log_file, "%c%ld%s%ld\n", ' ', (long)st_count, " symbolic tokens out of ", (long)9500);
-      fprintf (log_file, "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n", ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,", (long)max_wiggle, "r,", (long)150, "p,", (long)buf_size, 'b');
+      fprintf(log_file, "%s%ld\n", " out of ", (long)max_strings - init_str_ptr);
+      fprintf(log_file, "%c%ld%s%ld\n", ' ', (long)max_pool_ptr - init_pool_ptr, " string characters out of ", (long)pool_size - init_pool_ptr);
+      fprintf(log_file, "%c%ld%s%ld\n", ' ', (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2, " words of memory out of ", (long)mem_end + 1);
+      fprintf(log_file, "%c%ld%s%ld\n", ' ', (long)st_count, " symbolic tokens out of ", (long)9500);
+      fprintf(log_file, "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n", ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,", (long)max_wiggle, "r,", (long)150, "p,", (long)buf_size, 'b');
     }
   }
 #endif /* STAT */

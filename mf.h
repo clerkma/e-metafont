@@ -1201,6 +1201,12 @@ do {                        \
 #define left_v left_x //{|v| value for a pen edge}
 #define right_class right_y //{equivalence class number of a pen edge}
 #define left_length left_y //{length of a pen edge}
+/* 547 */
+#define we_found_it() \
+do {                          \
+  tt = (t + 04000) / 010000;  \
+  goto found;                 \
+} while (0)
 /* 553 */
 #define stack_1(a) bisect_stack[a] //{$U_1$, $V_1$, $X_1$, or $Y_1$}
 #define stack_2(a) bisect_stack[a+1] //{$U_2$, $V_2$, $X_2$, or $Y_2$}
