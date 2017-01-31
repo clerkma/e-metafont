@@ -1,6 +1,5 @@
 #include "mf.h"
 
-
 /* 4 */
 void initialize (void)
 {
@@ -309,9 +308,7 @@ void initialize (void)
     skip_table[k] = undefined_label;
   }
   for (k = 1; k <= header_size; k++)
-  {
     header_byte[k] = -1;
-  }
   bc = 255;
   ec = 0;
   nl = 0;
@@ -645,7 +642,7 @@ void print_diagnostic (str_number s, str_number t, boolean nuline)
     print_nl(s);
   else
     print(s);
-  print(450);
+  print(" at line ");
   print_int(line);
   print(t);
   print_char(':');
@@ -772,7 +769,7 @@ void error (void)
                   print(so(str_pool[j]));
                 else if (j + 1 == str_start[err_help + 1])
                   print_ln();
-                else if (str_pool[j + 1] != 37)
+                else if (str_pool[j + 1] != si('%'))
                   print_ln();
                 else
                 {
@@ -830,20 +827,20 @@ void error (void)
             {
               case 'Q':
                 {
-                  print(273);
+                  print("batchmode");
                   decr(selector);
                 }
                 break;
               case 'R':
-                print(274);
+                print("nonstopmode");
                 break;
               case 'S':
-                print(275);
+                print("scrollmode");
                 break;
             }
-            print(276);
+            print("...");
             print_ln();
-            fflush(stdout);
+            update_terminal();
             goto lab_exit;
           }
           break;
@@ -872,23 +869,23 @@ void error (void)
   incr(error_count);
   if (error_count == 100)
   {
-    print_nl(264);
+    print_nl("(That makes 100 errors; please try again.)");
     history = fatal_error_stop;
-    jump_out ();
+    jump_out();
   }
   if (interaction > batch_mode)
     decr(selector);
   if (use_err_help)
   {
-    print_nl(261);
+    print_nl("");
     j = str_start[err_help];
     while (j < str_start[err_help + 1])
     {
-      if (str_pool[j]!= 37)
-        print(str_pool[j]);
+      if (str_pool[j] != si('%'))
+        print(so(str_pool[j]));
       else if (j + 1 == str_start[err_help + 1])
         print_ln();
-      else if (str_pool[j + 1]!= 37)
+      else if (str_pool[j + 1] != si('%'))
         print_ln();
       else
       {
@@ -971,6 +968,7 @@ boolean init_terminal (void)
   }
   while (true)
   {
+    wakeup_terminal();
     fputs("**", stdout);
     fflush(stdout);
     if (!input_ln(stdin, true))
@@ -996,8 +994,6 @@ lab_exit:;
 /* 44 */
 str_number make_string (void)
 {
-  str_number Result;
-  
   if (str_ptr == max_str_ptr)
   {
     if (str_ptr == max_strings)
@@ -1007,20 +1003,18 @@ str_number make_string (void)
   str_ref[str_ptr] = 1;
   incr(str_ptr);
   str_start[str_ptr] = pool_ptr;
-  Result = str_ptr - 1;
-  return Result;
+  return str_ptr - 1;
 }
 /* 45 */
 boolean str_eq_buf (str_number s, integer k)
 {
-  boolean Result;
   pool_pointer j;
   boolean result;
 
   j = str_start[s];
   while (j < str_start[s + 1])
   {
-    if (str_pool[j]!= buffer[k])
+    if (str_pool[j] != buffer[k])
     {
       result = false;
       goto not_found;
@@ -1030,8 +1024,7 @@ boolean str_eq_buf (str_number s, integer k)
   }
   result = true;
 not_found:
-  Result = result;
-  return Result;
+  return result;
 }
 /* 46 */
 integer str_vs_str (str_number s, str_number t)
@@ -1126,10 +1119,8 @@ void term_input (void)
   term_offset = 0;
   decr(selector);
   if (last != first)
-  {
     for (k = first; k <= last - 1; k++)
       print(buffer[k]);
-  }
   print_ln();
   buffer[last] = '%';
   incr(selector);
@@ -1169,7 +1160,7 @@ void missing_err (str_number s)
 {
   print_err("Missing `");
   print(s);
-  print(299);
+  print("' has been inserted");
 }
 /* 99 */
 void clear_arith (void)
@@ -1185,31 +1176,27 @@ void clear_arith (void)
 /* 100 */
 integer slow_add (integer x, integer y)
 {
-  integer Result;
-
   if (x >= 0)
   {
     if (y <= el_gordo - x)
-      Result = x + y;
+      return x + y;
     else
     {
       arith_error = true;
-      Result = el_gordo;
+      return el_gordo;
     }
   }
   else if (-y <= el_gordo + x)
-    Result = x + y;
+    return x + y;
   else
   {
     arith_error = true;
-    Result = -el_gordo;
+    return -el_gordo;
   }
-  return Result;
 }
 /* 102 */
 scaled round_decimals (small_number k)
 {
-  scaled Result;
   integer a;
   
   a = 0;
@@ -1218,13 +1205,11 @@ scaled round_decimals (small_number k)
     decr(k);
     a = (a + dig[k] * two) / 10;
   }
-  Result = half(a + 1);
-  return Result;
+  return half(a + 1);
 }
 /* 107 */
 fraction make_fraction (integer p, integer q)
 {
-  fraction Result;
   integer f;
   integer n;
   boolean negative;
@@ -1234,15 +1219,15 @@ fraction make_fraction (integer p, integer q)
     negative = false;
   else
   {
-    p = -p;
+    negate(p);
     negative = true;
   }
   if (q <= 0)
   {
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
     if (q == 0)
       confusion("/");
-#endif /* TEXMF_DEBUG */
+#endif
     negate(q);
     negative = !negative;
   }
@@ -1252,9 +1237,9 @@ fraction make_fraction (integer p, integer q)
   {
     arith_error = true;
     if (negative)
-      Result = -el_gordo;
+      return -el_gordo;
     else
-      Result = el_gordo;
+      return el_gordo;
   }
   else
   {
@@ -1267,7 +1252,7 @@ fraction make_fraction (integer p, integer q)
         f = f + f + 1;
       else
       {
-        f = f + f;
+        _double(f);
         p = p + q;
       }
     } while (!(f >= fraction_one));
@@ -1275,16 +1260,14 @@ fraction make_fraction (integer p, integer q)
     if (be_careful + p >= 0)
       incr(f);
     if (negative)
-      Result = -(f + n);
+      return -(f + n);
     else
-      Result = f + n;
+      return f + n;
   }
-  return Result;
 }
 /* 109 */
 integer take_fraction (integer q, fraction f)
 {
-  integer Result;
   integer p;
   boolean negative;
   integer n;
@@ -1319,7 +1302,6 @@ integer take_fraction (integer q, fraction f)
   f = f + fraction_one;
   p = fraction_half;
   if (q < fraction_four)
-  {
     do {
       if (odd(f))
         p = half(p + q);
@@ -1327,9 +1309,7 @@ integer take_fraction (integer q, fraction f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
-  }
   else
-  {
     do {
       if (odd(f))
         p = p + half(q - p);
@@ -1337,7 +1317,6 @@ integer take_fraction (integer q, fraction f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
-  }
   be_careful = n - el_gordo;
   if (be_careful + p > 0)
   {
@@ -1345,15 +1324,13 @@ integer take_fraction (integer q, fraction f)
     n = el_gordo - p;
   }
   if (negative)
-    Result = -(n + p);
+    return -(n + p);
   else
-    Result = n + p;
-  return Result;
+    return n + p;
 }
 /* 112 */
 integer take_scaled (integer q, scaled f)
 {
-  integer Result;
   integer p;
   boolean negative;
   integer n;
@@ -1388,7 +1365,6 @@ integer take_scaled (integer q, scaled f)
   f = f + unity;
   p = half_unit;
   if (q < fraction_four)
-  {
     do {
       if (odd(f))
         p = half(p + q);
@@ -1396,9 +1372,7 @@ integer take_scaled (integer q, scaled f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
-  }
   else
-  {
     do {
       if (odd(f))
         p = p + half(q - p);
@@ -1406,7 +1380,6 @@ integer take_scaled (integer q, scaled f)
         p = half(p);
       f = half(f);
     } while (!(f == 1));
-  }
   be_careful = n - el_gordo;
   if (be_careful + p > 0)
   {
@@ -1414,15 +1387,13 @@ integer take_scaled (integer q, scaled f)
     n = el_gordo - p;
   }
   if (negative)
-    Result = -(n + p);
+    return -(n + p);
   else
-    Result = n + p;
-  return Result;
+    return n + p;
 }
 /* 114 */
 scaled make_scaled (integer p, integer q)
 {
-  scaled Result;
   integer f;
   integer n;
   boolean negative;
@@ -1437,7 +1408,7 @@ scaled make_scaled (integer p, integer q)
   }
   if (q <= 0)
   {
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
     if (q == 0)
       confusion("/");
 #endif
@@ -1446,13 +1417,13 @@ scaled make_scaled (integer p, integer q)
   }
   n = p / q;
   p = p % q;
-  if (n >= half_unit)
+  if (n >= 0100000)
   {
     arith_error = true;
     if (negative)
-      Result = -el_gordo;
+      return -el_gordo;
     else
-      Result = el_gordo;
+      return el_gordo;
   }
   else
   {
@@ -1473,16 +1444,14 @@ scaled make_scaled (integer p, integer q)
     if (be_careful + p >= 0)
       incr(f);
     if (negative)
-      Result = -(f + n);
+      return -(f + n);
     else
-      Result = f + n;
+      return f + n;
   }
-  return Result;
 }
 /* 116 */
 fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
 {
-  fraction Result;
   integer acc, num, denom;
 
   acc = take_fraction(st - (sf / 16), sf - (st / 16));
@@ -1492,10 +1461,9 @@ fraction velocity (fraction st, fraction ct, fraction sf, fraction cf, scaled t)
   if (t != unity)
     num = make_scaled(num, t);
   if (num / 4 >= denom)
-    Result = fraction_four;
+    return fraction_four;
   else
-    Result = make_fraction(num, denom);
-  return Result;
+    return make_fraction(num, denom);
 }
 /* 117 */
 integer ab_vs_cd (integer a, integer b, integer c, integer d)
@@ -1581,7 +1549,6 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
 /* 121 */
 scaled square_rt (scaled x)
 {
-  scaled Result;
   small_number k;
   integer y, q;
   
@@ -1591,12 +1558,12 @@ scaled square_rt (scaled x)
     {
       print_err("Square root of ");
       print_scaled(x);
-      print(306);
+      print(" has been replaced by 0");
       help2("Since I don't take square roots of negative numbers,",
         "I'm zeroing this one. Proceed, with fingers crossed.");
       error();
     }
-    Result = 0;
+    return 0;
   }
   else
   {
@@ -1615,16 +1582,16 @@ scaled square_rt (scaled x)
       y = 1;
     }
     do {
-      x = x + x;
-      y = y + y;
+      _double(x);
+      _double(y);
       if (x >= fraction_four)
       {
         x = x - fraction_four;
         incr(y);
       }
-      x = x + x;
+      _double(x);
       y = y + y - q;
-      q = q + q;
+      _double(q);
       if (x >= fraction_four)
       {
         x = x - fraction_four;
@@ -1642,9 +1609,8 @@ scaled square_rt (scaled x)
       }
       decr(k);
     } while (!(k == 0));
-    Result = half(q);
+    return half(q);
   }
-  return Result;
 }
 /* 124 */
 integer pyth_add (integer a, integer b)
@@ -1681,7 +1647,7 @@ integer pyth_add (integer a, integer b)
       a = a + take_fraction(a + a, r);
       b = take_fraction(b, r);
     }
-    done:;
+  done:;
     if (big)
     {
       if (a < fraction_two)
@@ -1693,13 +1659,11 @@ integer pyth_add (integer a, integer b)
       }
     }
   }
-  Result = a;
-  return Result;
+  return a;
 }
 /* 126 */
 integer pyth_sub (integer a, integer b)
 {
-  integer Result;
   fraction r;
   boolean big;
   
@@ -1711,9 +1675,9 @@ integer pyth_sub (integer a, integer b)
     {
       print_err("Pythagorean subtraction ");
       print_scaled(a);
-      print(310);
+      print("+-+");
       print_scaled(b);
-      print(306);
+      print(" has been replaced by 0");
       help2("Since I don't take square roots of negative numbers,",
         "I'm zeroing this one. Proceed, with fingers crossed.");
       error();
@@ -1744,13 +1708,11 @@ integer pyth_sub (integer a, integer b)
     if (big)
       a = a + a;
   }
-  Result = a;
-  return Result;
+  return a;
 }
 /* 132 */
 scaled m_log (scaled x)
 {
-  scaled Result;
   integer y, z;
   integer k;
 
@@ -1758,11 +1720,11 @@ scaled m_log (scaled x)
   {
     print_err("Logarithm of ");
     print_scaled(x);
-    print(306);
+    print(" has been replaced by 0");
     help2("Since I don't take logs of non-positive numbers,",
       "I'm zeroing this one. Proceed, with fingers crossed.");
     error();
-    Result = 0;
+    return 0;
   }
   else
   {
@@ -1770,7 +1732,7 @@ scaled m_log (scaled x)
     z = 27595 + 6553600;
     while (x < fraction_four)
     {
-      x = x + x;
+      _double(x);
       y = y - 93032639;
       z = z - 48782;
     }
@@ -1787,24 +1749,22 @@ scaled m_log (scaled x)
       y = y + spec_log[k];
       x = x - z;
     }
-    Result = y / 8;
+    return y / 8;
   }
-  return Result;
 }
 /* 135 */
 scaled m_exp (scaled x)
 {
-  scaled Result;
   small_number k;
   integer y, z;
   
   if (x > 174436200)
   {
     arith_error = true;
-    Result = el_gordo;
+    return el_gordo;
   }
   else if (x < -197694359)
-    Result = 0;
+    return 0;
   else
   {
     if (x <= 0)
@@ -1831,11 +1791,10 @@ scaled m_exp (scaled x)
       incr(k);
     }
     if (x <= 127919879)
-      Result = (y + 8) / 16;
+      return (y + 8) / 16;
     else
-      Result = y;
+      return y;
   }
-  return Result;
 }
 /* 139 */
 angle n_arg (integer x, integer y)
@@ -2069,23 +2028,20 @@ void init_randoms (scaled seed)
 /* 151 */
 scaled unif_rand (scaled x)
 {
-  scaled Result;
   scaled y;
   
   next_random();
   y = take_fraction(abs(x), randoms[j_random]);
   if (y == abs(x))
-    Result = 0;
+    return 0;
   else if (x > 0)
-    Result = y;
+    return y;
   else
-    Result = -y;
-  return Result;
+    return -y;
 }
 /* 152 */
 scaled norm_rand (void)
 {
-  scaled Result;
   integer x, u, l;
 
   do {
@@ -2098,14 +2054,13 @@ scaled norm_rand (void)
     x = make_fraction (x, u);
     l = 139548960 - m_log(u);
   } while (!(ab_vs_cd(1024, l, x, x) >= 0));
-  Result = x;
-  return Result;
+  return x;
 }
 /* 157 */
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
 void print_word (memory_word w)
 {
-  print_int(w.sc);
+  print_int(w.cint);
   print_char(' ');
   print_scaled(w.sc);
   print_char(' ');
@@ -2127,7 +2082,7 @@ void print_word (memory_word w)
   print_char(':');
   print_int(w.qqqq.b3);
 }
-#endif /* TEXMF_DEBUG */
+#endif
 void print_capsule(void);
 /* 217 */
 void show_token_list (integer p, integer q, integer l, integer null_tally)
@@ -2140,22 +2095,15 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
   while ((p != null) && (tally < l))
   {
     if (p == q)
-    {
-      first_count = tally;
-      trick_count = tally + 1 + error_line - half_error_line;
-      if (trick_count < error_line)
-        trick_count = error_line;
-    }
+      set_trick_count();
     c = letter_class;
     if ((p < mem_min) || (p > mem_end))
     {
-      print(493);
+      print(" CLOBBERED");
       goto lab_exit;
     }
     if (p < hi_mem_min)
-    {
       if (name_type(p) == token)
-      {
         if (type(p) == known)
         {
           if (cclass == digit_class)
@@ -2173,11 +2121,11 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
           else
           {
             print_scaled(v);
-            c = 0;
+            c = digit_class;
           }
         }
         else if (type(p) != string_type)
-          print(496);
+          print(" BAD");
         else
         {
           print_char('"');
@@ -2185,16 +2133,15 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
           print_char('"');
           c = string_class;
         }
-      }
       else if ((name_type(p) != capsule) || (type(p) < vacuous) || (type(p) > independent))
-        print(496);
+        print(" BAD");
       else
       {
         g_pointer = p;
         print_capsule();
         c = right_paren_class;
       }
-    }
+
     else
     {
       r = info(p);
@@ -2202,17 +2149,17 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
       {
         if (r < suffix_base)
         {
-          print(498);
+          print("EXPR");
           r = r - (expr_base);
         }
         else if (r < text_base)
         {
-          print(499);
+          print("SUFFIX");
           r = r - (suffix_base);
         }
         else
         {
-          print(500);
+          print("TEXT");
           r = r - (text_base);
         }
         print_int(r);
@@ -2220,22 +2167,20 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
         c = right_paren_class;
       }
       else if (r < 1)
-      {
         if (r == 0)
         {
           if (cclass == left_bracket_class)
             print_char(' ');
-          print(497);
+          print("[]");
           c = right_bracket_class;
         }
         else
-          print(494);
-      }
+          print(" IMPOSSIBLE");
       else
       {
         r = text(r);
         if ((r < 0) || (r >= str_ptr))
-          print(495);
+          print(" NONEXISTENT");
         else
         {
           c = char_class[str_pool[str_start[r]]];
@@ -2262,7 +2207,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
     p = link(p);
   }
   if (p != null)
-    print(492);
+    print(" ETC.");
   lab_exit:;
 }
 /* 665 */
@@ -2291,7 +2236,6 @@ void runaway (void)
 /* 163 */
 pointer get_avail (void)
 {
-  pointer Result;
   pointer p;
   
   p = avail;
@@ -2315,9 +2259,8 @@ pointer get_avail (void)
   link(p) = null;
 #ifdef STAT
   incr(dyn_used);
-#endif /* STAT */
-  Result = p;
-  return Result;
+#endif
+  return p;
 }
 /* 167 */
 pointer get_node (integer s)
@@ -2334,10 +2277,12 @@ lab_restart:
     q = p + node_size(p);
     while (is_empty(q))
     {
-      t = rlink(q); tt = llink(q);
+      t = rlink(q);
+      tt = llink(q);
       if (q == rover)
         rover = t;
-      llink(t) = tt; rlink(tt) = t;
+      llink(t) = tt;
+      rlink(tt) = t;
       q = q + node_size(q);
     }
     r = q - s;
@@ -2348,14 +2293,14 @@ lab_restart:
       goto found;
     }
     if (r == p)
-    {
       if (rlink(p) != p)
       {
-        rover = rlink(p); t = llink(p);
-        llink(rover) = t; rlink(t) = rover;
+        rover = rlink(p);
+        t = llink(p);
+        llink(rover) = t;
+        rlink(t) = rover;
         goto found;
       }
-    }
     node_size(p) = q - p;
     p = rlink(p);
   } while (!(p == rover));
@@ -2365,7 +2310,6 @@ lab_restart:
     goto lab_exit;
   }
   if (lo_mem_max + 2 < hi_mem_min)
-  {
     if (lo_mem_max + 2 <= mem_min + max_halfword)
     {
       if (hi_mem_min - lo_mem_max >= 1998)
@@ -2374,18 +2318,26 @@ lab_restart:
         t = lo_mem_max + 1 + (hi_mem_min - lo_mem_max) / 2;
       if (t > mem_min + max_halfword)
         t = mem_min + max_halfword;
-      p = llink(rover); q = lo_mem_max; rlink(p) = q; llink(rover) = q;
-      rlink(q) = rover; llink(q) = p; link(q) = empty_flag; node_size(q) = t - lo_mem_max;
-      lo_mem_max = t; link(lo_mem_max) = null; info(lo_mem_max) = null;
-      rover = q; goto lab_restart;
+      p = llink(rover);
+      q = lo_mem_max;
+      rlink(p) = q;
+      llink(rover) = q;
+      rlink(q) = rover;
+      llink(q) = p;
+      link(q) = empty_flag;
+      node_size(q) = t - lo_mem_max;
+      lo_mem_max = t;
+      link(lo_mem_max) = null;
+      info(lo_mem_max) = null;
+      rover = q;
+      goto lab_restart;
     }
-  }
-  overflow("main memory size", mem_max + 1);
+  overflow("main memory size", mem_max + 1 - mem_min);
 found:
   link(r) = null;
 #ifdef STAT
   var_used = var_used + s;
-#endif /* STAT */
+#endif
   Result = r;
 lab_exit:;
   return Result;
@@ -2404,13 +2356,13 @@ void free_node (pointer p, halfword s)
   rlink(q) = p;
 #ifdef STAT
   var_used = var_used - s;
-#endif /* STAT */
+#endif
 }
 /* 173 */
 void sort_avail (void)
 {
-  halfword p, q, r;
-  halfword old_rover;
+  pointer p, q, r;
+  pointer old_rover;
 
   p = get_node(010000000000);
   p = rlink(rover);
@@ -2429,7 +2381,7 @@ void sort_avail (void)
     {
       q = rover;
       while (rlink(q) < p)
-        q = rlink(q);;
+        q = rlink(q);
       r = rlink(p);
       rlink(p) = rlink(q);
       rlink(q) = p;
@@ -2451,7 +2403,6 @@ void flush_list (pointer p)
   pointer q, r;
 
   if (p >= hi_mem_min)
-  {
     if (p != sentinel)
     {
       r = p;
@@ -2460,7 +2411,7 @@ void flush_list (pointer p)
         r = link(r);
 #ifdef STAT
         decr(dyn_used);
-#endif /* STAT */
+#endif
         if (r < hi_mem_min)
           goto done;
       } while (!(r == sentinel));
@@ -2468,7 +2419,6 @@ void flush_list (pointer p)
       link(q) = avail;
       avail = p;
     }
-  }
 }
 /* 177 */
 void flush_node_list (pointer p)
@@ -2486,24 +2436,20 @@ void flush_node_list (pointer p)
   }
 }
 /* 180 */
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
 void check_mem (boolean print_locs)
 {
-  halfword p, q, r;
+  pointer p, q, r;
   boolean clobbered;
   
   for (p = 0; p <= lo_mem_max; p++)
-  {
     freearr[p] = false;
-  }
   for (p = hi_mem_min; p <= mem_end; p++)
-  {
     freearr[p] = false;
-  }
   p = avail;
-  q = 0;
+  q = null;
   clobbered = false;
-  while (p != 0)
+  while (p != null)
   {
     if ((p > mem_end) || (p < hi_mem_min))
       clobbered = true;
@@ -2511,52 +2457,51 @@ void check_mem (boolean print_locs)
       clobbered = true;
     if (clobbered)
     {
-      print_nl(316);
+      print_nl(("AVAIL list clobbered at ");
       print_int(q);
       goto done1;
     }
     freearr[p] = true;
     q = p;
-    p = mem[q].hh.rh;
+    p = link(q);
   }
-  done1:;
+done1:;
   p = rover;
-  q = 0;
+  q = null;
   clobbered = false;
   do {
-    if ((p >= lo_mem_max))
+    if ((p >= lo_mem_max) || (p < mem_min))
       clobbered = true;
-    else if ((mem[p + 1].hh.rh >= lo_mem_max))
+    else if ((rlink(p) >= lo_mem_max) || (rlink(p) < mem_min))
       clobbered = true;
-    else if (!((mem[p].hh.rh == 268435455)) || (mem[p].hh.lh < 2) ||
-      (p + mem[p].hh.lh > lo_mem_max) || (mem[mem[p + 1].hh.rh + 1].hh.lh != p))
+    else if (!(is_empty(p)) || (node_size(p) < 2) || (p + node_size(p) > lo_mem_max) || (llink(rlink(p)) != p))
       clobbered = true;
     if (clobbered)
     {
-      print_nl(317);
+      print_nl("Double-AVAIL list clobbered at ");
       print_int(q);
       goto done2;
     }
-    for (q = p; q <= p + mem[p].hh.lh - 1; q++)
+    for (q = p; q <= p + node_size(p) - 1; q++)
     {
       if (freearr[q])
       {
-        print_nl(318);
+        print_nl("Doubly free location at ");
         print_int(q);
         goto done2;
       }
       freearr[q] = true;
     }
     q = p;
-    p = mem[p + 1].hh.rh;
+    p = rlink(p);
   } while (!(p == rover));
-  done2:;
-  p = 0;
+done2:;
+  p = mem_min;
   while (p <= lo_mem_max)
   {
-    if ((mem[p].hh.rh == 268435455L))
+    if (is_empty(p))
     {
-      print_nl(319);
+      print_nl("Bad flag at ");
       print_int(p);
     }
     while ((p <= lo_mem_max) && !freearr[p])
@@ -2564,32 +2509,32 @@ void check_mem (boolean print_locs)
     while ((p <= lo_mem_max) && freearr[p])
       incr(p);
   }
-  q = 13;
-  p = mem[q].hh.rh;
-  while (p != 13)
+  q = dep_head;
+  p = link(q);
+  while (p != dep_head)
   {
-    if (mem[p + 1].hh.lh != q)
+    if (prev_dep(p) != q)
     {
-      print_nl(598);
+      print_nl("Bad PREVDEP at ");
       print_int(p);
     }
-    p = mem[p + 1].hh.rh;
-    r = 19;
+    p = dep_list(p);
+    r = inf_val;
     do {
-      if (mem[mem[p].hh.lh + 1].cint >= mem[r + 1].cint)
+      if (value(info(p)) >= value(r))
       {
-        print_nl(599);
+        print_nl("Out of order at ");
         print_int(p);
       }
-      r = mem[p].hh.lh;
+      r = info(p);
       q = p;
-      p = mem[q].hh.rh;
-    } while (!(r == 0));
+      p = link(q);
+    } while (!(r == null));
   }
   if (print_locs)
   {
-    print_nl(320);
-    for (p = 0; p <= lo_mem_max; p++)
+    print_nl("New busy locs:");
+    for (p = mem_min; p <= lo_mem_max; p++)
     {
       if (!freearr[p] && ((p > was_lo_max) || was_free[p]))
       {
@@ -2607,69 +2552,65 @@ void check_mem (boolean print_locs)
     }
   }
   for (p = 0; p <= lo_mem_max; p++)
-  {
     was_free[p] = freearr[p];
-  }
   for (p = hi_mem_min; p <= mem_end; p++)
-  {
     was_free[p] = freearr[p];
-  }
   was_mem_end = mem_end;
   was_lo_max = lo_mem_max;
   was_hi_min = hi_mem_min;
 }
-#endif /* TEXMF_DEBUG */
+#endif
 /* 185 */
-#ifdef TEXMF_DEBUG
-void search_mem (halfword p)
+#ifdef DEBUG
+void search_mem (pointer p)
 {
   integer q;
 
   for (q = 0; q <= lo_mem_max; q++)
   {
-    if (mem[q].hh.rh == p)
+    if (link(q) == p)
     {
-      print_nl(321);
+      print_nl("LINK(");
       print_int(q);
       print_char(')');
     }
-    if (mem[q].hh.lh == p)
+    if (info(q) == p)
     {
-      print_nl(322);
+      print_nl("INFO(");
       print_int(q);
       print_char(')');
     }
   }
   for (q = hi_mem_min; q <= mem_end; q++)
   {
-    if (mem[q].hh.rh == p)
+    if (link(q) == p)
     {
-      print_nl(321);
+      print_nl("LINK(");
       print_int(q);
       print_char(')');
     }
-    if (mem[q].hh.lh == p)
+    if (info(q) == p)
     {
-      print_nl(322);
+      print_nl("INFO(");
       print_int(q);
       print_char(')');
     }
   }
-  for (q = 1; q <= 9769; q++)
+  for (q = 1; q <= hash_end; q++)
   {
-    if (eqtb[q].rh == p)
+    if (equiv(q) == p)
     {
-      print_nl(458);
+      print_nl("EQUIV(");
       print_int(q);
       print_char(')');
     }
   }
 }
-#endif /* TEXMF_DEBUG */
+#endif
 /* 189 */
 void print_op (quarterword c)
 {
-  if (c <= 15)
+  if (c <= numeric_type)
     print_type(c);
   else
     switch (c)
@@ -2892,7 +2833,7 @@ void print_op (quarterword c)
 /* 194 */
 void fix_date_and_time (void)
 {
-  dateandtime(internal[time], internal[day], internal[month], internal[year]);
+  date_and_time(internal[time], internal[day], internal[month], internal[year]);
   internal[time] = internal[time] * unity;
   internal[day] = internal[day] * unity;
   internal[month] = internal[month] * unity;
@@ -2922,13 +2863,11 @@ pointer id_lookup (integer j, integer l)
   while (true)
   {
     if (text(p) > 0)
-    {
       if (length(text(p)) == l)
       {
         if (str_eq_buf(text(p), j))
           goto found;
       }
-    }
     if (next(p) == 0)
     {
       if (text(p) > 0)
@@ -2948,7 +2887,7 @@ pointer id_lookup (integer j, integer l)
       str_ref[text(p)] = max_str_ref;
 #ifdef STAT
       incr(st_count);
-#endif /* STAT */
+#endif
       goto found;
     }
     p = next(p);
@@ -3204,13 +3143,13 @@ void print_cmd_mod (integer c, integer m)
       switch (m)
       {
         case macro_prefix:
-          print("#@@");
+          print("#@");
           break;
         case macro_at:
-          print_char("@@");
+          print_char("@");
           break;
         case macro_suffix:
-          print("@@#");
+          print("@#");
           break;
         default:
           print("quote");
@@ -3470,6 +3409,9 @@ void show_macro (pointer p, integer q, integer l)
   tally = 0;
   switch (info(p))
   {
+    case general_macro:
+      print("->");
+      break;
     case primary_macro:
     case secondary_macro:
     case tertiary_macro:
@@ -3505,7 +3447,7 @@ void init_big_node (pointer p)
   q = get_node(s);
   do {
     s = s - 2;
-    new_index(q + s);
+    new_indep(q + s);
     name_type(q + s) = half(s) + x_part_sector;
     link(q + s) = null;
   } while (!(s == 0));
@@ -3515,7 +3457,6 @@ void init_big_node (pointer p)
 /* 233 */
 pointer id_transform (void)
 {
-  pointer Result;
   pointer p, q, r;
   
   p = get_node(value_node_size);
@@ -3532,8 +3473,7 @@ pointer id_transform (void)
   } while (!(r == q));
   value(xx_part_loc(q)) = unity;
   value(yy_part_loc(q)) = unity;
-  Result = p;
-  return Result;
+  return p;
 }
 /* 234 */
 void new_root (pointer x)
@@ -3577,7 +3517,7 @@ void print_variable_name (pointer p)
       case capsule:
         {
           print("%CAPSULE");
-          print_int(p - 0);
+          print_int(p - null);
           goto lab_exit;
         }
         break;
@@ -3590,7 +3530,7 @@ void print_variable_name (pointer p)
   {
     if (name_type(p) == subscr)
     {
-      r = new_num_tok (subscript(p));
+      r = new_num_tok(subscript(p));
       do {
         p = link(p);
       } while (!(name_type(p) == attr));
@@ -3632,10 +3572,8 @@ boolean interesting (pointer p)
   {
     t = name_type(p);
     if (t >= x_part_sector)
-    {
       if (t != capsule)
         t = name_type(link(p - 2 * (t - x_part_sector)));
-    }
     return (t != capsule);
   }
 }
@@ -3721,12 +3659,9 @@ pointer find_variable (pointer t)
   p = info(t);
   t = link(t);
   if (eq_type(p) % outer_tag != tag_token)
-  {
-    Result = 0;
-    goto lab_exit;
-  }
+    abort_find();
   if (eq_type(p) == null)
-    new_root (p);
+    new_root(p);
   p = equiv(p);
   pp = p;
   while (t != null)
@@ -3734,17 +3669,14 @@ pointer find_variable (pointer t)
     if (type(pp) != structured)
     {
       if (type(pp) > structured)
-      {
-        Result = 0;
-        goto lab_exit;
-      }
-      ss = new_structure (pp);
+        abort_find();
+      ss = new_structure(pp);
       if (p == pp)
         p = ss;
       pp = ss;
     }
     if (type(p) != structured)
-      p = new_structure (p);
+      p = new_structure(p);
     if (t < hi_mem_min)
     {
       n = value(t);
@@ -3780,7 +3712,7 @@ pointer find_variable (pointer t)
       } while (!(n <= attr_loc(ss)));
       if (n < attr_loc(ss))
       {
-        qq = get_node (attr_node_size);
+        qq = get_node(attr_node_size);
         link(rr) = qq;
         link(qq) = ss;
         attr_loc(qq) = n;
@@ -3820,14 +3752,10 @@ pointer find_variable (pointer t)
     t = link(t);
   }
   if (type(pp) >= structured)
-  {
     if (type(pp) == structured)
       pp = attr_head(pp);
     else
-    {
       abort_find();
-    }
-  }
   if (type(p) == structured)
     p = attr_head(p);
   if (type(p) == undefined)
@@ -3961,7 +3889,7 @@ void print_weight (pointer q, integer x_off)
   integer w, m;
   integer d;
 
-  d = info(q);
+  d = ho(info(q));
   w = d % 8;
   m = (d / 8) - m_offset(cur_edges);
   if (file_offset > max_print_line - 9)
@@ -4071,7 +3999,7 @@ void print_pen (pointer p, str_number s, boolean nuline)
       if (odd(k))
         ww = link(w);
       else
-        ww = knile(w);
+        ww = knil(w);
       if ((x_coord(ww) != x_coord(w)) || (y_coord(ww) != y_coord(w)))
       {
         if (nothing_printed)
@@ -4107,10 +4035,8 @@ void print_dependency (pointer p, small_number t)
       if ((v != 0) || (p == pp))
       {
         if (value(p) > 0)
-        {
           if (p != pp)
             print_char('+');
-        }
         print_scaled(value(p));
       }
       goto lab_exit;
@@ -4119,7 +4045,7 @@ void print_dependency (pointer p, small_number t)
       print_char('-');
     else if (p != pp)
       print_char('+');
-    if (t == 17)
+    if (t == dependent)
       v = round_fraction(v);
     if (v != unity)
       print_scaled(v);
@@ -4148,9 +4074,8 @@ void print_dp (small_number t, pointer p, small_number verbosity)
     print("linearform");
 }
 /* 799 */
-halfword stash_cur_exp (void)
+pointer stash_cur_exp (void)
 {
-  pointer Result;
   pointer p;
 
   switch (cur_type)
@@ -4232,7 +4157,7 @@ void print_exp (pointer p, small_number verbosity)
     case unknown_types:
     case numeric_type:
       {
-        print_type (t);
+        print_type(t);
         if (v != null)
         {
           print_char(' ');
@@ -4258,7 +4183,6 @@ void print_exp (pointer p, small_number verbosity)
       else
       {
         if (selector == term_and_log)
-        {
           if (internal[tracing_online] <= 0)
           {
             selector = term_only;
@@ -4266,7 +4190,6 @@ void print_exp (pointer p, small_number verbosity)
             print(" (see the transcript file)");
             selector = term_and_log;
           }
-        }
         switch (t)
         {
           case pen_type:
@@ -4324,7 +4247,7 @@ void print_exp (pointer p, small_number verbosity)
       break;
   }
   if (restore_cur_exp)
-    unstash_cur_exp (p);
+    unstash_cur_exp(p);
 }
 /* 807 */
 void disp_err (pointer p, str_number s)
@@ -4340,9 +4263,8 @@ void disp_err (pointer p, str_number s)
   }
 }
 /* 594 */
-halfword p_plus_fq(pointer p, integer f, pointer q, small_number t, small_number tt)
+pointer p_plus_fq (pointer p, integer f, pointer q, small_number t, small_number tt)
 {
-  pointer Result;
   pointer pp, qq;
   pointer r, s;
   integer threshold;
@@ -4358,7 +4280,6 @@ halfword p_plus_fq(pointer p, integer f, pointer q, small_number t, small_number
   while (true)
   {
     if (pp == qq)
-    {
       if (pp == null)
         goto done;
       else
@@ -4378,7 +4299,7 @@ halfword p_plus_fq(pointer p, integer f, pointer q, small_number t, small_number
           {
             if (watch_coefs)
             {
-              type(qq) = 0;
+              type(qq) = independent_needing_fix;
               fix_needed = true;
             }
           }
@@ -4389,7 +4310,6 @@ halfword p_plus_fq(pointer p, integer f, pointer q, small_number t, small_number
         q = link(q);
         qq = info(q);
       }
-    }
     else if (value(pp) < value(qq))
     {
       if (tt == dependent)
@@ -4405,7 +4325,7 @@ halfword p_plus_fq(pointer p, integer f, pointer q, small_number t, small_number
         {
           if (watch_coefs)
           {
-            type(qq) = null;
+            type(qq) = independent_needing_fix;
             fix_needed = true;
           }
         }
@@ -4430,13 +4350,11 @@ done:
     value(p) = slow_add(value(p), take_scaled(value(q), f));
   link(r) = p;
   dep_final = p;
-  Result = link(temp_head);
-  return Result;
+  return link(temp_head);
 }
 /* 600 */
 pointer p_over_v (pointer p, scaled v, small_number t0, small_number t1)
 {
-  pointer Result;
   pointer r, s;
   integer w;
   integer threshold;
@@ -4454,12 +4372,10 @@ pointer p_over_v (pointer p, scaled v, small_number t0, small_number t1)
   while (info(p) != null)
   {
     if (scaling_down)
-    {
       if (abs(v) < 02000000)
         w = make_scaled(value(p), v * 010000);
       else
         w = make_scaled(round_fraction(value(p)), v);
-    }
     else
       w = make_scaled(value(p), v);
     if (abs(w) <= threshold)
@@ -4483,8 +4399,7 @@ pointer p_over_v (pointer p, scaled v, small_number t0, small_number t1)
   }
   link(r) = p;
   value(p) = make_scaled(value(p), v);
-  Result = link(temp_head);
-  return Result;
+  return link(temp_head);
 }
 /* 602 */
 void val_too_big (scaled x)
@@ -4511,11 +4426,10 @@ void make_known (pointer p, pointer q)
   t = type(p);
   type(p) = known;
   value(p) = value(q);
-  free_node (q, dep_node_size);
+  free_node(q, dep_node_size);
   if (abs(value(p)) >= fraction_one)
     val_too_big(value(p));
   if (internal[tracing_equations] > 0)
-  {
     if (interesting(p))
     {
       begin_diagnostic();
@@ -4523,18 +4437,15 @@ void make_known (pointer p, pointer q)
       print_variable_name(p);
       print_char('=');
       print_scaled(value(p));
-      end_diagnostic (false);
+      end_diagnostic(false);
     }
-  }
   if (cur_exp == p)
-  {
     if (cur_type == t)
     {
       cur_type = known;
       cur_exp = value(p);
       free_node(p, value_node_size);
     }
-  }
 }
 /* 604 */
 void fix_dependencies (void)
@@ -4568,7 +4479,7 @@ void fix_dependencies (void)
         if (value(q) == 0)
         {
           link(r) = link(q);
-          free_node (q, dep_node_size);
+          free_node(q, dep_node_size);
           q = r;
         }
       }
@@ -4577,7 +4488,7 @@ void fix_dependencies (void)
 done:;
     r = link(q);
     if (q == dep_list(t))
-      make_known (t, q);
+      make_known(t, q);
   }
   while (s != null)
   {
@@ -4647,14 +4558,12 @@ void ring_delete (pointer p)
 
   q = value(p);
   if (q != null)
-  {
     if (q != p)
     {
       while (value(q) != p)
         q = value(q);
       value(q) = value(p);
     }
-  }
 }
 /* 809 */
 void recycle_value (pointer p)
@@ -4701,7 +4610,7 @@ void recycle_value (pointer p)
           q = q - 2;
           recycle_value(q);
         } while (!(q == v));
-        free_node (v, big_node_size[t]);
+        free_node(v, big_node_size[t]);
       }
       break;
     case dependent:
@@ -4720,12 +4629,12 @@ void recycle_value (pointer p)
       {
         max_c[dependent] = 0;
         max_c[proto_dependent] = 0;
-        max_link[dependent] = 0;
-        max_link[proto_dependent] = 0;
+        max_link[dependent] = null;
+        max_link[proto_dependent] = null;
         q = link(dep_head);
         while (q != dep_head)
         {
-          s = value(q);
+          s = value_loc(q);
           while (true)
           {
             r = link(s);
@@ -4776,17 +4685,14 @@ void recycle_value (pointer p)
           while (info(r) != null)
             r = link(r);
           q = link(r);
-          link(r) = s;
+          link(r) = null;
           prev_dep(q) = prev_dep(pp);
           link(prev_dep(pp)) = q;
           new_indep(pp);
           if (cur_exp == pp)
-          {
             if (cur_type == t)
               cur_type = independent;
-          }
           if (internal[tracing_online] > 0)
-          {
             if (interesting(p))
             {
               begin_diagnostic();
@@ -4812,7 +4718,6 @@ void recycle_value (pointer p)
               print_dependency(s, t);
               end_diagnostic(false);
             }
-          }
           t = dependent + proto_dependent - t;
           if (max_c[t] > 0)
           {
@@ -4820,7 +4725,6 @@ void recycle_value (pointer p)
             max_link[t] = max_ptr[t];
           }
           if (t != dependent)
-          {
             for (t = dependent; t <= proto_dependent; t++)
             {
               r = max_link[t];
@@ -4835,9 +4739,7 @@ void recycle_value (pointer p)
                 free_node(q, dep_node_size);
               }
             }
-          }
           else
-          {
             for (t = dependent; t <= proto_dependent; t++)
             {
               r = max_link[t];
@@ -4847,10 +4749,8 @@ void recycle_value (pointer p)
                 if (t == dependent)
                 {
                   if (cur_exp == q)
-                  {
                     if (cur_type == dependent)
                       cur_type = proto_dependent;
-                  }
                   dep_list(q) = p_over_v(dep_list(q), unity, dependent, proto_dependent);
                   type(q) = proto_dependent;
                   value(r) = round_fraction(value(r));
@@ -4863,7 +4763,6 @@ void recycle_value (pointer p)
                 free_node(q, dep_node_size);
               }
             }
-          }
           flush_node_list(s);
           if (fix_needed)
             fix_dependencies();
@@ -4991,7 +4890,6 @@ void flush_variable (pointer p, pointer t, boolean discard_suffixes)
       {
         flush_variable(q, t, discard_suffixes);
         if (t == null)
-        {
           if (type(q) == structured)
             r = q;
           else
@@ -4999,7 +4897,6 @@ void flush_variable (pointer p, pointer t, boolean discard_suffixes)
             link(r) = link(q);
             free_node(q, subscr_node_size);
           }
-        }
         else
           r = q;
         q = link(r);
@@ -5159,7 +5056,7 @@ void unsave (void)
       if (internal[tracing_restores] > 0)
       {
         begin_diagnostic();
-        print_nl("restoring");
+        print_nl("{restoring ");
         slow_print(text(q));
         print_char('}');
         end_diagnostic(false);
@@ -5184,17 +5081,13 @@ void unsave (void)
 /* 264 */
 pointer copy_knot (pointer p)
 {
-  pointer Result;
   pointer q;
   uint32_t k;
 
   q = get_node(knot_node_size);
   for (k = 0; k <= knot_node_size - 1; k++)
-  {
     mem[q + k] = mem[p + k];
-  }
-  Result = q;
-  return Result;
+  return q;
 }
 /* 265 */
 pointer copy_path (pointer p)
@@ -5265,7 +5158,6 @@ lab_exit:
 /* 296 */
 fraction curl_ratio (scaled gamma, scaled a_tension, scaled b_tension)
 {
-  fraction Result;
   fraction alpha, beta, num, denom, ff;
 
   alpha = make_fraction(unity, a_tension);
@@ -5288,10 +5180,9 @@ fraction curl_ratio (scaled gamma, scaled a_tension, scaled b_tension)
     num = take_fraction(gamma, fraction_three - alpha) + beta;
   }
   if (num >= denom + denom + denom + denom)
-    Result = fraction_four;
+    return fraction_four;
   else
-    Result = make_fraction(num, denom);
-  return Result;
+    return make_fraction(num, denom);
 }
 /* 299 */
 void set_controls (pointer p, pointer q, integer k)
@@ -5305,7 +5196,6 @@ void set_controls (pointer p, pointer q, integer k)
   rr = velocity(st, ct, sf, cf, rt);
   ss = velocity(sf, cf, st, ct, lt);
   if ((right_tension(p) < 0) || (left_tension(q) < 0))
-  {
     if (((st >= 0) && (sf >= 0)) || ((st <= 0) && (sf <= 0)))
     {
       sine = take_fraction(abs(st), cf) + take_fraction(abs(sf), ct);
@@ -5313,18 +5203,13 @@ void set_controls (pointer p, pointer q, integer k)
       {
         sine = take_fraction(sine, fraction_one + unity);
         if (right_tension(p) < 0)
-        {
           if (ab_vs_cd(abs(sf), fraction_one, rr, sine) < 0)
             rr = make_fraction(abs(sf), sine);
-        }
         if (left_tension(q) < 0)
-        {
           if (ab_vs_cd(abs(st), fraction_one, ss, sine) < 0)
             ss = make_fraction(abs(st), sine);
-        }
       }
     }
-  }
   right_x(p) = x_coord(p) + take_fraction(take_fraction(delta_x[k], ct) - take_fraction(delta_y[k], st), rr);
   right_y(p) = y_coord(p) + take_fraction(take_fraction(delta_y[k], ct) + take_fraction(delta_x[k], st), rr);
   left_x(q) = x_coord(q) - take_fraction(take_fraction(delta_x[k], cf) + take_fraction(delta_y[k], sf), ss);
@@ -5392,8 +5277,8 @@ void solve_choices (pointer p, pointer q, halfword n)
             else
             {
               ff = make_fraction(unity, 3 * rt);
-              mem[p + 5].cint = x_coord(p) + take_fraction(delta_x[0], ff);
-              mem[p + 6].cint = y_coord(p) + take_fraction(delta_y[0], ff);
+              right_x(p) = x_coord(p) + take_fraction(delta_x[0], ff);
+              right_y(p) = y_coord(p) + take_fraction(delta_y[0], ff);
             }
             if (lt == unity)
             {
@@ -5468,7 +5353,6 @@ void solve_choices (pointer p, pointer q, halfword n)
             lt = abs(left_tension(s));
             rt = abs(right_tension(s));
             if (lt != rt)
-            {
               if (lt < rt)
               {
                 ff = make_fraction(lt, rt);
@@ -5481,7 +5365,6 @@ void solve_choices (pointer p, pointer q, halfword n)
                 ff = take_fraction(ff, ff);
                 ee = take_fraction(ee, ff);
               }
-            }
             ff = make_fraction(ee, ee + dd);
             uu[k] = take_fraction(ff, bb);
             acc = -take_fraction(psi[k + 1], uu[k]);
@@ -5516,9 +5399,7 @@ void solve_choices (pointer p, pointer q, halfword n)
               theta[n] = aa;
               vv[0] = aa;
               for (k = 1; k <= n - 1; k++)
-              {
                 vv[k] = vv[k] + take_fraction(aa, ww[k]);
-              }
               goto found;
             }
           }
@@ -5551,9 +5432,7 @@ void solve_choices (pointer p, pointer q, halfword n)
   }
 found:
   for (k = n - 1; k <= 0; k--)
-  {
-    theta[k] = vv[k] - take_fraction (theta[k + 1], uu[k]);
-  }
+    theta[k] = vv[k] - take_fraction(theta[k + 1], uu[k]);
   s = p;
   k = 0;
   do {
@@ -5587,9 +5466,7 @@ void make_choices (pointer knots)
   do {
     q = link(p);
     if (x_coord(p) == x_coord(q))
-    {
       if (y_coord(p) == y_coord(q))
-      {
         if (right_type(p) > explicit)
         {
           right_type(p) = explicit;
@@ -5598,7 +5475,7 @@ void make_choices (pointer knots)
             left_type(p) = curl;
             left_curl(p) = unity;
           }
-          left_type(q) = 1;
+          left_type(q) = explicit;
           if (right_type(q) == open)
           {
             right_type(q) = curl;
@@ -5609,8 +5486,6 @@ void make_choices (pointer knots)
           right_y(p) = y_coord(p);
           left_y(q) = y_coord(p);
         }
-      }
-    }
     p = q;
   } while (!(p == knots));
   h = knots;
@@ -5647,8 +5522,8 @@ done:;
         {
           sine = make_fraction(delta_y[k - 1], delta[k - 1]);
           cosine = make_fraction(delta_x[k - 1], delta[k - 1]);
-          psi[k] = n_arg(take_fraction (delta_x[k], cosine) +
-            take_fraction(delta_y[k], sine), take_fraction(delta_y[k], cosine) - take_fraction (delta_x[k], sine));
+          psi[k] = n_arg(take_fraction(delta_x[k], cosine) +
+            take_fraction(delta_y[k], sine), take_fraction(delta_y[k], cosine) - take_fraction(delta_x[k], sine));
         }
         incr(k);
         s = t;
@@ -5696,7 +5571,7 @@ done:;
     p = q;
   } while (!(p == h));
   if (internal[tracing_choices] > 0)
-    print_path (knots, ", after choices", true);
+    print_path(knots, ", after choices", true);
   if (arith_error)
   {
     print_err("Some number got too big");
@@ -5748,18 +5623,14 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
   {
   lab_continue:
     if (m == 0)
-    {
       while (n > 0)
       {
         incr(move_ptr);
         move[move_ptr] = 1;
         decr(n);
       }
-    }
     else if (n == 0)
-    {
       move[move_ptr] = move[move_ptr] + m;
-    }
     else if (m + n == 2)
     {
       r = two_to_the[l] - r;
@@ -5779,7 +5650,6 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
         u = y1 + y2 + y3;
         s = s + s - eta_corr;
         if (t < r)
-        {
           if (u < s)
           {
             x1 = x3;
@@ -5799,7 +5669,6 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
             }
             goto done;
           }
-        }
         else if (u < s)
         {
           {
@@ -5886,30 +5755,24 @@ void smooth_moves (integer b, integer t)
     do {
       a = move[k];
       if (abs(a - aa) > 1)
-      {
         if (a > aa)
         {
           if (aaa >= aa)
-          {
             if (a >= move[k + 1])
             {
               incr(move[k - 1]);
               move[k] = a - 1;
             }
-          }
         }
         else
         {
           if (aaa <= aa)
-          {
             if (a <= move[k + 1])
             {
               decr(move[k - 1]);
               move[k] = a + 1;
             }
-          }
         }
-      }
       incr(k);
       aaa = aa;
       aa = a;
@@ -5961,18 +5824,16 @@ void fix_offset (void)
 void edge_prep (integer ml, integer mr, integer nl, integer nr)
 {
   halfword delta;
-  integer temp;
   pointer p, q;
 
   ml = ml + zero_field;
   mr = mr + zero_field;
   nl = nl + zero_field;
-  nr = nr + zero_field;
+  nr = nr - 1 + zero_field;
   if (ml < m_min(cur_edges))
     m_min(cur_edges) = ml;
   if (mr > m_max(cur_edges))
     m_max(cur_edges) = mr;
-  temp = m_offset(cur_edges) - zero_field;
   if (!valid_range(m_min(cur_edges) + m_offset(cur_edges) - zero_field) || !valid_range(m_max(cur_edges) + m_offset(cur_edges) - zero_field))
     fix_offset();
   if (empty_edges(cur_edges))
@@ -6022,7 +5883,6 @@ void edge_prep (integer ml, integer mr, integer nl, integer nr)
 /* 334 */
 pointer copy_edges (pointer h)
 {
-  pointer Result;
   pointer p, r;
   pointer hh, pp, qq, rr, ss;
 
@@ -6068,8 +5928,7 @@ pointer copy_edges (pointer h)
   }
   link(qq) = hh;
   knil(hh) = qq;
-  Result = hh;
-  return Result;
+  return hh;
 }
 /* 336 */
 void y_reflect_edges (void)
@@ -6081,7 +5940,7 @@ void y_reflect_edges (void)
   n_max(cur_edges) = zero_field + zero_field - 1 - p;
   n_pos(cur_edges) = zero_field + zero_field - 1 - n_pos(cur_edges);
   p = link(cur_edges);
-  q = cur_edges; //{we assume that |p<>q|}
+  q = cur_edges;
   do {
     r = link(p);
     link(p) = q;
@@ -6170,7 +6029,7 @@ void y_scale_edges (integer s)
         rr = temp_head;
         while (r > _void)
         {
-          ss = get_avail;
+          ss = get_avail();
           link(rr) = ss;
           rr = ss;
           info(rr) = info(r);
@@ -6382,12 +6241,10 @@ void cull_edges (integer w_lo, integer w_hi, integer w_out, integer w_in)
         }
         m = mm;
         if (ww >= w_lo)
-        {
           if (ww <= w_hi)
             w = w_in;
           else
             w = w_out;
-        }
         else
           w = w_out;
         s = link(q);
@@ -6472,17 +6329,15 @@ void xy_swap_edges (void)
   if (m_spread > move_size)
     overflow ("move table size", move_size);
   for (j = 0; j <= m_spread; j++)
-  {
     move[j] = mem_top;
-  }
   p = get_node(row_node_size);
   sorted(p) = sentinel;
   unsorted(p) = null;
   knil(p) = cur_edges;
-  knil(link(cur_edges)) = p; //{the new bottom row}
+  knil(link(cur_edges)) = p;
   p = get_node(row_node_size);
   sorted(p) = sentinel;
-  knil(p) = knil(cur_edges); //{the new top row}
+  knil(p) = knil(cur_edges);
   m_magic = m_min(cur_edges) + m_offset(cur_edges) - zero_field;
   n_magic = 8 * n_max(cur_edges) + 8 + zero_w + min_halfword;
   do {
@@ -6496,7 +6351,8 @@ void xy_swap_edges (void)
     pm = pd / 8;
     r = sorted(q);
     rd = ho(info(r));
-    rm = rd / 8; w = 0;
+    rm = rd / 8;
+    w = 0;
     while (true)
     {
       if (pm < rm)
@@ -6504,7 +6360,6 @@ void xy_swap_edges (void)
       else
         mm = rm;
       if (w != 0)
-      {
         if (m != mm)
         {
           if (mm - m_magic >= move_size)
@@ -6536,9 +6391,9 @@ void xy_swap_edges (void)
             incr(m);
           } while (!(m == mm));
         }
-      }
       if (pd < rd)
       {
+        dw = (pd % 8) - zero_w;
         s = link(p);
         free_avail(p);
         p = s;
@@ -6557,7 +6412,7 @@ void xy_swap_edges (void)
       m = mm;
       w = w + dw;
     }
-    done:;
+  done:
     p = q;
     n_magic = n_magic - 8;
   } while (!(knil(p) == cur_edges));
@@ -6606,10 +6461,9 @@ void merge_edges (pointer h)
 
   if (link(h) != h)
   {
-    if ((m_min(h)<m_min(cur_edges)) || (m_max(h)>m_max(cur_edges)) ||
-      (n_min(h)<n_min(cur_edges)) || (n_max(h)>n_max(cur_edges)))
-      edge_prep(m_min(h) - zero_field, m_max(h) - zero_field,
-        n_min(h) - zero_field, n_max(h) - zero_field + 1);
+    if ((m_min(h) < m_min(cur_edges)) || (m_max(h) > m_max(cur_edges)) ||
+      (n_min(h) < n_min(cur_edges)) || (n_max(h) > n_max(cur_edges)))
+      edge_prep(m_min(h) - zero_field, m_max(h) - zero_field, n_min(h) - zero_field, n_max(h) - zero_field + 1);
     if (m_offset(h) != m_offset(cur_edges))
     {
       pp = link(h);
@@ -6641,7 +6495,6 @@ void merge_edges (pointer h)
     do {
       qq = unsorted(pp);
       if (qq > _void)
-      {
         if (unsorted(p) <= _void)
           unsorted(p) = qq;
         else
@@ -6651,7 +6504,6 @@ void merge_edges (pointer h)
           link(qq) = unsorted(p);
           unsorted(p) = unsorted(pp);
         }
-      }
       unsorted(pp) = null;
       qq = sorted(pp);
       if (qq != sentinel)
@@ -6690,7 +6542,6 @@ void merge_edges (pointer h)
 /* 369 */
 integer total_weight (pointer h)
 {
-  integer Result;
   pointer p, q;
   integer n;
   unsigned short m;
@@ -6707,7 +6558,7 @@ integer total_weight (pointer h)
       q = link(q);
     }
     q = unsorted(p);
-    while (q > 1)
+    while (q > _void)
     {
       m = ho(info(q));
       n = n - ((m % 8) - zero_w) * (m / 8);
@@ -6715,8 +6566,7 @@ integer total_weight (pointer h)
     }
     p = link(p);
   }
-  Result = n;
-  return Result;
+  return n;
 }
 /* 372 */
 void begin_edge_tracing (void)
@@ -6751,7 +6601,7 @@ void end_edge_tracing (void)
   }
   end_diagnostic(true);
 }
-/* 273 */
+/* 373 */
 void trace_new_edge (pointer r, integer n)
 {
   integer d;
@@ -6823,9 +6673,9 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
         edge_prep(m0, m1, n0, n1);
       else
         edge_prep(m1, m0, n0, n1);
-      n = n_pos(cur_edges) - zero_field; p = n_rover(cur_edges);
+      n = n_pos(cur_edges) - zero_field;
+      p = n_rover(cur_edges);
       if (n != n0)
-      {
         if (n < n0)
         {
           do {
@@ -6840,7 +6690,6 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
             p = knil(p);
           } while (!(n == n0));
         }
-      }
       y0 = unity - y0;
       while (true)
       {
@@ -6873,7 +6722,6 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
       n = n_pos(cur_edges) - zero_field;
       p = n_rover(cur_edges);
       if (n != n0)
-      {
         if (n < n0)
         {
           do {
@@ -6888,7 +6736,6 @@ void line_edges (scaled x0, scaled y0, scaled x1, scaled y1)
             p = knil(p);
           } while (!(n == n0));
         }
-      }
       while (true)
       {
         r = get_avail();
@@ -6922,18 +6769,18 @@ void move_to_edges (integer m0, integer n0, integer m1, integer n1)
   integer edge_and_weight;
   integer j;
   integer n;
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
   integer sum;
-#endif /* TEXMF_DEBUG */
+#endif
 
   delta = n1 - n0;
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
   sum = move[0];
   for (k = 1; k <= delta; k++)
     sum = sum + abs(move[k]);
   if (sum != m1 - m0)
     confusion("0");
-#endif /* TEXMF_DEBUG */
+#endif
   switch (octant)
   {
     case first_octant:
@@ -7001,7 +6848,6 @@ fast_case_up:
   n = n_pos(cur_edges) - zero_field;
   p = n_rover(cur_edges);
   if (n != n0)
-  {
     if (n < n0)
     {
       do {
@@ -7016,7 +6862,6 @@ fast_case_up:
         p = knil(p);
       } while (!(n == n0));
     }
-  }
   if (delta > 0)
   {
     k = 0;
@@ -7040,7 +6885,6 @@ fast_case_down:
   n = n_pos(cur_edges) - zero_field;
   p = n_rover(cur_edges);
   if (n != n0)
-  {
     if (n < n0)
     {
       do {
@@ -7055,7 +6899,6 @@ fast_case_down:
         p = knil(p);
       } while (!(n == n0));
     }
-  }
   if (delta > 0)
   {
     k = 0;
@@ -7081,7 +6924,6 @@ slow_case_up:
   n = n_pos(cur_edges) - zero_field;
   p = n_rover(cur_edges);
   if (n != n0)
-  {
     if (n < n0)
     {
       do {
@@ -7096,7 +6938,6 @@ slow_case_up:
         p = knil(p);
       } while (!(n == n0));
     }
-  }
   do {
     j = move[k];
     while (j > 0)
@@ -7122,7 +6963,6 @@ slow_case_down:
   n = n_pos(cur_edges) - zero_field;
   p = n_rover(cur_edges);
   if (n != n0)
-  {
     if (n < n0)
     {
       do {
@@ -7137,7 +6977,6 @@ slow_case_down:
         p = knil(p);
       } while (!(n == n0));
     }
-  }
   do {
     j = move[k];
     while (j > 0)
@@ -7215,22 +7054,18 @@ fraction crossing_point (integer a, integer b, integer c)
   if (c >= 0)
   {
     if (b >= 0)
-    {
       if (c > 0)
         no_crossing();
       else if ((a == 0) && (b == 0))
         no_crossing();
       else
         one_crossing();
-    }
     if (a == 0)
       zero_crossing();
   }
   else if (a == 0)
-  {
     if (b <= 0)
       zero_crossing();
-  }
   d = 1;
   x0 = a;
   x1 = a - b;
@@ -7256,10 +7091,8 @@ fraction crossing_point (integer a, integer b, integer c)
       {
         x0 = x0 - xx;
         if (x <= x0)
-        {
           if (x + x2 <= x0)
             no_crossing();
-        }
         x1 = x;
         d = d + d + 1;
       }
@@ -7324,7 +7157,8 @@ void print_strange (str_number s)
   if (interaction == error_stop_mode)
     wake_up_terminal();
   print_nl(">");
-  p = cur_spec; t = max_quarterword + 1;
+  p = cur_spec;
+  t = max_quarterword + 1;
   do {
     p = link(p);
     if (left_type(p) != endpoint)
@@ -7691,7 +7525,7 @@ lab_continue:
       {
         if (q != p)
         {
-          remove_cubic (p);
+          remove_cubic(p);
           if (cur_spec != q)
             goto lab_continue;
           else
@@ -7968,12 +7802,10 @@ void make_safe (void)
 void before_and_after (scaled b, scaled a, pointer p)
 {
   if (cur_rounding_ptr == max_rounding_ptr)
-  {
     if (max_rounding_ptr < max_wiggle)
       incr(max_rounding_ptr);
     else
       overflow("rounding table size", max_wiggle);
-  }
   after[cur_rounding_ptr] = a;
   before[cur_rounding_ptr] = b;
   node_to_round[cur_rounding_ptr] = p;
@@ -8025,8 +7857,7 @@ void xy_round (void)
         if (cur_pen == null_pen)
           pen_edge = 0;
         else if (cur_path_type == double_path_code)
-          pen_edge = compromise(east_edge(cur_pen), west_edge(
-            cur_pen));
+          pen_edge = compromise(east_edge(cur_pen), west_edge(cur_pen));
         else if (odd(right_type(q)))
           pen_edge = west_edge(cur_pen);
         else
@@ -8036,12 +7867,10 @@ void xy_round (void)
       else
         a = b;
       if (abs(a) > max_allowed)
-      {
         if (a > 0)
           a = max_allowed;
         else
           a = -max_allowed;
-      }
       before_and_after(b, a, q);
     }
     p = q;
@@ -8102,12 +7931,10 @@ void xy_round (void)
       else
         a = b;
       if (abs(a) > max_allowed)
-      {
         if (a > 0)
           a = max_allowed;
         else
           a = -max_allowed;
-      }
       before_and_after(b, a, q);
     }
     p = q;
@@ -8263,23 +8090,19 @@ void diag_round (void)
             else
               dd = y_coord(pp) - bb;
             if (odd(aa - bb))
-            {
               if (right_type(p) > switch_x_and_y)
                 cc = dd - half(aa - bb + 1);
               else
                 cc = dd - half(aa - bb - 1);
-            }
             else
               cc = dd - half(aa - bb);
           }
           d = y_coord(p);
           if (odd(a - b))
-          {
             if (right_type(p) > switch_x_and_y)
               c = d - half(a - b - 1);
             else
               c = d - half(a - b + 1);
-          }
           else
             c = d - half(a - b);
           if ((aa < a) || (cc < c) || (aa - a > 2 * (bb - b)) || (cc - c > 2 * (dd - d)))
@@ -8335,23 +8158,19 @@ void diag_round (void)
           else
             dd = y_coord(pp) - bb;
           if (odd(aa - bb))
-          {
             if (right_type(p) > switch_x_and_y)
               cc = dd - half(aa - bb + 1);
             else
               cc = dd - half(aa - bb - 1);
-          }
           else
             cc = dd - half(aa - bb);
         }
         d = y_coord(p);
         if (odd(a - b))
-        {
           if (right_type(p) > switch_x_and_y)
             c = d - half(a - b - 1);
           else
             c = d - half(a - b + 1);
-        }
         else
           c = d - half(a - b);
         if (b == bb)
@@ -8399,7 +8218,6 @@ void new_boundary (pointer p, small_number octant)
 /* 402 */
 pointer make_spec (pointer h, scaled safety_margin, integer tracing)
 {
-  pointer Result;
   pointer p, q, r, s;
   integer k;
   integer chopped;
@@ -8410,7 +8228,7 @@ pointer make_spec (pointer h, scaled safety_margin, integer tracing)
 
   cur_spec = h;
   if (tracing > 0)
-    print_path(cur_spec, 559, true);
+    print_path(cur_spec, ", before subdivision into octants", true);
   max_allowed = fraction_one - half_unit - 1 - safety_margin;
   p = cur_spec;
   k = 1;
@@ -8585,12 +8403,10 @@ pointer make_spec (pointer h, scaled safety_margin, integer tracing)
       while (true)
       {
         if (clockwise)
-        {
           if (o1 == 1)
             o1 = 8;
           else
             decr(o1);
-        }
         else if (o1 == 8)
           o1 = 1;
         else
@@ -8647,22 +8463,21 @@ done:
   if (tracing > 0)
   {
     if ((internal[autorounding] <= 0) || (chopped != 0))
-      print_spec (560);
+      print_spec(", after subdivision");
     else if (internal[autorounding] > unity)
-      print_spec (561);
+      print_spec(", after subdivision and double autorounding");
     else
-      print_spec (562);
+      print_spec(", after subdivision and autorounding");
   }
-  Result = cur_spec;
-  return Result;
+  return cur_spec;
 }
 /* 463 */
 void end_round (scaled x, scaled y)
 {
   y = y + half_unit - y_corr[octant];
   x = x + y - x_corr[octant];
-  m1 = floor_unscaled (x);
-  n1 = floor_unscaled (y);
+  m1 = floor_unscaled(x);
+  n1 = floor_unscaled(y);
   if (x - unity * m1 >= y - unity * n1 + z_corr[octant])
     d1 = 1;
   else
@@ -8695,8 +8510,8 @@ void fill_spec (pointer h)
       r = p;
       do {
         s = link(r);
-        make_moves(x_coord(r), right_x(r), left_x(s), x_coord(s), y_coord(r) +
-          half_unit, right_y(r) + half_unit, left_y(s) + half_unit, y_coord(s) + half_unit,
+        make_moves(x_coord(r), right_x(r), left_x(s), x_coord(s),
+          y_coord(r) + half_unit, right_y(r) + half_unit, left_y(s) + half_unit, y_coord(s) + half_unit,
           xy_corr[octant], y_corr[octant]);
         r = s;
       } while (!(r == q));
@@ -8727,7 +8542,6 @@ void dup_offset (pointer w)
 /* 477 */
 pointer make_pen (pointer h)
 {
-  pointer Result;
   small_number o, oo, k;
   pointer p;
   pointer q, r, s, w, hh;
@@ -8766,12 +8580,10 @@ pointer make_pen (pointer h)
       if (dx > 0)
         octant = first_octant;
       else if (dx == 0)
-      {
         if (dy > 0)
           octant = first_octant;
         else
           octant = first_octant + negate_x;
-      }
       else
       {
         negate(dx);
@@ -8796,7 +8608,7 @@ pointer make_pen (pointer h)
         hh = q;
       }
       o = oo;
-      if ((q == h) && (hh != 0))
+      if ((q == h) && (hh != null))
         goto done;
       q = r;
       r = s;
@@ -8887,14 +8699,12 @@ not_found:
   put_get_error();
 found:
   if (internal[tracing_pens] > 0)
-    print_pen(p, 572, true);
-  Result = p;
-  return Result;
+    print_pen(p, " (newly created)", true);
+  return p;
 }
 /* 486 */
 pointer trivial_knot (scaled x, scaled y)
 {
-  pointer Result;
   pointer p;
 
   p = get_node(knot_node_size);
@@ -8906,13 +8716,11 @@ pointer trivial_knot (scaled x, scaled y)
   y_coord(p) = y;
   left_y(p) = y;
   right_y(p) = y;
-  Result = p;
-  return Result;
+  return p;
 }
 /* 484 */
 pointer make_path (pointer pen_head)
 {
-  pointer Result;
   pointer p;
   unsigned char k;
   pointer h;
@@ -8950,8 +8758,7 @@ pointer make_path (pointer pen_head)
     link(temp_head) = p;
   }
   link(p) = link(temp_head);
-  Result = link(temp_head);
-  return Result;
+  return link(temp_head);
 }
 /* 488 */
 void find_offset (scaled x, scaled y, pointer p)
@@ -9014,7 +8821,7 @@ void find_offset (scaled x, scaled y, pointer p)
   }
 done:
   unskew(x_coord(w), y_coord(w), octant);
-  lab_exit:;
+lab_exit:;
 }
 /* 493 */
 void split_for_offset (pointer p, fraction t)
@@ -9048,12 +8855,10 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
   {
     right_type(p) = k;
     if (rising)
-    {
       if (k == n)
         goto lab_exit;
       else
         ww = link(w);
-    }
     else if (k == 1)
       goto lab_exit;
     else
@@ -9109,7 +8914,7 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
       decr(k);
     w = ww;
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 491 */
 void offset_prep (pointer c, pointer h)
@@ -9237,7 +9042,7 @@ void offset_prep (pointer c, pointer h)
           fin_offset_prep(p, k, w, x0, x1a, x2a, y0, y1a, y2a, true, n);
           x0 = x2a;
           y0 = y2a;
-          t1 = t1 - take_fraction (t1 - t2, t);
+          t1 = t1 - take_fraction(t1 - t2, t);
           if (t1 < 0)
             t1 = 0;
           t = crossing_point(0, t1, t2);
@@ -9295,13 +9100,13 @@ void skew_line_edges (pointer p, pointer w, pointer ww)
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
-      print_nl(585);
+      print_nl("@ retrograde line from ");
       print_two(x0, y0);
-      print(584);
+      print(" to ");
       print_two(cur_x, cur_y);
-      print_nl(261);
+      print_nl("");
     }
-#endif /* STAT */
+#endif
     line_edges(x0, y0, cur_x, cur_y);
   }
 }

@@ -650,7 +650,7 @@ do {                \
 #define one_eighty_deg 01320000000 //{$180\cdot2^{20}$, represents $180^\circ$}
 #define three_sixty_deg 02640000000 //{$360\cdot2^{20}$, represents $360^\circ$}
 /* 117 */
-#define return_sign(a) return(a)
+#define return_sign(a) Result=(a),goto lab_exit
 /* 139 */
 #define negate_x 1
 #define negate_y 2
@@ -1062,7 +1062,7 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define pair_node_size 4 //{the number of words in a pair node}
 #define transform_node_size 12 //{the number of words in a transform node}
 /* 242 */
-#define abort_find() return(null)
+#define abort_find() do {Result=null; goto lab_exit;} while(0)
 /* 250 */
 #define save_node_size 2 //{number of words per non-boundary save-stack node}
 #define saved_equiv(a) mem[a+1].hh //{where an |eqtb| entry gets saved}
