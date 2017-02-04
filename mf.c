@@ -9143,13 +9143,12 @@ void dual_moves (pointer h, pointer p, pointer q)
 #ifdef STAT
       if (internal[tracing_edges] > unity)
       {
-        print_nl(586);
+        print_nl("@ transition line ");
         print_int(k);
-        print(587);
-        unskew(xx, yy - half_unit, octant);
-        print_two(cur_x, cur_y);
+        print(", from ");
+        print_two_true(xx, yy - half_unit);
       }
-#endif /* STAT */
+#endif
       if (right_type(r) < k)
       {
         decr(k);
@@ -9196,12 +9195,11 @@ void dual_moves (pointer h, pointer p, pointer q)
 #ifdef STAT
       if (internal[tracing_edges] > unity)
       {
-        print(584);
-        unskew(xp, yp - half_unit, octant);
-        print_two(cur_x, cur_y);
-        print_nl(261);
+        print(" to ");
+        print_two_true(xp, yp - half_unit);
+        print_nl("");
       }
-#endif /* STAT */
+#endif
       m = floor_unscaled(xp - xy_corr[octant]);
       move_ptr = floor_unscaled(yp - y_corr[octant]) - n0;
       if (m < env_move[move_ptr])
@@ -9226,15 +9224,14 @@ void dual_moves (pointer h, pointer p, pointer q)
     } while (!(n > move_ptr));
     r = s;
   }
-  done:
-  ;
+done:
 #ifdef DEBUG
   if ((m != mm1) || (move_ptr != n1 - n0))
     confusion("2");
 #endif
   move[0] = d0 + env_move[1] - mm0;
   for (n = 1; n <= move_ptr; n++)
-    move[n] = env_move[n + 1] - env_move[n]+ 1;
+    move[n] = env_move[n + 1] - env_move[n] + 1;
   move[move_ptr] = move[move_ptr] - d1;
   if (internal[smoothing] > 0)
     smooth_moves(smooth_bot, smooth_top);
@@ -9273,23 +9270,22 @@ void fill_envelope (pointer spec_head)
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
-      print_nl(580);
+      print_nl("@ Octant ");
       print(octant_dir[octant]);
-      print(558);
+      print(" (");
       print_int(info(h));
+      print(" offset");
       if (info(h) != 1)
-        print(581);
-      else
-        print(582);
-      print(583);
+        print_char('s');
+      print("), from ");
       print_two_true(x_coord(p) + x_coord(w), y_coord(p) + y_coord(w));
       ww = link(h);
       if (right_transition(q) == diagonal)
         ww = knil(ww);
-      print(584);
+      print(" to ");
       print_two_true(x_coord(q) + x_coord(ww), y_coord(q) + y_coord(ww));
     }
-#endif /* STAT */
+#endif
     ww = link(h);
     www = ww;
     if (odd(octant_number[octant]))
@@ -9334,12 +9330,12 @@ void fill_envelope (pointer spec_head)
 #ifdef STAT
           if (internal[tracing_edges] > unity)
           {
-            print_nl(586);
+            print_nl("@ transition line ");
             print_int(k);
-            print(587);
+            print(", from ");
             print_two_true(xx, yy - half_unit);
           }
-#endif /* STAT */
+#endif
           if (right_type(r) > k)
           {
             incr(k);
@@ -9358,7 +9354,7 @@ void fill_envelope (pointer spec_head)
                 yy = unity - yy;
                 while (true)
                 {
-                  tx = take_fraction(delx, make_fraction (yy, dely));
+                  tx = take_fraction(delx, make_fraction(yy, dely));
                   if (ab_vs_cd(tx, dely, delx, yy) + xy_corr[octant] > 0)
                     decr(tx);
                   m = floor_unscaled(xx + tx);
@@ -9384,11 +9380,11 @@ void fill_envelope (pointer spec_head)
 #ifdef STAT
           if (internal[tracing_edges] > unity)
           {
-            print(584);
+            print(" to ");
             print_two_true(xp, yp - half_unit);
-            print_nl(261);
+            print_nl("");
           }
-#endif /* STAT */
+#endif
           m = floor_unscaled(xp - xy_corr[octant]);
           move_ptr = floor_unscaled(yp - y_corr[octant]) - n0;
           if (m > env_move[move_ptr])
@@ -9413,14 +9409,14 @@ void fill_envelope (pointer spec_head)
         } while (!(n > move_ptr));
         r = s;
       }
-    done:;
-#ifdef TEXMF_DEBUG
+    done:
+#ifdef DEBUG
       if ((m != mm1) || (move_ptr != n1 - n0))
         confusion("1");
-#endif /* TEXMF_DEBUG */
+#endif
       move[0] = d0 + env_move[0] - mm0;
       for (n = 1; n <= move_ptr; n++)
-        move[n] = env_move[n] - env_move[n - 1]+ 1;
+        move[n] = env_move[n] - env_move[n - 1] + 1;
       move[move_ptr] = move[move_ptr] - d1;
       if (internal[smoothing] > 0)
         smooth_moves(smooth_bot, smooth_top);
@@ -9443,7 +9439,6 @@ void fill_envelope (pointer spec_head)
 /* 527 */
 pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
 {
-  pointer Result;
   pointer p, q, r, s;
   pointer h;
   integer alpha, beta, gamma, delta;
@@ -9476,12 +9471,10 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     gamma = take_fraction(major_axis, n_sin);
     delta = take_fraction(minor_axis, n_cos);
     beta = pyth_add(gamma, delta);
-    alpha = make_fraction(gamma, beta);
-    alpha = take_fraction(major_axis, alpha);
-    alpha = take_fraction(alpha, n_cos);
+    alpha = take_fraction(take_fraction(major_axis, make_fraction(gamma, beta)), n_cos)
+      - take_fraction(take_fraction(major_axis, make_fraction(delta, beta)), n_sin);
     alpha = (alpha + half_unit) / unity;
-    gamma = take_fraction(minor_axis, n_sin);
-    gamma = pyth_add(take_fraction(major_axis, n_cos), gamma);
+    gamma = pyth_add(take_fraction(major_axis, n_cos), take_fraction(minor_axis, n_sin));
   }
   beta = (beta + half_unit) / unity;
   gamma = (gamma + half_unit) / unity;
@@ -9501,14 +9494,12 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
   if (gamma == 0)
     gamma = 1;
   if (gamma <= abs(alpha))
-  {
     if (alpha > 0)
       alpha = gamma - 1;
     else
       alpha = 1 - gamma;
-  }
   x_coord(p) = -alpha * half_unit;
-  y_coord(p) = -beta*half_unit;
+  y_coord(p) = -beta * half_unit;
   x_coord(q) = gamma * half_unit;
   y_coord(q) = y_coord(p);
   x_coord(r) = x_coord(q);
@@ -9686,8 +9677,7 @@ pointer make_ellipse (scaled major_axis, scaled minor_axis, angle theta)
     r = link(r);
   } while (!(r == q));
   link(p) = h;
-  Result = h;
-  return Result;
+  return h;
 }
 /* 539 */
 scaled find_direction_time (scaled x, scaled y, pointer h)
@@ -9854,7 +9844,7 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
       t = t_of_the_way(tt, fraction_one);
       we_found_it();
     }
-  done:;
+  done:
     p = q;
     n = n + unity;
   }
@@ -10076,6 +10066,34 @@ void path_intersection (pointer h, pointer hh)
   cur_tt = -unity;
 lab_exit:;
 }
+/* 564 */
+boolean init_screen (void)
+{
+  return false;
+}
+/* 564 */
+void update_screen (void)
+{
+  if (0)
+    wterm_ln("Calling UPDATESCREEN");
+}
+/* 567 */
+void blank_rectangle(screen_col left_col, screen_col right_col, screen_row top_row, screen_row bot_row)
+{
+  screen_row r;
+  screen_col c;
+  for (r = top_row; r <= bot_row - 1; r++)
+    for (c = left_col; c <= right_col - 1; r++)
+      screen_pixel[r][c] = white;
+  if (0)
+  {
+    wlog_cr();
+    wlog_ln("Calling BLANKRECTANGLE(%d,%d,%d,%d)", left_col, right_col, top_row, bot_row);
+  }
+}
+void paint_row (screen_row r, pixel_color b, trans_spec a, screen_col n)
+{
+}
 /* 574 */
 void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y)
 {
@@ -10089,12 +10107,10 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   if (r1 > screen_depth)
     r1 = screen_depth;
   if (r1 < r0)
-  {
     if (r0 > screen_depth)
       r0 = r1;
     else
       r1 = r0;
-  }
   if (c0 < 0)
     c0 = 0;
   else
@@ -10103,12 +10119,10 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   if (c1 > screen_width)
     c1 = screen_width;
   if (c1 < c0)
-  {
     if (c0 > screen_width)
       c0 = c1;
     else
       c1 = c0;
-  }
   window_open[k] = true;
   incr(window_time[k]);
   left_col[k] = c0;
@@ -10119,13 +10133,7 @@ void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1,
   n = round_unscaled(y) - 1;
   m_window[k] = c0 - m;
   n_window[k] = r0 + n;
-  {
-    if (!screen_started)
-    {
-      screen_OK = init_screen();
-      screen_started = true;
-    }
-  }
+  start_screen();
   if (screen_OK)
   {
     blank_rectangle(c0, c1, r0, r1);

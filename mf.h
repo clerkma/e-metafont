@@ -1265,6 +1265,14 @@ do {                          \
 /* 565 */
 #define white 0
 #define black 0
+/* 570 */
+#define start_screen() do {     \
+  if (!screen_started)          \
+  {                             \
+    screen_OK = init_screen();  \
+    screen_started = true;      \
+  }                             \
+} while (0)
 /* 585 */
 #define s_scale 64 //{the serial numbers are multiplied by this factor}
 #define new_indep(a) \
