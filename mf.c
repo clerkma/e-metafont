@@ -10093,6 +10093,30 @@ void blank_rectangle(screen_col left_col, screen_col right_col, screen_row top_r
 }
 void paint_row (screen_row r, pixel_color b, trans_spec a, screen_col n)
 {
+  screen_col k;
+  screen_col c;
+
+  k = 0;
+  c = a[0];
+  do {
+    incr(k);
+    do {
+      screen_pixel[r][c] = b;
+      incr(c);
+    } while (!(c == a[k]));
+    k = black - b;
+  } while (!(k == n));
+  if (0)
+  {
+    wlog("Calling PAINTROW(%d,%d;", r, b);
+    for (k = 0; k <= n; k++)
+    {
+      wlog("%d", a[k]);
+      if (k != n)
+        wlog(",");
+    }
+    wlog(")");
+  }
 }
 /* 574 */
 void open_a_window (window_number k, scaled r0, scaled c0, scaled r1, scaled c1, scaled x, scaled y)
@@ -10177,10 +10201,8 @@ void disp_edges (window_number k)
             if (unsorted(p) > _void)
               sort_edges(p);
             else if (unsorted(p) == _void)
-            {
               if (already_there)
                 goto done;
-            }
             unsorted(p) = _void;
             n = 0;
             ww = 0;
@@ -10219,7 +10241,7 @@ void disp_edges (window_number k)
                   if (m > min_col)
                   {
                     if (n == 0)
-                      b = 1;
+                      b = black;
                     incr(n);
                     row_transition[n] = m;
                   }
@@ -10245,7 +10267,7 @@ void disp_edges (window_number k)
             else if (n == 0)
               goto done;
             paint_row(r, b, row_transition, n);
-            done:;
+          done:;
           }
           p = link(p);
           decr(r);
@@ -10256,7 +10278,7 @@ void disp_edges (window_number k)
         last_window_time(cur_edges) = window_time[k];
       }
 }
-/* 495 */
+/* 591 */
 fraction max_coef (pointer p)
 {
   fraction x;
@@ -10273,7 +10295,6 @@ fraction max_coef (pointer p)
 /* 597 */
 pointer p_plus_q (pointer p, pointer q, small_number t)
 {
-  pointer Result;
   pointer pp, qq;
   pointer r, s;
   integer threshold;
@@ -10286,51 +10307,51 @@ pointer p_plus_q (pointer p, pointer q, small_number t)
   r = temp_head;
   pp = info(p);
   qq = info(q);
-  while (true) if (pp == qq)
-  {
-    if (pp == null)
-      goto done;
-    else
-    {
-      v = value(p) + value(q);
-      value(p) = v;
-      s = p;
-      p = link(p);
-      pp = info(p);
-      if (abs(v) < threshold)
-        free_node(s, dep_node_size);
+  while (true)
+    if (pp == qq)
+      if (pp == null)
+        goto done;
       else
       {
-        if (abs(v) >= coef_bound)
-          if (watch_coefs)
-          {
-            type(qq) = independent_needing_fix;
-            fix_needed = true;
-          }
+        v = value(p) + value(q);
+        value(p) = v;
+        s = p;
+        p = link(p);
+        pp = info(p);
+        if (abs(v) < threshold)
+          free_node(s, dep_node_size);
+        else
+        {
+          if (abs(v) >= coef_bound)
+            if (watch_coefs)
+            {
+              type(qq) = independent_needing_fix;
+              fix_needed = true;
+            }
+          link(r) = s;
+          r = s;
+        }
+        q = link(q);
+        qq = info(q);
+      }
+    else
+      if (value(pp) < value(qq))
+      {
+        s = get_node(dep_node_size);
+        info(s) = qq;
+        value(s) = value(q);
+        q = link(q);
+        qq = info(q);
         link(r) = s;
         r = s;
       }
-      q = link(q);
-      qq = info(q);
-    }
-  }
-  else if (value(pp) < value(qq))
-  {
-    s = get_node(dep_node_size);
-    info(s) = qq;
-    value(s) = value(q);
-    q = link(q);
-    qq = info(q);
-    link(r) = s;
-    r = s;
-  }
-  else
-  {
-    link(r) = p;
-    r = p;
-    p = link(p);
-    pp = info(p);
-  }
+      else
+      {
+        link(r) = p;
+        r = p;
+        p = link(p);
+        pp = info(p);
+      }
 done:
   value(p) = slow_add(value(p), value(q));
   link(r) = p;
@@ -10354,7 +10375,7 @@ pointer p_times_v (pointer p, integer v, small_number t0, small_number t1, boole
   else
     threshold = half_scaled_threshold;
   r = temp_head;
-  while (info(p) != 0)
+  while (info(p) != null)
   {
     if (scaling_down)
       w = take_fraction(v, value(p));
@@ -10484,7 +10505,7 @@ void linear_eq (pointer p, small_number t)
   q = p;
   r = link(p);
   v = value(q);
-  while (info(r) != 0)
+  while (info(r) != null)
   {
     if (abs(value(r)) > abs(v))
     {
@@ -10531,16 +10552,16 @@ void linear_eq (pointer p, small_number t)
     if (interesting(x))
     {
       begin_diagnostic();
-      print_nl(597);
+      print_nl("## ");
       print_variable_name(x);
       w = n;
       while (w > 0)
       {
-        print(590);
+        print("*4");
         w = w - 2;
       }
       print_char('=');
-      print_dependency(p, 17);
+      print_dependency(p, dependent);
       end_diagnostic(false);
     }
   }
@@ -10693,14 +10714,14 @@ void ring_merge (pointer p, pointer q)
   r = value(p);
   value(p) = value(q);
   value(q) = r;
-  lab_exit:;
+lab_exit:;
 }
 /* 626 */
 void show_cmd_mod (integer c, integer m)
 {
   begin_diagnostic();
-  print_nl(123);
-  print_cmd_mod (c, m);
+  print_nl("{");
+  print_cmd_mod(c, m);
   print_char('}');
   end_diagnostic(false);
 }
@@ -10729,39 +10750,37 @@ void show_context (void)
         if (name <= 1)
         {
           if (terminal_input && (file_ptr == 0))
-            print_nl(604);
+            print_nl("<*>");
           else
-            print_nl(605);
+            print_nl("<insert>");
         }
         else if (name == 2)
-          print_nl(606);
+          print_nl("<scantokens>");
         else
         {
-          print_nl(607);
+          print_nl("l.");
           print_int(line);
         }
         print_char(' ');
         begin_pseudoprint();
         if (limit > 0)
-        {
           for (i = start; i <= limit - 1; i++)
           {
             if (i == loc)
               set_trick_count();
             print(buffer[i]);
           }
-        }
       }
       else
       {
         switch (token_type)
         {
           case forever_text:
-            print_nl(608);
+            print_nl("<forever> ");
             break;
           case loop_text:
             {
-              print_nl(613);
+              print_nl("<for(");
               p = param_stack[param_start];
               if (p != null)
               {
@@ -10770,20 +10789,20 @@ void show_context (void)
                 else
                   show_token_list(p, null, 20, tally);
               }
-              print(614);
+              print(")> ");
             }
             break;
           case parameter:
-            print_nl(609);
+            print_nl("<argument> ");
             break;
           case backed_up:
             if (loc == null)
-              print_nl(610);
+              print_nl("<recently read> ");
             else
-              print_nl(611);
+              print_nl("<to be read again> ");
             break;
           case inserted:
-            print_nl(612);
+            print_nl("<inserted text> ");
             break;
           case macro:
             {
@@ -10805,11 +10824,11 @@ void show_context (void)
                   link(q) = null;
                 }
               }
-              print(501);
+              print("->");
             }
             break;
           default:
-            print_nl(63);
+            print_nl("?");
             break;
         }
         begin_pseudoprint();
@@ -10832,7 +10851,7 @@ void show_context (void)
       }
       else
       {
-        print(276);
+        print("...");
         p = l + first_count - half_error_line + 3;
         n = half_error_line;
       }
@@ -10848,13 +10867,11 @@ void show_context (void)
       for (q = first_count; q <= p - 1; q++)
         print_char(trick_buf[q % error_line]);
       if (m + n > error_line)
-        print(276);
+        print("...");
     }
     if (file_state)
-    {
       if ((name > 2) || (file_ptr == 0))
         goto done;
-    }
     decr(file_ptr);
   }
 done:
@@ -11034,7 +11051,6 @@ pointer cur_tok (void)
   integer save_exp;
 
   if (cur_sym == 0)
-  {
     if (cur_cmd == capsule_token)
     {
       save_type = cur_type;
@@ -11055,7 +11071,6 @@ pointer cur_tok (void)
       else
         type(p) = string_type;
     }
-  }
   else
   {
     fast_get_avail(p);
@@ -11149,7 +11164,7 @@ boolean check_outer_validity (void)
       {
         print_err("Forbidden token found");
       }
-      print(625);
+      print(" while scanning ");
       help4("I suspect you have forgotten an `enddef',",
         "causing me to read past where you wanted me to stop.",
         "I'll try to recover; but if the error is serious,",
@@ -11158,15 +11173,15 @@ boolean check_outer_validity (void)
       {
         case flushing:
           {
-            print(630);
-            help_line[3] = 631;
+            print("to the end of the statement");
+            help_line[3] = "A previous error seems to have propagated,";
             cur_sym = frozen_semicolon;
           }
           break;
         case absorbing:
           {
-            print(632);
-            help_line[3] = 633;
+            print("a text argument");
+            help_line[3] = "It seems that a right delimiter was left out,";
             if (warning_info == 0)
               cur_sym = frozen_end_group;
             else
@@ -11179,7 +11194,7 @@ boolean check_outer_validity (void)
         case var_defining:
         case op_defining:
           {
-            print(634);
+            print("the definition of ");
             if (scanner_status == op_defining)
               slow_print(text(warning_info));
             else
@@ -11189,10 +11204,10 @@ boolean check_outer_validity (void)
           break;
         case loop_defining:
           {
-            print(635);
+            print("the text of a ");
             slow_print(text(warning_info));
-            print(636);
-            help_line[3] = 637;
+            print(" loop");
+            help_line[3] = "I suspect you have forgotten an `enddef',";
             cur_sym = frozen_end_for;
           }
           break;
@@ -11207,7 +11222,7 @@ boolean check_outer_validity (void)
         "This kind of error happens when you say `if...' and forget",
         "the matching `fi'. I've inserted a `fi'; this might work.");
       if (cur_sym == 0)
-        help_line[2] = 622;
+        help_line[2] = "The file ended while I was skipping conditional text.";
       cur_sym = frozen_fi;
       ins_error();
     }
@@ -11228,29 +11243,29 @@ lab_restart:
   cur_sym = 0;
   if ((index <= 15))
   {
-lab25:
+lab_switch:
     c = buffer[loc];
     incr(loc);
     cclass = char_class[c];
     switch (cclass)
     {
       case digit_class:
-        goto lab85;
+        goto lab_start_numeric_token;
         break;
       case period_class:
         {
           cclass = char_class[buffer[loc]];
           if (cclass > period_class)
-            goto lab25;
+            goto lab_switch;
           else if (cclass < period_class)
           {
             n = 0;
-            goto lab86;
+            goto lab_start_decimal_token;
           }
         }
         break;
       case space_class:
-        goto lab25;
+        goto lab_switch;
         break;
       case percent_class:
         {
@@ -11260,7 +11275,7 @@ lab25:
             first = start;
             if (!force_eof)
             {
-              if (input_ln(input_file[index], true))
+              if (input_ln(cur_file, true))
                 firm_up_the_line();
               else
                 force_eof = true;
@@ -11277,7 +11292,7 @@ lab25:
               else
                 goto lab_restart;
             }
-            buffer[limit] = 37;
+            buffer[limit] = '%';
             first = limit + 1;
             loc = start;
           }
@@ -11293,12 +11308,12 @@ lab25:
             if (interaction > nonstop_mode)
             {
               if (limit == start)
-                print_nl(652);
+                print_nl("(Please type a command or say `end')");
               print_ln();
               first = start;
               prompt_input("*");
               limit = last;
-              buffer[limit] = 37;
+              buffer[limit] = '%';
               first = limit + 1;
               loc = start;
             }
@@ -11306,20 +11321,20 @@ lab25:
               fatal_error("*** (job aborted, no legal end found)");
           }
           check_interrupt();
-          goto lab25;
+          goto lab_switch;
         }
         break;
       case string_class:
         {
-          if (buffer[loc] == 34)
-            cur_mod = 261;
+          if (buffer[loc] == '"')
+            cur_mod = "";
           else
           {
             k = loc;
-            buffer[limit + 1] = 34;
+            buffer[limit + 1] = '"';
             do {
               incr(loc);
-            } while (!(buffer[loc] == 34));
+            } while (!(buffer[loc] == '"'));
             if (loc > limit)
             {
               loc = limit;
@@ -11332,7 +11347,7 @@ lab25:
               deletions_allowed = true;
               goto lab_restart;
             }
-            if ((loc == k + 1) && ((str_start[buffer[k] + 1] - str_start[buffer[k]]) == 1))
+            if ((loc == k + 1) && (length(buffer[k]) == 1))
               cur_mod = buffer[k];
             else
             {
@@ -11374,38 +11389,38 @@ lab25:
     while (char_class[buffer[loc]] == cclass)
       incr(loc);
     goto found;
-  lab85:
-    n = c - 48;
+  lab_start_numeric_token:
+    n = c - '0';
     while (char_class[buffer[loc]] == digit_class)
     {
       if (n < 4096)
-        n = 10 * n + buffer[loc] - 48;
+        n = 10 * n + buffer[loc] - '0';
       incr(loc);
     }
-    if (buffer[loc] == 46)
-      if (char_class[buffer[loc + 1]] == 0)
+    if (buffer[loc] == ".")
+      if (char_class[buffer[loc + 1]] == digit_class)
         goto done;
     f = 0;
-    goto lab87;
+    goto lab_fin_numeric_token;
   done:
     incr(loc);
-  lab86:
+  lab_start_decimal_token:
     k = 0;
     do {
       if (k < 17)
       {
-        dig[k] = buffer[loc] - 48;
+        dig[k] = buffer[loc] - '0';
         incr(k);
       }
       incr(loc);
-    } while (!(char_class[buffer[loc]]!= 0));
-    f = round_decimals (k);
+    } while (!(char_class[buffer[loc]] != digit_class));
+    f = round_decimals(k);
     if (f == unity)
     {
       incr(n);
       f = 0;
     }
-  lab87:
+  lab_fin_numeric_token:
     if (n < 4096)
       cur_mod = n * unity + f;
     else
@@ -11416,7 +11431,7 @@ lab25:
       deletions_allowed = false;
       error();
       deletions_allowed = true;
-      cur_mod = 268435455;
+      cur_mod = 01777777777;
     }
     cur_cmd = numeric_token;
     goto lab_exit;
@@ -11472,13 +11487,11 @@ lab25:
   cur_cmd = eq_type(cur_sym);
   cur_mod = equiv(cur_sym);
   if (cur_cmd >= outer_tag)
-  {
     if (check_outer_validity())
       cur_cmd = cur_cmd - outer_tag;
     else
       goto lab_restart;
-  }
-  lab_exit:;
+lab_exit:;
 }
 /* 682 */
 void firm_up_the_line (void)
@@ -11538,7 +11551,6 @@ pointer scan_toks (command_code terminator, pointer subst_list, pointer tail_end
         found:;
       }
       if (cur_cmd == terminator)
-      {
         if (cur_mod > 0)
           incr(balance);
         else
@@ -11547,10 +11559,9 @@ pointer scan_toks (command_code terminator, pointer subst_list, pointer tail_end
           if (balance == 0)
             goto done;
         }
-      }
       else if (cur_cmd == macro_special)
       {
-        if (cur_mod == 0)
+        if (cur_mod == quote)
           get_next();
         else if (cur_mod <= suffix_count)
           cur_sym = suffix_base - 1 + cur_mod;
@@ -11576,7 +11587,7 @@ lab_restart:
       "I've inserted an inaccessible symbol so that your",
       "definition will be completed without mixing me up too badly.");
     if (cur_sym > 0)
-      help_line[2] = 670;
+      help_line[2] = "Sorry: You cant redefine my error-recovery tokens.";
     else if (cur_cmd == string_token)
       delete_str_ref(cur_mod);
     cur_sym = frozen_inaccessible;
@@ -11594,10 +11605,9 @@ void get_clear_symbol (void)
 void check_equals (void)
 {
   if (cur_cmd != equals)
-  {
     if (cur_cmd != assignment)
     {
-      missing_err(61);
+      missing_err("=");
       help5("The next thing in this `def' should have been `=',",
         "because I've already looked at the definition heading.",
         "But don't worry; I'll pretend that an equals sign",
@@ -11605,7 +11615,6 @@ void check_equals (void)
         "will be the replacement text of this macro.");
       back_error();
     }
-  }
 }
 /* 694 */
 void make_op_def (void)
@@ -11643,10 +11652,8 @@ void make_op_def (void)
 void check_delimiter (pointer l_delim, pointer r_delim)
 {
   if (cur_cmd == right_delimiter)
-  {
     if (cur_mod == l_delim)
       goto lab_exit;
-  }
   if (cur_sym != r_delim)
   {
     missing_err(text(r_delim));
@@ -11658,13 +11665,13 @@ void check_delimiter (pointer l_delim, pointer r_delim)
   {
     print_err("The token `");
     slow_print(text(r_delim));
-    print(925);
+    print("' is no longer a right delimiter");
     help3("Strange: This token has lost its former meaning!",
       "I'll read it as a right delimiter this time;",
       "but watch out, I'll probably miss it later.");
     error();
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 1011 */
 pointer scan_declared_variable (void)
@@ -11686,9 +11693,7 @@ pointer scan_declared_variable (void)
     if (cur_sym == 0)
       goto done;
     if (cur_cmd != tag_token)
-    {
       if (cur_cmd != internal_quantity)
-      {
         if (cur_cmd == left_bracket)
         {
           l = cur_sym;
@@ -11705,8 +11710,6 @@ pointer scan_declared_variable (void)
         }
         else
           goto done;
-      }
-    }
     link(t) = get_avail();
     t = link(t);
     info(t) = cur_sym;

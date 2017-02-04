@@ -312,6 +312,8 @@ EXTERN integer uv, xy;
 EXTERN integer three_l;
 EXTERN integer appr_t, appr_tt;
 
+EXTERN pixel_color ** screen_pixel;
+
 EXTERN boolean screen_started;
 EXTERN boolean screen_OK;
 
@@ -650,7 +652,10 @@ do {                \
 #define one_eighty_deg 01320000000 //{$180\cdot2^{20}$, represents $180^\circ$}
 #define three_sixty_deg 02640000000 //{$360\cdot2^{20}$, represents $360^\circ$}
 /* 117 */
-#define return_sign(a) Result=(a),goto lab_exit
+#define return_sign(a) do { \
+  Result = a;               \
+  goto lab_exit;            \
+} while (0)
 /* 139 */
 #define negate_x 1
 #define negate_y 2
