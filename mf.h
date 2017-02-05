@@ -383,7 +383,7 @@ EXTERN char * MF_base_default;
 
 EXTERN str_number job_name;
 EXTERN boolean log_opened;
-EXTERN str_number texmflogname;
+EXTERN str_number log_name;
 
 EXTERN str_number gf_ext;
 
@@ -469,9 +469,8 @@ EXTERN word_file base_file;
 
 EXTERN integer ready_already;
 
-EXTERN boolean stopatspace;
-
 /* M A C R O S */
+#define banner "This is METAFONT, Version 2.7182818"
 /* 12 */
 #define mem_min 0 /*{smallest index in the |mem| array, must not be less
   than |min_halfword|}*/
@@ -1415,6 +1414,8 @@ do {                            \
 #define base_area_length 8 //{length of its area part}
 #define base_ext_length 5 //{length of its `\.{.base}' part}
 #define base_extension ".base" //{the extension, as a \.{WEB} constant}
+/* 784 */
+#define pack_cur_name() pack_file_name(cur_name, cur_area, cur_ext)
 /* 791 */
 #define set_output_file_name()                    \
 do {                                              \

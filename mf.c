@@ -12526,9 +12526,9 @@ lab_reswitch:
   {
     begin_diagnostic();
     if (cur_exp == true_code)
-      print(722);
+      print("{true}");
     else
-      print(723);
+      print("{false}");
     end_diagnostic(false);
   }
 found:
@@ -12574,14 +12574,14 @@ done:
     get_x_next();
     goto found;
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 754 */
 void bad_for (str_number s)
 {
   disp_err(null, "Improper ");
   print(s);
-  print(306);
+  print(" has been replaced by 0");
   help4("When you say `for x=a step b until c',",
     "the initial value `a' and the step size `b'",
     "and the final value `c' must have known numeric values.",
@@ -12612,7 +12612,7 @@ void begin_iteration (void)
   get_x_next();
   if ((cur_cmd != equals) && (cur_cmd != assignment))
   {
-    missing_err(61);
+    missing_err("=");
     help3("The next thing in this loop should have been `=' or `:='.", 
       "But don't worry; I'll pretend that an equals sign", 
       "was present, and I'll look for the values next.");
@@ -12628,27 +12628,24 @@ void begin_iteration (void)
     else
     {
       if (cur_cmd >= colon)
-      {
         if (cur_cmd <= comma)
           goto lab_continue;
-      }
       scan_expression();
       if (cur_cmd == step_token)
-      {
         if (q == loop_list_loc(s))
         {
           if (cur_type != known)
-            bad_for(737);
+            bad_for("initial value");
           pp = get_node(progression_node_size);
           value(pp) = cur_exp;
           get_x_next();
           scan_expression();
           if (cur_type != known)
-            bad_for(738);
+            bad_for("step size");
           step_size(pp) = cur_exp;
           if (cur_cmd != until_token)
           {
-            missing_err(490);
+            missing_err("until");
             help2("I assume you meant to say `until' after `step'.",
               "So I'll look for the final value and colon next.");
             back_error();
@@ -12656,25 +12653,24 @@ void begin_iteration (void)
           get_x_next();
           scan_expression();
           if (cur_type != known)
-            bad_for(741);
+            bad_for("final value");
           final_value(pp) = cur_exp;
           loop_type(s) = pp;
           goto done;
         }
-      }
       cur_exp = stash_cur_exp();
     }
     link(q) = get_avail();
     q = link(q);
     info(q) = cur_exp;
     cur_type = vacuous;
-    lab_continue:;
+  lab_continue:;
   } while (!(cur_cmd != comma));
 done:;
 found:
   if (cur_cmd != colon)
   {
-    missing_err(58);
+    missing_err(":");
     help3("The next thing in this loop should have been a `:'.",
       "So I'll pretend that a colon was present;",
       "everything from here to `endfor' will be iterated.");
@@ -12699,8 +12695,7 @@ void resume_iteration (void)
   if (p > _void)
   {
     cur_exp = value(p);
-    if (((step_size(p) > 0) && (cur_exp > final_value(p))) || ((step_size(p) < 0)
-      && (cur_exp < final_value(p))))
+    if (((step_size(p) > 0) && (cur_exp > final_value(p))) || ((step_size(p) < 0) && (cur_exp < final_value(p))))
       goto not_found;
     cur_type = known;
     q = stash_cur_exp();
@@ -12725,7 +12720,7 @@ void resume_iteration (void)
   if (internal[tracing_commands] > unity)
   {
     begin_diagnostic();
-    print_nl(736);
+    print_nl("{loop value=");
     if ((q != null) && (link(q) = _void))
       print_exp(q, 1);
     else
@@ -12753,7 +12748,6 @@ void stop_iteration (void)
     {
       p = info(q);
       if (p != null)
-      {
         if (link(p) == _void)
         {
           recycle_value(p);
@@ -12761,7 +12755,6 @@ void stop_iteration (void)
         }
         else
           flush_token_list(p);
-      }
       p = q;
       q = link(q);
       free_avail(p);
@@ -12779,48 +12772,27 @@ void begin_name (void)
   ext_delimiter = 0;
 }
 /* 771 */
-boolean more_name (ASCII_code c)
+boolean more_name(ASCII_code c)
 {
-  boolean Result;
-
-  if (c == 34)
-  {
-    quotedfilename = !quotedfilename;
-    Result = true;
-  }
-  else if (((c == 32) || (c == 9)) && stopatspace && (!quotedfilename))
-    Result = false;
+  if (c == ' ')
+    return false;
   else
   {
-    if (ISDIRSEP (c))
+    if ((c == '>') || (c == ':'))
     {
       area_delimiter = pool_ptr;
       ext_delimiter = 0;
     }
-    else if (c == 46)
+    else if ((c == '.') && (ext_delimiter == 0))
       ext_delimiter = pool_ptr;
-    {
-      if (pool_ptr + 1 > max_pool_ptr)
-      {
-        if (pool_ptr + 1 > pool_size)
-          overflow("pool size", pool_size - init_pool_ptr);
-        max_pool_ptr = pool_ptr + 1;
-      }
-    }
-    {
-      str_pool[pool_ptr] = c;
-      incr(pool_ptr);
-    }
-    Result = true;
+    str_room(1);
+    append_char(c);
+    return true;
   }
-  return Result;
 }
 /* 772 */
 void end_name (void)
 {
-  boolean mustquote;
-  pool_pointer j, s, t;
-
   if (str_ptr + 3 > max_str_ptr)
   {
     if (str_ptr + 3 > max_strings)
@@ -12836,94 +12808,25 @@ void end_name (void)
     }
   }
   if (area_delimiter == 0)
-    cur_area = 261;
+    cur_area = "";
   else
   {
-    mustquote = false;
-    s = str_start[str_ptr];
-    t = area_delimiter + 1;
-    j = s;
-    while ((!mustquote) && (j < t))
-    {
-      mustquote = str_pool[j] == 32;
-      incr(j);
-    }
-    if (mustquote)
-    {
-      for (j = pool_ptr - 1; j <= t; j++)
-      {
-        str_pool[j + 2] = str_pool[j];
-      }
-      str_pool[t + 1] = 34;
-      for (j = t - 1; j <= s; j++)
-      {
-        str_pool[j + 1] = str_pool[j];
-      }
-      str_pool[s] = 34;
-      pool_ptr = pool_ptr + 2;
-      area_delimiter = area_delimiter + 2;
-      if (ext_delimiter != 0)
-        ext_delimiter = ext_delimiter + 2;
-    }
     cur_area = str_ptr;
     incr(str_ptr);
     str_start[str_ptr] = area_delimiter + 1;
   }
   if (ext_delimiter == 0)
-    cur_ext = 261;
+  {
+    cur_ext = "";
+    cur_name = make_string();
+  }
   else
   {
-    mustquote = false;
-    s = str_start[str_ptr];
-    t = ext_delimiter;
-    j = s;
-    while ((!mustquote) && (j < t))
-    {
-      mustquote = str_pool[j] == 32;
-      incr(j);
-    }
-    if (mustquote)
-    {
-      for (j = pool_ptr - 1; j <= t; j++)
-      {
-        str_pool[j + 2] = str_pool[j];
-      }
-      str_pool[t + 1] = 34;
-      for (j = t - 1; j <= s; j++)
-      {
-        str_pool[j + 1] = str_pool[j];
-      }
-      str_pool[s] = 34;
-      pool_ptr = pool_ptr + 2;
-      ext_delimiter = ext_delimiter + 2;
-    }
     cur_name = str_ptr;
     incr(str_ptr);
     str_start[str_ptr] = ext_delimiter;
-  }
-  mustquote = false;
-  s = str_start[str_ptr];
-  t = pool_ptr;
-  j = s;
-  while ((!mustquote) && (j < t))
-  {
-    mustquote = str_pool[j] == 32;
-    incr(j);
-  }
-  if (mustquote)
-  {
-    str_pool[t + 1] = 34;
-    for (j = t - 1; j <= s; j++)
-    {
-      str_pool[j + 1] = str_pool[j];
-    }
-    str_pool[s] = 34;
-    pool_ptr = pool_ptr + 2;
-  }
-  if (ext_delimiter == 0)
-    cur_name = make_string();
-  else
     cur_ext = make_string();
+  }
 }
 /* 774 */
 void pack_file_name (str_number n, str_number a, str_number e)
@@ -12943,7 +12846,8 @@ void pack_file_name (str_number n, str_number a, str_number e)
     name_length = k;
   else
     name_length = file_name_size;
-  name_of_file[name_length + 1] = 0;
+  for (k = name_length + 1; k <= file_name_size; k++)
+    name_of_file[k] = ' ';
 }
 /* 778 */
 void pack_buffered_name (small_number n, integer a, integer b)
@@ -12965,64 +12869,47 @@ void pack_buffered_name (small_number n, integer a, integer b)
     name_length = k;
   else
     name_length = file_name_size;
-  name_of_file[name_length + 1] = 0;
+  for (k = name_length + 1; k <= file_name_size; k++)
+    name_of_file[k] = ' ';
 }
 /* 780 */
 str_number make_name_string (void)
 {
-  str_number Result;
   integer k;
 
   if ((pool_ptr + name_length > pool_size) || (str_ptr == max_strings))
-    Result = 63;
+    return "?";
   else
   {
     for (k = 1; k <= name_length; k++)
       append_char(xord[name_of_file[k]]);
-    Result = make_string();
+    return make_string();
   }
-  k = 1;
-  begin_name();
-  stopatspace = false;
-  while ((k <= name_length) && (more_name (name_of_file[k])))
-    incr(k);
-  stopatspace = true;
-  end_name();
-  return Result;
 }
 /* 780 */
 str_number a_make_name_string (alpha_file f)
-{
-  str_number Result;
-  
-  Result = make_name_string();
-  return Result;
+{  
+  return make_name_string();
 }
 /* 780 */
 str_number b_make_name_string (byte_file f)
 {
-  str_number Result;
-  
-  Result = make_name_string();
-  return Result;
+  return make_name_string();
 }
 /* 780 */
 str_number w_make_name_string (word_file f)
 {
-  str_number Result;
-  
-  Result = make_name_string();
-  return Result;
+  return make_name_string();
 }
 /* 781 */
 void scan_file_name (void)
 {
   begin_name();
-  while ((buffer[loc] == 32) || (buffer[loc] == 9))
+  while (buffer[loc] == ' ')
     incr(loc);
   while (true)
   {
-    if ((buffer[loc] == 59) || (buffer[loc] == 37))
+    if ((buffer[loc] == ';') || (buffer[loc] == '%'))
       goto done;
     if (!more_name(buffer[loc]))
       goto done;
@@ -13034,10 +12921,10 @@ done:
 /* 784 */
 void pack_job_name (str_number s)
 {
-  cur_area = 261;
+  cur_area = "";
   cur_ext = s;
   cur_name = job_name;
-  pack_file_name(cur_name, cur_area, cur_ext);
+  pack_cur_name();
 }
 /* 786 */
 void prompt_file_name (str_number s, str_number e)
@@ -13047,15 +12934,15 @@ void prompt_file_name (str_number s, str_number e)
 
   if (interaction == scroll_mode)
     wake_up_terminal();
-  if (s == 743)
+  if (s == "input file name")
     print_err("I can't find file `");
   else
     print_err("I can't write on file `");
   print_file_name(cur_name, cur_area, cur_ext);
-  print(746);
-  if (e == 747)
+  print("'.");
+  if (e == ".mf")
     show_context();
-  print_nl(748);
+  print_nl("Please type another ");
   print(s);
   if (interaction < scroll_mode)
     fatal_error("*** (job aborted, file error in nonstop mode)");
@@ -13064,24 +12951,22 @@ void prompt_file_name (str_number s, str_number e)
   {
     begin_name();
     k = first;
-    while (((buffer[k] == 32) || (buffer[k] == 9)) && (k < last))
+    while ((buffer[k] == ' ') && (k < last))
       incr(k);
     while (true)
     {
       if (k == last)
         goto done;
-      if (!more_name (buffer[k]))
+      if (!more_name(buffer[k]))
         goto done;
       incr(k);
     }
   done:
     end_name();
   }
-  if (cur_ext == 261)
+  if (cur_ext == "")
     cur_ext = e;
-  if ((str_start[cur_name + 1] - str_start[cur_name]) == 0)
-    cur_name = saved_cur_name;
-  pack_file_name (cur_name, cur_area, cur_ext);
+  pack_cur_name();
 }
 /* 788 */
 void open_log_file (void)
@@ -13094,28 +12979,26 @@ void open_log_file (void)
 
   old_setting = selector;
   if (job_name == 0)
-    job_name = getjob_name(750);
-  pack_job_name(751);
+    job_name = getjob_name("mfput");
+  pack_job_name(".log");
   while (!a_open_out(log_file))
   {
     selector = term_only;
-    prompt_file_name(754, 752);
+    prompt_file_name("transcript file name", ".log");
   }
-  texmflogname = a_make_name_string(log_file);
+  log_name = a_make_name_string(log_file);
   selector = log_only;
   log_opened = true;
   {
-    fputs(log_file, "This is METAFONT, Version 2.7182818");
+    wlog(banner);
     slow_print(base_ident);
-    print(755);
+    print("  ");
     print_int(round_unscaled(internal[day]));
     print_char(' ');
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
     m = round_unscaled(internal[month]);
     for (k = 3 * m - 2; k <= 3 * m; k++)
-    {
       wlog(months[k], log_file);
-    }
     print_char(' ');
     print_int(round_unscaled(internal[year]));
     print_char(' ');
@@ -13125,7 +13008,7 @@ void open_log_file (void)
     print_dd(m % 60);
   }
   input_stack[input_ptr] = cur_input;
-  print_nl(753);
+  print_nl("**");
   l = input_stack[0].limit_field - 1;
   for (k = 1; k <= l; k++)
     print(buffer[k]);
@@ -13149,41 +13032,51 @@ void start_input (void)
     scan_file_name();
   else
   {
-    cur_name = 261;
-    cur_ext = 261;
-    cur_area = 261;
+    cur_name = "";
+    cur_ext = "";
+    cur_area = "";
   }
+  if (cur_ext == "")
+    cur_ext = ".mf";
   pack_cur_name();
   while (true)
   {
     begin_file_reading();
-    if (cur_ext == 747)
+    if (a_open_in(cur_file))
+      goto done;
+    if (cur_area == "")
     {
-      cur_ext = 261;
-      pack_file_name(cur_name, cur_area, cur_ext);
+      pack_file_name(cur_name, MF_area, cur_ext);
+      if (a_open_in(cur_file))
+        goto done;
     }
     end_file_reading();
-    prompt_file_name(743, 747);
+    prompt_file_name("input file name", ".mf");
   }
 done:
-  name = a_make_name_string(input_file[index]);
-  str_ref[cur_name] = 127;
+  name = a_make_name_string(cur_file);
+  str_ref[cur_name] = max_str_ptr;
   if (job_name == 0)
   {
     job_name = getjob_name(cur_name);
     open_log_file();
   }
-  if (term_offset + (str_start[name + 1] - str_start[name]) > max_print_line - 2)
+  if (term_offset + length(name) > max_print_line - 2)
     print_ln();
   else if ((term_offset > 0) || (file_offset > 0))
     print_char(' ');
   print_char('(');
   incr(open_parens);
   slow_print(name);
-  fflush (stdout);
+  update_terminal();
+  if (name == str_ptr - 1)
+  {
+    flush_string(name);
+    name = cur_name;
+  }
   {
     line = 1;
-    if (input_ln(input_file[index], false))
+    if (input_ln(cur_file, false))
       do_nothing();
     firm_up_the_line();
     buffer[limit] = '%';
@@ -13197,7 +13090,7 @@ void bad_exp (str_number s)
   unsigned char save_flag;
 
   print_err(s);
-  print(770);
+  print(" expression can't begin with `");
   print_cmd_mod (cur_cmd, cur_mod);
   print_char('\'');
   help4("I'm afraid I need some sort of value in order to continue,",
@@ -13272,7 +13165,7 @@ void obliterated (pointer q)
 {
   print_err("Variable ");
   show_token_list(q, null, 1000, 0);
-  print(791);
+  print(" has been obliterated");
   help3("It seems you did a nasty thing---probably by accident,",
     "but nevertheless you nearly hornswoggled me...",
     "While I was evaluating the right-hand side of this",
@@ -13349,7 +13242,7 @@ void known_pair (void)
 
   if (cur_type != pair_type)
   {
-    disp_err(null, "Undefined coordinates have been replaced by (0,0)");
+    exp_err("Undefined coordinates have been replaced by (0,0)");
     help5("I need x and y numbers for this part of the path.",
       "The value I found (see above) was no good;",
       "so I'll try to keep going by using zero instead.",
@@ -13396,7 +13289,6 @@ void known_pair (void)
 /* 871 */
 pointer new_knot (void)
 {
-  pointer Result;
   pointer q;
 
   q = get_node(knot_node_size);
@@ -13406,13 +13298,11 @@ pointer new_knot (void)
   known_pair();
   x_coord(q) = cur_x;
   y_coord(q) = cur_y;
-  Result = q;
-  return Result;
+  return q;
 }
 /* 875 */
 small_number scan_direction (void)
 {
-  small_number Result;
   unsigned char t;
   scaled x;
 
@@ -13436,7 +13326,7 @@ small_number scan_direction (void)
     {
       if (cur_type != known)
       {
-        disp_err(null, "Undefined x coordinate has been replaced by 0");
+        exp_err("Undefined x coordinate has been replaced by 0");
         help5("I need a `known' x value for this part of the path.", 
           "The value I found (see above) was no good;",
           "so I'll try to keep going by using zero instead.",
@@ -13447,7 +13337,7 @@ small_number scan_direction (void)
       x = cur_exp;
       if (cur_cmd != comma)
       {
-        missing_err(44);
+        missing_err(",");
         help2("I've got the x coordinate of a path direction;",
           "will look for the y coordinate next.");
         back_error();
@@ -13479,15 +13369,14 @@ small_number scan_direction (void)
   }
   if (cur_cmd != right_brace)
   {
-    missing_err(125);
+    missing_err("}");
     help3("I've scanned a direction spec for part of a path,",
       "so a right brace should have come next.",
       "I shall pretend that one was there.");
     back_error();
   }
   get_x_next();
-  Result = t;
-  return Result;
+  return t;
 }
 /* 895 */
 void do_nullary (quarterword c)
@@ -13496,7 +13385,7 @@ void do_nullary (quarterword c)
 
   check_arith();
   if (internal[tracing_commands] > two)
-    show_cmd_mod (33, c);
+    show_cmd_mod(nullary, c);
   switch (c)
   {
     case true_code:
@@ -13557,9 +13446,7 @@ void do_nullary (quarterword c)
         prompt_input("");
         str_room(last - start);
         for (k = start; k <= last - 1; k++)
-        {
           append_char(buffer[k]);
-        }
         end_file_reading();
         cur_type = string_type;
         cur_exp = make_string();
@@ -13577,16 +13464,14 @@ boolean nice_pair (integer p, quarterword t)
   {
     p = value(p);
     if (type(x_part_loc(p)) == known)
-    {
       if (type(y_part_loc(p)) == known)
       {
         Result = true;
         goto lab_exit;
       }
-    }
   }
   Result = false;
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 900 */
@@ -13598,12 +13483,12 @@ void print_known_or_unknown_type (small_number t, integer v)
     if (t != pair_type)
       print_type (t);
     else if (nice_pair(v, pair_type))
-      print(336);
+      print("pair");
     else
-      print(836);
+      print("unknown pair");
   }
   else
-    print(837);
+    print("unknown numeric");
   print_char(')');
 }
 /* 901 */
@@ -13611,7 +13496,7 @@ void bad_unary (quarterword c)
 {
   disp_err(null, "Not implemented: ");
   print_op(c);
-  print_known_or_unknown_type (cur_type, cur_exp);
+  print_known_or_unknown_type(cur_type, cur_exp);
   help3("I'm afraid I don't know how to apply that operation to that",
     "particular type. Continue, and I'll simply return the",
     "argument (shown above) as the result of the operation.");
@@ -13627,7 +13512,7 @@ void negate_dep_list (pointer p)
       goto lab_exit;
     p = link(p);
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 908 */
 void pair_to_path (void)
@@ -13675,12 +13560,12 @@ void str_to_num (quarterword c)
     for (k = str_start[cur_exp]; k <= str_start[cur_exp + 1] - 1; k++)
     {
       m = so(str_pool[k]);
-      if ((m >= 48) && (m <= 57))
-        m = m - 48;
-      else if ((m >= 65) && (m <= 70))
-        m = m - 55;
-      else if ((m >= 97) && (m <= 102))
-        m = m - 87;
+      if ((m >= '0') && (m <= '9'))
+        m = m - '0';
+      else if ((m >= 'A') && (m <= 'F'))
+        m = m - 'A';
+      else if ((m >= 'a') && (m <= 'f'))
+        m = m - 'a';
       else
       {
         bad_char = true;
@@ -13691,14 +13576,14 @@ void str_to_num (quarterword c)
         bad_char = true;
         m = 0;
       }
-      if (n < half_unit / b)
+      if (n < 32768 / b)
         n = n * b + m;
       else
         n = 32767;
     }
     if (bad_char)
     {
-      disp_err(null, "String contains illegal digits");
+      exp_err("String contains illegal digits");
       if (c == oct_op)
         help1("I zeroed out characters that weren't in the range 0..7.");
       else
@@ -13719,7 +13604,6 @@ void str_to_num (quarterword c)
 /* 916 */
 scaled path_length (void)
 {
-  scaled Result;
   scaled n;
   pointer p;
 
@@ -13732,8 +13616,7 @@ scaled path_length (void)
     p = link(p);
     n = n + unity;
   } while (!(p == cur_exp));
-  Result = n;
-  return Result;
+  return n;
 }
 /* 919 */
 void test_known (quarterword c)
@@ -13765,7 +13648,7 @@ void test_known (quarterword c)
             goto done;
         } while (!(q == p));
         b = true_code;
-done:;
+      done:;
       }
       break;
     default:
@@ -13778,7 +13661,7 @@ done:;
     flush_cur_exp(true_code + false_code - b);
   cur_type = boolean_type;
 }
-/* 895 */
+/* 898 */
 void do_unary (quarterword c)
 {
   pointer p, q;
@@ -13788,11 +13671,11 @@ void do_unary (quarterword c)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl(123);
+    print_nl("{");
     print_op(c);
     print_char('(');
-    print_exp(0, 0);
-    print(842);
+    print_exp(null, 0);
+    print(")}");
     end_diagnostic(false);
   }
   switch (c)
@@ -14090,7 +13973,7 @@ void bad_binary (pointer p, quarterword c)
     print_op(c);
   print_known_or_unknown_type(type(p), p);
   if (c >= min_of)
-    print(479);
+    print("of");
   else
     print_op(c);
   print_known_or_unknown_type(cur_type, cur_exp);
@@ -14112,12 +13995,12 @@ pointer tarnished (pointer p)
     r = r - 2;
     if (type(r) == independent)
     {
-      Result = 1;
+      Result = _void;
       goto lab_exit;
     }
   } while (!(r == q));
   Result = null;
-  lab_exit:;
+lab_exit:;
   return Result;
 }
 /* 935 */
@@ -14166,7 +14049,7 @@ void add_or_subtract (pointer p, pointer q, quarterword c)
   }
   else
   {
-    v = dep_list(cur_exp);
+    t = type(q);
     if (t < dependent)
       v = value(q);
     else
@@ -14220,7 +14103,7 @@ void add_or_subtract (pointer p, pointer q, quarterword c)
       {
         if (s == dependent)
         {
-          if (max_coef (r) + max_coef (v) < coef_bound)
+          if (max_coef(r) + max_coef(v) < coef_bound)
           {
             v = p_plus_q(v, r, dependent);
             goto done;
@@ -14243,7 +14126,7 @@ void add_or_subtract (pointer p, pointer q, quarterword c)
       }
     }
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 943 */
 void dep_mult (pointer p, integer v, boolean v_is_scaled)
@@ -14267,16 +14150,12 @@ void dep_mult (pointer p, integer v, boolean v_is_scaled)
   q = dep_list(q);
   s = t;
   if (t == dependent)
-  {
     if (v_is_scaled)
-    {
       if (ab_vs_cd(max_coef(q), abs(v), coef_bound - 1, unity) >= 0)
         t = proto_dependent;
-    }
-  }
   q = p_times_v(q, v, s, t, v_is_scaled);
   dep_finish(q, p, t);
-  lab_exit:;
+lab_exit:;
 }
 /* 946 */
 void hard_times (pointer p)
@@ -14322,13 +14201,11 @@ void dep_div (pointer p, scaled v)
   q = dep_list(q);
   s = t;
   if (t == dependent)
-  {
     if (ab_vs_cd(max_coef(q), unity, coef_bound - 1, abs(v)) >= 0)
       t = proto_dependent;
-  }
   q = p_over_v(q, v, s, t);
   dep_finish(q, p, t);
-  lab_exit:;
+lab_exit:;
 }
 /* 953 */
 void set_up_trans (quarterword c)
