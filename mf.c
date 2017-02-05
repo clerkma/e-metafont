@@ -14311,7 +14311,7 @@ void set_up_trans (quarterword c)
   tx = value(x_part_loc(q));
   ty = value(y_part_loc(q));
   flush_cur_exp(0);
-  lab_exit:;
+lab_exit:;
 }
 /* 960 */
 void set_up_known_trans (quarterword c)
@@ -14319,7 +14319,7 @@ void set_up_known_trans (quarterword c)
   set_up_trans(c);
   if (cur_type != known)
   {
-    disp_err(null, "Transform components aren't all known");
+    exp_err("Transform components aren't all known");
     help3("I'm unable to apply a partially specified transformation",
       "except to a fully known pair or transform.",
       "Proceed, and I'll omit the transformation.");
@@ -14351,13 +14351,9 @@ void path_trans (pointer p, quarterword c)
   if (cur_type == pen_type)
   {
     if (max_offset(cur_exp) == 0)
-    {
       if (tx == 0)
-      {
         if (ty == 0)
           goto lab_exit;
-      }
-    }
     flush_cur_exp(make_path(cur_exp));
     cur_type = future_pen;
   }
@@ -14370,7 +14366,7 @@ void path_trans (pointer p, quarterword c)
       trans(q + 5, q + 6);
     q = link(q);
   } while (!(q == cur_exp));
-  lab_exit:;
+lab_exit:;
 }
 /* 963 */
 void edges_trans (pointer p, quarterword c)
@@ -14381,11 +14377,8 @@ void edges_trans (pointer p, quarterword c)
   if (empty_edges(cur_edges))
     goto lab_exit;
   if (txx == 0)
-  {
     if (tyy == 0)
-    {
       if (txy % unity == 0)
-      {
         if (tyx % unity == 0)
         {
           xy_swap_edges();
@@ -14396,15 +14389,9 @@ void edges_trans (pointer p, quarterword c)
           if (empty_edges(cur_edges))
             goto lab_exit;
         }
-      }
-    }
-  }
   if (txy == 0)
-  {
     if (tyx == 0)
-    {
       if (txx % unity == 0)
-      {
         if (tyy % unity == 0)
         {
           if ((txx == 0) || (tyy == 0))
@@ -14463,15 +14450,12 @@ void edges_trans (pointer p, quarterword c)
           }
           goto lab_exit;
         }
-      }
-    }
-  }
   print_err("That transformation is too hard");
   help3("I can apply complicated transformations to paths,",
     "but I can only do integer operations on pictures.",
     "Proceed, and I'll omit the transformation.");
   put_get_error();
-  lab_exit:;
+lab_exit:;
 }
 /* 968 */
 void bilin1 (pointer p, scaled t, pointer q, scaled u, scaled delta)
@@ -14481,7 +14465,6 @@ void bilin1 (pointer p, scaled t, pointer q, scaled u, scaled delta)
   if (t != unity)
     dep_mult(p, t, true);
   if (u != 0)
-  {
     if (type(q) == known)
       delta = delta + take_scaled(value(q), u);
     else
@@ -14496,7 +14479,6 @@ void bilin1 (pointer p, scaled t, pointer q, scaled u, scaled delta)
       }
       dep_list(p) = p_plus_fq(dep_list(p), u, dep_list(q), proto_dependent, type(q));
     }
-  }
   if (type(p) == known)
     value(p) = value(p) + delta;
   else
@@ -14559,7 +14541,7 @@ void bilin3 (pointer p, scaled t, scaled v, scaled u, scaled delta)
   else
     delta = delta + value(p);
   if (u != 0)
-    value(p) = delta + take_scaled (v, u);
+    value(p) = delta + take_scaled(v, u);
   else
     value(p) = delta;
 }
@@ -14596,7 +14578,7 @@ void big_trans (pointer p, quarterword c)
   {
     make_exp_copy(p);
     r = value(cur_exp);
-    if (cur_type == 13)
+    if (cur_type == transform_type)
     {
       bilin3(yy_part_loc(r), tyy, value(xy_part_loc(q)), tyx, 0);
       bilin3(yx_part_loc(r), tyy, value(xx_part_loc(q)), tyx, 0);
@@ -14608,11 +14590,11 @@ void big_trans (pointer p, quarterword c)
   }
   else
   {
-    pp = stash_cur_exp;
+    pp = stash_cur_exp();
     qq = value(pp);
     make_exp_copy(p);
     r = value(cur_exp);
-    if (cur_type == 13)
+    if (cur_type == transform_type)
     {
       bilin2(yy_part_loc(r), yy_part_loc(qq), value(xy_part_loc(q)), yx_part_loc(qq), null);
       bilin2(yx_part_loc(r), yy_part_loc(qq), value(xx_part_loc(q)), yx_part_loc(qq), null);
@@ -14621,9 +14603,10 @@ void big_trans (pointer p, quarterword c)
     }
     bilin2(y_part_loc(r), yy_part_loc(qq), value(x_part_loc(q)), yx_part_loc(qq), y_part_loc(qq));
     bilin2(x_part_loc(r), xx_part_loc(qq), value(y_part_loc(q)), xy_part_loc(qq), x_part_loc(qq));
-    recycle_value(pp); free_node(pp, value_node_size);
+    recycle_value(pp);
+    free_node(pp, value_node_size);
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 976 */
 void cat (pointer p)
@@ -14677,15 +14660,11 @@ void chop_string (pointer p)
   }
   str_room(b - a);
   if (reversed)
-  {
     for (k = str_start[s] + b - 1; k <= str_start[s] + a; k--)
       append_char(so(str_pool[k]));
-  }
   else
-  {
     for (k = str_start[s] + a; k <= str_start[s] + b - 1; k++)
       append_char(so(str_pool[k]));
-  }
   cur_exp = make_string();
   delete_str_ref(s);
 }
@@ -14710,7 +14689,6 @@ void chop_path (pointer p)
     b = k;
   }
   if (a < 0)
-  {
     if (left_type(cur_exp) == endpoint)
     {
       a = 0;
@@ -14722,9 +14700,7 @@ void chop_path (pointer p)
         a = a + l;
         b = b + l;
       } while (!(a >= 0));
-  }
   if (b > l)
-  {
     if (left_type(cur_exp) == endpoint)
     {
       b = l;
@@ -14737,7 +14713,6 @@ void chop_path (pointer p)
         a = a - l;
         b = b - l;
       }
-  }
   q = cur_exp;
   while (a >= unity)
   {
@@ -14750,7 +14725,7 @@ void chop_path (pointer p)
     if (a > 0)
     {
       qq = link(q);
-      split_cubic(q, a * 4096, x_coord(qq), y_coord(qq));
+      split_cubic(q, a * 010000, x_coord(qq), y_coord(qq));
       q = link(q);
     }
     pp = copy_knot(q);
@@ -14771,7 +14746,7 @@ void chop_path (pointer p)
     {
       ss = pp;
       pp = link(pp);
-      split_cubic(ss, a * 4096, x_coord(pp), y_coord(pp));
+      split_cubic(ss, a * 010000, x_coord(pp), y_coord(pp));
       pp = link(ss);
       free_node(ss, knot_node_size);
       if (rr == ss)
@@ -14782,7 +14757,7 @@ void chop_path (pointer p)
     }
     if (b < 0)
     {
-      split_cubic(rr, (b + unity) * 4096, x_coord(qq), y_coord(qq));
+      split_cubic(rr, (b + unity) * 010000, x_coord(qq), y_coord(qq));
       free_node(qq, knot_node_size);
       qq = link(rr);
     }
@@ -14846,19 +14821,15 @@ void find_point (scaled v, quarterword c)
   if (n == 0)
     v = 0;
   else if (v < 0)
-  {
     if (left_type(p) == endpoint)
       v = 0;
     else
       v = n - 1 - ((-v - 1) % n);
-  }
   else if (v > n)
-  {
     if (left_type(p) == endpoint)
       v = n;
     else
       v = v % n;
-  }
   p = cur_exp;
   while (v >= unity)
   {
@@ -14868,7 +14839,7 @@ void find_point (scaled v, quarterword c)
   if (v != 0)
   {
     q = link(p);
-    split_cubic(p, v * 4096, x_coord(q), y_coord(q));
+    split_cubic(p, v * 010000, x_coord(q), y_coord(q));
     p = link(p);
   }
   switch (c)
@@ -14901,13 +14872,13 @@ void do_binary (pointer p, quarterword c)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl(850);
+    print_nl("{(");
     print_exp(p, 0);
     print_char(')');
     print_op(c);
     print_char('(');
-    print_exp(0, 0);
-    print(842);
+    print_exp(null, 0);
+    print(")}");
     end_diagnostic(false);
   }
   switch (type(p))
@@ -14925,10 +14896,10 @@ void do_binary (pointer p, quarterword c)
   }
   if (old_p != null)
   {
-    q = stash_cur_exp;
+    q = stash_cur_exp();
     old_p = p;
     make_exp_copy(old_p);
-    p = stash_cur_exp;
+    p = stash_cur_exp();
     unstash_cur_exp(q);
   }
   switch (cur_type)
@@ -14964,7 +14935,6 @@ void do_binary (pointer p, quarterword c)
         else
           bad_binary(p, c);
       else if (cur_type == pair_type)
-      {
         if (type(p) !=  pair_type)
           bad_binary(p, c);
         else
@@ -14974,7 +14944,6 @@ void do_binary (pointer p, quarterword c)
           add_or_subtract(x_part_loc(q), x_part_loc(r), c);
           add_or_subtract(y_part_loc(q), y_part_loc(r), c);
         }
-      }
       else if (type(p) == pair_type)
         bad_binary(p, c);
       else
@@ -15041,7 +15010,7 @@ void do_binary (pointer p, quarterword c)
           else
             help2("Oh dear. I can't decide if the expression above is positive,",
               "negative, or zero. So this comparison test won't be `true'.");
-          disp_err(null, "Unknown relation will be considered false");
+          exp_err("Unknown relation will be considered false");
           put_get_flush_error(false_code);
         }
         else switch (c)
@@ -15066,7 +15035,7 @@ void do_binary (pointer p, quarterword c)
             break;
         }
         cur_type = boolean_type;
-        done:;
+      done:;
       }
       break;
     case and_op:
@@ -15120,7 +15089,7 @@ void do_binary (pointer p, quarterword c)
         unstash_cur_exp(p);
         if (v == 0)
         {
-          disp_err(null, "Division by zero");
+          exp_err("Division by zero");
           help2("You're trying to divide the quantity shown above the error",
             "message by zero. I'm going to divide it by one instead.");
           put_get_error();
@@ -15144,12 +15113,10 @@ void do_binary (pointer p, quarterword c)
     case pythag_add:
     case pythag_sub:
       if ((cur_type == known) && (type(p) == known))
-      {
         if (c == pythag_add)
           cur_exp = pyth_add(value(p), cur_exp);
         else
           cur_exp = pyth_sub(value(p), cur_exp);
-      }
       else
         bad_binary(p, c);
       break;
@@ -15277,13 +15244,13 @@ void frac_mult (scaled n, scaled d)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl(850);
+    print_nl("{(");
     print_scaled(n);
     print_char('/');
     print_scaled(d);
-    print(855);
-    print_exp(0, 0);
-    print(842);
+    print(")*(");
+    print_exp(null, 0);
+    print(")}");
     end_diagnostic(false);
   }
   switch (cur_type)
@@ -15315,7 +15282,7 @@ void frac_mult (scaled n, scaled d)
   }
   else
     dep_mult(null, v, false);
-  if (old_exp != 0)
+  if (old_exp != null)
   {
     recycle_value(old_exp);
     free_node(old_exp, value_node_size);
@@ -15325,6 +15292,7 @@ void frac_mult (scaled n, scaled d)
 void write_gf (gf_index a, gf_index b)
 {
   gf_index k;
+
   for (k = a; k <= b; k++)
     write(gf_file, gf_buf[k]);
 }
@@ -15351,8 +15319,8 @@ void gf_four (integer x)
     gf_out(x / three_bytes);
   else
   {
-    x = x + fraction_four;
-    x = x + fraction_four;
+    x = x + 010000000000;
+    x = x + 010000000000;
     gf_out((x / three_bytes) + 128);
   }
   x = x % three_bytes;
@@ -15415,10 +15383,8 @@ void gf_string (str_number s, str_number t)
       gf_out(so(str_pool[k]));
   }
   if (t != 0)
-  {
     for (k = str_start[t]; k <= str_start[t + 1] - 1; k++)
       gf_out(so(str_pool[k]));
-  }
 }
 /* 1161 */
 void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
@@ -15428,15 +15394,10 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
   if (max_n > gf_max_n)
     gf_max_n = max_n;
   if (boc_p == -1)
-  {
     if (one_byte(boc_c))
-    {
       if (one_byte(max_m - min_m))
-      {
         if (one_byte(max_m))
-        {
           if (one_byte(max_n - min_n))
-          {
             if (one_byte(max_n))
             {
               gf_out(boc1);
@@ -15446,12 +15407,7 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
               gf_out(max_n - min_n);
               gf_out(max_n);
               goto lab_exit;
-            }
-          }
-        } 
-      } 
-    }
-  }
+            }  
   gf_out(boc);
   gf_four(boc_c);
   gf_four(boc_p);
@@ -15459,7 +15415,7 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
   gf_four(max_m);
   gf_four(min_n);
   gf_four(max_n);
-  lab_exit:;
+lab_exit:;
 }
 /* 1163 */
 void init_gf (void)
@@ -15472,18 +15428,16 @@ void init_gf (void)
   gf_min_n = 4096;
   gf_max_n = -4096;
   for (k = 0; k <= 255; k++)
-  {
     char_ptr[k] = -1;
-  }
   if (internal[hppp] <= 0)
-    gf_ext = 1055;
+    gf_ext = ".gf";
   else
   {
     old_setting = selector;
     selector = new_string;
     print_char('.');
     print_int(make_scaled(internal[hppp], 59429463));
-    print(1056);
+    print("gf");
     gf_ext = make_string();
     selector = old_setting;
   }
@@ -15492,7 +15446,7 @@ void init_gf (void)
   gf_out(gf_id_byte);
   old_setting = selector;
   selector = new_string;
-  print(1054);
+  print(" METAFONT output ");
   print_int(round_unscaled(internal[year]));
   print_char('.');
   print_dd(round_unscaled(internal[month]));
@@ -15545,13 +15499,13 @@ void ship_out (eight_bits c)
   {
     if (x_off != 0)
     {
-      gf_string(437, 0);
+      gf_string("xoffset", 0);
       gf_out(yyy);
       gf_four(x_off * unity);
     }
     if (y_off != 0)
     {
-      gf_string(438, 0);
+      gf_string("yoffset", 0);
       gf_out(yyy);
       gf_four(y_off * unity);
     }
@@ -15639,7 +15593,7 @@ void ship_out (eight_bits c)
       q = link(q);
     } while (!(mm == fraction_one));
     if (w != 0)
-      print_nl(1058);
+      print_nl("(There's unbounded black in character shipped out!)");
     if (prev_m - m_offset(cur_edges) + x_off > gf_max_m)
       gf_max_m = prev_m - m_offset(cur_edges) + x_off;
     p = knil(p);
@@ -15659,9 +15613,9 @@ void ship_out (eight_bits c)
   gf_prev_ptr = gf_offset + gf_ptr;
   incr(total_chars);
   print_char(']');
-  fflush(stdout);
+  update_terminal();
   if (internal[tracing_output] > 0)
-    print_edges(1057, true, x_off, y_off);
+    print_edges(" (just shipped out)", true, x_off, y_off);
 }
 /* 1006 */
 void try_eq (pointer l, pointer r)
