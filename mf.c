@@ -11767,13 +11767,11 @@ void scan_def (void)
     scanner_status = var_defining;
     n = 2;
     if (cur_cmd == macro_special)
-    {
       if (cur_mod == macro_suffix)
       {
         n = 3;
         get_next();
       }
-    }
     type(warning_info) = unsuffixed_macro - 2 + n;
     value(warning_info) = q;
   }
@@ -11837,7 +11835,6 @@ void scan_def (void)
     r = p;
     get_next();
     if (c == expr_macro)
-    {
       if (cur_cmd == of_token)
       {
         c = of_macro;
@@ -11851,7 +11848,6 @@ void scan_def (void)
         r = p;
         get_next();
       }
-    }
   }
   check_equals();
   p = get_avail();
@@ -11903,13 +11899,13 @@ void print_macro_name (pointer a, pointer n)
 void print_arg (pointer q, integer n, pointer b)
 {
   if (link(q) = _void)
-    print_nl(498);
+    print_nl("(EXPR");
   else if ((b < text_base) && (b != text_macro))
-    print_nl(499);
+    print_nl("(SUFFIX");
   else
-    print_nl(500);
+    print_nl("(TEXT");
   print_int(n);
-  print(703);
+  print(")<-");
   if (link(q) = _void)
     print_exp(q, 1);
   else
@@ -11953,10 +11949,8 @@ void scan_text_arg (pointer l_delim, pointer r_delim)
         }
       }
       else if (cur_cmd == left_delimiter)
-      {
         if (cur_mod == r_delim)
           incr(balance);
-      }
     }
     link(p) = cur_tok();
     p = link(p);
@@ -11983,7 +11977,7 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
   {
     n = 1;
     tail = arg_list;
-    while (link(tail) != 0)
+    while (link(tail) != null)
     {
       incr(n);
       tail = link(tail);
@@ -11995,7 +11989,7 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
     print_ln();
     print_macro_name (arg_list, macro_name);
     if (n == 3)
-      print(665);
+      print("@#");
     show_macro(def_ref, 0, 100000);
     if (arg_list != null)
     {
@@ -12052,10 +12046,9 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
     }
     if (cur_cmd != comma)
       if ((cur_cmd != right_delimiter) || (cur_mod != l_delim))
-      {
         if (info(link(r)) >= expr_base)
         {
-          missing_err(44);
+          missing_err(",");
           help3("I've finished reading a macro argument and am about to",
             "read another; the arguments weren't delimited correctly.",
             "You might want to delete some tokens before continuing.");
@@ -12069,7 +12062,6 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
             "You might want to delete some tokens before continuing.");
           back_error();
         }
-      }
   found:
     {
       p = get_avail();
@@ -12097,9 +12089,9 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
     print_err("Too many arguments to ");
     print_macro_name(arg_list, macro_name);
     print_char(';');
-    print_nl(705);
+    print_nl("  Missing `");
     slow_print(text(r_delim));
-    print(299);
+    print("' has been inserted");
     help3("I'm going to assume that the comma I just read was a",
       "right delimiter, and then I'll begin expanding the macro.",
       "You might want to delete some tokens before continuing.");
@@ -12147,8 +12139,8 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
           incr(n);
           if (cur_cmd != of_token)
           {
-            missing_err (479);
-            print(716);
+            missing_err(" of ");
+            print(" for ");
             print_macro_name(arg_list, macro_name);
             help1("I've got the first argument; will look now for the other.");
             back_error();
@@ -12252,7 +12244,7 @@ void expand (void)
       if (cur_mod > if_limit)
         if (if_limit == if_code)
         {
-          missing_err(58);
+          missing_err(":");
           back_input();
           cur_sym = frozen_colon;
           ins_error();
@@ -12285,7 +12277,7 @@ void expand (void)
         start_input();
       break;
     case iteration:
-      if (cur_mod == 0)
+      if (cur_mod == end_for)
       {
         print_err("Extra `endfor'");
         help2("I'm not currently working on a for loop,",
@@ -12344,7 +12336,7 @@ void expand (void)
           }
         else if (cur_cmd != semicolon)
         {
-          missing_err(59);
+          missing_err(";");
           help2("After `exitif <boolean exp>' I expect to see a semicolon.",
             "I shall pretend that one was there.");
           back_error();
@@ -12359,7 +12351,7 @@ void expand (void)
         get_next();
         p = cur_tok();
         get_next();
-        if (cur_cmd < display_command)
+        if (cur_cmd < min_command)
           expand();
         else
           back_input();
@@ -12402,7 +12394,7 @@ void expand (void)
               incr(j);
               incr(first);
             }
-            buffer[limit] = 37;
+            buffer[limit] = '%';
             first = limit + 1;
             loc = start;
             flush_cur_exp(0);
@@ -12421,16 +12413,16 @@ void get_x_next (void)
   pointer save_exp;
 
   get_next();
-  if (cur_cmd < display_command)
+  if (cur_cmd < min_command)
   {
     save_exp = stash_cur_exp();
     do {
       if (cur_cmd == defined_macro)
-        macro_call(cur_mod, 0, cur_sym);
+        macro_call(cur_mod, null, cur_sym);
       else
         expand();
       get_next();
-    } while (!(cur_cmd >= display_command));
+    } while (!(cur_cmd >= min_command));
     unstash_cur_exp(save_exp);
   }
 }
@@ -12495,14 +12487,14 @@ void change_if_limit (small_number l, pointer p)
       q = link(q);
     }
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 747 */
 void check_colon (void)
 {
   if (cur_cmd != colon)
   {
-    missing_err(58);
+    missing_err(":");
     help2("There should've been a colon after the condition.",
       "I shall pretend that one was there.");
     back_error();
