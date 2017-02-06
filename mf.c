@@ -15658,7 +15658,6 @@ void try_eq (pointer l, pointer r)
     type(l) = known;
   }
   if (r == null)
-  {
     if (cur_type == known)
     {
       value(q) = value(q) + cur_exp;
@@ -15672,7 +15671,6 @@ void try_eq (pointer l, pointer r)
       else
         pp = dep_list(cur_exp);
     }
-  }
   else if (type(r) == known)
   {
     value(q) = value(q) + value(r);
@@ -15712,13 +15710,13 @@ void try_eq (pointer l, pointer r)
   watch_coefs = true;
   if (copied)
     flush_node_list(pp);
-  done1:;
+done1:;
   if (info(p) == null)
   {
     if (abs(value(p)) > 64)
     {
       print_err("Inconsistent equation");
-      print(899);
+      print(" (off by ");
       print_scaled(value(p));
       print_char(')');
       help2("The equation I just read contradicts what was said before.",
@@ -15738,9 +15736,7 @@ void try_eq (pointer l, pointer r)
   {
     linear_eq(p, t);
     if (r == null)
-    {
       if (cur_type != known)
-      {
         if (type(cur_exp) == known)
         {
           pp = cur_exp;
@@ -15748,8 +15744,6 @@ void try_eq (pointer l, pointer r)
           cur_type = known;
           free_node(pp, value_node_size);
         }
-      }
-    }
   }
 }
 /* 1001 */
@@ -15820,13 +15814,11 @@ lab_restart:
         goto done;
       }
       else if (cur_type == pair_type)
-      {
         if (t == unknown_path)
         {
           pair_to_path();
           goto lab_restart;
         }
-      }
       break;
     case transform_type:
     case pair_type:
@@ -15837,7 +15829,7 @@ lab_restart:
         do {
           p = p - 2;
           q = q - 2;
-          try_eq (p, q);
+          try_eq(p, q);
         } while (!(p == v));
         goto done;
       }
@@ -15857,16 +15849,16 @@ lab_restart:
       break;
   }
   disp_err(lhs, "");
-  disp_err(null, "Equation cannot be performed (");
+  exp_err("Equation cannot be performed (");
   if (type(lhs) <= pair_type)
     print_type(type(lhs));
   else
-    print(340);
+    print("numeric");
   print_char('=');
   if (cur_type <= pair_type)
     print_type(cur_type);
   else
-    print(340);
+    print("numeric");
   print_char(')');
   help2("I'm sorry, but I don't know how to make such things equal.",
     "(See the two expressions just above the error message.)");
@@ -15894,22 +15886,20 @@ void do_equation (void)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl(850);
+    print_nl("{(");
     print_exp(lhs, 0);
-    print(886);
+    print(")=(");
     print_exp(null, 0);
-    print(842);
+    print(")}");
     end_diagnostic(false);
   }
   if (cur_type == unknown_path)
-  {
     if (type(lhs) == pair_type)
     {
       p = stash_cur_exp();
       unstash_cur_exp(lhs);
       lhs = p;
     }
-  }
   make_eq(lhs);
 }
 /* 996 */
@@ -15921,7 +15911,7 @@ void do_assignment (void)
 
   if (cur_type != token_list)
   {
-    disp_err(null, "Improper `:=' will be changed to `='");
+    exp_err("Improper `:=' will be changed to `='");
     help2("I didn't find a variable name at the left of the `:=',",
       "so I'm going to pretend that you said `=' instead.");
     error();
@@ -15941,30 +15931,28 @@ void do_assignment (void)
     if (internal[tracing_commands] > two)
     {
       begin_diagnostic();
-      print_nl(123);
+      print_nl("{");
       if (info(lhs) > hash_end)
         slow_print(int_name[info(lhs) - (hash_end)]);
       else
         show_token_list(lhs, null, 1000, 0);
-      print(461);
+      print(":=");
       print_exp(null, 0);
       print_char('}');
       end_diagnostic(false);
     }
     if (info(lhs) > hash_end)
-    {
       if (cur_type == known)
         internal[info(lhs) - (hash_end)] = cur_exp;
       else
       {
-        disp_err(null, "Internal quantity `");
+        exp_err("Internal quantity `");
         slow_print(int_name[info(lhs) - (hash_end)]);
-        print(888);
+        print("' must receive a known value");
         help2("I can't set an internal quantity to anything but a known",
           "numeric value, so I'll have to ignore this assignment.");
         put_get_error();
       }
-    }
     else
     {
       p = find_variable(lhs);
@@ -15978,7 +15966,7 @@ void do_assignment (void)
         make_exp_copy(p);
         p = stash_cur_exp();
         unstash_cur_exp(q);
-        make_eq (p);
+        make_eq(p);
       }
       else
       {
@@ -16026,17 +16014,15 @@ void do_type_declaration (void)
         "I'm going to discard the junk I found here,",
         "up to the next comma or the end of the declaration.");
       if (cur_cmd == numeric_token)
-        help_line[2] = 909;
+        help_line[2] = "Explicit subscripts like `x15a' aren't permitted.";
       put_get_error();
       scanner_status = flushing;
       do {
         get_next();
         if (cur_cmd == string_token)
-        {
           delete_str_ref(cur_mod);
-        }
       } while (!(cur_cmd >= comma));
-      scanner_status = 0;
+      scanner_status = normal;
     }
   } while (!(cur_cmd > comma));
 }
@@ -16046,7 +16032,7 @@ void do_random_seed (void)
   get_x_next();
   if (cur_cmd != assignment)
   {
-    missing_err(461);
+    missing_err(":=");
     help1("Always say `randomseed:=<numeric expression>'.");
     back_error();
   }
@@ -16054,7 +16040,7 @@ void do_random_seed (void)
   scan_expression();
   if (cur_type != known)
   {
-    disp_err(null, "Unknown value will be ignored");
+    exp_err("Unknown value will be ignored");
     help2("Your expression was too random for me to handle,",
       "so I won't change the random seed just now.");
     put_get_flush_error(0);
@@ -16066,10 +16052,10 @@ void do_random_seed (void)
     {
       old_setting = selector;
       selector = log_only;
-      print_nl(918);
+      print_nl("{randomseed:=");
       print_scaled(cur_exp);
       print_char('}');
-      print_nl(261);
+      print_nl("");
       selector = old_setting;
     }
   }
@@ -16083,7 +16069,7 @@ void do_protection (void)
   m = cur_mod;
   do {
     get_symbol();
-    t = eqtb[cur_sym].lh;
+    t = eq_type(cur_sym);
     if (m == 0)
     {
       if (t >= outer_tag)
@@ -16118,10 +16104,10 @@ void do_interim (void)
   {
     print_err("The token `");
     if (cur_sym == 0)
-      print(929);
+      print("(%CAPSULE)");
     else
       slow_print(text(cur_sym));
-    print(930);
+    print("' isn't an internal quantity");
     help1("Something like `tracingonline' should follow `interim'.");
     back_error();
   }
@@ -16141,16 +16127,14 @@ void do_let (void)
   l = cur_sym;
   get_x_next();
   if (cur_cmd != equals)
-  {
     if (cur_cmd != assignment)
     {
-      missing_err(61);
+      missing_err("=");
       help3("You should have said `let symbol = something'.",
         "But don't worry; I'll pretend that an equals sign",
         "was present. The next token I read will be `something'.");
       back_error();
     }
-  }
   get_symbol();
   switch (cur_cmd)
   {
@@ -16193,15 +16177,15 @@ void do_show (void)
   do {
     get_x_next();
     scan_expression();
-    print_nl(765);
-    print_exp(0, 2);
+    print_nl(">> ");
+    print_exp(null, 2);
     flush_cur_exp(0);
   } while (!(cur_cmd != comma));
 }
 /* 1041 */
 void disp_token (void)
 {
-  print_nl(940);
+  print_nl("> ");
   if (cur_sym == 0)
   {
     if (cur_cmd == numeric_token)
@@ -16224,7 +16208,7 @@ void disp_token (void)
     slow_print(text(cur_sym));
     print_char('=');
     if (eq_type(cur_sym) >= outer_tag)
-      print(941);
+      print("(outer) ");
     print_cmd_mod(cur_cmd, cur_mod);
     if (cur_cmd == defined_macro)
     {
@@ -16245,27 +16229,27 @@ void do_show_token (void)
 /* 1045 */
 void do_show_stats (void)
 {
-  print_nl(950);
+  print_nl("Memory usage ");
 #ifdef STAT
   print_int(var_used);
   print_char('&');
   print_int(dyn_used);
   if (false)
-#endif /* STAT */
-  print(357);
-  print(558);
+#endif
+  print("unknown");
+  print(" (");
   print_int(hi_mem_min - lo_mem_max - 1);
-  print(951);
+  print(" still untouched)");
   print_ln();
-  print_nl(952);
+  print_nl("String usage ");
   print_int(str_ptr - init_str_ptr);
   print_char('&');
   print_int(pool_ptr - init_pool_ptr);
-  print(558);
+  print(" (");
   print_int(max_strings - max_str_ptr);
   print_char('&');
   print_int(pool_size - max_pool_ptr);
-  print(951);
+  print(" still untouched)");
   print_ln();
   get_x_next();
 }
@@ -16291,11 +16275,11 @@ void disp_var (pointer p)
   }
   else if (type(p) >= unsuffixed_macro)
   {
-    print_nl(261);
+    print_nl("");
     print_variable_name(p);
     if (type(p) > unsuffixed_macro)
-      print(665);
-    print(953);
+      print("@#");
+    print("=macro:");
     if (file_offset >= max_print_line - 20)
       n = 5;
     else
@@ -16304,7 +16288,7 @@ void disp_var (pointer p)
   }
   else if (type(p) != undefined)
   {
-    print_nl(261);
+    print_nl("");
     print_variable_name(p);
     print_char('=');
     print_exp(p, 0);
@@ -16316,19 +16300,14 @@ void do_show_var (void)
   do {
     get_next();
     if (cur_sym > 0)
-    {
       if (cur_sym <= hash_end)
-      {
         if (cur_cmd == tag_token)
-        {
+        
           if (cur_mod != null)
           {
             disp_var(cur_mod);
             goto done;
           }
-        }
-      }
-    }
     disp_token();
   done:
     get_x_next();
@@ -16344,12 +16323,12 @@ void do_show_dependencies (void)
   {
     if (interesting(p))
     {
-      print_nl(261);
+      print_nl("");
       print_variable_name(p);
       if (type(p) == dependent)
         print_char('=');
       else
-        print(768);
+        print(" = ");
       print_dependency(dep_list(p), type(p));
     }
     p = dep_list(p);
@@ -16387,7 +16366,7 @@ void do_show_whatever (void)
     print_err("OK");
     if (interaction < error_stop_mode)
     {
-      help_ptr = 0;
+      help0();
       decr(error_count);
     }
     else
@@ -16401,7 +16380,6 @@ void do_show_whatever (void)
 /* 1054 */
 boolean scan_with (void)
 {
-  boolean Result;
   small_number t;
   boolean result;
 
@@ -16412,11 +16390,11 @@ boolean scan_with (void)
   result = false;
   if (cur_type != t)
   {
-    disp_err(null, "Improper type");
+    exp_err("Improper type");
     help2("Next time say `withweight <known numeric expression>';",
       "I'll ignore the bad `with' clause and look for another.");
-    if (t == 6)
-      help_line[1] = 966;
+    if (t == pen_type)
+      help_line[1] = "Next time say `withpen <known pen expression>';";
     put_get_flush_error(0);
   }
   else if (cur_type == pen_type)
@@ -16433,8 +16411,7 @@ boolean scan_with (void)
       put_get_flush_error(0);
     }
   }
-  Result = result;
-  return Result;
+  return result;
 }
 /* 1057 */
 void find_edges_var (pointer t)
@@ -16452,7 +16429,7 @@ void find_edges_var (pointer t)
   {
     print_err("Variable ");
     show_token_list(t, null, 1000, 0);
-    print(968);
+    print(" is the wrong type (");
     print_type(type(p));
     print_char(')');
     help2("I was looking for a \"known\" picture variable.",
@@ -16477,7 +16454,7 @@ void do_add_to (void)
   scan_primary();
   if (cur_type != token_list)
   {
-    disp_err(null, "Not a suitable variable");
+    exp_err("Not a suitable variable");
     help4("At this point I needed to see the name of a picture variable.",
       "(Or perhaps you have indeed presented me with one; I might",
       "have missed it, if it wasn't followed by the proper token.)", 
@@ -16498,7 +16475,7 @@ void do_add_to (void)
         flush_cur_exp(0);
       else if (cur_type != picture_type)
       {
-        disp_err(null, "Improper `addto'");
+        exp_err("Improper `addto'");
         help2("This expression should have specified a known picture.",
           "So I'll not change anything just now.");
         put_get_flush_error(0);
@@ -16515,7 +16492,7 @@ void do_add_to (void)
         pair_to_path();
       if (cur_type != path_type)
       {
-        disp_err(null, "Improper `addto'");
+        exp_err("Improper `addto'");
         help2("This expression should have been a known path.", 
           "So I'll not change anything just now.");
         put_get_flush_error(0);
@@ -16527,8 +16504,7 @@ void do_add_to (void)
         w = 1;
         cur_pen = null_pen;
         while (cur_cmd == with_option)
-          if (scan_with ())
-          {
+          if (scan_with())
             if (cur_type == known)
               w = cur_exp;
             else
@@ -16536,7 +16512,6 @@ void do_add_to (void)
               delete_pen_ref(cur_pen);
               cur_pen = cur_exp;
             }
-          }
         find_edges_var(lhs);
         if (cur_edges == null)
           toss_knot_list(rhs);
@@ -16545,9 +16520,7 @@ void do_add_to (void)
           lhs = null;
           cur_path_type = add_to_type;
           if (left_type(rhs) == endpoint)
-          {
             if (cur_path_type == double_path_code)
-            {
               if (link(rhs) == rhs)
               {
                 right_x(rhs) = x_coord(rhs);
@@ -16573,7 +16546,6 @@ void do_add_to (void)
                 free_node(rhs, knot_node_size);
                 rhs = p;
               }
-            }
             else
             {
               print_err("Not a cycle");
@@ -16583,38 +16555,29 @@ void do_add_to (void)
               toss_knot_list(rhs);
               goto not_found;
             }
-          }
           else if (cur_path_type == double_path_code)
             lhs = htap_ypoc(rhs);
           cur_wt = w;
           rhs = make_spec(rhs, max_offset(cur_pen), internal[tracing_specs]);
           if (turning_number <= 0)
-          {
             if (cur_path_type != double_path_code)
-            {
               if (internal[turning_check] > 0)
-              {
                 if ((turning_number < 0) && (link(cur_pen) == null))
-                  cur_wt = -cur_wt;
+                  negate(cur_wt);
                 else
                 {
                   if (turning_number == 0)
-                  {
                     if ((internal[turning_check] <= unity) && (link(cur_pen) == null))
                       goto done;
                     else
-                      print_strange(980);
-                  }
+                      print_strange("Strange path (turning number is zero)");
                   else
-                    print_strange(981);
+                    print_strange("Backwards path (turning number is negative)");
                   help3("The path doesn't have a counterclockwise orientation,",
                     "so I'll probably have trouble drawing it.",
                     "(See Chapter 27 of The METAFONTbook for more help.)");
                   put_get_error();
                 }
-              }
-            }
-          }
           done:;
           if (max_offset(cur_pen) == 0)
             fill_spec(rhs);
@@ -16630,7 +16593,7 @@ void do_add_to (void)
             else
               fill_envelope(lhs);
           }
-          not_found:;
+        not_found:;
         }
         delete_pen_ref(cur_pen);
       }
@@ -16644,7 +16607,7 @@ scaled tfm_check (small_number m)
   {
     print_err("Enormous ");
     print(int_name[m]);
-    print(1002);
+    print(" has been reduced");
     help1("Font metric dimensions must be less than 2048pt.");
     put_get_error();
     if (internal[m] > 0)
@@ -16664,13 +16627,12 @@ void do_ship_out (void)
   var_flag = semicolon;
   scan_expression();
   if (cur_type != token_list)
-  {
     if (cur_type == picture_type)
       cur_edges = cur_exp;
     else
     {
       {
-        disp_err(null, "Not a suitable variable");
+        exp_err("Not a suitable variable");
         help4("At this point I needed to see the name of a picture variable.",
           "(Or perhaps you have indeed presented me with one; I might",
           "have missed it, if it wasn't followed by the proper token.)", 
@@ -16679,7 +16641,6 @@ void do_ship_out (void)
       }
       goto lab_exit;
     }
-  }
   else
   {
     find_edges_var(cur_exp);
@@ -16705,7 +16666,7 @@ void do_ship_out (void)
       ship_out(c);
   }
   flush_cur_exp(0);
-  lab_exit:;
+lab_exit:;
 }
 /* 1071 */
 void do_display (void)
@@ -16717,7 +16678,7 @@ void do_display (void)
   scan_primary();
   if (cur_type != token_list)
   {
-    disp_err(null, "Not a suitable variable");
+    exp_err("Not a suitable variable");
     help4("At this point I needed to see the name of a picture variable.",
       "(Or perhaps you have indeed presented me with one; I might",
       "have missed it, if it wasn't followed by the proper token.)",
@@ -16740,7 +16701,7 @@ void do_display (void)
     if (!window_open[cur_exp])
       goto not_found;
     find_edges_var(e);
-    if (cur_edges != 0)
+    if (cur_edges != null)
       disp_edges(cur_exp);
     goto lab_exit;
   not_found:
@@ -16751,7 +16712,7 @@ void do_display (void)
     put_get_flush_error(0);
     flush_token_list(e);
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 1072 */
 boolean get_pair (command_code c)
@@ -16810,9 +16771,9 @@ not_found:
   help2("Say `openwindow k from (r0,c0) to (r1,c1) at (x,y)',",
     "where all quantities are known and k is between 0 and 15.");
   put_get_error();
-  lab_exit:;
+lab_exit:;
 }
-/* 1047 */
+/* 1074 */
 void do_cull (void)
 {
   pointer e;
@@ -16825,7 +16786,7 @@ void do_cull (void)
   scan_primary();
   if (cur_type != token_list)
   {
-    disp_err(null, "Not a suitable variable");
+    exp_err("Not a suitable variable");
     help4("At this point I needed to see the name of a picture variable.",
       "(Or perhaps you have indeed presented me with one; I might",
       "have missed it, if it wasn't followed by the proper token.)",
@@ -16844,7 +16805,7 @@ void do_cull (void)
         w = cur_exp;
     if (cur_x > cur_y)
       goto not_found;
-    if (keeping == 0)
+    if (keeping == drop_code)
     {
       if ((cur_x > 0) || (cur_y < 0))
         goto not_found;
@@ -16868,7 +16829,7 @@ void do_cull (void)
     put_get_error();
     flush_token_list(e);
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 1082 */
 void do_message (void)
@@ -16889,7 +16850,7 @@ void do_message (void)
     {
       case message_code:
         {
-          print_nl(261);
+          print_nl("");
           slow_print(cur_exp);
         }
         break;
@@ -16917,9 +16878,7 @@ void do_message (void)
       case err_help_code:
         {
           if (err_help != 0)
-          {
             delete_str_ref(err_help);
-          }
           if (length(cur_exp) == 0)
             err_help = 0;
           else
@@ -16935,7 +16894,6 @@ void do_message (void)
 /* 1103 */
 eight_bits get_code (void)
 {
-  eight_bits Result;
   integer c;
 
   get_x_next();
@@ -16944,27 +16902,22 @@ eight_bits get_code (void)
   {
     c = round_unscaled(cur_exp);
     if (c >= 0)
-    {
       if (c < 256)
         goto found;
-    }
   }
   else if (cur_type == string_type)
-  {
     if (length(cur_exp) == 1)
     {
       c = str_pool[str_start[cur_exp]];
       goto found;
     }
-  }
-  disp_err(null, "Invalid code has been replaced by 0");
+  exp_err("Invalid code has been replaced by 0");
   help2("I was looking for a number between 0 and 255, or for a",
     "string of length 1. Didn't find it; will use 0 instead.");
   put_get_flush_error(0);
   c = 0;
 found:
-  Result = c;
-  return Result;
+  return c;
 }
 /* 1104 */
 void set_tag (halfword c, small_number t, halfword r)
@@ -16973,7 +16926,7 @@ void set_tag (halfword c, small_number t, halfword r)
   {
     char_tag[c] = t;
     char_remainder[c] = r;
-    if (t == 1)
+    if (t == lig_tag)
     {
       incr(label_ptr);
       label_loc[label_ptr] = r;
@@ -16983,26 +16936,26 @@ void set_tag (halfword c, small_number t, halfword r)
   else
   {
     print_err("Character ");
-    if ((c > 32) && (c < 127))
+    if ((c > ' ') && (c < 127))
       print(c);
     else if (c == 256)
-      print(1013);
+      print("||");
     else
     {
-      print(1014);
+      print("code ");
       print_int(c);
     }
-    print(1015);
+    print(" is already ");
     switch (char_tag[c])
     {
       case lig_tag:
-        print(1016);
+        print("in a ligtable");
         break;
       case list_tag:
-        print(1017);
+        print("in a charlist");
         break;
       case ext_tag:
-        print(1006);
+        print("extensible");
         break;
     }
     help2("It's not legal to label a character more than once.",
@@ -17093,7 +17046,7 @@ void do_tfm_command (void)
           if (cur_mod < 128)
           {
             op_byte(nl) = qi(cur_mod);
-            rem_byte(nl) = qi(get_code);
+            rem_byte(nl) = qi(get_code());
           }
           else
           {
@@ -17101,7 +17054,7 @@ void do_tfm_command (void)
             scan_expression();
             if (cur_type != known)
             {
-              disp_err(null, "Improper kern");
+              exp_err("Improper kern");
               help2("The amount of kern should be a known numeric value.",
                 "I'm zeroing this one. Proceed, with fingers crossed.");
               put_get_flush_error(0);
@@ -17138,7 +17091,7 @@ void do_tfm_command (void)
           goto lab_continue;
         if (skip_byte(nl - 1) < stop_flag)
           skip_byte(nl - 1) = stop_flag;
-        done:;
+      done:;
       }
       break;
     case extensible_code:
@@ -17148,17 +17101,17 @@ void do_tfm_command (void)
         c = get_code();
         set_tag(c, ext_tag, ne);
         if (cur_cmd != colon)
-          missing_extensible_punctuation(58);
-        ext_top(ne) = qi(get_code);
+          missing_extensible_punctuation(":");
+        ext_top(ne) = qi(get_code());
         if (cur_cmd != comma)
-          missing_extensible_punctuation(44);
-        ext_mid(ne) = qi(get_code);
+          missing_extensible_punctuation(",");
+        ext_mid(ne) = qi(get_code());
         if (cur_cmd != comma)
-          missing_extensible_punctuation(44);
-        ext_bot(ne) = qi(get_code);
+          missing_extensible_punctuation(",");
+        ext_bot(ne) = qi(get_code());
         if (cur_cmd != comma)
-          missing_extensible_punctuation(44);
-        ext_rep(ne) = qi(get_code);
+          missing_extensible_punctuation(",");
+        ext_rep(ne) = qi(get_code());
         incr(ne);
       }
       break;
@@ -17170,7 +17123,7 @@ void do_tfm_command (void)
         scan_expression();
         if ((cur_type != known) || (cur_exp < half_unit))
         {
-          disp_err(null, "Improper location");
+          exp_err("Improper location");
           help2("I was looking for a known, positive number.",
             "For safety's sake I'll ignore the present command.");
           put_get_error();
@@ -17180,7 +17133,7 @@ void do_tfm_command (void)
           j = round_unscaled(cur_exp);
           if (cur_cmd != colon)
           {
-            missing_err(58);
+            missing_err(":");
             help1("A colon should follow a headerbyte or fontinfo location.");
             back_error();
           }
@@ -17204,14 +17157,14 @@ void do_tfm_command (void)
               scan_expression();
               if (cur_type != known)
               {
-                disp_err(null, "Improper font parameter");
+                exp_err("Improper font parameter");
                 help1("I'm zeroing this one. Proceed, with fingers crossed.");
                 put_get_flush_error(0);
               }
               param[j] = cur_exp;
               incr(j);
             } while (!(cur_cmd != comma));
-      }
+        }
       }
       break;
   }
@@ -17225,17 +17178,15 @@ void do_special (void)
   get_x_next();
   scan_expression();
   if (internal[proofing] >= 0)
-  {
     if (cur_type != m)
     {
-      disp_err(null, "Unsuitable expression");
+      exp_err("Unsuitable expression");
       help1("The expression shown above has the wrong type to be output.");
       put_get_error();
     }
     else
     {
-      if (output_file_name == 0)
-        init_gf();
+      check_gf();
       if (m == string_type)
         gf_string(cur_exp, 0);
       else
@@ -17244,7 +17195,6 @@ void do_special (void)
         gf_four(cur_exp);
       }
     }
-  }
   flush_cur_exp(0);
 }
 /* 1186 */
@@ -17254,10 +17204,9 @@ void store_base_file (void)
   halfword p, q;
   integer x;
   four_quarters w;
-  ASCII_code * baseengine;
 
   selector = new_string;
-  print(1073);
+  print(" (preloaded base=");
   print(job_name);
   print_char(' ');
   print_int(round_unscaled(internal[year]));
@@ -17273,126 +17222,96 @@ void store_base_file (void)
   str_room(1);
   base_ident = make_string();
   str_ref[base_ident] = max_str_ref;
-  pack_job_name(742);
+  pack_job_name(base_extension);
   while (!w_open_out(base_file))
-    prompt_file_name(1074, 742);
+    prompt_file_name("base name file", base_extension);
   print_nl("Beginning to dump on file ");
   slow_print(w_make_name_string(base_file));
   flush_string(str_ptr - 1);
   print_nl("");
   slow_print(base_ident);
-  dump_int(1462914374L);
-  x = strlen(enginename);
-  baseengine = xmallocarray(ASCII_code, x + 4);
-  strcpy(stringcast(baseengine), enginename);
-  for (k = x; k <= x + 3; k++)
-  {
-    baseengine[k] = 0;
-  }
-  x = x + 4 - (x % 4);
-  dump_int(x);
-  dumpthings(baseengine[0], x);
-  libcfree(baseengine);
   dump_int(4795517L);
-  dumpthings(xord[0], 256);
-  dumpthings(xchr[0], 256);
-  dump_int(0);
+  dump_int(mem_min);
   dump_int(mem_top);
-  dump_int(9500);
-  dump_int(7919);
-  dump_int(15);
+  dump_int(hash_size);
+  dump_int(hash_prime);
+  dump_int(max_in_open);
   dump_int(pool_ptr);
   dump_int(str_ptr);
   for (k = 0; k <= str_ptr; k++)
-  {
     dump_int(str_start[k]);
-  }
   k = 0;
   while (k + 4 < pool_ptr)
   {
-    w.b0 = str_pool[k];
-    w.b1 = str_pool[k + 1];
-    w.b2 = str_pool[k + 2];
-    w.b3 = str_pool[k + 3];
-    dump_qqqq(w);
+    dump_four_ASCII();
     k = k + 4;
   }
   k = pool_ptr - 4;
-  w.b0 = str_pool[k];
-  w.b1 = str_pool[k + 1];
-  w.b2 = str_pool[k + 2];
-  w.b3 = str_pool[k + 3];
-  dump_qqqq(w);
+  dump_four_ASCII();
   print_ln();
   print_int(str_ptr);
-  print(1070);
+  print(" strings of total length ");
   print_int(pool_ptr);
   sort_avail();
   var_used = 0;
   dump_int(lo_mem_max);
   dump_int(rover);
-  p = 0;
+  p = mem_min;
   q = rover;
   x = 0;
   do {
     for (k = p; k <= q + 1; k++)
-    {
-      dumpwd(mem[k]);
-    }
+      dump_wd(mem[k]);
     x = x + q + 2 - p;
     var_used = var_used + q - p;
-    p = q + mem[q].hh.lh;
-    q = mem[q + 1].hh.rh;
+    p = q + node_size(q);
+    q = rlink(q);
   } while (!(q == rover));
   var_used = var_used + lo_mem_max - p;
   dyn_used = mem_end + 1 - hi_mem_min;
   for (k = p; k <= lo_mem_max; k ++)
-  {
-    dumpwd(mem[k]);
-  }
+    dump_wd(mem[k]);
   x = x + lo_mem_max + 1 - p;
   dump_int(hi_mem_min);
   dump_int(avail);
   for (k = hi_mem_min; k <= mem_end; k++)
-  {
-    dumpwd(mem[k]);
-  }
+    dump_wd(mem[k]);
   x = x + mem_end + 1 - hi_mem_min;
   p = avail;
-  while (p != 0)
+  while (p != null)
   {
     decr(dyn_used);
-    p = mem[p].hh.rh;
+    p = link(p);
   }
   dump_int(var_used);
   dump_int(dyn_used);
   print_ln();
   print_int(x);
-  print(1071);
+  print(" memory locations dumped; current usage is ");
   print_int(var_used);
   print_char('&');
   print_int(dyn_used);
   dump_int(hash_used);
-  st_count = 9756 - hash_used;
+  st_count = frozen_inaccessible - 1 - hash_used;
   for (p = 1; p <= hash_used; p++)
   {
-    if (hash[p].rh != 0)
+    if (text(p) != 0)
     {
       dump_int(p);
-      dumphh(hash[p]);
-      dumphh(eqtb[p]);
+      dump_hh(hash[p]);
+      dump_hh(eqtb[p]);
       incr(st_count);
     }
   }
-  for (p = hash_used + 1; p <= 9769; p++)
+  for (p = hash_used + 1; p <= hash_end; p++)
   {
-    dumphh(hash[p]);
-    dumphh(eqtb[p]);
+    dump_hh(hash[p]);
+    dump_hh(eqtb[p]);
   }
   dump_int(st_count);
   print_ln();
   print_int(st_count);
-  print(1072);
+  print(" symbolic tokens");
   dump_int(int_ptr);
   for (k = 1; k <= int_ptr; k++)
   {
@@ -17405,21 +17324,21 @@ void store_base_file (void)
   dump_int(bg_loc);
   dump_int(eg_loc);
   dump_int(serial_no);
-  dump_int(69069L);
+  dump_int(69069);
   internal[tracing_stats] = 0;
-  wclose(base_file);
+  w_close(base_file);
 }
 /* 989 */
 void do_statement (void)
 {
   cur_type = vacuous;
   get_x_next();
-  if (cur_cmd > plus_or_minus)
+  if (cur_cmd > max_primary_command)
   {
     if (cur_cmd < semicolon)
     {
       print_err("A statement can't begin with `");
-      print_cmd_mod (cur_cmd, cur_mod);
+      print_cmd_mod(cur_cmd, cur_mod);
       print_char('\'');
       help5("I was looking for the beginning of a new statement.",
         "If you just proceed without changing anything, I'll ignore",
@@ -17444,20 +17363,19 @@ void do_statement (void)
       {
         if (internal[tracing_titles] > 0)
         {
-          print_nl(261);
+          print_nl("");
           slow_print(cur_exp);
-          fflush(stdout);
+          update_terminal();
         }
         if (internal[proofing] > 0)
         {
-          if (output_file_name == 0)
-            init_gf();
-          gf_string(1063, cur_exp);
+          check_gf();
+          gf_string("title ", cur_exp);
         }
       }
       else if (cur_type != vacuous)
       {
-        disp_err(null, "Isolated expression");
+        exp_err("Isolated expression");
         help3("I couldn't find an `=' or `:=' after the",
           "expression that is shown above this error message,",
           "so I guess I'll just ignore it and carry on.");
@@ -17533,7 +17451,7 @@ void do_statement (void)
         do_display();
         break;
       case open_window:
-        doopen_window();
+        do_open_window();
         break;
       case cull_command:
         do_cull();
@@ -17571,9 +17489,7 @@ void do_statement (void)
     do {
       get_next();
       if (cur_cmd == string_token)
-      {
         delete_str_ref(cur_mod);
-      }
     } while (!(cur_cmd > comma));
     scanner_status = normal;
   }
@@ -17596,7 +17512,6 @@ void main_control (void)
 /* 1117 */
 pointer sort_in (scaled v)
 {
-  pointer Result;
   pointer p, q, r;
 
   p = temp_head;
@@ -17615,13 +17530,11 @@ found:
     link(r) = q;
     link(p) = r;
   }
-  Result = link(p);
-  return Result;
+  return link(p);
 }
 /* 1118 */
 integer min_cover (scaled d)
 {
-  integer Result;
   pointer p;
   scaled l;
   integer m;
@@ -17639,18 +17552,16 @@ integer min_cover (scaled d)
     if (value(p) - l < perturbation)
       perturbation = value(p) - l;
   }
-  Result = m;
-  return Result;
+  return m;
 }
 /* 1120 */
 scaled threshold (integer m)
 {
-  scaled Result;
   scaled d;
 
   excess = min_cover(0) - m;
   if (excess <= 0)
-    Result = 0;
+    return 0;
   else
   {
     do {
@@ -17658,14 +17569,12 @@ scaled threshold (integer m)
     } while (!(min_cover(d + d) <= m));
     while (min_cover(d) > m)
       d = perturbation;
-    Result = d;
+    return d;
   }
-  return Result;
 }
 /* 1121 */
 integer skimp (integer m)
 {
-  integer Result;
   scaled d;
   pointer p, q, r;
   scaled l;
@@ -17703,8 +17612,7 @@ integer skimp (integer m)
     q = p;
     p = link(p);
   }
-  Result = m;
-  return Result;
+  return m;
 }
 /* 1123 */
 void tfm_warning (small_number m)
@@ -17724,35 +17632,27 @@ void fix_design_size (void)
   if ((d < unity) || (d >= fraction_half))
   {
     if (d != 0)
-      print_nl(1044);
-    d = 8388608;
+      print_nl("(illegal design size has been changed to 128pt)");
+    d = 040000000;
     internal[design_size] = d;
   }
   if (header_byte[5] < 0)
-  {
     if (header_byte[6] < 0)
-    {
       if (header_byte[7] < 0)
-      {
         if (header_byte[8] < 0)
         {
-          header_byte[5] = d / 1048576;
+          header_byte[5] = d / 04000000;
           header_byte[6] = (d / 4096) % 256;
           header_byte[7] = (d / 16) % 256;
           header_byte[8] = (d % 16) * 16;
         }
-      }
-    }
-  }
-  max_tfm_dimen = 16 * internal[design_size] - 1 - internal[design_size] / 2097152;
+  max_tfm_dimen = 16 * internal[design_size] - 1 - internal[design_size] / 010000000;
   if (max_tfm_dimen >= fraction_half)
     max_tfm_dimen = fraction_half - 1;
 }
 /* 1129 */
 integer dimen_out (scaled x)
 {
-  integer Result;
-
   if (abs(x) > max_tfm_dimen)
   {
     incr(tfm_changed);
@@ -17762,63 +17662,52 @@ integer dimen_out (scaled x)
       x = -max_tfm_dimen;
   }
   x = make_scaled(x * 16, internal[design_size]);
-  Result = x;
-  return Result;
+  return x;
 }
 /* 1131 */
 void fix_check_sum (void)
 {
   eight_bits k;
-  eight_bits lb1, lb2, lb3, b4;
+  eight_bits b1, b2, b3, b4;
   integer x;
 
   if (header_byte[1] < 0)
-  {
     if (header_byte[2] < 0)
-    {
       if (header_byte[3] < 0)
-      {
         if (header_byte[4] < 0)
         {
-          lb1 = bc;
-          lb2 = ec;
-          lb3 = bc;
+          b1 = bc;
+          b2 = ec;
+          b3 = bc;
           b4 = ec;
           tfm_changed = 0;
           for (k = bc; k <= ec; k++)
-          {
             if (char_exists[k])
             {
-              x = dimen_out(value(tfm_width[k])) + (k + 4) * 4194304;
-              lb1 = (lb1 + lb1 + x) % 255;
-              lb2 = (lb2 + lb2 + x) % 253;
-              lb3 = (lb3 + lb3 + x) % 251;
+              x = dimen_out(value(tfm_width[k])) + (k + 4) * 020000000;
+              b1 = (b1 + b1 + x) % 255;
+              b2 = (b2 + b2 + x) % 253;
+              b3 = (b3 + b3 + x) % 251;
               b4 = (b4 + b4 + x) % 247;
             }
-          }
-          header_byte[1] = lb1;
-          header_byte[2] = lb2;
-          header_byte[3] = lb3;
+          header_byte[1] = b1;
+          header_byte[2] = b2;
+          header_byte[3] = b3;
           header_byte[4] = b4;
           goto lab_exit;
         }
-      }
-    }
-  }
   for (k = 1; k <= 4; k++)
-  {
     if (header_byte[k] < 0)
       header_byte[k] = 0;
-  }
 lab_exit:;
 }
 /* 1133 */
 void tfm_qqqq (four_quarters x)
 {
-  putbyte(x.b0, tfm_file);
-  putbyte(x.b1, tfm_file);
-  putbyte(x.b2, tfm_file);
-  putbyte(x.b3, tfm_file);
+  tfm_out(qo(x.b0));
+  tfm_out(qo(x.b1));
+  tfm_out(qo(x.b2));
+  tfm_out(qo(x.b3));
 }
 /* 779 */
 boolean open_base_file (void)
@@ -17827,36 +17716,32 @@ boolean open_base_file (void)
   integer j;
 
   j = loc;
-  if (buffer[loc] == 38)
+  if (buffer[loc] == '&')
   {
     incr(loc);
     j = loc;
-    buffer[last] = 32;
-    while (buffer[j] != 32)
+    buffer[last] = ' ';
+    while (buffer[j] != ' ')
       incr(j);
     pack_buffered_name(0, loc, j - 1);
     if (w_open_in(base_file))
       goto found;
-    fputs(stdout, "Sorry, I can't find the base `");
-    fputs(stringcast(name_of_file + 1), stdout);
-    Fputs(stdout, "'; will try `");
-    fputs(MF_base_default + 1, stdout);
-    fprintf(stdout, "%s\n", "'.");
-    fflush(stdout);
+    wake_up_terminal();
+    wterm_ln("Sorry, I can't find the base `", " will try PLAIN.");
+    update_terminal();
   }
-  pack_buffered_name(base_default_length - 5, 1, 0);
+  pack_buffered_name(base_default_length - base_ext_length, 1, 0);
   if (!w_open_in(base_file))
   {
-    fputs(stdout, "I can't find the base file `");
-    fputs(MF_base_default + 1, stdout);
-    fprintf(stdout, "%s\n", "'!");
+    wake_up_terminal();
+    wterm_ln("I can't find the PLAIN base file!");
     Result = false;
     goto lab_exit;
   }
 found:
   loc = j;
   Result = true;
-  lab_exit:;
+lab_exit:
   return Result;
 }
 /* 1187 */
@@ -17867,255 +17752,99 @@ boolean load_base_file (void)
   halfword p, q;
   integer x;
   four_quarters w;
-  ASCII_code * baseengine;
-  ASCII_code dummyxord;
-  ASCII_code dummyxchr;
 
   undump_int(x);
   if (x != 1462914374L)
-    goto lab6666;
+    goto off_base;
   undump_int(x);
-  if ((x < 0) || (x > 256))
-    goto lab6666;
-  baseengine = xmallocarray(ASCII_code, x);
-  undumpthings(baseengine[0], x);
-  baseengine[x - 1] = 0;
-  if (strcmp(enginename, stringcast(baseengine)))
-  {
-    fprintf(stdout, "%s%s%s%s\n", "---! ", stringcast(name_of_file + 1), " was written by ", stringcast(baseengine));
-    libcfree(baseengine);
-    goto lab6666;
-  }
-  libcfree(baseengine);
+  if (x != mem_min)
+    goto off_base;
   undump_int(x);
-  if (x != 4795517L)
-  {
-    ;
-    fprintf(stdout, "%s%s%s%s\n", "---! ", stringcast(name_of_file + 1), " doesn't match ", pool_name);
-    goto lab6666;
-  }
-  {
-    undumpthings(xord[0], 256);
-    undumpthings(xchr[0], 256);
-  }
+  if (x != mem_top)
+    goto off_base;
   undump_int(x);
-  if (x != 0)
-    goto lab6666;
-  ;
-#ifdef INIMF
-  if (iniversion)
-  {
-    libcfree(mem);
-  }
-#endif /* INIMF */
-  undump_int(mem_top);
-  if (mem_max < mem_top)
-    mem_max = mem_top;
-  if (1100 > mem_top)
-    goto lab6666;
-  mem = xmallocarray(memory_word, mem_max + 1);
+  if (x != hash_size)
+    goto off_base;
   undump_int(x);
-  if (x != 9500)
-    goto lab6666;
+  if (x != hash_prime)
+    goto off_base;
   undump_int(x);
-  if (x != 7919)
-    goto lab6666;
-  undump_int(x);
-  if (x != 15)
-    goto lab6666;
-  {
-    undump_int(x);
-    if (x < 0)
-      goto lab6666;
-    if (x > pool_size)
-    {
-      ;
-      fprintf(stdout, "%s%s\n", "---! Must increase the ", "string pool size");
-      goto lab6666;
-    }
-    else pool_ptr = x;
-  }
-  {
-    undump_int(x);
-    if (x < 0)
-      goto lab6666;
-    if (x > max_strings)
-    {
-      ;
-      fprintf(stdout, "%s%s\n", "---! Must increase the ", "max strings");
-      goto lab6666;
-    }
-    else str_ptr = x;
-  }
+  if (x != max_in_open)
+    goto off_base;
+  undump_size(0, pool_size, "string pool size", pool_ptr);
+  undump_size(0, max_strings, "max strings", str_ptr);
   for (k = 0; k <= str_ptr; k++)
   {
-    {
-      undump_int(x);
-      if ((x < 0) || (x > pool_ptr))
-        goto lab6666;
-      else str_start[k] = x;
-    }
-    str_ref[k] = 127;
+    undump(0, pool_ptr, str_start[k]);
+    str_ref[k] = max_str_ptr;
   }
   k = 0;
   while (k + 4 < pool_ptr)
   {
-    undumpqqqq(w);
-    str_pool[k] = w.b0;
-    str_pool[k + 1] = w.b1;
-    str_pool[k + 2] = w.b2;
-    str_pool[k + 3] = w.b3;
+    undump_four_ASCII();
     k = k + 4;
   }
   k = pool_ptr - 4;
-  undumpqqqq(w);
-  str_pool[k] = w.b0;
-  str_pool[k + 1] = w.b1;
-  str_pool[k + 2] = w.b2;
-  str_pool[k + 3] = w.b3;
+  undump_four_ASCII();
   init_str_ptr = str_ptr;
   init_pool_ptr = pool_ptr;
   max_str_ptr = str_ptr;
   max_pool_ptr = pool_ptr;
-  {
-    undump_int(x);
-    if ((x < 1022) || (x > mem_top - 3))
-      goto lab6666;
-    else
-      lo_mem_max = x;
-  }
-  {
-    undump_int(x);
-    if ((x < 23) || (x > lo_mem_max))
-      goto lab6666;
-    else
-      rover = x;
-  }
-  p = 0;
+  undump(lo_mem_stat_max + 1000, hi_mem_stat_min - 1, lo_mem_max);
+  undump(lo_mem_stat_max + 1, lo_mem_max, rover);
+  p = mem_min;
   q = rover;
   do {
     for (k = p; k <= q + 1; k++)
-    {
-      undumpwd(mem[k]);
-    }
-    p = q + mem[q].hh.lh;
-    if ((p > lo_mem_max) || ((q >= mem[q + 1].hh.rh) && (mem[q + 1].hh.rh != rover)))
-      goto lab6666;
-    q = mem[q + 1].hh.rh;
+      undump_wd(mem[k]);
+    p = q + node_size(q);
+    if ((p > lo_mem_max) || ((q >= rlink(q)) && (rlink(q) != rover)))
+      goto off_base;
+    q = rlink(q);
   } while (!(q == rover));
   for (k = p; k <= lo_mem_max; k++)
-  {
-    undumpwd(mem[k]);
-  }
-  {
-    undump_int(x);
-    if ((x < lo_mem_max + 1) || (x > mem_top - 2))
-      goto lab6666;
-    else
-      hi_mem_min = x;
-  }
-  {
-    undump_int(x);
-    if ((x < 0) || (x > mem_top))
-      goto lab6666;
-    else
-      avail = x;
-  }
+    undump_wd(mem[k]);
+  undump(lo_mem_max + 1, hi_mem_stat_min, hi_mem_min);
+  undump(null, mem_top, avail);
   mem_end = mem_top;
   for (k = hi_mem_min; k <= mem_end; k++)
-  {
-    undumpwd(mem[k]);
-  }
+    undump_wd(mem[k]);
   undump_int(var_used);
   undump_int(dyn_used);
-  {
-    undump_int(x);
-    if ((x < 1) || (x > 9757))
-      goto lab6666;
-    else
-      hash_used = x;
-  }
+  undump(1, frozen_inaccessible, hash_used);
   p = 0;
   do {
-    {
-      undump_int(x);
-      if ((x < p + 1) || (x > hash_used))
-        goto lab6666;
-      else
-        p = x;
-    }
-    undumphh(hash[p]);
-    undumphh(eqtb[p]);
+    undump(p + 1, hash_used, p);
+    undump_hh(hash[p]);
+    undump_hh(eqtb[p]);
   } while (!(p == hash_used));
-  for (p = hash_used + 1; p <= 9769; p++)
+  for (p = hash_used + 1; p <= hash_end; p++)
   {
-    undumphh(hash[p]);
-    undumphh(eqtb[p]);
+    undump_hh(hash[p]);
+    undump_hh(eqtb[p]);
   }
   undump_int(st_count);
-  {
-    undump_int(x);
-    if ((x < 41) || (x > max_internal))
-      goto lab6666;
-    else
-      int_ptr = x;
-  }
+  undump(max_given_internal, max_internal, int_ptr);
   for (k = 1; k <= int_ptr; k++)
   {
     undump_int(internal[k]);
-    {
-      undump_int(x);
-      if ((x < 0) || (x > str_ptr))
-        goto lab6666;
-      else
-        int_name[k] = x;
-    }
+    undump(0, str_ptr, int_name[k]);
   }
-  {
-    undump_int(x);
-    if ((x < 0) || (x > 9757))
-      goto lab6666;
-    else
-      start_sym = x;
-  }
-  {
-    undump_int(x);
-    if ((x < 0) || (x > 3))
-      goto lab6666;
-    else
-      interaction = x;
-  }
-  {
-    undump_int(x);
-    if ((x < 0) || (x > str_ptr))
-      goto lab6666;
-    else
-      base_ident = x;
-  }
-  {
-    undump_int(x);
-    if ((x < 1) || (x > 9769))
-      goto lab6666;
-    else
-      bg_loc = x;
-  }
-  {
-    undump_int(x);
-    if ((x < 1) || (x > 9769))
-      goto lab6666;
-    else
-      eg_loc = x;
-  }
+  undump(0, frozen_inaccessible, start_sym);
+  undump(batch_mode, error_stop_mode, interaction);
+  undump(0, str_ptr, base_ident);
+  undump(1, hash_end, bg_loc);
+  undump(1, hash_end, eg_loc);
   undump_int(serial_no);
   undump_int(x);
   if (x != 69069L)
-    goto lab6666;
+    goto off_base;
   Result = true;
   goto lab_exit;
-lab6666:;
+off_base:
   fprintf(stdout, "%s\n", "(Fatal base file error; I'm stymied)");
   Result = false;
-lab_exit:;
+lab_exit:
   return Result;
 }
 /* 823 */
@@ -18136,19 +17865,17 @@ void scan_primary (void)
   var_flag = 0;
 lab_restart:
   check_arith();
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
   if (panicking)
     check_mem(false);
-#endif /* TEXMF_DEBUG */
+#endif
   if (interrupt != 0)
-  {
     if (OK_to_interrupt)
     {
       back_input();
       check_interrupt();
       get_x_next();
     }
-  }
   switch (cur_cmd)
   {
     case left_delimiter:
@@ -18169,7 +17896,7 @@ lab_restart:
           scan_expression();
           if (cur_type < known)
           {
-            disp_err(null, "Nonnumeric ypart has been replaced by 0");
+            exp_err("Nonnumeric ypart has been replaced by 0");
             help4("I thought you were giving me a pair `(x,y)'; but",
               "after finding a nice xpart `x' I found a ypart `y'",
               "that isn't of numeric type. So I've changed y to zero.",
@@ -18189,7 +17916,7 @@ lab_restart:
       {
         group_line = line;
         if (internal[tracing_commands] > 0)
-          show_cmd_mod (cur_cmd, cur_mod);
+          show_cmd_mod(cur_cmd, cur_mod);
         save_boundary_item(p);
         do {
           do_statement();
@@ -18198,7 +17925,7 @@ lab_restart:
         {
           print_err("A group begun on line ");
           print_int(group_line);
-          print(781);
+          print(" never ended");
           help2("I saw a `begingroup' back there that hasn't been matched",
             "by `endgroup'. So I've inserted `endgroup' now.");
           back_error();
@@ -18250,7 +17977,6 @@ lab_restart:
           get_x_next();
         }
         if (cur_cmd >= min_primary_command)
-        {
           if (cur_cmd < numeric_token)
           {
             p = stash_cur_exp();
@@ -18263,7 +17989,6 @@ lab_restart:
               free_node(p, value_node_size);
             }
           }
-        }
         goto done;
       }
       break;
@@ -18289,9 +18014,9 @@ lab_restart:
         scan_expression();
         if (cur_cmd != of_token)
         {
-          missing_err (479);
-          print(716);
-          print_cmd_mod(37, c);
+          missing_err("of");
+          print(" for ");
+          print_cmd_mod(primary_binary, c);
           help1("I've got the first argument; will look now for the other.");
           back_error();
         }
@@ -18312,7 +18037,7 @@ lab_restart:
         flush_token_list(cur_exp);
         cur_exp = make_string();
         selector = old_setting;
-        cur_type = 4;
+        cur_type = string_type;
         goto done;
       }
       break;
@@ -18380,7 +18105,7 @@ lab_restart:
                   }
                 }
               }
-              done2:;
+            done2:;
             }
             if (tt >= unsuffixed_macro)
             {
@@ -18423,7 +18148,7 @@ lab_restart:
             else
             {
               if (cur_type != known)
-                bad_sub_script();
+                bad_subscript();
               cur_cmd = numeric_token;
               cur_mod = cur_exp;
               cur_sym = 0;
@@ -18465,9 +18190,9 @@ lab_restart:
         else
         {
           obliterated(q);
-          help_line[2] = 797;
-          help_line[1] = 798;
-          help_line[0] = 799;
+          help_line[2] = "While I was evaluating the suffix of this variable,";
+          help_line[1] = "something was redefined, and it's no longer a variable!";
+          help_line[0] = "In order to get back on my feet, I've inserted `0' instead.";
           put_get_flush_error(0);
         }
         flush_node_list(q);
@@ -18476,7 +18201,7 @@ lab_restart:
       break;
     default:
       {
-        bad_exp(769);
+        bad_exp("A primary");
         goto lab_restart;
       }
       break;
@@ -18484,7 +18209,6 @@ lab_restart:
   get_x_next();
 done:
   if (cur_cmd == left_bracket)
-  {
     if (cur_type >= known)
     {
       p = stash_cur_exp();
@@ -18508,7 +18232,7 @@ done:
         scan_expression();
         if (cur_cmd != right_bracket)
         {
-          missing_err(93);
+          missing_err("]");
           help3("I've scanned an expression of the form `a[b,c',",
             "so a right bracket should have come next.", 
             "I shall pretend that one was there.");
@@ -18522,7 +18246,6 @@ done:
         get_x_next();
       }
     }
-  }
 }
 /* 860 */
 void scan_suffix (void)
@@ -18539,10 +18262,10 @@ void scan_suffix (void)
       get_x_next();
       scan_expression();
       if (cur_type != known)
-        bad_sub_script();
+        bad_subscript();
       if (cur_cmd != right_bracket)
       {
-        missing_err(93);
+        missing_err("]");
         help3("I've seen a `[' and a subscript value, in a suffix,",
           "so a right bracket should have come next.",
           "I shall pretend that one was there.");
@@ -18578,11 +18301,10 @@ void scan_secondary (void)
 
 lab_restart:
   if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
-    bad_exp(804);
+    bad_exp("A secondary");
   scan_primary();
 lab_continue:
   if (cur_cmd <= max_secondary_command)
-  {
     if (cur_cmd >= min_secondary_command)
     {
       p = stash_cur_exp();
@@ -18607,7 +18329,6 @@ lab_continue:
       }
       goto lab_continue;
     }
-  }
 }
 /* 864 */
 void scan_tertiary (void)
@@ -18618,13 +18339,12 @@ void scan_tertiary (void)
 
 lab_restart:
   if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
-    bad_exp(805);
+    bad_exp("A tertiary");
   scan_secondary();
   if (cur_type == future_pen)
     materialize_pen();
 lab_continue:
   if (cur_cmd <= max_tertiary_command)
-  {
     if (cur_cmd >= min_tertiary_command)
     {
       p = stash_cur_exp();
@@ -18649,7 +18369,6 @@ lab_continue:
       }
       goto lab_continue;
     }
-  }
 }
 /* 868 */
 void scan_expression (void)
@@ -18665,12 +18384,12 @@ void scan_expression (void)
   my_var_flag = var_flag;
 lab_restart:
   if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
-    bad_exp(808);
+    bad_exp("An");
   scan_tertiary();
 lab_continue:
-  if (cur_cmd <= equals)
+  if (cur_cmd <= max_expression_command)
   {
-    if (cur_cmd >= left_brace)
+    if (cur_cmd >= min_expression_command)
     {
       if ((cur_cmd != equals) || (my_var_flag != assignment))
       {
@@ -18733,7 +18452,7 @@ lab_continue:
               scan_primary();
               if ((cur_type != known) || (cur_exp < three_quarter_unit))
               {
-                disp_err(null, "Improper tension has been set to 1");
+                exp_err("Improper tension has been set to 1");
                 help1("The expression above should have been a number >=3/4.");
                 put_get_flush_error(unity);
               }
@@ -18749,7 +18468,7 @@ lab_continue:
                 scan_primary();
                 if ((cur_type != known) || (cur_exp < three_quarter_unit))
                 {
-                  disp_err(null, "Improper tension has been set to 1");
+                  exp_err("Improper tension has been set to 1");
                   help1("The expression above should have been a number >=3/4.");
                   put_get_flush_error(unity);
                 }
@@ -18790,11 +18509,11 @@ lab_continue:
             }
             if (cur_cmd != path_join)
             {
-              missing_err(408);
+              missing_err("..");
               help1("A path join command should end with two dots.");
               back_error();
             }
-            done:;
+          done:;
           }
           else if (d != ampersand)
             goto lab26;
@@ -18819,14 +18538,12 @@ lab_continue:
             pp = p;
             qq = p;
             if (d == ampersand)
-            {
               if (p == q)
               {
                 d = path_join;
                 right_tension(q) = unity;
                 y = unity;
               }
-            }
           }
           else
           {
@@ -18865,31 +18582,25 @@ lab_continue:
               }
             }
             if (right_type(pp) == open)
-            {
               if ((t == curl) || (t == given))
               {
                 right_type(pp) = t;
                 right_given(pp) = x;
               }
-            }
             if (d == ampersand)
             {
               if (left_type(q) == open)
-              {
                 if (right_type(q) == open)
                 {
                   left_type(q) = curl;
                   left_curl(q) = unity;
                 }
-              }
               if (right_type(pp) == open)
-              {
                 if (t == open)
                 {
                   right_type(pp) = curl;
                   right_curl(pp) = unity;
                 }
-              }
               right_type(q) = right_type(pp);
               link(q) = link(pp);
               right_x(q) = right_x(pp);
@@ -18901,13 +18612,11 @@ lab_continue:
             else
             {
               if (right_type(q) == open)
-              {
                 if ((left_type(q) == curl) || (left_type(q) == given))
                 {
                   right_type(q) = left_type(q);
                   right_given(q) = left_given(q);
                 }
-              }
               link(q) = pp;
               left_y(pp) = y;
               if (t != open)
@@ -18919,13 +18628,9 @@ lab_continue:
             q = qq;
           }
           if (cur_cmd >= min_expression_command)
-          {
             if (cur_cmd <= ampersand)
-            {
               if (!cycle_hit)
                 goto lab25;
-            }
-          }
         lab26:
           if (cycle_hit)
           {
@@ -18971,7 +18676,7 @@ lab_continue:
       }
     }
   }
-  lab_exit:;
+lab_exit:;
 }
 /* 892 */
 void get_boolean (void)
@@ -18980,10 +18685,10 @@ void get_boolean (void)
   scan_expression();
   if (cur_type != boolean_type)
   {
-    disp_err(null, "Undefined condition will be treated as `false'");
+    exp_err("Undefined condition will be treated as `false'");
     help2("The expression shown above should have had a definite",
       "true-or-false value. I'm changing it to `false'.");
-    put_get_flush_error(31);
+    put_get_flush_error(false_code);
     cur_type = boolean_type;
   }
 }
@@ -19025,7 +18730,7 @@ void close_files_and_terminate (void)
       fprintf(log_file, "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n", ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,", (long)max_wiggle, "r,", (long)150, "p,", (long)buf_size, 'b');
     }
   }
-#endif /* STAT */
+#endif
   if ((gf_prev_ptr > 0) || (internal[fontmaking] > 0))
   {
     rover = lo_mem_stat_max + 1;

@@ -1570,3 +1570,19 @@ do {                          \
   if (output_file_name == 0)  \
     init_gf();                \
 } while (0)
+/* 1192 */
+#define dump_four_ASCII() do {    \
+  w.b0 = qi(so(str_pool[k]));     \
+  w.b1 = qi(so(str_pool[k + 1])); \
+  w.b2 = qi(so(str_pool[k + 2])); \
+  w.b3 = qi(so(str_pool[k + 3])); \
+  dump_qqqq(w);                   \
+} while (0)
+/* 1193 */
+#define undump_four_ASCII() do {  \
+  undump_qqqq(w);                 \
+  str_pool[k] = si(qo(w.b0));     \
+  str_pool[k + 1] = si(qo(w.b1)); \
+  str_pool[k + 2] = si(qo(w.b2)); \
+  str_pool[k + 3] = si(qo(w.b3)); \
+} while (0)
