@@ -7,38 +7,20 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#pragma warning(disable:4459)
-#pragma warning(disable:4047)
-#pragma warning(disable:4024)
+#ifdef _WIN32
+  #pragma warning(disable:4459)
+  #pragma warning(disable:4047)
+  #pragma warning(disable:4024)
+  #pragma warning(disable:4700)
+#endif
 
 typedef int32_t  integer;
 typedef uint32_t boolean;
 
-const int32_t debug, stat;
-const char * enginename;
+const int32_t debug, stat, inimf;
+const char * dump_name;
 
 /* 11 */
-/*
-#define max_internal (300)
-#define stack_size (300)
-#define max_strings (7500)
-#define string_vacancies (74000L)
-#define pool_size (100000L)
-#define move_size (20000)
-#define max_wiggle (1000)
-#define pool_name (TEXMFpool_name)
-#define enginename (TEXMFENGINENAME)
-#define path_size (1000)
-#define bistack_size (1500)
-#define header_size (100)
-#define lig_table_size (15000)
-#define max_kerns (2500)
-#define max_font_dimen (60)
-#define infmainmemory (3000)
-#define supmainmemory (8000000L)
-#define infbuf_size (500)
-#define supbuf_size (30000000L)
-*/
 #define mem_max 30000 /*{greatest index in \MF's internal |mem| array;
   must be strictly less than |max_halfword|;
   must be equal to |mem_top| in \.{INIMF}, otherwise |>=mem_top|}*/
@@ -77,8 +59,8 @@ const uint8_t* pool_name = "MFbases:MF.POOL                         ";
 
 typedef uint8_t ASCII_code;
 typedef uint8_t eight_bits;
-typedef FILE* /* of  ASCII_code */ alpha_file;
-typedef FILE* /* of  eight_bits */ byte_file;
+typedef FILE * alpha_file;
+typedef FILE * byte_file;
 typedef integer pool_pointer;
 typedef integer str_number;
 typedef uint8_t packed_ASCII_code;
@@ -107,7 +89,7 @@ typedef union {
   two_halves hh;
   four_quarters qqqq;
 } memory_word;
-typedef FILE* /* of  memory_word */ word_file;
+typedef FILE * word_file;
 typedef uint8_t command_code;
 typedef short screen_row;
 typedef short screen_col;
@@ -126,7 +108,7 @@ EXTERN integer bad;
 EXTERN boolean iniversion;
 EXTERN boolean dumpoption;
 EXTERN boolean dumpline;
-#endif /* INIMF */
+#endif
 
 EXTERN integer mainmemory;
 EXTERN integer mem_top;
@@ -138,7 +120,6 @@ EXTERN integer mem_top;
 EXTERN integer screenwidth;
 EXTERN integer screendepth;
 //EXTERN integer gf_buf_size;
-EXTERN boolean quotedfilename;
 
 EXTERN ASCII_code xord[256];
 EXTERN ASCII_code xchr[256];
@@ -164,7 +145,7 @@ EXTERN uint8_t str_ref[max_strings + 1];
 
 #ifdef INIMF
 EXTERN alpha_file pool_file;
-#endif /* INIMF */
+#endif
 
 EXTERN alpha_file log_file;
 EXTERN uint8_t selector;
@@ -214,12 +195,12 @@ EXTERN halfword mem_end;
 
 EXTERN halfword rover;
 
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
 EXTERN boolean freearr[2];
 EXTERN boolean was_free[2];
 EXTERN halfword was_mem_end, was_lo_max, was_hi_min;
 EXTERN boolean panicking;
-#endif /* TEXMF_DEBUG */
+#endif
 
 EXTERN scaled internal[max_internal + 1];
 EXTERN str_number int_name[max_internal + 1];
@@ -348,8 +329,6 @@ EXTERN uint8_t open_parens;
 EXTERN alpha_file input_file[16];
 EXTERN integer line;
 EXTERN integer line_stack[16];
-EXTERN str_number * sourcefilenamestack;
-EXTERN str_number * fullsourcefilenamestack;
 
 EXTERN halfword param_stack[151];
 EXTERN uint8_t param_ptr;
@@ -501,7 +480,7 @@ EXTERN integer ready_already;
 #define t_open_out() 
 /* 33 */
 #define update_terminal() 
-#define clear_terminal() 
+#define clear_terminal() fflush(stdout)
 #define wake_up_terminal() 
 /* 35 */
 #define loc cur_input.loc_field //{location of first unread character in |buffer|}
@@ -653,7 +632,7 @@ do {                \
 /* 117 */
 #define return_sign(a) do { \
   Result = a;               \
-  goto lab_exit;            \
+  goto l_exit;            \
 } while (0)
 /* 139 */
 #define negate_x 1
@@ -1066,7 +1045,7 @@ case unknown_pen: case unknown_picture: case unknown_path
 #define pair_node_size 4 //{the number of words in a pair node}
 #define transform_node_size 12 //{the number of words in a transform node}
 /* 242 */
-#define abort_find() do {Result=null; goto lab_exit;} while(0)
+#define abort_find() do {Result=null; goto l_exit;} while(0)
 /* 250 */
 #define save_node_size 2 //{number of words per non-boundary save-stack node}
 #define saved_equiv(a) mem[a+1].hh //{where an |eqtb| entry gets saved}

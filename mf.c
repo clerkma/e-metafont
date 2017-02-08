@@ -692,11 +692,11 @@ void error (void)
   {
     while (true)
     {
-    lab_continue:
+    l_continue:
       clear_for_error_prompt();
       prompt_input("? ");
       if (last == first)
-        goto lab_exit;
+        goto l_exit;
       c = buffer[first];
       if (c >= 'a')
         c = c + 'A' - 'a';
@@ -736,14 +736,14 @@ void error (void)
             help2("I have just deleted some text, as you asked.",
               "You can now delete more, or insert, or whatever.");
             show_context();
-            goto lab_continue;
+            goto l_continue;
           }
           break;
 #ifdef DEBUG
         case 'D':
           {
             debug_help();
-            goto lab_continue;
+            goto l_continue;
           }
           break;
 #endif
@@ -795,7 +795,7 @@ void error (void)
               "Maybe you should try asking a human?",
               "An error might have occurred before I noticed any problems.",
               "``If all else fails, read the instructions.''");
-            goto lab_continue;
+            goto l_continue;
           }
           break;
         case 'I':
@@ -813,7 +813,7 @@ void error (void)
             }
             first = last + 1;
             cur_input.limit_field = last;
-            goto lab_exit;
+            goto l_exit;
           }
           break;
         case 'Q':
@@ -841,7 +841,7 @@ void error (void)
             print("...");
             print_ln();
             update_terminal();
-            goto lab_exit;
+            goto l_exit;
           }
           break;
         case 'X':
@@ -907,7 +907,7 @@ void error (void)
   if (interaction > batch_mode)
     incr(selector);
   print_ln();
-  lab_exit:;
+  l_exit:;
 }
 /* 88 */
 void fatal_error (str_number s)
@@ -963,7 +963,7 @@ boolean init_terminal (void)
     if (loc < last)
     {
       Result = true;
-      goto lab_exit;
+      goto l_exit;
     }
   }
   while (true)
@@ -976,7 +976,7 @@ boolean init_terminal (void)
       putc('\n', stdout);
       fprintf(stdout, "%s\n", "!End of file on the terminal... why?");
       Result = false;
-      goto lab_exit;
+      goto l_exit;
     }
     loc = first;
     while ((loc < last) && (buffer[loc] == ' '))
@@ -984,11 +984,11 @@ boolean init_terminal (void)
     if (loc < last)
     {
       Result = true;
-      goto lab_exit;
+      goto l_exit;
     }
     fprintf(stdout, "%s\n", "Please type the name of your input file.");
   }
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 44 */
@@ -1047,14 +1047,14 @@ integer str_vs_str (str_number s, str_number t)
     if (str_pool[j] != str_pool[k])
     {
       Result = str_pool[j] - str_pool[k];
-      goto lab_exit;
+      goto l_exit;
     }
     incr(j);
     incr(k);
     decr(l);
   }
   Result = ls - lt;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 47 */
@@ -1095,10 +1095,10 @@ boolean get_strings_started (void)
   {
     fprintf(stdout, "%s\n", "! You have to increase pool_size.");
     Result = false;
-    goto lab_exit;
+    goto l_exit;
   }
   Result = true;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 65 */
@@ -1543,7 +1543,7 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
     c = d;
     d = r;
   }
-  lab_exit:;
+  l_exit:;
   return Result;
 }
 /* 121 */
@@ -2100,7 +2100,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
     if ((p < mem_min) || (p > mem_end))
     {
       print(" CLOBBERED");
-      goto lab_exit;
+      goto l_exit;
     }
     if (p < hi_mem_min)
       if (name_type(p) == token)
@@ -2208,7 +2208,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
   }
   if (p != null)
     print(" ETC.");
-  lab_exit:;
+  l_exit:;
 }
 /* 665 */
 void runaway (void)
@@ -2271,7 +2271,7 @@ pointer get_node (integer s)
   integer r;
   integer t, tt;
   
-lab_restart:
+l_restart:
   p = rover;
   do {
     q = p + node_size(p);
@@ -2307,7 +2307,7 @@ lab_restart:
   if (s == 010000000000)
   {
     Result = max_halfword;
-    goto lab_exit;
+    goto l_exit;
   }
   if (lo_mem_max + 2 < hi_mem_min)
     if (lo_mem_max + 2 <= mem_min + max_halfword)
@@ -2330,7 +2330,7 @@ lab_restart:
       link(lo_mem_max) = null;
       info(lo_mem_max) = null;
       rover = q;
-      goto lab_restart;
+      goto l_restart;
     }
   overflow("main memory size", mem_max + 1 - mem_min);
 found:
@@ -2339,7 +2339,7 @@ found:
   var_used = var_used + s;
 #endif
   Result = r;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 172 */
@@ -3404,7 +3404,7 @@ void show_macro (pointer p, integer q, integer l)
     if (l > 0)
       l = l - tally;
     else
-      goto lab_exit;
+      goto l_exit;
   }
   tally = 0;
   switch (info(p))
@@ -3435,7 +3435,7 @@ void show_macro (pointer p, integer q, integer l)
       break;
   }
   show_token_list(link(p), q, l - tally, 0);
-lab_exit:;
+l_exit:;
 }
 /* 232 */
 void init_big_node (pointer p)
@@ -3518,7 +3518,7 @@ void print_variable_name (pointer p)
         {
           print("%CAPSULE");
           print_int(p - null);
-          goto lab_exit;
+          goto l_exit;
         }
         break;
     }
@@ -3559,7 +3559,7 @@ found:
     print("(SAVED)");
   show_token_list(r, null, el_gordo, tally);
   flush_token_list(r);
-lab_exit:;
+l_exit:;
 }
 /* 238 */
 boolean interesting (pointer p)
@@ -3769,7 +3769,7 @@ pointer find_variable (pointer t)
     value(p) = null;
   }
   Result = p;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 257 */
@@ -4039,7 +4039,7 @@ void print_dependency (pointer p, small_number t)
             print_char('+');
         print_scaled(value(p));
       }
-      goto lab_exit;
+      goto l_exit;
     }
     if (value(p) < 0)
       print_char('-');
@@ -4060,7 +4060,7 @@ void print_dependency (pointer p, small_number t)
     }
     p = link(p);
   }
-  lab_exit:;
+  l_exit:;
 }
 /* 805 */
 void print_dp (small_number t, pointer p, small_number verbosity)
@@ -4879,7 +4879,7 @@ void flush_variable (pointer p, pointer t, boolean discard_suffixes)
   while (t != null)
   {
     if (type(p) != structured)
-      goto lab_exit;
+      goto l_exit;
     n = info(t);
     t = link(t);
     if (n == collective_subscript)
@@ -4908,7 +4908,7 @@ void flush_variable (pointer p, pointer t, boolean discard_suffixes)
       p = link(p);
     } while (!(attr_loc(p) >= n));
     if (attr_loc(p) != n)
-      goto lab_exit;
+      goto l_exit;
   }
   if (discard_suffixes)
     flush_below_variable(p);
@@ -4918,7 +4918,7 @@ void flush_variable (pointer p, pointer t, boolean discard_suffixes)
       p = attr_head(p);
     recycle_value(p);
   }
-lab_exit:;
+l_exit:;
 }
 /* 248 */
 small_number und_type (pointer p)
@@ -5112,13 +5112,13 @@ pointer copy_path (pointer p)
     {
       link(qq) = q;
       Result = q;
-      goto lab_exit;
+      goto l_exit;
     }
     link(qq) = get_node(knot_node_size);
     qq = link(qq);
     pp = link(pp);
   }
-lab_exit:
+l_exit:
   return Result;
 }
 /* 266 */
@@ -5145,14 +5145,14 @@ pointer htap_ypoc (pointer p)
       link(q) = qq;
       path_tail = pp;
       Result = q;
-      goto lab_exit;
+      goto l_exit;
     }
     rr = get_node(knot_node_size);
     link(rr) = qq;
     qq = rr;
     pp = link(pp);
   }
-lab_exit:
+l_exit:
   return Result;
 }
 /* 296 */
@@ -5246,7 +5246,7 @@ void solve_choices (pointer p, pointer q, halfword n)
             cf = n_cos;
             sf = -n_sin;
             set_controls(p, q, 0);
-            goto lab_exit;
+            goto l_exit;
           }
           else
           {
@@ -5297,7 +5297,7 @@ void solve_choices (pointer p, pointer q, halfword n)
               left_x(q) = x_coord(q) - take_fraction(delta_x[0], ff);
               left_y(q) = y_coord(q) - take_fraction(delta_y[0], ff);
             }
-            goto lab_exit;
+            goto l_exit;
           }
           else
           {
@@ -5447,7 +5447,7 @@ found:
     incr(k);
     s = t;
   } while (!(k == n));
-lab_exit:;
+l_exit:;
 }
 /* 269 */
 void make_choices (pointer knots)
@@ -5621,7 +5621,7 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
   }
   while (true)
   {
-  lab_continue:
+  l_continue:
     if (m == 0)
       while (n > 0)
       {
@@ -5722,10 +5722,10 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
       stack_n = n - q;
       n = q;
       bisect_ptr = bisect_ptr + move_increment;
-      goto lab_continue;
+      goto l_continue;
     }
     if (bisect_ptr == 0)
-      goto lab_exit;
+      goto l_exit;
     bisect_ptr = bisect_ptr - move_increment;
     x1 = stack_x1;
     x2 = stack_x2;
@@ -5739,7 +5739,7 @@ void make_moves (scaled xx0, scaled xx1, scaled xx2, scaled xx3, scaled yy0, sca
     n = stack_n;
     l = stack_l;
   }
-lab_exit:;
+l_exit:;
 }
 /* 321 */
 void smooth_moves (integer b, integer t)
@@ -7099,7 +7099,7 @@ fraction crossing_point (integer a, integer b, integer c)
     }
   } while (!(d >= fraction_one));
   Result = d - fraction_one;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 394 */
@@ -7282,7 +7282,7 @@ void quadrant_subdivide (void)
   first_x = x_coord(cur_spec);
   first_y = y_coord(cur_spec);
   do {
-lab_continue:
+l_continue:
     q = link(p);
     if (q == cur_spec)
     {
@@ -7527,11 +7527,11 @@ lab_continue:
         {
           remove_cubic(p);
           if (cur_spec != q)
-            goto lab_continue;
+            goto l_continue;
           else
           {
             cur_spec = p;
-            goto lab_exit;
+            goto l_exit;
           }
         }
       }
@@ -7565,7 +7565,7 @@ lab_continue:
     }
     p = q;
   } while (!(p == cur_spec));
-  lab_exit:;
+  l_exit:;
 }
 /* 419 */
 void octant_subdivide (void)
@@ -8265,7 +8265,7 @@ pointer make_spec (pointer h, scaled safety_margin, integer tracing)
     diag_round();
   p = cur_spec;
   do {
-  lab_continue:
+  l_continue:
     q = link(p);
     if (p != q)
     {
@@ -8281,7 +8281,7 @@ pointer make_spec (pointer h, scaled safety_margin, integer tracing)
                 {
                   remove_cubic(p);
                   if (q != cur_spec)
-                    goto lab_continue;
+                    goto l_continue;
                   cur_spec = p;
                   q = p;
                 }
@@ -8776,7 +8776,7 @@ void find_offset (scaled x, scaled y, pointer p)
       {
         cur_x = 0;
         cur_y = 0;
-        goto lab_exit;
+        goto l_exit;
       }
       else
         octant = first_octant + negate_x;
@@ -8821,7 +8821,7 @@ void find_offset (scaled x, scaled y, pointer p)
   }
 done:
   unskew(x_coord(w), y_coord(w), octant);
-lab_exit:;
+l_exit:;
 }
 /* 493 */
 void split_for_offset (pointer p, fraction t)
@@ -8856,11 +8856,11 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
     right_type(p) = k;
     if (rising)
       if (k == n)
-        goto lab_exit;
+        goto l_exit;
       else
         ww = link(w);
     else if (k == 1)
-      goto lab_exit;
+      goto l_exit;
     else
       ww = knil(w);
     du = x_coord(ww) - x_coord(w);
@@ -8881,7 +8881,7 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
     }
     t = crossing_point(t0, t1, t2);
     if (t >= fraction_one)
-      goto lab_exit;
+      goto l_exit;
     {
       split_for_offset(p, t);
       right_type(p) = k;
@@ -8914,7 +8914,7 @@ void fin_offset_prep (pointer p, halfword k, pointer w, integer x0, integer x1, 
       decr(k);
     w = ww;
   }
-lab_exit:;
+l_exit:;
 }
 /* 491 */
 void offset_prep (pointer c, pointer h)
@@ -9702,7 +9702,7 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
   else if (x == 0)
   {
     Result = 0;
-    goto lab_exit;
+    goto l_exit;
   }
   else
   {
@@ -9850,10 +9850,10 @@ scaled find_direction_time (scaled x, scaled y, pointer h)
   }
 not_found:
   Result = -unity;
-  goto lab_exit;
+  goto l_exit;
 found:
   Result = n + tt;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 556 */
@@ -9892,7 +9892,7 @@ void cubic_intersection (pointer p, pointer pp)
   cur_tt = 1;
   while (true)
   {
-  lab_continue:
+  l_continue:
     if (delx - tol <= stack_max(x_packet(xy)) - stack_min(u_packet(uv)))
       if (delx + tol >= stack_min(x_packet(xy)) - stack_max(u_packet(uv)))
         if (dely - tol <= stack_max(y_packet(xy)) - stack_min(v_packet(uv)))
@@ -9904,7 +9904,7 @@ void cubic_intersection (pointer p, pointer pp)
               {
                 cur_t = half(cur_t + 1);
                 cur_tt = half(cur_tt + 1);
-                goto lab_exit;
+                goto l_exit;
               }
               _double(max_t);
               appr_t = cur_t;
@@ -9957,7 +9957,7 @@ void cubic_intersection (pointer p, pointer pp)
             tol = tol - three_l + tol_step;
             _double(tol);
             three_l = three_l + tol_step;
-            goto lab_continue;
+            goto l_continue;
           }
     if (time_to_go > 0)
       decr(time_to_go);
@@ -9970,7 +9970,7 @@ void cubic_intersection (pointer p, pointer pp)
       }
       cur_t = appr_t;
       cur_tt = appr_tt;
-      goto lab_exit;
+      goto l_exit;
     }
   not_found:
     if (odd(cur_tt))
@@ -9979,7 +9979,7 @@ void cubic_intersection (pointer p, pointer pp)
         cur_t = half(cur_t);
         cur_tt = half(cur_tt);
         if (cur_t == 0)
-          goto lab_exit;
+          goto l_exit;
         bisect_ptr = bisect_ptr - int_increment;
         three_l = three_l - tol_step;
         delx = stack_dx;
@@ -10009,7 +10009,7 @@ void cubic_intersection (pointer p, pointer pp)
       xy = xy + int_packets;
     }
   }
-  lab_exit:;
+  l_exit:;
 }
 /* 562 */
 void path_intersection (pointer h, pointer hh)
@@ -10050,7 +10050,7 @@ void path_intersection (pointer h, pointer hh)
             {
               cur_t = cur_t + n;
               cur_tt = cur_tt + nn;
-              goto lab_exit;
+              goto l_exit;
             }
           }
           nn = nn + unity;
@@ -10064,7 +10064,7 @@ void path_intersection (pointer h, pointer hh)
   } while (!(tol_step > 3));
   cur_t = -unity;
   cur_tt = -unity;
-lab_exit:;
+l_exit:;
 }
 /* 564 */
 boolean init_screen (void)
@@ -10707,14 +10707,14 @@ void ring_merge (pointer p, pointer q)
           "But perhaps no harm has been done; let's continue.");
         put_get_error();
       }
-      goto lab_exit;
+      goto l_exit;
     }
     r = value(r);
   }
   r = value(p);
   value(p) = value(q);
   value(q) = r;
-lab_exit:;
+l_exit:;
 }
 /* 626 */
 void show_cmd_mod (integer c, integer m)
@@ -10962,7 +10962,7 @@ void make_exp_copy (pointer p)
 {
   pointer q, r, t;
 
-lab_restart:
+l_restart:
   cur_type = type(p);
   switch (cur_type)
   {
@@ -11019,7 +11019,7 @@ lab_restart:
     case numeric_type:
       {
         new_indep(p);
-        goto lab_restart;
+        goto l_restart;
       }
       break;
     case independent:
@@ -11239,11 +11239,11 @@ void get_next (void)
   ASCII_code cclass;
   integer n, f;
 
-lab_restart:
+l_restart:
   cur_sym = 0;
   if ((index <= 15))
   {
-lab_switch:
+l_switch:
     c = buffer[loc];
     incr(loc);
     cclass = char_class[c];
@@ -11256,7 +11256,7 @@ lab_switch:
         {
           cclass = char_class[buffer[loc]];
           if (cclass > period_class)
-            goto lab_switch;
+            goto l_switch;
           else if (cclass < period_class)
           {
             n = 0;
@@ -11265,7 +11265,7 @@ lab_switch:
         }
         break;
       case space_class:
-        goto lab_switch;
+        goto l_switch;
         break;
       case percent_class:
         {
@@ -11288,9 +11288,9 @@ lab_switch:
               force_eof = false;
               end_file_reading();
               if (check_outer_validity())
-                goto lab_restart;
+                goto l_restart;
               else
-                goto lab_restart;
+                goto l_restart;
             }
             buffer[limit] = '%';
             first = limit + 1;
@@ -11301,7 +11301,7 @@ lab_switch:
             if (input_ptr > 0)
             {
               end_file_reading();
-              goto lab_restart;
+              goto l_restart;
             }
             if (selector < log_only)
               open_log_file();
@@ -11321,7 +11321,7 @@ lab_switch:
               fatal_error("*** (job aborted, no legal end found)");
           }
           check_interrupt();
-          goto lab_switch;
+          goto l_switch;
         }
         break;
       case string_class:
@@ -11345,7 +11345,7 @@ lab_switch:
               deletions_allowed = false;
               error();
               deletions_allowed = true;
-              goto lab_restart;
+              goto l_restart;
             }
             if ((loc == k + 1) && (length(buffer[k]) == 1))
               cur_mod = buffer[k];
@@ -11361,7 +11361,7 @@ lab_switch:
           }
           incr(loc);
           cur_cmd = string_token;
-          goto lab_exit;
+          goto l_exit;
         }
         break;
       case isolated_classes:
@@ -11378,7 +11378,7 @@ lab_switch:
           deletions_allowed = false;
           error();
           deletions_allowed = true;
-          goto lab_restart;
+          goto l_restart;
         }
         break;
       default:
@@ -11434,7 +11434,7 @@ lab_switch:
       cur_mod = 01777777777;
     }
     cur_cmd = numeric_token;
-    goto lab_exit;
+    goto l_exit;
   found:
     cur_sym = id_lookup(k, loc - k);
   }
@@ -11448,14 +11448,14 @@ lab_switch:
         if (cur_sym >= text_base)
           cur_sym = cur_sym - param_size;
         begin_token_list(param_stack[param_start + cur_sym - (suffix_base)], parameter);
-        goto lab_restart;
+        goto l_restart;
       }
       else
       {
         cur_cmd = capsule_token;
         cur_mod = param_stack[param_start + cur_sym - (expr_base)];
         cur_sym = 0;
-        goto lab_exit;
+        goto l_exit;
       }
   }
   else if (loc > null)
@@ -11477,12 +11477,12 @@ lab_switch:
       cur_cmd = capsule_token;
     }
     loc = link(loc);
-    goto lab_exit;
+    goto l_exit;
   }
   else
   {
     end_token_list();
-    goto lab_restart;
+    goto l_restart;
   }
   cur_cmd = eq_type(cur_sym);
   cur_mod = equiv(cur_sym);
@@ -11490,8 +11490,8 @@ lab_switch:
     if (check_outer_validity())
       cur_cmd = cur_cmd - outer_tag;
     else
-      goto lab_restart;
-lab_exit:;
+      goto l_restart;
+l_exit:;
 }
 /* 682 */
 void firm_up_the_line (void)
@@ -11578,7 +11578,7 @@ done:
 /* 691 */
 void get_symbol (void)
 {
-lab_restart:
+l_restart:
   get_next();
   if ((cur_sym == 0) || (cur_sym > frozen_inaccessible))
   {
@@ -11592,7 +11592,7 @@ lab_restart:
       delete_str_ref(cur_mod);
     cur_sym = frozen_inaccessible;
     ins_error();
-    goto lab_restart;
+    goto l_restart;
   }
 }
 /* 692 */
@@ -11653,7 +11653,7 @@ void check_delimiter (pointer l_delim, pointer r_delim)
 {
   if (cur_cmd == right_delimiter)
     if (cur_mod == l_delim)
-      goto lab_exit;
+      goto l_exit;
   if (cur_sym != r_delim)
   {
     missing_err(text(r_delim));
@@ -11671,7 +11671,7 @@ void check_delimiter (pointer l_delim, pointer r_delim)
       "but watch out, I'll probably miss it later.");
     error();
   }
-lab_exit:;
+l_exit:;
 }
 /* 1011 */
 pointer scan_declared_variable (void)
@@ -12482,12 +12482,12 @@ void change_if_limit (small_number l, pointer p)
       if (link(q) == p)
       {
         type(q) = l;
-        goto lab_exit;
+        goto l_exit;
       }
       q = link(q);
     }
   }
-lab_exit:;
+l_exit:;
 }
 /* 747 */
 void check_colon (void)
@@ -12536,7 +12536,7 @@ found:
   if (cur_exp == true_code)
   {
     change_if_limit(new_if_limit, save_cond_ptr);
-    goto lab_exit;
+    goto l_exit;
   }
   while (true)
   {
@@ -12574,7 +12574,7 @@ done:
     get_x_next();
     goto found;
   }
-lab_exit:;
+l_exit:;
 }
 /* 754 */
 void bad_for (str_number s)
@@ -12629,7 +12629,7 @@ void begin_iteration (void)
     {
       if (cur_cmd >= colon)
         if (cur_cmd <= comma)
-          goto lab_continue;
+          goto l_continue;
       scan_expression();
       if (cur_cmd == step_token)
         if (q == loop_list_loc(s))
@@ -12664,7 +12664,7 @@ void begin_iteration (void)
     q = link(q);
     info(q) = cur_exp;
     cur_type = vacuous;
-  lab_continue:;
+  l_continue:;
   } while (!(cur_cmd != comma));
 done:;
 found:
@@ -12713,7 +12713,7 @@ void resume_iteration (void)
   else
   {
     begin_token_list(info(loop_ptr), forever_text);
-    goto lab_exit;
+    goto l_exit;
   }
   begin_token_list(info(loop_ptr), loop_text);
   stack_argument(q);
@@ -12728,10 +12728,10 @@ void resume_iteration (void)
     print_char('}');
     end_diagnostic (false);
   }
-  goto lab_exit;
+  goto l_exit;
 not_found:
   stop_iteration();
-lab_exit:;
+l_exit:;
 }
 /* 763 */
 void stop_iteration (void)
@@ -13467,11 +13467,11 @@ boolean nice_pair (integer p, quarterword t)
       if (type(y_part_loc(p)) == known)
       {
         Result = true;
-        goto lab_exit;
+        goto l_exit;
       }
   }
   Result = false;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 900 */
@@ -13509,10 +13509,10 @@ void negate_dep_list (pointer p)
   {
     negate(value(p));
     if (info(p) == null)
-      goto lab_exit;
+      goto l_exit;
     p = link(p);
   }
-lab_exit:;
+l_exit:;
 }
 /* 908 */
 void pair_to_path (void)
@@ -13996,11 +13996,11 @@ pointer tarnished (pointer p)
     if (type(r) == independent)
     {
       Result = _void;
-      goto lab_exit;
+      goto l_exit;
     }
   } while (!(r == q));
   Result = null;
-lab_exit:;
+l_exit:;
   return Result;
 }
 /* 935 */
@@ -14066,7 +14066,7 @@ void add_or_subtract (pointer p, pointer q, quarterword c)
         cur_exp = v;
       else
         value(q) = v;
-      goto lab_exit;
+      goto l_exit;
     }
     r = dep_list(p);
     while (info(r) != null)
@@ -14126,7 +14126,7 @@ void add_or_subtract (pointer p, pointer q, quarterword c)
       }
     }
   }
-lab_exit:;
+l_exit:;
 }
 /* 943 */
 void dep_mult (pointer p, integer v, boolean v_is_scaled)
@@ -14144,7 +14144,7 @@ void dep_mult (pointer p, integer v, boolean v_is_scaled)
       value(p) = take_scaled(value(p), v);
     else
       value(p) = take_fraction(value(p), v);
-    goto lab_exit;
+    goto l_exit;
   }
   t = type(q);
   q = dep_list(q);
@@ -14155,7 +14155,7 @@ void dep_mult (pointer p, integer v, boolean v_is_scaled)
         t = proto_dependent;
   q = p_times_v(q, v, s, t, v_is_scaled);
   dep_finish(q, p, t);
-lab_exit:;
+l_exit:;
 }
 /* 946 */
 void hard_times (pointer p)
@@ -14195,7 +14195,7 @@ void dep_div (pointer p, scaled v)
   else
   {
     value(p) = make_scaled(value(p), v);
-    goto lab_exit;
+    goto l_exit;
   }
   t = type(q);
   q = dep_list(q);
@@ -14205,7 +14205,7 @@ void dep_div (pointer p, scaled v)
       t = proto_dependent;
   q = p_over_v(q, v, s, t);
   dep_finish(q, p, t);
-lab_exit:;
+l_exit:;
 }
 /* 953 */
 void set_up_trans (quarterword c)
@@ -14302,7 +14302,7 @@ void set_up_trans (quarterword c)
   do {
     r = r - 2;
     if (type(r) != known)
-      goto lab_exit;
+      goto l_exit;
   } while (!(r == q));
   txx = value(xx_part_loc(q));
   txy = value(xy_part_loc(q));
@@ -14311,7 +14311,7 @@ void set_up_trans (quarterword c)
   tx = value(x_part_loc(q));
   ty = value(y_part_loc(q));
   flush_cur_exp(0);
-lab_exit:;
+l_exit:;
 }
 /* 960 */
 void set_up_known_trans (quarterword c)
@@ -14353,7 +14353,7 @@ void path_trans (pointer p, quarterword c)
     if (max_offset(cur_exp) == 0)
       if (tx == 0)
         if (ty == 0)
-          goto lab_exit;
+          goto l_exit;
     flush_cur_exp(make_path(cur_exp));
     cur_type = future_pen;
   }
@@ -14366,7 +14366,7 @@ void path_trans (pointer p, quarterword c)
       trans(q + 5, q + 6);
     q = link(q);
   } while (!(q == cur_exp));
-lab_exit:;
+l_exit:;
 }
 /* 963 */
 void edges_trans (pointer p, quarterword c)
@@ -14375,7 +14375,7 @@ void edges_trans (pointer p, quarterword c)
   unstash_cur_exp(p);
   cur_edges = cur_exp;
   if (empty_edges(cur_edges))
-    goto lab_exit;
+    goto l_exit;
   if (txx == 0)
     if (tyy == 0)
       if (txy % unity == 0)
@@ -14387,7 +14387,7 @@ void edges_trans (pointer p, quarterword c)
           txy = 0;
           tyx = 0;
           if (empty_edges(cur_edges))
-            goto lab_exit;
+            goto l_exit;
         }
   if (txy == 0)
     if (tyx == 0)
@@ -14448,14 +14448,14 @@ void edges_trans (pointer p, quarterword c)
               }
             }
           }
-          goto lab_exit;
+          goto l_exit;
         }
   print_err("That transformation is too hard");
   help3("I can apply complicated transformations to paths,",
     "but I can only do integer operations on pictures.",
     "Proceed, and I'll omit the transformation.");
   put_get_error();
-lab_exit:;
+l_exit:;
 }
 /* 968 */
 void bilin1 (pointer p, scaled t, pointer q, scaled u, scaled delta)
@@ -14570,7 +14570,7 @@ void big_trans (pointer p, quarterword c)
       }
       bilin1(y_part_loc(r), tyy, x_part_loc(q), tyx, ty);
       bilin1(x_part_loc(r), txx, y_part_loc(q), txy, tx);
-      goto lab_exit;
+      goto l_exit;
     }
   } while (!(r == q));
   set_up_trans(c);
@@ -14606,7 +14606,7 @@ void big_trans (pointer p, quarterword c)
     recycle_value(pp);
     free_node(pp, value_node_size);
   }
-lab_exit:;
+l_exit:;
 }
 /* 976 */
 void cat (pointer p)
@@ -15070,12 +15070,12 @@ void do_binary (pointer p, quarterword c)
         }
         else
           dep_mult(null, v, true);
-        goto lab_exit;
+        goto l_exit;
       }
       else if ((nice_pair(p, type(p)) && (cur_type > pair_type)) || (nice_pair(cur_exp, cur_type) && (type(p) > pair_type)))
       {
         hard_times(p);
-        goto lab_exit;
+        goto l_exit;
       }
       else
         bad_binary(p, times);
@@ -15107,7 +15107,7 @@ void do_binary (pointer p, quarterword c)
           else
             dep_div(null, v);
         }
-        goto lab_exit;
+        goto l_exit;
       }
       break;
     case pythag_add:
@@ -15131,14 +15131,14 @@ void do_binary (pointer p, quarterword c)
       if ((type(p) == path_type) || (type(p) == future_pen) || (type(p) == pen_type))
       {
         path_trans(p, c);
-        goto lab_exit;
+        goto l_exit;
       }
       else if ((type(p) == pair_type) || (type(p) == transform_type))
         big_trans(p, c);
       else if (type(p) == picture_type)
       {
         edges_trans(p, c);
-        goto lab_exit;
+        goto l_exit;
       }
       else
         bad_binary(p, c);
@@ -15221,7 +15221,7 @@ void do_binary (pointer p, quarterword c)
   }
   recycle_value(p);
   free_node(p, value_node_size);
-lab_exit:
+l_exit:
   check_arith();
   if (old_p != null)
   {
@@ -15319,8 +15319,8 @@ void gf_four (integer x)
     gf_out(x / three_bytes);
   else
   {
-    x = x + 010000000000;
-    x = x + 010000000000;
+    x = x + 010000000000;
+    x = x + 010000000000;
     gf_out((x / three_bytes) + 128);
   }
   x = x % three_bytes;
@@ -15406,7 +15406,7 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
               gf_out(max_m);
               gf_out(max_n - min_n);
               gf_out(max_n);
-              goto lab_exit;
+              goto l_exit;
             }  
   gf_out(boc);
   gf_four(boc_c);
@@ -15415,7 +15415,7 @@ void gf_boc (integer min_m, integer max_m, integer min_n, integer max_n)
   gf_four(max_m);
   gf_four(min_n);
   gf_four(max_n);
-lab_exit:;
+l_exit:;
 }
 /* 1163 */
 void init_gf (void)
@@ -15753,7 +15753,7 @@ void make_eq (pointer lhs)
   integer v;
   pointer p, q;
 
-lab_restart:
+l_restart:
   t = type(lhs);
   if (t <= pair_type)
     v = value(lhs);
@@ -15817,7 +15817,7 @@ lab_restart:
         if (t == unknown_path)
         {
           pair_to_path();
-          goto lab_restart;
+          goto l_restart;
         }
       break;
     case transform_type:
@@ -16639,7 +16639,7 @@ void do_ship_out (void)
           "So I'll not change anything just now.");
         put_get_flush_error(0);
       }
-      goto lab_exit;
+      goto l_exit;
     }
   else
   {
@@ -16666,7 +16666,7 @@ void do_ship_out (void)
       ship_out(c);
   }
   flush_cur_exp(0);
-lab_exit:;
+l_exit:;
 }
 /* 1071 */
 void do_display (void)
@@ -16703,7 +16703,7 @@ void do_display (void)
     find_edges_var(e);
     if (cur_edges != null)
       disp_edges(cur_exp);
-    goto lab_exit;
+    goto l_exit;
   not_found:
     cur_exp = cur_exp * unity;
   common_ending:
@@ -16712,7 +16712,7 @@ void do_display (void)
     put_get_flush_error(0);
     flush_token_list(e);
   }
-lab_exit:;
+l_exit:;
 }
 /* 1072 */
 boolean get_pair (command_code c)
@@ -16765,13 +16765,13 @@ void do_open_window (void)
   if (!get_pair(at_token))
     goto not_found;
   open_a_window(k, r0, c0, r1, c1, cur_x, cur_y);
-  goto lab_exit;
+  goto l_exit;
 not_found:
   print_err("Improper `openwindow'");
   help2("Say `openwindow k from (r0,c0) to (r1,c1) at (x,y)',",
     "where all quantities are known and k is between 0 and 15.");
   put_get_error();
-lab_exit:;
+l_exit:;
 }
 /* 1074 */
 void do_cull (void)
@@ -16822,14 +16822,14 @@ void do_cull (void)
     find_edges_var(e);
     if (cur_edges != null)
       cull_edges(floor_unscaled(cur_x + unity - 1), floor_unscaled(cur_y), w_out, w_in);
-    goto lab_exit;
+    goto l_exit;
   not_found:
     print_err("Bad culling amounts");
     help1("Always cull by known amounts that exclude 0.");
     put_get_error();
     flush_token_list(e);
   }
-lab_exit:;
+l_exit:;
 }
 /* 1082 */
 void do_message (void)
@@ -16986,7 +16986,7 @@ void do_tfm_command (void)
     case lig_table_code:
       {
         lk_started = false;
-      lab_continue:
+      l_continue:
         get_x_next();
         if ((cur_cmd == skip_to) && lk_started)
         {
@@ -17031,13 +17031,13 @@ void do_tfm_command (void)
               if (nl - ll > 128)
               {
                 skip_error(ll);
-                goto lab_continue;
+                goto l_continue;
               }
               skip_byte(ll) = qi(nl - ll - 1);
               ll = ll - lll;
             } while (!(lll == 0));
           }
-          goto lab_continue;
+          goto l_continue;
         }
         if (cur_cmd == lig_kern_token)
         {
@@ -17088,7 +17088,7 @@ void do_tfm_command (void)
           overflow("ligtable size", lig_table_size);
         incr(nl);
         if (cur_cmd == comma)
-          goto lab_continue;
+          goto l_continue;
         if (skip_byte(nl - 1) < stop_flag)
           skip_byte(nl - 1) = stop_flag;
       done:;
@@ -17694,12 +17694,12 @@ void fix_check_sum (void)
           header_byte[2] = b2;
           header_byte[3] = b3;
           header_byte[4] = b4;
-          goto lab_exit;
+          goto l_exit;
         }
   for (k = 1; k <= 4; k++)
     if (header_byte[k] < 0)
       header_byte[k] = 0;
-lab_exit:;
+l_exit:;
 }
 /* 1133 */
 void tfm_qqqq (four_quarters x)
@@ -17736,12 +17736,12 @@ boolean open_base_file (void)
     wake_up_terminal();
     wterm_ln("I can't find the PLAIN base file!");
     Result = false;
-    goto lab_exit;
+    goto l_exit;
   }
 found:
   loc = j;
   Result = true;
-lab_exit:
+l_exit:
   return Result;
 }
 /* 1187 */
@@ -17840,11 +17840,11 @@ boolean load_base_file (void)
   if (x != 69069L)
     goto off_base;
   Result = true;
-  goto lab_exit;
+  goto l_exit;
 off_base:
   fprintf(stdout, "%s\n", "(Fatal base file error; I'm stymied)");
   Result = false;
-lab_exit:
+l_exit:
   return Result;
 }
 /* 823 */
@@ -17863,7 +17863,7 @@ void scan_primary (void)
 
   my_var_flag = var_flag;
   var_flag = 0;
-lab_restart:
+l_restart:
   check_arith();
 #ifdef DEBUG
   if (panicking)
@@ -18127,7 +18127,7 @@ lab_restart:
                 info(p) = t;
                 macro_call(value(q), pre_head, null);
                 get_x_next();
-                goto lab_restart;
+                goto l_restart;
               }
             }
           }
@@ -18174,7 +18174,7 @@ lab_restart:
           macro_call(macro_ref, pre_head, null);
           decr(ref_count(macro_ref));
           get_x_next();
-          goto lab_restart;
+          goto l_restart;
         }
         q = link(pre_head);
         free_avail(pre_head);
@@ -18202,7 +18202,7 @@ lab_restart:
     default:
       {
         bad_exp("A primary");
-        goto lab_restart;
+        goto l_restart;
       }
       break;
   }
@@ -18299,11 +18299,11 @@ void scan_secondary (void)
   halfword c, d;
   pointer mac_name;
 
-lab_restart:
+l_restart:
   if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
     bad_exp("A secondary");
   scan_primary();
-lab_continue:
+l_continue:
   if (cur_cmd <= max_secondary_command)
     if (cur_cmd >= min_secondary_command)
     {
@@ -18325,9 +18325,9 @@ lab_continue:
         binary_mac(p, c, mac_name);
         decr(ref_count(c));
         get_x_next();
-        goto lab_restart;
+        goto l_restart;
       }
-      goto lab_continue;
+      goto l_continue;
     }
 }
 /* 864 */
@@ -18337,13 +18337,13 @@ void scan_tertiary (void)
   halfword c, d;
   halfword mac_name;
 
-lab_restart:
+l_restart:
   if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
     bad_exp("A tertiary");
   scan_secondary();
   if (cur_type == future_pen)
     materialize_pen();
-lab_continue:
+l_continue:
   if (cur_cmd <= max_tertiary_command)
     if (cur_cmd >= min_tertiary_command)
     {
@@ -18365,9 +18365,9 @@ lab_continue:
         binary_mac(p, c, mac_name);
         decr(ref_count(c));
         get_x_next();
-        goto lab_restart;
+        goto l_restart;
       }
-      goto lab_continue;
+      goto l_continue;
     }
 }
 /* 868 */
@@ -18382,11 +18382,11 @@ void scan_expression (void)
   unsigned char t;
 
   my_var_flag = var_flag;
-lab_restart:
+l_restart:
   if ((cur_cmd < min_primary_command) || (cur_cmd > max_primary_command))
     bad_exp("An");
   scan_tertiary();
-lab_continue:
+l_continue:
   if (cur_cmd <= max_expression_command)
   {
     if (cur_cmd >= min_expression_command)
@@ -18411,7 +18411,7 @@ lab_continue:
             else if (cur_type == path_type)
               p = cur_exp;
             else
-              goto lab_exit;
+              goto l_exit;
             q = p;
             while (link(q) != p)
               q = link(q);
@@ -18669,14 +18669,14 @@ lab_continue:
             binary_mac(p, c, mac_name);
             decr(ref_count(c));
             get_x_next();
-            goto lab_restart;
+            goto l_restart;
           }
         }
-        goto lab_continue;
+        goto l_continue;
       }
     }
   }
-lab_exit:;
+l_exit:;
 }
 /* 892 */
 void get_boolean (void)
@@ -18718,19 +18718,20 @@ void close_files_and_terminate (void)
   {
     if (log_opened)
     {
-      { putc (' ', log_file); putc ('\n', log_file); }
-      fprintf (log_file, "%s%s\n", "Here is how much of METAFONT's memory", " you used:");
-      fprintf (log_file, "%c%ld%s", ' ', (long)max_str_ptr - init_str_ptr, " string");
+      wlog_ln(" ");
+      wlog_ln("%s%s\n", "Here is how much of METAFONT's memory", " you used:");
+      wlog_ln("%c%ld%s", ' ', (long)max_str_ptr - init_str_ptr, " string");
       if (max_str_ptr != init_str_ptr + 1)
-        putc ('s', log_file);
-      fprintf(log_file, "%s%ld\n", " out of ", (long)max_strings - init_str_ptr);
-      fprintf(log_file, "%c%ld%s%ld\n", ' ', (long)max_pool_ptr - init_pool_ptr, " string characters out of ", (long)pool_size - init_pool_ptr);
-      fprintf(log_file, "%c%ld%s%ld\n", ' ', (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2, " words of memory out of ", (long)mem_end + 1);
-      fprintf(log_file, "%c%ld%s%ld\n", ' ', (long)st_count, " symbolic tokens out of ", (long)9500);
-      fprintf(log_file, "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n", ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,", (long)max_wiggle, "r,", (long)150, "p,", (long)buf_size, 'b');
+        wlog('s');
+      wlog_ln("%s%ld\n", " out of ", (long)max_strings - init_str_ptr);
+      wlog_ln("%c%ld%s%ld\n", ' ', (long)max_pool_ptr - init_pool_ptr, " string characters out of ", (long)pool_size - init_pool_ptr);
+      wlog_ln("%c%ld%s%ld\n", ' ', (long)lo_mem_max + 0 + mem_end - hi_mem_min + 2, " words of memory out of ", (long)mem_end + 1);
+      wlog_ln("%c%ld%s%ld\n", ' ', (long)st_count, " symbolic tokens out of ", (long)hash_size);
+      wlog_ln("%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n", ' ', (long)max_in_stack, "i,", (long)int_ptr, "n,",       (long)max_rounding_ptr, "r,", (long)max_param_stack, "p,", (long)max_buf_stack + 1,       "b stack positions out of ", (long)stack_size, "i,", (long)max_internal, "n,", (long)max_wiggle, "r,", (long)150, "p,", (long)buf_size, 'b');
     }
   }
 #endif
+  wake_up_terminal();
   if ((gf_prev_ptr > 0) || (internal[fontmaking] > 0))
   {
     rover = lo_mem_stat_max + 1;
@@ -18745,13 +18746,11 @@ void close_files_and_terminate (void)
     info(lo_mem_max) = null;
     clear_the_list();
     for (k = bc; k <= ec; k++)
-    {
       if (char_exists[k])
         tfm_width[k] = sort_in(tfm_width[k]);
-    }
     nw = skimp(255) + 1;
     dimen_head[1] = link(temp_head);
-    if (perturbation >= 4096)
+    if (perturbation >= 010000)
       tfm_warning(char_wd);
     fix_design_size();
     fix_check_sum();
@@ -18761,53 +18760,43 @@ void close_files_and_terminate (void)
       for (k = bc; k <= ec; k++)
       {
         if (char_exists[k])
-        {
           if (tfm_height[k] == 0)
             tfm_height[k] = zero_val;
           else
             tfm_height[k] = sort_in(tfm_height[k]);
-        }
       }
       nh = skimp(15) + 1;
       dimen_head[2] = link(temp_head);
-      if (perturbation >= 4096)
+      if (perturbation >= 010000)
         tfm_warning(char_ht);
-      mem[mem_top - 1].hh.rh = 19;
+      clear_the_list();
       for (k = bc; k <= ec; k++)
-      {
         if (char_exists[k])
-        {
           if (tfm_depth[k] == 0)
             tfm_depth[k] = zero_val;
           else
             tfm_depth[k] = sort_in(tfm_depth[k]);
-        }
-      }
       nd = skimp(15) + 1;
       dimen_head[3] = link(temp_head);
-      if (perturbation >= 4096)
+      if (perturbation >= 010000)
         tfm_warning(char_dp);
       clear_the_list();
       for (k = bc; k <= ec; k++)
-      {
         if (char_exists[k])
-        {
           if (tfm_ital_corr[k] == 0)
             tfm_ital_corr[k] = zero_val;
           else
             tfm_ital_corr[k] = sort_in (tfm_ital_corr[k]);
-        }
-      }
       ni = skimp(63) + 1;
       dimen_head[4] = link(temp_head);
-      if (perturbation >= 4096)
+      if (perturbation >= 010000)
         tfm_warning(char_ic);
       internal[fontmaking] = 0;
       if (job_name == 0)
         open_log_file();
-      pack_job_name(1045);
+      pack_job_name(".tfm");
       while (!b_open_out(tfm_file))
-        prompt_file_name(1046, 1045);
+        prompt_file_name("file name for font metrics", ".tfm");
       metric_file_name = b_make_name_string(tfm_file);
       k = header_size;
       while (header_byte[k] < 0)
@@ -18871,12 +18860,11 @@ void close_files_and_terminate (void)
       tfm_two(np);
       for (k = 1; k <= 4 * lh; k++)
       {
-        if (header_byte[k]< 0)
+        if (header_byte[k] < 0)
           header_byte[k] = 0;
         tfm_out(header_byte[k]);
       }
       for (k = bc; k <= ec; k++)
-      {
         if (!char_exists[k])
           tfm_four(0);
         else
@@ -18886,7 +18874,6 @@ void close_files_and_terminate (void)
           tfm_out((info(tfm_ital_corr[k])) * 4 + char_tag[k]);
           tfm_out(char_remainder[k]);
         }
-      }
       tfm_changed = 0;
       for (k = 1; k <= 4; k++)
       {
@@ -18899,15 +18886,13 @@ void close_files_and_terminate (void)
         }
       }
       for (k = 0; k <= 255; k++)
-      {
         if (skip_table[k] < lig_table_size)
         {
-          print_nl(1048);
+          print_nl("(local label ");
           print_int(k);
-          print(1049);
+          print(":: was missing)");
           cancel_skips(skip_table[k]);
         }
-      }
       if (lk_started)
       {
         tfm_out(255);
@@ -18915,7 +18900,6 @@ void close_files_and_terminate (void)
         tfm_two(0);
       }
       else
-      {
         for (k = 1; k <= lk_offset; k++)
         {
           ll = label_loc[label_ptr];
@@ -18934,21 +18918,13 @@ void close_files_and_terminate (void)
             decr(label_ptr);
           } while (!(label_loc[label_ptr] < ll));
         }
-      }
       for (k = 0; k <= nl - 1; k++)
-      {
         tfm_qqqq(lig_kern[k]);
-      }
       for (k = 0; k <= nk - 1; k++)
-      {
         tfm_four(dimen_out(kern[k]));
-      }
       for (k = 0; k <= ne - 1; k++)
-      {
         tfm_qqqq(exten[k]);
-      }
       for (k = 1; k <= np; k++)
-      {
         if (k == 1)
         {
           if (abs(param[1]) < fraction_half)
@@ -18964,31 +18940,31 @@ void close_files_and_terminate (void)
         }
         else
           tfm_four(dimen_out(param[k]));
-      }
       if (tfm_changed > 0)
       {
         if (tfm_changed == 1)
-          print_nl(1050);
+          print_nl("(a font metric dimension");
         else
         {
-          print_nl(40);
+          print_nl("(");
           print_int(tfm_changed);
-          print(1051);
+          print(" font metric dimensions");
         }
-        print(1052);
+        print(" had to be decreased)");
       }
 #ifdef STAT
       if (internal[tracing_stats] > 0)
       {
+        wlog_ln(" ");
         { putc (' ', log_file);  putc ('\n', log_file); }
         if (bch_label < lig_table_size)
           decr(nl);
-        fprintf(log_file, "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n", "(You used ", (long)nw, "w,", (long)nh, "h,", (long)nd, "d,", (long)ni, "i,", (long)nl, "l,", (long)nk, "k,", (long)ne, "e,", (long)np, "p metric file positions");
-        fprintf(log_file, "%s%s%ld%s%ld%s%ld%s\n", "  out of ", "256w,16h,16d,64i,", (long)lig_table_size, "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
+        wlog_ln("%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n", "(You used ", (long)nw, "w,", (long)nh, "h,", (long)nd, "d,", (long)ni, "i,", (long)nl, "l,", (long)nk, "k,", (long)ne, "e,", (long)np, "p metric file positions");
+        wlog_ln("%s%s%ld%s%ld%s%ld%s\n", "  out of ", "256w,16h,16d,64i,", (long)lig_table_size, "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
       }
-#endif /* STAT */
-      print_nl(1047);
-      print_file_name(0, metric_file_name, 0);
+#endif
+      print_nl("Font metrics written on ");
+      slow_print(metric_file_name);
       print_char('.');
       b_close(tfm_file);
     }
@@ -19007,7 +18983,6 @@ void close_files_and_terminate (void)
       gf_four(gf_min_n);
       gf_four(gf_max_n);
       for (k = 0; k <= 255; k++)
-      {
         if (char_exists[k])
         {
           x = gf_dx[k] / unity;
@@ -19026,18 +19001,15 @@ void close_files_and_terminate (void)
           }
           x = mem[tfm_width[k]+ 1].cint;
           if (abs(x) > max_tfm_dimen)
-          {
             if (x > 0)
-              x = 16777215L;
+              x = three_bytes - 1;
             else
-              x = -16777215L;
-          }
+              x = 1 - three_bytes;
           else
             x = make_scaled(x * 16, internal[design_size]);
           gf_four(x);
           gf_four(char_ptr[k]);
         }
-      }
       gf_out(post_post);
       gf_four(gf_prev_ptr);
       gf_out(gf_id_byte);
@@ -19049,36 +19021,30 @@ void close_files_and_terminate (void)
       }
       if (gf_limit == half_buf)
         write_gf(half_buf, gf_buf_size - 1);
-      if (gf_ptr > (2147483647L - gf_offset))
-      {
-        gf_prev_ptr = 0;
-        fatal_error("gf length exceeds \"7FFFFFFF");
-      }
       if (gf_ptr > 0)
         write_gf(0, gf_ptr - 1);
-      print_nl(1064);
-      print_file_name(0, output_file_name, 0);
-      print(558);
+      print_nl("Output written on ");
+      slow_print(output_file_name);
+      print(" (");
       print_int(total_chars);
+      print(" character");
       if (total_chars != 1)
-        print(1065);
-      else
-        print(1066);
-      print(1067);
+        print_char('s');
+      print(", ");
       print_int(gf_offset + gf_ptr);
-      print(1068);
+      print(" bytes).");
       b_close(gf_file);
     }
   }
   if (log_opened)
   {
-    putc('\n', log_file);
-    aclose(log_file);
+    wlog_cr();
+    a_close(log_file);
     selector = selector - 2;
     if (selector == term_only)
     {
-      print_nl(1076);
-      print_file_name(0, texmflogname, 0);
+      print_nl("Transcript written on ");
+      slow_print(log_name);
       print_char('.');
     }
   }
@@ -19093,29 +19059,27 @@ void final_cleanup (void)
   if (job_name == 0)
     open_log_file();
   while (input_ptr > 0)
-  {
-    if ((index > 15))
+    if (token_state)
       end_token_list();
     else
       end_file_reading();
-  }
-  while (loop_ptr != 0)
+  while (loop_ptr != null)
     stop_iteration();
   while (open_parens > 0)
   {
-    print(1077);
+    print(" )");
     decr(open_parens);
   }
-  while (cond_ptr != 0)
+  while (cond_ptr != null)
   {
     print_nl("(end occurred when ");
-    print_cmd_mod(2, cur_if);
+    print_cmd_mod(fi_or_else, cur_if);
     if (if_line != 0)
     {
-      print(1079);
+      print(" on line ");
       print_int(if_line);
     }
-    print(1080);
+    print(" was incomplete)");
     if_line = if_line_field(cond_ptr);
     cur_if = name_type(cond_ptr);
     loop_ptr = cond_ptr;
@@ -19123,48 +19087,135 @@ void final_cleanup (void)
     free_node(loop_ptr, if_node_size);
   }
   if (history != spotless)
-  {
     if (((history == warning_issued) || (interaction < term_and_log)))
-    {
       if (selector == term_and_log)
       {
         selector = term_only;
         print_nl("(see the transcript file for additional information)");
         selector = term_and_log;
       }
-    }
-  }
   if (c == 1)
   {
 #ifdef INIMF
     if (iniversion)
     {
       store_base_file();
-      goto lab_exit;
+      goto l_exit;
     }
-#endif /* INIMF */
+#endif
     print_nl("(dump is performed only by INIMF)");
-    goto lab_exit;
+    goto l_exit;
   }
-lab_exit:;
+l_exit:;
 }
 /* 1210 */
 void init_prim (void)
 {
+  primitive("tracingtitles", internal_quantity, tracing_titles);
+  primitive("tracingequations", internal_quantity, tracing_equations);
+  primitive("tracingcapsules", internal_quantity, tracing_capsules);
+  primitive("tracingchoices", internal_quantity, tracing_choices);
+  primitive("tracingspecs", internal_quantity, tracing_specs);
+  primitive("tracingpens", internal_quantity, tracing_pens);
+  primitive("tracingcommands", internal_quantity, tracing_commands);
+  primitive("tracingrestores", internal_quantity, tracing_restores);
+  primitive("tracingmacros", internal_quantity, tracing_macros);
+  primitive("tracingedges", internal_quantity, tracing_edges);
+  primitive("tracingoutput", internal_quantity, tracing_output);
+  primitive("tracingstats", internal_quantity, tracing_stats);
+  primitive("tracingonline", internal_quantity, tracing_online);
+  primitive("year", internal_quantity, year);
+  primitive("month", internal_quantity, month);
+  primitive("day", internal_quantity, day);
+  primitive("time", internal_quantity, time);
+  primitive("charcode", internal_quantity, char_code);
+  primitive("charext", internal_quantity, char_ext);
+  primitive("charwd", internal_quantity, char_wd);
+  primitive("charht", internal_quantity, char_ht);
+  primitive("chardp", internal_quantity, char_dp);
+  primitive("charic", internal_quantity, char_ic);
+  primitive("chardx", internal_quantity, char_dx);
+  primitive("chardy", internal_quantity, char_dy);
+  primitive("designsize", internal_quantity, design_size);
+  primitive("hppp", internal_quantity, hppp);
+  primitive("vppp", internal_quantity, vppp);
+  primitive("xoffset", internal_quantity, x_offset);
+  primitive("yoffset", internal_quantity, y_offset);
+  primitive("pausing", internal_quantity, pausing);
+  primitive("showstopping", internal_quantity, showstopping);
+  primitive("fontmaking", internal_quantity, fontmaking);
+  primitive("proofing", internal_quantity, proofing);
+  primitive("smoothing", internal_quantity, smoothing);
+  primitive("autorounding", internal_quantity, autorounding);
+  primitive("granularity", internal_quantity, granularity);
+  primitive("fillin", internal_quantity, fillin);
+  primitive("turningcheck", internal_quantity, turning_check);
+  primitive("warningcheck", internal_quantity, warning_check);
+  primitive("boundarychar", internal_quantity, boundary_char);
+  primitive("..", path_join, 0);
+  primitive("[", left_bracket, 0);
+  eqtb[frozen_left_bracket] = eqtb[cur_sym];
+  primitive("]", right_bracket, 0);
+  primitive("}", right_brace, 0);
+  primitive("{", left_brace, 0);
+  primitive(":", colon, 0);
+  eqtb[frozen_colon] = eqtb[cur_sym];
+  primitive("::", double_colon, 0);
+  primitive("||:", bchar_label, 0);
+  primitive(":=", assignment, 0);
+  primitive(",", comma, 0);
+  primitive(";", semicolon, 0);
+  eqtb[frozen_semicolon] = eqtb[cur_sym];
+  primitive("\\", relax, 0);
+  primitive("addto", add_to_command, 0);
+  primitive("at", at_token, 0);
+  primitive("atleast", at_least, 0);
+  primitive("begingroup", begin_group, 0);
+  bg_loc = cur_sym;
+  primitive("controls", controls, 0);
+  primitive("cull", cull_command, 0);
+  primitive("curl", curl_command, 0);
+  primitive("delimiters", delimiters, 0);
+  primitive("display", display_command, 0);
+  primitive("endgroup", end_group, 0);
+  eqtb[frozen_end_group] = eqtb[cur_sym];
+  eg_loc = cur_sym;
+  primitive("everyjob", every_job_command, 0);
+  primitive("exitif", exit_test, 0);
+  primitive("expandafter", expand_after, 0);
+  primitive("from", from_token, 0);
+  primitive("inwindow", in_window, 0);
+  primitive("interim", interim_command, 0);
+  primitive("let", let_command, 0);
+  primitive("newinternal", new_internal, 0);
+  primitive("of", of_token, 0);
+  primitive("openwindow", open_window, 0);
+  primitive("randomseed", random_seed, 0);
+  primitive("save", save_command, 0);
+  primitive("scantokens", scan_tokens, 0);
+  primitive("shipout", ship_out_command, 0);
+  primitive("skipto", skip_to, 0);
+  primitive("step", step_token, 0);
+  primitive("str", str_op, 0);
+  primitive("tension", tension, 0);
+  primitive("to", to_token, 0);
+  primitive("until", until_token, 0);
   primitive("def", macro_def, start_def);
   primitive("vardef", macro_def, var_def);
   primitive("primarydef", macro_def, secondary_primary_macro);
   primitive("secondarydef", macro_def, tertiary_secondary_macro);
   primitive("tertiarydef", macro_def, expression_tertiary_macro);
-  primitive("enddef", macro_def, end_def); eqtb[frozen_end_def] = eqtb[cur_sym];
+  primitive("enddef", macro_def, end_def);
+  eqtb[frozen_end_def] = eqtb[cur_sym];
   primitive("for", iteration, expr_base);
   primitive("forsuffixes", iteration, suffix_base);
   primitive("forever", iteration, start_forever);
-  primitive("endfor", iteration, end_for); eqtb[frozen_end_for] = eqtb[cur_sym];
+  primitive("endfor", iteration, end_for);
+  eqtb[frozen_end_for] = eqtb[cur_sym];
   primitive("quote", macro_special, quote);
-  primitive("#@@", macro_special, macro_prefix);
-  primitive("@@", macro_special, macro_at);
-  primitive("@@#", macro_special, macro_suffix);
+  primitive("#@", macro_special, macro_prefix);
+  primitive("@", macro_special, macro_at);
+  primitive("@#", macro_special, macro_suffix);
   primitive("expr", param_type, expr_base);
   primitive("suffix", param_type, suffix_base);
   primitive("text", param_type, text_base);
@@ -19174,7 +19225,8 @@ void init_prim (void)
   primitive("input", input, 0);
   primitive("endinput", input, 1);
   primitive("if", if_test, if_code);
-  primitive("fi", fi_or_else, fi_code); eqtb[frozen_fi] = eqtb[cur_sym];
+  primitive("fi", fi_or_else, fi_code);
+  eqtb[frozen_fi] = eqtb[cur_sym];
   primitive("else", fi_or_else, else_code);
   primitive("elseif", fi_or_else, else_if_code);
   primitive("true", nullary, true_code);
@@ -19219,7 +19271,8 @@ void init_prim (void)
   primitive("+", plus_or_minus, plus);
   primitive("-", plus_or_minus, minus);
   primitive("*", secondary_binary, times);
-  primitive("/", slash, over); eqtb[frozen_slash] = eqtb[cur_sym];
+  primitive("/", slash, over);
+  eqtb[frozen_slash] = eqtb[cur_sym];
   primitive("++", tertiary_binary, pythag_add);
   primitive("+-+", tertiary_binary, pythag_sub);
   primitive("and", and_command, and_op);
@@ -19309,68 +19362,66 @@ void init_tab (void)
   link(lo_mem_max) = null;
   info(lo_mem_max) = null;
   for (k = mem_top - 2; k <= mem_top; k++)
-  {
     mem[k] = mem[lo_mem_max];
-  }
   avail = null;
   mem_end = mem_top;
   hi_mem_min = hi_mem_stat_min;
   var_used = lo_mem_stat_max + 1 - mem_min;
   dyn_used = mem_top + 1 - hi_mem_min;
-  int_name[tracing_titles] = 409;
-  int_name[tracing_equations] = 410;
-  int_name[tracing_capsules] = 411;
-  int_name[tracing_choices] = 412;
-  int_name[tracing_specs] = 413;
-  int_name[tracing_pens] = 414;
-  int_name[tracing_commands] = 415;
-  int_name[tracing_restores] = 416;
-  int_name[tracing_macros] = 417;
-  int_name[tracing_edges] = 418;
-  int_name[tracing_output] = 419;
-  int_name[tracing_stats] = 420;
-  int_name[tracing_online] = 421;
-  int_name[year] = 422;
-  int_name[month] = 423;
-  int_name[day] = 424;
-  int_name[time] = 425;
-  int_name[char_code] = 426;
-  int_name[char_ext] = 427;
-  int_name[char_wd] = 428;
-  int_name[char_ht] = 429;
-  int_name[char_dp] = 430;
-  int_name[char_ic] = 431;
-  int_name[char_dx] = 432;
-  int_name[char_dy] = 433;
-  int_name[design_size] = 434;
-  int_name[hppp] = 435;
-  int_name[vppp] = 436;
-  int_name[x_offset] = 437;
-  int_name[y_offset] = 438;
-  int_name[pausing] = 439;
-  int_name[showstopping] = 440;
-  int_name[fontmaking] = 441;
-  int_name[proofing] = 442;
-  int_name[smoothing] = 443;
-  int_name[autorounding] = 444;
-  int_name[granularity] = 445;
-  int_name[fillin] = 446;
-  int_name[turning_check] = 447;
-  int_name[warning_check] = 448;
-  int_name[boundary_char] = 449;
+  int_name[tracing_titles] = "tracingtitles";
+  int_name[tracing_equations] = "tracingequations";
+  int_name[tracing_capsules] = "tracingcapsules";
+  int_name[tracing_choices] = "tracingchoices";
+  int_name[tracing_specs] = "tracingspecs";
+  int_name[tracing_pens] = "tracingpens";
+  int_name[tracing_commands] = "tracingcommands";
+  int_name[tracing_restores] = "tracingrestores";
+  int_name[tracing_macros] = "tracingmacros";
+  int_name[tracing_edges] = "tracingedges";
+  int_name[tracing_output] = "tracingoutput";
+  int_name[tracing_stats] = "tracingstats";
+  int_name[tracing_online] = "tracingonline";
+  int_name[year] = "year";
+  int_name[month] = "month";
+  int_name[day] = "day";
+  int_name[time] = "time";
+  int_name[char_code] = "charcode";
+  int_name[char_ext] = "charext";
+  int_name[char_wd] = "charwd";
+  int_name[char_ht] = "charht";
+  int_name[char_dp] = "chardp";
+  int_name[char_ic] = "charic";
+  int_name[char_dx] = "chardx";
+  int_name[char_dy] = "chardy";
+  int_name[design_size] = "designsize";
+  int_name[hppp] = "hppp";
+  int_name[vppp] = "vppp";
+  int_name[x_offset] = "xoffset";
+  int_name[y_offset] = "yoffset";
+  int_name[pausing] = "pausing";
+  int_name[showstopping] = "showstopping";
+  int_name[fontmaking] = "fontmaking";
+  int_name[proofing] = "proofing";
+  int_name[smoothing] = "smoothing";
+  int_name[autorounding] = "autorounding";
+  int_name[granularity] = "granularity";
+  int_name[fillin] = "fillin";
+  int_name[turning_check] = "turningcheck";
+  int_name[warning_check] = "warningcheck";
+  int_name[boundary_char] = "boundarychar";
   hash_used = frozen_inaccessible;
   st_count = 0;
-  text(frozen_bad_vardef) = 449;
-  text(frozen_fi) = 450;
-  text(frozen_end_group) = 451;
-  text(frozen_end_def) = 452;
-  text(frozen_end_for) = 453;
-  text(frozen_semicolon) = 59;
-  text(frozen_colon) = 58;
-  text(frozen_slash) = 47;
-  text(frozen_left_bracket) = 91;
-  text(frozen_right_delimiter) = 41;
-  text(frozen_inaccessible) = 454;
+  text(frozen_bad_vardef) = "a bad variable";
+  text(frozen_fi) = "fi";
+  text(frozen_end_group) = "endgroup";
+  text(frozen_end_def) = "enddef";
+  text(frozen_end_for) = "endfor";
+  text(frozen_semicolon) = ";";
+  text(frozen_colon) = ":";
+  text(frozen_slash) = "/";
+  text(frozen_left_bracket) = "[";
+  text(frozen_right_delimiter) = ")";
+  text(frozen_inaccessible) = " INACCESSIBLE";
   eq_type(frozen_right_delimiter) = right_delimiter;
   attr_loc(end_attr) = hash_end + 1;
   parent(end_attr) = null;
@@ -19380,9 +19431,7 @@ void init_tab (void)
   info(null_pen + 1) = 1;
   link(null_pen + 1) = null_coords;
   for (k = null_pen + 2; k <= null_pen + 8; k++)
-  {
     mem[k] = mem[null_pen + 1];
-  }
   max_offset(null_pen) = 0;
   link(null_coords) = null_coords;
   knil(null_coords) = null_coords;
@@ -19398,17 +19447,17 @@ void init_tab (void)
   equiv(frozen_bad_vardef) = bad_vardef;
   eq_type(frozen_bad_vardef) = tag_token;
   eq_type(frozen_repeat_loop) = repeat_loop + outer_tag;
-  text(frozen_repeat_loop) = 730;
+  text(frozen_repeat_loop) = " ENDFOR";
   name_type(temp_val) = capsule;
   value(inf_val) = fraction_four;
   value(zero_val) = 0;
   info(zero_val) = 0;
-  if (iniversion)
-    base_ident = 1069;
+  if (inimf)
+    base_ident = " (INIMF)";
 }
 
 /* 1212 */
-#ifdef TEXMF_DEBUG
+#ifdef DEBUG
 void debug_help (void)
 {
   integer k, l, m, n;
@@ -19416,11 +19465,11 @@ void debug_help (void)
   while (true)
   {
     wake_up_terminal();
-    print_nl(1083);
+    print_nl("debug # (-1 to exit):");
     unpated_terminal();
-    read(stdin, m);
+    read(term_in, m);
     if (m < 0)
-      goto lab_exit;
+      goto l_exit;
     else if (m == 0)
     {
       goto lab888;
@@ -19428,23 +19477,23 @@ void debug_help (void)
     }
     else
     {
-      read (stdin, n);
+      read(term_in, n);
       switch (m)
       {
         case 1:
           print_word(mem[n]);
           break;
         case 2:
-          print_int(mem[n].hh.lh);
+          print_int(info(n));
           break;
         case 3:
-          print_int(mem[n].hh.rh);
+          print_int(link(n));
           break;
         case 4:
           {
-            print_int(eqtb[n].lh);
+            print_int(eq_type(n));
             print_char(':');
-            print_int(eqtb[n].rh);
+            print_int(equiv(n));
           }
           break;
         case 5:
@@ -19457,7 +19506,7 @@ void debug_help (void)
           do_show_dependencies();
           break;
         case 9:
-          show_token_list(n, null, 100000L, 0);
+          show_token_list(n, null, 100000, 0);
           break;
         case 10:
           slow_print(n);
@@ -19470,26 +19519,24 @@ void debug_help (void)
           break;
         case 13:
           {
-            read(stdin, l);
+            read(term_in, l);
             print_cmd_mod(n, l);
           }
           break;
         case 14:
           for (k = 0; k <= n; k++)
-          {
             print(buffer[k]);
-          }
           break;
         case 15:
           panicking = !panicking;
           break;
         default:
-          print(63);
+          print("?");
           break;
       }
     }
   }
-  lab_exit:;
+l_exit:;
 }
 #endif /* TEXMF_DEBUG */
 /* main */
@@ -19498,7 +19545,7 @@ void main_program (void)
   history = fatal_error_stop;
   t_open_out();
   if (ready_already == 314159)
-    goto lab_start_of_MF;
+    goto start_of_MF;
   bad = 0;
   if ((half_error_line < 30) || (half_error_line > error_line - 15))
     bad = 1;
@@ -19517,7 +19564,7 @@ void main_program (void)
 #ifdef INIMF
   if (mem_max != mem_top)
     bad = 10;
-#endif /* INIMF */
+#endif
   if (mem_max < mem_top)
     bad = 10;
   if ((min_quarterword > 0) || (max_quarterword < 127))
@@ -19546,15 +19593,15 @@ void main_program (void)
     bad = 41;
   if (bad > 0)
   {
-    fprintf(stdout, "%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long) bad);
-    goto lab_final_end;
+    wterm_ln("%s%s%ld\n", "Ouch---my internal constants have been clobbered!", "---case ", (long) bad);
+    goto final_end;
   }
   initialize();
 #ifdef INIMF
   if (iniversion)
   {
     if (!get_strings_started())
-      goto lab_final_end;
+      goto final_end;
     init_tab();
     init_prim();
     init_str_ptr = str_ptr;
@@ -19563,16 +19610,16 @@ void main_program (void)
     max_pool_ptr = pool_ptr;
     fix_date_and_time();
   }
-#endif /* INIMF */
+#endif
   ready_already = 314159;
-lab_start_of_MF:
+start_of_MF:
   selector = term_only;
   tally = 0;
   term_offset = 0;
   file_offset = 0;
-  fputs("This is METAFONT, Version 2.7182818", stdout);
+  wterm(banner);
   if (base_ident == 0)
-    fprintf(stdout, "%s%s%c\n", " (preloaded base=", dump_name, ')');
+    wterm_ln("%s%s%c\n", " (preloaded base=", dump_name, ')');
   else
   {
     slow_print(base_ident);
@@ -19598,7 +19645,7 @@ lab_start_of_MF:
       name = 0;
       force_eof = false;
       if (!init_terminal())
-        goto lab_final_end;
+        goto final_end;
       limit = last;
       first = last + 1;
     }
@@ -19608,11 +19655,11 @@ lab_start_of_MF:
       if (base_ident != 0)
         initialize();
       if (!open_base_file())
-        goto lab_final_end;
+        goto final_end;
       if (!load_base_file())
       {
         w_close(base_file);
-        goto lab_final_end;
+        goto final_end;
       }
       w_close(base_file);
       while ((loc < limit) && (buffer[loc] == ' '))
@@ -19626,10 +19673,8 @@ lab_start_of_MF:
     else
       selector = term_only;
     if (loc < limit)
-    {
       if (buffer[loc] != '\\')
         start_input();
-    }
   }
   history = spotless;
   if (start_sym > 0)
@@ -19640,6 +19685,6 @@ lab_start_of_MF:
   main_control();
   final_cleanup();
   close_files_and_terminate();
-lab_final_end:
+final_end:
   ready_already = 0;
 }
