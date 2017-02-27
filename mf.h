@@ -549,10 +549,10 @@ do {                            \
 #define max_selector 5 //{highest selector setting}
 /* 66 */
 #define prompt_input(a) \
-do {                  \
-  wake_up_terminal(); \
-  print(a);           \
-  term_input();       \
+do {                    \
+  wake_up_terminal();   \
+  r_print(a);           \
+  term_input();         \
 } while (0)
 /* 68 */
 #define batch_mode 0 //{omits all stops and omits terminal output}

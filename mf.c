@@ -433,6 +433,11 @@ void print (integer s)
     }
   }
 }
+void r_print (const char * s)
+{
+  while (*s)
+    print_char(*s++);
+}
 /* 60 */
 void slow_print (integer s)
 {
@@ -458,6 +463,12 @@ void print_nl (str_number s)
   if (((term_offset > 0) && (odd(selector))) || ((file_offset > 0) && (selector >= log_only)))
     print_ln();
   print(s);
+}
+void r_print_nl (const char * s)
+{
+  if (((term_offset > 0) && (odd(selector))) || ((file_offset > 0) && (selector >= log_only)))
+    print_ln();
+  r_print(s);
 }
 /* 63 */
 void print_the_digs (eight_bits k)
@@ -542,76 +553,76 @@ void print_type (small_number t)
   switch (t)
   {
     case vacuous:
-      print("vacuous");
+      r_print("vacuous");
       break;
     case boolean_type:
-      print("boolean");
+      r_print("boolean");
       break;
     case unknown_boolean:
-      print("unknown boolean");
+      r_print("unknown boolean");
       break;
     case string_type:
-      print("string");
+      r_print("string");
       break;
     case unknown_string:
-      print("unknown string");
+      r_print("unknown string");
       break;
     case pen_type:
-      print("pen");
+      r_print("pen");
       break;
     case unknown_pen:
-      print("unknown pen");
+      r_print("unknown pen");
       break;
     case future_pen:
-      print("future pen");
+      r_print("future pen");
       break;
     case path_type:
-      print("path");
+      r_print("path");
       break;
     case unknown_path:
-      print("unknown path");
+      r_print("unknown path");
       break;
     case picture_type:
-      print("picture");
+      r_print("picture");
       break;
     case unknown_picture:
-      print("unknown picture");
+      r_print("unknown picture");
       break;
     case transform_type:
-      print("transform");
+      r_print("transform");
       break;
     case pair_type:
-      print("pair");
+      r_print("pair");
       break;
     case known:
-      print("known numeric");
+      r_print("known numeric");
       break;
     case dependent:
-      print("dependent");
+      r_print("dependent");
       break;
     case proto_dependent:
-      print("proto-dependent");
+      r_print("proto-dependent");
       break;
     case numeric_type:
-      print("numeric");
+      r_print("numeric");
       break;
     case independent:
-      print("independent");
+      r_print("independent");
       break;
     case token_list:
-      print("token list");
+      r_print("token list");
       break;
     case structured:
-      print("structured");
+      r_print("structured");
       break;
     case unsuffixed_macro:
-      print("unsuffixed macro");
+      r_print("unsuffixed macro");
       break;
     case suffixed_macro:
-      print("suffixed macro");
+      r_print("suffixed macro");
       break;
     default:
-      print("undefined");
+      r_print("undefined");
       break;
   }
 }
@@ -629,7 +640,7 @@ void begin_diagnostic (void)
 /* 195 */
 void end_diagnostic (boolean blank_line)
 {
-  print_nl("");
+  r_print_nl("");
   if (blank_line)
     print_ln();
   selector = old_setting;
@@ -642,7 +653,7 @@ void print_diagnostic (str_number s, str_number t, boolean nuline)
     print_nl(s);
   else
     print(s);
-  print(" at line ");
+  r_print(" at line ");
   print_int(line);
   print(t);
   print_char(':');
@@ -750,9 +761,9 @@ void error (void)
         case 'E':
           if (file_ptr > 0)
           {
-            print_nl("You want to edit file ");
+            r_print_nl("You want to edit file ");
             slow_print(input_stack[file_ptr].name_field);
-            print(" at line ");
+            r_print(" at line ");
             print_int(line);
             interaction = scroll_mode;
             jump_out();
@@ -827,18 +838,18 @@ void error (void)
             {
               case 'Q':
                 {
-                  print("batchmode");
+                  r_print("batchmode");
                   decr(selector);
                 }
                 break;
               case 'R':
-                print("nonstopmode");
+                r_print("nonstopmode");
                 break;
               case 'S':
-                print("scrollmode");
+                r_print("scrollmode");
                 break;
             }
-            print("...");
+            r_print("...");
             print_ln();
             update_terminal();
             goto l_exit;
@@ -855,21 +866,21 @@ void error (void)
           break;
       }
       {
-        print("Type <return> to proceed, S to scroll future error messages,");
-        print_nl("R to run without stopping, Q to run quietly,");
-        print_nl("I to insert something, ");
+        r_print("Type <return> to proceed, S to scroll future error messages,");
+        r_print_nl("R to run without stopping, Q to run quietly,");
+        r_print_nl("I to insert something, ");
         if (file_ptr > 0)
-          print("E to edit your file,");
+          r_print("E to edit your file,");
         if (deletions_allowed)
-          print_nl("1 or ... or 9 to ignore the next 1 to 9 tokens of input,");
-        print_nl("H for help, X to quit.");
+          r_print_nl("1 or ... or 9 to ignore the next 1 to 9 tokens of input,");
+        r_print_nl("H for help, X to quit.");
       }
     }
   }
   incr(error_count);
   if (error_count == 100)
   {
-    print_nl("(That makes 100 errors; please try again.)");
+    r_print_nl("(That makes 100 errors; please try again.)");
     history = fatal_error_stop;
     jump_out();
   }
@@ -877,7 +888,7 @@ void error (void)
     decr(selector);
   if (use_err_help)
   {
-    print_nl("");
+    r_print_nl("");
     j = str_start[err_help];
     while (j < str_start[err_help + 1])
     {
@@ -1160,7 +1171,7 @@ void missing_err (str_number s)
 {
   print_err("Missing `");
   print(s);
-  print("' has been inserted");
+  r_print("' has been inserted");
 }
 /* 99 */
 void clear_arith (void)
@@ -1558,7 +1569,7 @@ scaled square_rt (scaled x)
     {
       print_err("Square root of ");
       print_scaled(x);
-      print(" has been replaced by 0");
+      r_print(" has been replaced by 0");
       help2("Since I don't take square roots of negative numbers,",
         "I'm zeroing this one. Proceed, with fingers crossed.");
       error();
@@ -1675,9 +1686,9 @@ integer pyth_sub (integer a, integer b)
     {
       print_err("Pythagorean subtraction ");
       print_scaled(a);
-      print("+-+");
+      r_print("+-+");
       print_scaled(b);
-      print(" has been replaced by 0");
+      r_print(" has been replaced by 0");
       help2("Since I don't take square roots of negative numbers,",
         "I'm zeroing this one. Proceed, with fingers crossed.");
       error();
@@ -1720,7 +1731,7 @@ scaled m_log (scaled x)
   {
     print_err("Logarithm of ");
     print_scaled(x);
-    print(" has been replaced by 0");
+    r_print(" has been replaced by 0");
     help2("Since I don't take logs of non-positive numbers,",
       "I'm zeroing this one. Proceed, with fingers crossed.");
     error();
@@ -2099,7 +2110,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
     c = letter_class;
     if ((p < mem_min) || (p > mem_end))
     {
-      print(" CLOBBERED");
+      r_print(" CLOBBERED");
       goto l_exit;
     }
     if (p < hi_mem_min)
@@ -2125,7 +2136,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
           }
         }
         else if (type(p) != string_type)
-          print(" BAD");
+          r_print(" BAD");
         else
         {
           print_char('"');
@@ -2134,7 +2145,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
           c = string_class;
         }
       else if ((name_type(p) != capsule) || (type(p) < vacuous) || (type(p) > independent))
-        print(" BAD");
+        r_print(" BAD");
       else
       {
         g_pointer = p;
@@ -2149,17 +2160,17 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
       {
         if (r < suffix_base)
         {
-          print("EXPR");
+          r_print("EXPR");
           r = r - (expr_base);
         }
         else if (r < text_base)
         {
-          print("SUFFIX");
+          r_print("SUFFIX");
           r = r - (suffix_base);
         }
         else
         {
-          print("TEXT");
+          r_print("TEXT");
           r = r - (text_base);
         }
         print_int(r);
@@ -2171,16 +2182,16 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
         {
           if (cclass == left_bracket_class)
             print_char(' ');
-          print("[]");
+          r_print("[]");
           c = right_bracket_class;
         }
         else
-          print(" IMPOSSIBLE");
+          r_print(" IMPOSSIBLE");
       else
       {
         r = text(r);
         if ((r < 0) || (r >= str_ptr))
-          print(" NONEXISTENT");
+          r_print(" NONEXISTENT");
         else
         {
           c = char_class[str_pool[str_start[r]]];
@@ -2207,7 +2218,7 @@ void show_token_list (integer p, integer q, integer l, integer null_tally)
     p = link(p);
   }
   if (p != null)
-    print(" ETC.");
+    r_print(" ETC.");
   l_exit:;
 }
 /* 665 */
@@ -2215,18 +2226,18 @@ void runaway (void)
 {
   if (scanner_status > flushing)
   {
-    print_nl("Runaway ");
+    r_print_nl("Runaway ");
     switch (scanner_status)
     {
       case absorbing:
-        print("text?");
+        r_print("text?");
         break;
       case var_defining:
       case op_defining:
-        print("definition?");
+        r_print("definition?");
         break;
       case loop_defining:
-        print("loop?");
+        r_print("loop?");
         break;
     }
     print_ln();
@@ -2478,7 +2489,7 @@ done1:;
       clobbered = true;
     if (clobbered)
     {
-      print_nl("Double-AVAIL list clobbered at ");
+      r_print_nl("Double-AVAIL list clobbered at ");
       print_int(q);
       goto done2;
     }
@@ -2486,7 +2497,7 @@ done1:;
     {
       if (freearr[q])
       {
-        print_nl("Doubly free location at ");
+        r_print_nl("Doubly free location at ");
         print_int(q);
         goto done2;
       }
@@ -2501,7 +2512,7 @@ done2:;
   {
     if (is_empty(p))
     {
-      print_nl("Bad flag at ");
+      r_print_nl("Bad flag at ");
       print_int(p);
     }
     while ((p <= lo_mem_max) && !freearr[p])
@@ -2515,7 +2526,7 @@ done2:;
   {
     if (prev_dep(p) != q)
     {
-      print_nl("Bad PREVDEP at ");
+      r_print_nl("Bad PREVDEP at ");
       print_int(p);
     }
     p = dep_list(p);
@@ -2523,7 +2534,7 @@ done2:;
     do {
       if (value(info(p)) >= value(r))
       {
-        print_nl("Out of order at ");
+        r_print_nl("Out of order at ");
         print_int(p);
       }
       r = info(p);
@@ -2533,7 +2544,7 @@ done2:;
   }
   if (print_locs)
   {
-    print_nl("New busy locs:");
+    r_print_nl("New busy locs:");
     for (p = mem_min; p <= lo_mem_max; p++)
     {
       if (!freearr[p] && ((p > was_lo_max) || was_free[p]))
@@ -2570,13 +2581,13 @@ void search_mem (pointer p)
   {
     if (link(q) == p)
     {
-      print_nl("LINK(");
+      r_print_nl("LINK(");
       print_int(q);
       print_char(')');
     }
     if (info(q) == p)
     {
-      print_nl("INFO(");
+      r_print_nl("INFO(");
       print_int(q);
       print_char(')');
     }
@@ -2585,13 +2596,13 @@ void search_mem (pointer p)
   {
     if (link(q) == p)
     {
-      print_nl("LINK(");
+      r_print_nl("LINK(");
       print_int(q);
       print_char(')');
     }
     if (info(q) == p)
     {
-      print_nl("INFO(");
+      r_print_nl("INFO(");
       print_int(q);
       print_char(')');
     }
@@ -2600,7 +2611,7 @@ void search_mem (pointer p)
   {
     if (equiv(q) == p)
     {
-      print_nl("EQUIV(");
+      r_print_nl("EQUIV(");
       print_int(q);
       print_char(')');
     }
@@ -2616,121 +2627,121 @@ void print_op (quarterword c)
     switch (c)
     {
       case true_code:
-        print("true");
+        r_print("true");
         break;
       case false_code:
-        print("false");
+        r_print("false");
         break;
       case null_picture_code:
-        print("nullpicture");
+        r_print("nullpicture");
         break;
       case null_pen_code:
-        print("nullpen");
+        r_print("nullpen");
         break;
       case job_name_op:
-        print("jobname");
+        r_print("jobname");
         break;
       case read_string_op:
-        print("readstring");
+        r_print("readstring");
         break;
       case pen_circle:
-        print("pencircle");
+        r_print("pencircle");
         break;
       case normal_deviate:
-        print("normaldeviate");
+        r_print("normaldeviate");
         break;
       case odd_op:
-        print("odd");
+        r_print("odd");
         break;
       case known_op:
-        print("known");
+        r_print("known");
         break;
       case unknown_op:
-        print("unknown");
+        r_print("unknown");
         break;
       case not_op:
-        print("not");
+        r_print("not");
         break;
       case decimal:
-        print("decimal");
+        r_print("decimal");
         break;
       case reverse:
-        print("reverse");
+        r_print("reverse");
         break;
       case make_path_op:
-        print("makepath");
+        r_print("makepath");
         break;
       case make_pen_op:
-        print("makepen");
+        r_print("makepen");
         break;
       case total_weight_op:
-        print("totalweight");
+        r_print("totalweight");
         break;
       case oct_op:
-        print("oct");
+        r_print("oct");
         break;
       case hex_op:
-        print("hex");
+        r_print("hex");
         break;
       case ASCII_op:
-        print("ASCII");
+        r_print("ASCII");
         break;
       case char_op:
-        print("char");
+        r_print("char");
         break;
       case length_op:
-        print("length");
+        r_print("length");
         break;
       case turning_op:
-        print("turningnumber");
+        r_print("turningnumber");
         break;
       case x_part:
-        print("xpart");
+        r_print("xpart");
         break;
       case y_part:
-        print("ypart");
+        r_print("ypart");
         break;
       case xx_part:
-        print("xxpart");
+        r_print("xxpart");
         break;
       case xy_part:
-        print("xypart");
+        r_print("xypart");
         break;
       case yx_part:
-        print("yxpart");
+        r_print("yxpart");
         break;
       case yy_part:
-        print("yypart");
+        r_print("yypart");
         break;
       case sqrt_op:
-        print("sqrt");
+        r_print("sqrt");
         break;
       case m_exp_op:
-        print("mexp");
+        r_print("mexp");
         break;
       case m_log_op:
-        print("mlog");
+        r_print("mlog");
         break;
       case sin_d_op:
-        print("sind");
+        r_print("sind");
         break;
       case cos_d_op:
-        print("cosd");
+        r_print("cosd");
         break;
       case floor_op:
-        print("floor");
+        r_print("floor");
         break;
       case uniform_deviate:
-        print("uniformdeviate");
+        r_print("uniformdeviate");
         break;
       case char_exists_op:
-        print("charexists");
+        r_print("charexists");
         break;
       case angle_op:
-        print("angle");
+        r_print("angle");
         break;
       case cycle_op:
-        print("cycle");
+        r_print("cycle");
         break;
       case plus:
         print_char('+');
@@ -2745,88 +2756,88 @@ void print_op (quarterword c)
         print_char('/');
         break;
       case pythag_add:
-        print("++");
+        r_print("++");
         break;
       case pythag_sub:
-        print("+-+");
+        r_print("+-+");
         break;
       case or_op:
-        print("or");
+        r_print("or");
         break;
       case and_op:
-        print("and");
+        r_print("and");
         break;
       case less_than:
         print_char('<');
         break;
       case less_or_equal:
-        print("<=");
+        r_print("<=");
         break;
       case greater_than:
         print_char(">");
         break;
       case greater_or_equal:
-        print(">=");
+        r_print(">=");
         break;
       case equal_to:
         print_char("=");
         break;
       case unequal_to:
-        print("<>");
+        r_print("<>");
         break;
       case concatenate:
-        print("&");
+        r_print("&");
         break;
       case rotated_by:
-        print("rotated");
+        r_print("rotated");
         break;
       case slanted_by:
-        print("slanted");
+        r_print("slanted");
         break;
       case scaled_by:
-        print("scaled");
+        r_print("scaled");
         break;
       case shifted_by:
-        print("shifted");
+        r_print("shifted");
         break;
       case transformed_by:
-        print("transformed");
+        r_print("transformed");
         break;
       case x_scaled:
-        print("xscaled");
+        r_print("xscaled");
         break;
       case y_scaled:
-        print("yscaled");
+        r_print("yscaled");
         break;
       case z_scaled:
-        print("zscaled");
+        r_print("zscaled");
         break;
       case intersect:
-        print("intersectiontimes");
+        r_print("intersectiontimes");
         break;
       case substring_of:
-        print("substring");
+        r_print("substring");
         break;
       case subpath_of:
-        print("subpath");
+        r_print("subpath");
         break;
       case direction_time_of:
-        print("directiontime");
+        r_print("directiontime");
         break;
       case point_of:
-        print("point");
+        r_print("point");
         break;
       case precontrol_of:
-        print("precontrol");
+        r_print("precontrol");
         break;
       case postcontrol_of:
-        print("postcontrol");
+        r_print("postcontrol");
         break;
       case pen_offset_of:
-        print("penoffset");
+        r_print("penoffset");
         break;
       default:
-        print("..");
+        r_print("..");
         break;
   }
 }
@@ -2987,211 +2998,211 @@ void print_cmd_mod (integer c, integer m)
   switch (c)
   {
     case add_to_command:
-      print("addto");
+      r_print("addto");
       break;
     case assignment:
-      print(":=");
+      r_print(":=");
       break;
     case at_least:
-      print("atleast");
+      r_print("atleast");
       break;
     case at_token:
-      print("at");
+      r_print("at");
       break;
     case bchar_label:
-      print("||:");
+      r_print("||:");
       break;
     case begin_group:
-      print("begingroup");
+      r_print("begingroup");
       break;
     case colon:
-      print(":");
+      r_print(":");
       break;
     case comma:
-      print(",");
+      r_print(",");
       break;
     case controls:
-      print("controls");
+      r_print("controls");
       break;
     case cull_command:
-      print("cull");
+      r_print("cull");
       break;
     case curl_command:
-      print("curl");
+      r_print("curl");
       break;
     case delimiters:
-      print("delimiters");
+      r_print("delimiters");
       break;
     case display_command:
-      print("display");
+      r_print("display");
       break;
     case double_colon:
-      print("::");
+      r_print("::");
       break;
     case end_group:
-      print("endgroup");
+      r_print("endgroup");
       break;
     case every_job_command:
-      print("everyjob");
+      r_print("everyjob");
       break;
     case exit_test:
-      print("exitif");
+      r_print("exitif");
       break;
     case expand_after:
-      print("expandafter");
+      r_print("expandafter");
       break;
     case from_token:
-      print("from");
+      r_print("from");
       break;
     case in_window:
-      print("inwindow");
+      r_print("inwindow");
       break;
     case interim_command:
-      print("interim");
+      r_print("interim");
       break;
     case left_brace:
-      print("{");
+      r_print("{");
       break;
     case left_bracket:
-      print("[");
+      r_print("[");
       break;
     case let_command:
-      print("let");
+      r_print("let");
       break;
     case new_internal:
-      print("newinternal");
+      r_print("newinternal");
       break;
     case of_token:
-      print("of");
+      r_print("of");
       break;
     case open_window:
-      print("openwindow");
+      r_print("openwindow");
       break;
     case path_join:
-      print("..");
+      r_print("..");
       break;
     case random_seed:
-      print("randomseed");
+      r_print("randomseed");
       break;
     case relax:
       print_char("\\");
       break;
     case right_brace:
-      print("}");
+      r_print("}");
       break;
     case right_bracket:
-      print("]");
+      r_print("]");
       break;
     case save_command:
-      print("save");
+      r_print("save");
       break;
     case scan_tokens:
-      print("scantokens");
+      r_print("scantokens");
       break;
     case semicolon:
-      print(";");
+      r_print(";");
       break;
     case ship_out_command:
-      print("shipout");
+      r_print("shipout");
       break;
     case skip_to:
-      print("skipto");
+      r_print("skipto");
       break;
     case step_token:
-      print("step");
+      r_print("step");
       break;
     case str_op:
-      print("str");
+      r_print("str");
       break;
     case tension:
-      print("tension");
+      r_print("tension");
       break;
     case to_token:
-      print("to");
+      r_print("to");
       break;
     case until_token:
-      print("until");
+      r_print("until");
       break;
     case macro_def:
       if (m <= var_def)
         if (m == start_def)
-          print("def");
+          r_print("def");
         else if (m < start_def)
-          print("enddef");
+          r_print("enddef");
         else
-          print("vardef");
+          r_print("vardef");
       else if (m == secondary_primary_macro)
-        print("primarydef");
+        r_print("primarydef");
       else if (m == tertiary_secondary_macro)
-        print("secondarydef");
+        r_print("secondarydef");
       else
-        print("tertiarydef");
+        r_print("tertiarydef");
       break;
     case iteration:
       if (m <= start_forever)
         if (m == start_forever)
-          print("forever");
+          r_print("forever");
         else
-          print("endfor");
+          r_print("endfor");
       else
         if (m == expr_base)
-          print("for");
+          r_print("for");
         else
-          print("forsuffixes");
+          r_print("forsuffixes");
       break;
     case macro_special:
       switch (m)
       {
         case macro_prefix:
-          print("#@");
+          r_print("#@");
           break;
         case macro_at:
           print_char("@");
           break;
         case macro_suffix:
-          print("@#");
+          r_print("@#");
           break;
         default:
-          print("quote");
+          r_print("quote");
           break;
       }
       break;
     case param_type:
       if (m >= expr_base)
         if (m == expr_base)
-          print("expr");
+          r_print("expr");
         else if (m == suffix_base)
-          print("suffix");
+          r_print("suffix");
         else
-          print("text");
+          r_print("text");
       else if (m < secondary_macro)
-        print("primary");
+        r_print("primary");
       else if (m == secondary_macro)
-        print("secondary");
+        r_print("secondary");
       else
-        print("tertiary");
+        r_print("tertiary");
       break;
     case input:
       if (m == 0)
-        print("input");
+        r_print("input");
       else
-        print("endinput");
+        r_print("endinput");
       break;
     case if_test:
     case fi_or_else:
       switch (m)
       {
         case if_code:
-          print("if");
+          r_print("if");
           break;
         case fi_code:
-          print("fi");
+          r_print("fi");
           break;
         case else_code:
-          print("else");
+          r_print("else");
           break;
         default:
-          print("elseif");
+          r_print("elseif");
           break;
       }
       break;
@@ -3214,50 +3225,50 @@ void print_cmd_mod (integer c, integer m)
       break;
     case stop:
       if (m == 0)
-        print("end");
+        r_print("end");
       else
-        print("dump");
+        r_print("dump");
       break;
     case mode_command:
       switch (m)
       {
         case batch_mode:
-          print("batchmode");
+          r_print("batchmode");
           break;
         case nonstop_mode:
-          print("nonstopmode");
+          r_print("nonstopmode");
           break;
         case scroll_mode:
-          print("scrollmode");
+          r_print("scrollmode");
           break;
         default:
-          print("errorstopmode");
+          r_print("errorstopmode");
           break;
       }
       break;
     case protection_command:
       if (m == 0)
-        print("inner");
+        r_print("inner");
       else
-        print("outer");
+        r_print("outer");
       break;
     case show_command:
       switch (m)
       {
         case show_token_code:
-          print("showtoken");
+          r_print("showtoken");
           break;
         case show_stats_code:
-          print("showstats");
+          r_print("showstats");
           break;
         case show_code:
-          print("show");
+          r_print("show");
           break;
         case show_var_code:
-          print("showvariable");
+          r_print("showvariable");
           break;
         default:
-          print("showdependencies");
+          r_print("showdependencies");
           break;
       }
       break;
@@ -3265,83 +3276,83 @@ void print_cmd_mod (integer c, integer m)
     case right_delimiter:
       {
         if (c == left_delimiter)
-          print("lef");
+          r_print("lef");
         else
-          print("righ");
-        print("t delimiter that matches ");
+          r_print("righ");
+        r_print("t delimiter that matches ");
         slow_print(text(m));
       }
       break;
     case tag_token:
       if (m == null)
-        print("tag");
+        r_print("tag");
       else
-        print("variable");
+        r_print("variable");
       break;
     case defined_macro:
-      print("macro:");
+      r_print("macro:");
       break;
     case secondary_primary_macro:
     case tertiary_secondary_macro:
     case expression_tertiary_macro:
       {
         print_cmd_mod(macro_def, c);
-        print("'d macro:");
+        r_print("'d macro:");
         print_ln();
         show_token_list(link(link(m)), null, 1000, 0);
       }
       break;
     case repeat_loop:
-      print("[repeat the loop]");
+      r_print("[repeat the loop]");
       break;
     case internal_quantity:
       slow_print(int_name[m]);
       break;
     case thing_to_add:
       if (m == contour_code)
-        print("contour");
+        r_print("contour");
       else if (m == double_path_code)
-        print("doublepath");
+        r_print("doublepath");
       else
-        print("also");
+        r_print("also");
       break;
     case with_option:
       if (m == pen_type)
-        print("withpen");
+        r_print("withpen");
       else
-        print("withweight");
+        r_print("withweight");
       break;
     case cull_op:
       if (m == drop_code)
-        print("dropping");
+        r_print("dropping");
       else
-        print("keeping");
+        r_print("keeping");
       break;
     case message_command:
       if (m < err_message_code)
-        print("message");
+        r_print("message");
       else if (m == err_message_code)
-        print("errmessage");
+        r_print("errmessage");
       else
-        print("errhelp");
+        r_print("errhelp");
       break;
     case tfm_command:
       switch (m)
       {
         case char_list_code:
-          print("charlist");
+          r_print("charlist");
           break;
         case lig_table_code:
-          print("ligtable");
+          r_print("ligtable");
           break;
         case extensible_code:
-          print("extensible");
+          r_print("extensible");
           break;
         case header_byte_code:
-          print("headerbyte");
+          r_print("headerbyte");
           break;
         default:
-          print("fontdimen");
+          r_print("fontdimen");
           break;
       }
       break;
@@ -3349,42 +3360,42 @@ void print_cmd_mod (integer c, integer m)
       switch (m)
       {
         case 0:
-          print("=:");
+          r_print("=:");
           break;
         case 1:
-          print("=:|");
+          r_print("=:|");
           break;
         case 2:
-          print("|=:");
+          r_print("|=:");
           break;
         case 3:
-          print("|=:|");
+          r_print("|=:|");
           break;
         case 5:
-          print("=:|>");
+          r_print("=:|>");
           break;
         case 6:
-          print("|=:>");
+          r_print("|=:>");
           break;
         case 7:
-          print("|=:|>");
+          r_print("|=:|>");
           break;
         case 11:
-          print("|=:|>>");
+          r_print("|=:|>>");
           break;
         default:
-          print("kern");
+          r_print("kern");
           break;
       }
       break;
     case special_command:
       if (m == known)
-        print("numspecial");
+        r_print("numspecial");
       else
-        print("special");
+        r_print("special");
       break;
     default:
-      print("[unknown command code!]");
+      r_print("[unknown command code!]");
       break;
   }
 }
@@ -3410,7 +3421,7 @@ void show_macro (pointer p, integer q, integer l)
   switch (info(p))
   {
     case general_macro:
-      print("->");
+      r_print("->");
       break;
     case primary_macro:
     case secondary_macro:
@@ -3418,20 +3429,20 @@ void show_macro (pointer p, integer q, integer l)
       {
         print_char("<");
         print_cmd_mod(param_type, info(p));
-        print(">->");
+        r_print(">->");
       }
       break;
     case expr_macro:
-      print("<expr>->");
+      r_print("<expr>->");
       break;
     case of_macro:
-      print("<expr>of<primary>->");
+      r_print("<expr>of<primary>->");
       break;
     case suffix_macro:
-      print("<suffix>->");
+      r_print("<suffix>->");
       break;
     case text_macro:
-      print("<text>->");
+      r_print("<text>->");
       break;
   }
   show_token_list(link(p), q, l - tally, 0);
@@ -3503,26 +3514,26 @@ void print_variable_name (pointer p)
         print_char('y');
         break;
       case xx_part_sector:
-        print("xx");
+        r_print("xx");
         break;
       case xy_part_sector:
-        print("xy");
+        r_print("xy");
         break;
       case yx_part_sector:
-        print("yx");
+        r_print("yx");
         break;
       case yy_part_sector:
-        print("yy");
+        r_print("yy");
         break;
       case capsule:
         {
-          print("%CAPSULE");
+          r_print("%CAPSULE");
           print_int(p - null);
           goto l_exit;
         }
         break;
     }
-    print("part ");
+    r_print("part ");
     p = link(p - 2 * (name_type(p) - x_part_sector));
   }
   q = null;
@@ -3556,7 +3567,7 @@ found:
   info(r) = link(p);
   link(r) = q;
   if (name_type(p) == saved_root)
-    print("(SAVED)");
+    r_print("(SAVED)");
   show_token_list(r, null, el_gordo, tally);
   flush_token_list(r);
 l_exit:;
@@ -3784,7 +3795,7 @@ void print_path (pointer h, str_number s, boolean nuline)
     q = link(p);
     if ((p == null) || (q == null))
     {
-      print_nl("???");
+      r_print_nl("???");
       goto done;
     }
     print_two(x_coord(p), y_coord(p));
@@ -3793,7 +3804,7 @@ void print_path (pointer h, str_number s, boolean nuline)
       case endpoint:
         {
           if (left_type(p) == open)
-            print("{open?}");
+            r_print("{open?}");
           if ((left_type(q) != endpoint) || (q != h))
             q = null;
           goto done1;
@@ -3801,11 +3812,11 @@ void print_path (pointer h, str_number s, boolean nuline)
         break;
       case explicit:
         {
-          print("..controls ");
+          r_print("..controls ");
           print_two(right_x(p), right_y(p));
-          print(" and ");
+          r_print(" and ");
           if (left_type(q) != explicit)
-            print("??");
+            r_print("??");
           else
             print_two(left_x(q), left_y(q));
           goto done1;
@@ -3813,16 +3824,16 @@ void print_path (pointer h, str_number s, boolean nuline)
         break;
       case open:
         if ((left_type(p) != explicit) && (left_type(p) != open))
-          print("{open?}");
+          r_print("{open?}");
         break;
       case curl:
       case given:
         {
           if (left_type(p) == open)
-            print("??");
+            r_print("??");
           if (right_type(p) == curl)
           {
-            print("{curl ");
+            r_print("{curl ");
             print_scaled(right_curl(p));
           }
           else
@@ -3837,22 +3848,22 @@ void print_path (pointer h, str_number s, boolean nuline)
         }
         break;
       default:
-        print("???");
+        r_print("???");
         break;
     }
     if (left_type(q) <= explicit)
-      print("..control?");
+      r_print("..control?");
     else if ((right_tension(p) != unity) || (left_tension(q) != unity))
     {
-      print("..tension ");
+      r_print("..tension ");
       if (right_tension(p) < 0)
-        print("atleast");
+        r_print("atleast");
       print_scaled(abs(right_tension(p)));
       if (right_tension(p) != left_tension(q))
       {
-        print(" and ");
+        r_print(" and ");
         if (left_tension(q) < 0)
-          print("atleast");
+          r_print("atleast");
         print_scaled(abs(left_tension(q)));
       }
     }
@@ -3860,7 +3871,7 @@ done1:
     p = q;
     if ((p != h) || (left_type(h) != endpoint))
     {
-      print_nl(" ..");
+      r_print_nl(" ..");
       if (left_type(p) == given)
       {
         n_sin_cos(left_given(p));
@@ -3872,14 +3883,14 @@ done1:
       }
       else if (left_type(p) == curl)
       {
-        print("{curl ");
+        r_print("{curl ");
         print_scaled(left_curl(p));
         print_char('}');
       }
     }
   } while (!(p == h));
   if (left_type(h) != endpoint)
-    print("cycle");
+    r_print("cycle");
 done:
   end_diagnostic(true);
 }
@@ -3923,7 +3934,7 @@ void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
     r = sorted(p);
     if ((q > _void) || (r != sentinel))
     {
-      print_nl("row ");
+      r_print_nl("row ");
       print_int(n + y_off);
       print_char(':');
       while (q > _void)
@@ -3931,7 +3942,7 @@ void print_edges (str_number s, boolean nuline, integer x_off, integer y_off)
         print_weight(q, x_off);
         q = link(q);
       }
-      print(" |");
+      r_print(" |");
       while (r != sentinel)
       {
         print_weight(r, x_off);
@@ -4005,7 +4016,7 @@ void print_pen (pointer p, str_number s, boolean nuline)
         if (nothing_printed)
           nothing_printed = false;
         else
-          print_nl(" .. ");
+          r_print_nl(" .. ");
         print_two_true(x_coord(ww), y_coord(ww));
       }
       w = ww;
@@ -4016,7 +4027,7 @@ void print_pen (pointer p, str_number s, boolean nuline)
     w = link(p + first_octant);
     print_two(x_coord(w) + y_coord(w), y_coord(w));
   }
-  print_nl(" .. cycle");
+  r_print_nl(" .. cycle");
   end_diagnostic(true);
 }
 /* 589 */
@@ -4055,7 +4066,7 @@ void print_dependency (pointer p, small_number t)
     v = value(q) % s_scale;
     while (v > 0)
     {
-      print("*4");
+      r_print("*4");
       v = v - 2;
     }
     p = link(p);
@@ -4071,7 +4082,7 @@ void print_dp (small_number t, pointer p, small_number verbosity)
   if ((info(q) == null) || (verbosity > 0))
     print_dependency(p, t);
   else
-    print("linearform");
+    r_print("linearform");
 }
 /* 799 */
 pointer stash_cur_exp (void)
@@ -4146,13 +4157,13 @@ void print_exp (pointer p, small_number verbosity)
   switch (t)
   {
     case vacuous:
-      print("vacuous");
+      r_print("vacuous");
       break;
     case boolean_type:
       if (v == true_code)
-        print("true");
+        r_print("true");
       else
-        print("false");
+        r_print("false");
       break;
     case unknown_types:
     case numeric_type:
@@ -4187,7 +4198,7 @@ void print_exp (pointer p, small_number verbosity)
           {
             selector = term_only;
             print_type(t);
-            print(" (see the transcript file)");
+            r_print(" (see the transcript file)");
             selector = term_and_log;
           }
         switch (t)
@@ -4254,11 +4265,11 @@ void disp_err (pointer p, str_number s)
 {
   if (interaction == error_stop_mode)
     wake_up_terminal();
-  print_nl(">> ");
+  r_print_nl(">> ");
   print_exp(p, 1);
   if (s != "")
   {
-    print_nl("! ");
+    r_print_nl("! ");
     print(s);
   }
 }
@@ -4433,7 +4444,7 @@ void make_known (pointer p, pointer q)
     if (interesting(p))
     {
       begin_diagnostic();
-      print_nl("#### ");
+      r_print_nl("#### ");
       print_variable_name(p);
       print_char('=');
       print_scaled(value(p));
@@ -4696,7 +4707,7 @@ void recycle_value (pointer p)
             if (interesting(p))
             {
               begin_diagnostic();
-              print_nl("### ");
+              r_print_nl("### ");
               if (v > 0)
                 print_char('-');
               if (t == dependent)
@@ -4708,13 +4719,13 @@ void recycle_value (pointer p)
               print_variable_name(p);
               while (value(p) % s_scale > 0)
               {
-                print("*4");
+                r_print("*4");
                 value(p) = value(p) - 2;
               }
               if (t == dependent)
                 print_char('=');
               else
-                print(" = ");
+                r_print(" = ");
               print_dependency(s, t);
               end_diagnostic(false);
             }
@@ -5042,7 +5053,7 @@ void unsave (void)
       if (internal[tracing_restores] > 0)
       {
         begin_diagnostic();
-        print_nl("{restoring ");
+        r_print_nl("{restoring ");
         slow_print(int_name[q - (hash_end)]);
         print_char('=');
         print_scaled(value(save_ptr));
@@ -5056,7 +5067,7 @@ void unsave (void)
       if (internal[tracing_restores] > 0)
       {
         begin_diagnostic();
-        print_nl("{restoring ");
+        r_print_nl("{restoring ");
         slow_print(text(q));
         print_char('}');
         end_diagnostic(false);
@@ -6572,7 +6583,7 @@ integer total_weight (pointer h)
 void begin_edge_tracing (void)
 {
   print_diagnostic("Tracing edges", "", true);
-  print(" (weight ");
+  r_print(" (weight ");
   print_int(cur_wt);
   print_char(')');
   trace_x = -4096;
@@ -6581,7 +6592,7 @@ void begin_edge_tracing (void)
 void trace_a_corner (void)
 {
   if (file_offset > max_print_line - 13)
-    print_nl("");
+    r_print_nl("");
   print_char('(');
   print_int(trace_x);
   print_char(',');
@@ -6593,7 +6604,7 @@ void trace_a_corner (void)
 void end_edge_tracing (void)
 {
   if (trace_x == -4096)
-    print_nl("(No new edges added.)");
+    r_print_nl("(No new edges added.)");
   else
   {
     trace_a_corner();
@@ -6625,7 +6636,7 @@ void trace_new_edge (pointer r, integer n)
   {
     if (trace_x == -4096)
     {
-      print_nl("");
+      r_print_nl("");
       trace_yy = n0;
     }
     else if (trace_yy != n0)
@@ -7113,7 +7124,7 @@ void print_spec (str_number s)
   octant = left_octant(p);
   print_ln();
   print_two_true(x_coord(cur_spec), y_coord(cur_spec));
-  print(" % beginning in octant `");
+  r_print(" % beginning in octant `");
   while (true)
   {
     print(octant_dir[octant]);
@@ -7124,13 +7135,13 @@ void print_spec (str_number s)
       if (right_type(p) == endpoint)
         goto not_found;
       {
-        print_nl("   ..controls ");
+        r_print_nl("   ..controls ");
         print_two_true(right_x(p), right_y(p));
-        print(" and ");
+        r_print(" and ");
         print_two_true(left_x(q), left_y(q));
-        print_nl(" ..");
+        r_print_nl(" ..");
         print_two_true(x_coord(q), y_coord(q));
-        print(" % segment ");
+        r_print(" % segment ");
         print_int(left_type(q) - 1);
       }
       p = q;
@@ -7140,10 +7151,10 @@ void print_spec (str_number s)
       goto done;
     p = q;
     octant = left_octant(p);
-    print_nl("% entering octant `");
+    r_print_nl("% entering octant `");
   }
 done:
-  print_nl(" & cycle");
+  r_print_nl(" & cycle");
   end_diagnostic(true);
 }
 /* 398 */
@@ -7156,7 +7167,7 @@ void print_strange (str_number s)
 
   if (interaction == error_stop_mode)
     wake_up_terminal();
-  print_nl(">");
+  r_print_nl(">");
   p = cur_spec;
   t = max_quarterword + 1;
   do {
@@ -7189,7 +7200,7 @@ void print_strange (str_number s)
       {
         if (left_type(link(q)) == endpoint)
         {
-          print(" (");
+          r_print(" (");
           print(octant_dir[left_octant(q)]);
           q = link(q);
           while (left_type(link(q)) == endpoint)
@@ -7215,7 +7226,7 @@ void print_strange (str_number s)
   {
     if (left_type(link(q)) == endpoint)
     {
-      print(" (");
+      r_print(" (");
       print(octant_dir[left_octant(q)]);
       q = link(q);
       while (left_type(link(q)) == endpoint)
@@ -9100,11 +9111,11 @@ void skew_line_edges (pointer p, pointer w, pointer ww)
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
-      print_nl("@ retrograde line from ");
+      r_print_nl("@ retrograde line from ");
       print_two(x0, y0);
-      print(" to ");
+      r_print(" to ");
       print_two(cur_x, cur_y);
-      print_nl("");
+      r_print_nl("");
     }
 #endif
     line_edges(x0, y0, cur_x, cur_y);
@@ -9143,9 +9154,9 @@ void dual_moves (pointer h, pointer p, pointer q)
 #ifdef STAT
       if (internal[tracing_edges] > unity)
       {
-        print_nl("@ transition line ");
+        r_print_nl("@ transition line ");
         print_int(k);
-        print(", from ");
+        r_print(", from ");
         print_two_true(xx, yy - half_unit);
       }
 #endif
@@ -9195,9 +9206,9 @@ void dual_moves (pointer h, pointer p, pointer q)
 #ifdef STAT
       if (internal[tracing_edges] > unity)
       {
-        print(" to ");
+        r_print(" to ");
         print_two_true(xp, yp - half_unit);
-        print_nl("");
+        r_print_nl("");
       }
 #endif
       m = floor_unscaled(xp - xy_corr[octant]);
@@ -9270,19 +9281,19 @@ void fill_envelope (pointer spec_head)
 #ifdef STAT
     if (internal[tracing_edges] > unity)
     {
-      print_nl("@ Octant ");
+      r_print_nl("@ Octant ");
       print(octant_dir[octant]);
-      print(" (");
+      r_print(" (");
       print_int(info(h));
-      print(" offset");
+      r_print(" offset");
       if (info(h) != 1)
         print_char('s');
-      print("), from ");
+      r_print("), from ");
       print_two_true(x_coord(p) + x_coord(w), y_coord(p) + y_coord(w));
       ww = link(h);
       if (right_transition(q) == diagonal)
         ww = knil(ww);
-      print(" to ");
+      r_print(" to ");
       print_two_true(x_coord(q) + x_coord(ww), y_coord(q) + y_coord(ww));
     }
 #endif
@@ -9330,9 +9341,9 @@ void fill_envelope (pointer spec_head)
 #ifdef STAT
           if (internal[tracing_edges] > unity)
           {
-            print_nl("@ transition line ");
+            r_print_nl("@ transition line ");
             print_int(k);
-            print(", from ");
+            r_print(", from ");
             print_two_true(xx, yy - half_unit);
           }
 #endif
@@ -9380,9 +9391,9 @@ void fill_envelope (pointer spec_head)
 #ifdef STAT
           if (internal[tracing_edges] > unity)
           {
-            print(" to ");
+            r_print(" to ");
             print_two_true(xp, yp - half_unit);
-            print_nl("");
+            r_print_nl("");
           }
 #endif
           m = floor_unscaled(xp - xy_corr[octant]);
@@ -10108,7 +10119,7 @@ void paint_row (screen_row r, pixel_color b, trans_spec a, screen_col n)
   } while (!(k == n));
   if (0)
   {
-    wlog("Calling PAINTROW(%d,%d;", r, b);
+    wlog("Calling PAINTROW(%d,%d;", r, b);
     for (k = 0; k <= n; k++)
     {
       wlog("%d", a[k]);
@@ -10552,12 +10563,12 @@ void linear_eq (pointer p, small_number t)
     if (interesting(x))
     {
       begin_diagnostic();
-      print_nl("## ");
+      r_print_nl("## ");
       print_variable_name(x);
       w = n;
       while (w > 0)
       {
-        print("*4");
+        r_print("*4");
         w = w - 2;
       }
       print_char('=');
@@ -10720,7 +10731,7 @@ l_exit:;
 void show_cmd_mod (integer c, integer m)
 {
   begin_diagnostic();
-  print_nl("{");
+  r_print_nl("{");
   print_cmd_mod(c, m);
   print_char('}');
   end_diagnostic(false);
@@ -10750,15 +10761,15 @@ void show_context (void)
         if (name <= 1)
         {
           if (terminal_input && (file_ptr == 0))
-            print_nl("<*>");
+            r_print_nl("<*>");
           else
-            print_nl("<insert>");
+            r_print_nl("<insert>");
         }
         else if (name == 2)
-          print_nl("<scantokens>");
+          r_print_nl("<scantokens>");
         else
         {
-          print_nl("l.");
+          r_print_nl("l.");
           print_int(line);
         }
         print_char(' ');
@@ -10776,11 +10787,11 @@ void show_context (void)
         switch (token_type)
         {
           case forever_text:
-            print_nl("<forever> ");
+            r_print_nl("<forever> ");
             break;
           case loop_text:
             {
-              print_nl("<for(");
+              r_print_nl("<for(");
               p = param_stack[param_start];
               if (p != null)
               {
@@ -10789,20 +10800,20 @@ void show_context (void)
                 else
                   show_token_list(p, null, 20, tally);
               }
-              print(")> ");
+              r_print(")> ");
             }
             break;
           case parameter:
-            print_nl("<argument> ");
+            r_print_nl("<argument> ");
             break;
           case backed_up:
             if (loc == null)
-              print_nl("<recently read> ");
+              r_print_nl("<recently read> ");
             else
-              print_nl("<to be read again> ");
+              r_print_nl("<to be read again> ");
             break;
           case inserted:
-            print_nl("<inserted text> ");
+            r_print_nl("<inserted text> ");
             break;
           case macro:
             {
@@ -10824,11 +10835,11 @@ void show_context (void)
                   link(q) = null;
                 }
               }
-              print("->");
+              r_print("->");
             }
             break;
           default:
-            print_nl("?");
+            r_print_nl("?");
             break;
         }
         begin_pseudoprint();
@@ -10851,7 +10862,7 @@ void show_context (void)
       }
       else
       {
-        print("...");
+        r_print("...");
         p = l + first_count - half_error_line + 3;
         n = half_error_line;
       }
@@ -10867,7 +10878,7 @@ void show_context (void)
       for (q = first_count; q <= p - 1; q++)
         print_char(trick_buf[q % error_line]);
       if (m + n > error_line)
-        print("...");
+        r_print("...");
     }
     if (file_state)
       if ((name > 2) || (file_ptr == 0))
@@ -11164,7 +11175,7 @@ boolean check_outer_validity (void)
       {
         print_err("Forbidden token found");
       }
-      print(" while scanning ");
+      r_print(" while scanning ");
       help4("I suspect you have forgotten an `enddef',",
         "causing me to read past where you wanted me to stop.",
         "I'll try to recover; but if the error is serious,",
@@ -11173,14 +11184,14 @@ boolean check_outer_validity (void)
       {
         case flushing:
           {
-            print("to the end of the statement");
+            r_print("to the end of the statement");
             help_line[3] = "A previous error seems to have propagated,";
             cur_sym = frozen_semicolon;
           }
           break;
         case absorbing:
           {
-            print("a text argument");
+            r_print("a text argument");
             help_line[3] = "It seems that a right delimiter was left out,";
             if (warning_info == 0)
               cur_sym = frozen_end_group;
@@ -11194,7 +11205,7 @@ boolean check_outer_validity (void)
         case var_defining:
         case op_defining:
           {
-            print("the definition of ");
+            r_print("the definition of ");
             if (scanner_status == op_defining)
               slow_print(text(warning_info));
             else
@@ -11204,9 +11215,9 @@ boolean check_outer_validity (void)
           break;
         case loop_defining:
           {
-            print("the text of a ");
+            r_print("the text of a ");
             slow_print(text(warning_info));
-            print(" loop");
+            r_print(" loop");
             help_line[3] = "I suspect you have forgotten an `enddef',";
             cur_sym = frozen_end_for;
           }
@@ -11308,7 +11319,7 @@ l_switch:
             if (interaction > nonstop_mode)
             {
               if (limit == start)
-                print_nl("(Please type a command or say `end')");
+                r_print_nl("(Please type a command or say `end')");
               print_ln();
               first = start;
               prompt_input("*");
@@ -11665,7 +11676,7 @@ void check_delimiter (pointer l_delim, pointer r_delim)
   {
     print_err("The token `");
     slow_print(text(r_delim));
-    print("' is no longer a right delimiter");
+    r_print("' is no longer a right delimiter");
     help3("Strange: This token has lost its former meaning!",
       "I'll read it as a right delimiter this time;",
       "but watch out, I'll probably miss it later.");
@@ -11899,13 +11910,13 @@ void print_macro_name (pointer a, pointer n)
 void print_arg (pointer q, integer n, pointer b)
 {
   if (link(q) = _void)
-    print_nl("(EXPR");
+    r_print_nl("(EXPR");
   else if ((b < text_base) && (b != text_macro))
-    print_nl("(SUFFIX");
+    r_print_nl("(SUFFIX");
   else
-    print_nl("(TEXT");
+    r_print_nl("(TEXT");
   print_int(n);
-  print(")<-");
+  r_print(")<-");
   if (link(q) = _void)
     print_exp(q, 1);
   else
@@ -11989,7 +12000,7 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
     print_ln();
     print_macro_name (arg_list, macro_name);
     if (n == 3)
-      print("@#");
+      r_print("@#");
     show_macro(def_ref, 0, 100000);
     if (arg_list != null)
     {
@@ -12089,9 +12100,9 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
     print_err("Too many arguments to ");
     print_macro_name(arg_list, macro_name);
     print_char(';');
-    print_nl("  Missing `");
+    r_print_nl("  Missing `");
     slow_print(text(r_delim));
-    print("' has been inserted");
+    r_print("' has been inserted");
     help3("I'm going to assume that the comma I just read was a",
       "right delimiter, and then I'll begin expanding the macro.",
       "You might want to delete some tokens before continuing.");
@@ -12140,7 +12151,7 @@ void macro_call (pointer def_ref, pointer arg_list, pointer macro_name)
           if (cur_cmd != of_token)
           {
             missing_err(" of ");
-            print(" for ");
+            r_print(" for ");
             print_macro_name(arg_list, macro_name);
             help1("I've got the first argument; will look now for the other.");
             back_error();
@@ -12526,9 +12537,9 @@ lab_reswitch:
   {
     begin_diagnostic();
     if (cur_exp == true_code)
-      print("{true}");
+      r_print("{true}");
     else
-      print("{false}");
+      r_print("{false}");
     end_diagnostic(false);
   }
 found:
@@ -12581,7 +12592,7 @@ void bad_for (str_number s)
 {
   disp_err(null, "Improper ");
   print(s);
-  print(" has been replaced by 0");
+  r_print(" has been replaced by 0");
   help4("When you say `for x=a step b until c',",
     "the initial value `a' and the step size `b'",
     "and the final value `c' must have known numeric values.",
@@ -12720,7 +12731,7 @@ void resume_iteration (void)
   if (internal[tracing_commands] > unity)
   {
     begin_diagnostic();
-    print_nl("{loop value=");
+    r_print_nl("{loop value=");
     if ((q != null) && (link(q) = _void))
       print_exp(q, 1);
     else
@@ -12939,10 +12950,10 @@ void prompt_file_name (str_number s, str_number e)
   else
     print_err("I can't write on file `");
   print_file_name(cur_name, cur_area, cur_ext);
-  print("'.");
+  r_print("'.");
   if (e == ".mf")
     show_context();
-  print_nl("Please type another ");
+  r_print_nl("Please type another ");
   print(s);
   if (interaction < scroll_mode)
     fatal_error("*** (job aborted, file error in nonstop mode)");
@@ -12992,7 +13003,7 @@ void open_log_file (void)
   {
     wlog(banner);
     slow_print(base_ident);
-    print("  ");
+    r_print("  ");
     print_int(round_unscaled(internal[day]));
     print_char(' ');
     months = " JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
@@ -13008,7 +13019,7 @@ void open_log_file (void)
     print_dd(m % 60);
   }
   input_stack[input_ptr] = cur_input;
-  print_nl("**");
+  r_print_nl("**");
   l = input_stack[0].limit_field - 1;
   for (k = 1; k <= l; k++)
     print(buffer[k]);
@@ -13090,7 +13101,7 @@ void bad_exp (str_number s)
   unsigned char save_flag;
 
   print_err(s);
-  print(" expression can't begin with `");
+  r_print(" expression can't begin with `");
   print_cmd_mod (cur_cmd, cur_mod);
   print_char('\'');
   help4("I'm afraid I need some sort of value in order to continue,",
@@ -13165,7 +13176,7 @@ void obliterated (pointer q)
 {
   print_err("Variable ");
   show_token_list(q, null, 1000, 0);
-  print(" has been obliterated");
+  r_print(" has been obliterated");
   help3("It seems you did a nasty thing---probably by accident,",
     "but nevertheless you nearly hornswoggled me...",
     "While I was evaluating the right-hand side of this",
@@ -13483,12 +13494,12 @@ void print_known_or_unknown_type (small_number t, integer v)
     if (t != pair_type)
       print_type (t);
     else if (nice_pair(v, pair_type))
-      print("pair");
+      r_print("pair");
     else
-      print("unknown pair");
+      r_print("unknown pair");
   }
   else
-    print("unknown numeric");
+    r_print("unknown numeric");
   print_char(')');
 }
 /* 901 */
@@ -13671,11 +13682,11 @@ void do_unary (quarterword c)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl("{");
+    r_print_nl("{");
     print_op(c);
     print_char('(');
     print_exp(null, 0);
-    print(")}");
+    r_print(")}");
     end_diagnostic(false);
   }
   switch (c)
@@ -13973,7 +13984,7 @@ void bad_binary (pointer p, quarterword c)
     print_op(c);
   print_known_or_unknown_type(type(p), p);
   if (c >= min_of)
-    print("of");
+    r_print("of");
   else
     print_op(c);
   print_known_or_unknown_type(cur_type, cur_exp);
@@ -14872,13 +14883,13 @@ void do_binary (pointer p, quarterword c)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl("{(");
+    r_print_nl("{(");
     print_exp(p, 0);
     print_char(')');
     print_op(c);
     print_char('(');
     print_exp(null, 0);
-    print(")}");
+    r_print(")}");
     end_diagnostic(false);
   }
   switch (type(p))
@@ -15244,13 +15255,13 @@ void frac_mult (scaled n, scaled d)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl("{(");
+    r_print_nl("{(");
     print_scaled(n);
     print_char('/');
     print_scaled(d);
-    print(")*(");
+    r_print(")*(");
     print_exp(null, 0);
-    print(")}");
+    r_print(")}");
     end_diagnostic(false);
   }
   switch (cur_type)
@@ -15437,7 +15448,7 @@ void init_gf (void)
     selector = new_string;
     print_char('.');
     print_int(make_scaled(internal[hppp], 59429463));
-    print("gf");
+    r_print("gf");
     gf_ext = make_string();
     selector = old_setting;
   }
@@ -15446,7 +15457,7 @@ void init_gf (void)
   gf_out(gf_id_byte);
   old_setting = selector;
   selector = new_string;
-  print(" METAFONT output ");
+  r_print(" METAFONT output ");
   print_int(round_unscaled(internal[year]));
   print_char('.');
   print_dd(round_unscaled(internal[month]));
@@ -15593,7 +15604,7 @@ void ship_out (eight_bits c)
       q = link(q);
     } while (!(mm == fraction_one));
     if (w != 0)
-      print_nl("(There's unbounded black in character shipped out!)");
+      r_print_nl("(There's unbounded black in character shipped out!)");
     if (prev_m - m_offset(cur_edges) + x_off > gf_max_m)
       gf_max_m = prev_m - m_offset(cur_edges) + x_off;
     p = knil(p);
@@ -15716,7 +15727,7 @@ done1:;
     if (abs(value(p)) > 64)
     {
       print_err("Inconsistent equation");
-      print(" (off by ");
+      r_print(" (off by ");
       print_scaled(value(p));
       print_char(')');
       help2("The equation I just read contradicts what was said before.",
@@ -15853,12 +15864,12 @@ l_restart:
   if (type(lhs) <= pair_type)
     print_type(type(lhs));
   else
-    print("numeric");
+    r_print("numeric");
   print_char('=');
   if (cur_type <= pair_type)
     print_type(cur_type);
   else
-    print("numeric");
+    r_print("numeric");
   print_char(')');
   help2("I'm sorry, but I don't know how to make such things equal.",
     "(See the two expressions just above the error message.)");
@@ -15886,11 +15897,11 @@ void do_equation (void)
   if (internal[tracing_commands] > two)
   {
     begin_diagnostic();
-    print_nl("{(");
+    r_print_nl("{(");
     print_exp(lhs, 0);
-    print(")=(");
+    r_print(")=(");
     print_exp(null, 0);
-    print(")}");
+    r_print(")}");
     end_diagnostic(false);
   }
   if (cur_type == unknown_path)
@@ -15931,12 +15942,12 @@ void do_assignment (void)
     if (internal[tracing_commands] > two)
     {
       begin_diagnostic();
-      print_nl("{");
+      r_print_nl("{");
       if (info(lhs) > hash_end)
         slow_print(int_name[info(lhs) - (hash_end)]);
       else
         show_token_list(lhs, null, 1000, 0);
-      print(":=");
+      r_print(":=");
       print_exp(null, 0);
       print_char('}');
       end_diagnostic(false);
@@ -15948,7 +15959,7 @@ void do_assignment (void)
       {
         exp_err("Internal quantity `");
         slow_print(int_name[info(lhs) - (hash_end)]);
-        print("' must receive a known value");
+        r_print("' must receive a known value");
         help2("I can't set an internal quantity to anything but a known",
           "numeric value, so I'll have to ignore this assignment.");
         put_get_error();
@@ -16052,10 +16063,10 @@ void do_random_seed (void)
     {
       old_setting = selector;
       selector = log_only;
-      print_nl("{randomseed:=");
+      r_print_nl("{randomseed:=");
       print_scaled(cur_exp);
       print_char('}');
-      print_nl("");
+      r_print_nl("");
       selector = old_setting;
     }
   }
@@ -16104,10 +16115,10 @@ void do_interim (void)
   {
     print_err("The token `");
     if (cur_sym == 0)
-      print("(%CAPSULE)");
+      r_print("(%CAPSULE)");
     else
       slow_print(text(cur_sym));
-    print("' isn't an internal quantity");
+    r_print("' isn't an internal quantity");
     help1("Something like `tracingonline' should follow `interim'.");
     back_error();
   }
@@ -16177,7 +16188,7 @@ void do_show (void)
   do {
     get_x_next();
     scan_expression();
-    print_nl(">> ");
+    r_print_nl(">> ");
     print_exp(null, 2);
     flush_cur_exp(0);
   } while (!(cur_cmd != comma));
@@ -16185,7 +16196,7 @@ void do_show (void)
 /* 1041 */
 void disp_token (void)
 {
-  print_nl("> ");
+  r_print_nl("> ");
   if (cur_sym == 0)
   {
     if (cur_cmd == numeric_token)
@@ -16208,7 +16219,7 @@ void disp_token (void)
     slow_print(text(cur_sym));
     print_char('=');
     if (eq_type(cur_sym) >= outer_tag)
-      print("(outer) ");
+      r_print("(outer) ");
     print_cmd_mod(cur_cmd, cur_mod);
     if (cur_cmd == defined_macro)
     {
@@ -16229,27 +16240,27 @@ void do_show_token (void)
 /* 1045 */
 void do_show_stats (void)
 {
-  print_nl("Memory usage ");
+  r_print_nl("Memory usage ");
 #ifdef STAT
   print_int(var_used);
   print_char('&');
   print_int(dyn_used);
   if (false)
 #endif
-  print("unknown");
-  print(" (");
+  r_print("unknown");
+  r_print(" (");
   print_int(hi_mem_min - lo_mem_max - 1);
-  print(" still untouched)");
+  r_print(" still untouched)");
   print_ln();
-  print_nl("String usage ");
+  r_print_nl("String usage ");
   print_int(str_ptr - init_str_ptr);
   print_char('&');
   print_int(pool_ptr - init_pool_ptr);
-  print(" (");
+  r_print(" (");
   print_int(max_strings - max_str_ptr);
   print_char('&');
   print_int(pool_size - max_pool_ptr);
-  print(" still untouched)");
+  r_print(" still untouched)");
   print_ln();
   get_x_next();
 }
@@ -16275,11 +16286,11 @@ void disp_var (pointer p)
   }
   else if (type(p) >= unsuffixed_macro)
   {
-    print_nl("");
+    r_print_nl("");
     print_variable_name(p);
     if (type(p) > unsuffixed_macro)
-      print("@#");
-    print("=macro:");
+      r_print("@#");
+    r_print("=macro:");
     if (file_offset >= max_print_line - 20)
       n = 5;
     else
@@ -16288,7 +16299,7 @@ void disp_var (pointer p)
   }
   else if (type(p) != undefined)
   {
-    print_nl("");
+    r_print_nl("");
     print_variable_name(p);
     print_char('=');
     print_exp(p, 0);
@@ -16323,12 +16334,12 @@ void do_show_dependencies (void)
   {
     if (interesting(p))
     {
-      print_nl("");
+      r_print_nl("");
       print_variable_name(p);
       if (type(p) == dependent)
         print_char('=');
       else
-        print(" = ");
+        r_print(" = ");
       print_dependency(dep_list(p), type(p));
     }
     p = dep_list(p);
@@ -16429,7 +16440,7 @@ void find_edges_var (pointer t)
   {
     print_err("Variable ");
     show_token_list(t, null, 1000, 0);
-    print(" is the wrong type (");
+    r_print(" is the wrong type (");
     print_type(type(p));
     print_char(')');
     help2("I was looking for a \"known\" picture variable.",
@@ -16607,7 +16618,7 @@ scaled tfm_check (small_number m)
   {
     print_err("Enormous ");
     print(int_name[m]);
-    print(" has been reduced");
+    r_print(" has been reduced");
     help1("Font metric dimensions must be less than 2048pt.");
     put_get_error();
     if (internal[m] > 0)
@@ -16850,7 +16861,7 @@ void do_message (void)
     {
       case message_code:
         {
-          print_nl("");
+          r_print_nl("");
           slow_print(cur_exp);
         }
         break;
@@ -16939,23 +16950,23 @@ void set_tag (halfword c, small_number t, halfword r)
     if ((c > ' ') && (c < 127))
       print(c);
     else if (c == 256)
-      print("||");
+      r_print("||");
     else
     {
-      print("code ");
+      r_print("code ");
       print_int(c);
     }
-    print(" is already ");
+    r_print(" is already ");
     switch (char_tag[c])
     {
       case lig_tag:
-        print("in a ligtable");
+        r_print("in a ligtable");
         break;
       case list_tag:
-        print("in a charlist");
+        r_print("in a charlist");
         break;
       case ext_tag:
-        print("extensible");
+        r_print("extensible");
         break;
     }
     help2("It's not legal to label a character more than once.",
@@ -17206,7 +17217,7 @@ void store_base_file (void)
   four_quarters w;
 
   selector = new_string;
-  print(" (preloaded base=");
+  r_print(" (preloaded base=");
   print(job_name);
   print_char(' ');
   print_int(round_unscaled(internal[year]));
@@ -17225,10 +17236,10 @@ void store_base_file (void)
   pack_job_name(base_extension);
   while (!w_open_out(base_file))
     prompt_file_name("base name file", base_extension);
-  print_nl("Beginning to dump on file ");
+  r_print_nl("Beginning to dump on file ");
   slow_print(w_make_name_string(base_file));
   flush_string(str_ptr - 1);
-  print_nl("");
+  r_print_nl("");
   slow_print(base_ident);
   dump_int(4795517L);
   dump_int(mem_min);
@@ -17250,7 +17261,7 @@ void store_base_file (void)
   dump_four_ASCII();
   print_ln();
   print_int(str_ptr);
-  print(" strings of total length ");
+  r_print(" strings of total length ");
   print_int(pool_ptr);
   sort_avail();
   var_used = 0;
@@ -17287,7 +17298,7 @@ void store_base_file (void)
   dump_int(dyn_used);
   print_ln();
   print_int(x);
-  print(" memory locations dumped; current usage is ");
+  r_print(" memory locations dumped; current usage is ");
   print_int(var_used);
   print_char('&');
   print_int(dyn_used);
@@ -17311,7 +17322,7 @@ void store_base_file (void)
   dump_int(st_count);
   print_ln();
   print_int(st_count);
-  print(" symbolic tokens");
+  r_print(" symbolic tokens");
   dump_int(int_ptr);
   for (k = 1; k <= int_ptr; k++)
   {
@@ -17363,7 +17374,7 @@ void do_statement (void)
       {
         if (internal[tracing_titles] > 0)
         {
-          print_nl("");
+          r_print_nl("");
           slow_print(cur_exp);
           update_terminal();
         }
@@ -17632,7 +17643,7 @@ void fix_design_size (void)
   if ((d < unity) || (d >= fraction_half))
   {
     if (d != 0)
-      print_nl("(illegal design size has been changed to 128pt)");
+      r_print_nl("(illegal design size has been changed to 128pt)");
     d = 040000000;
     internal[design_size] = d;
   }
@@ -17925,7 +17936,7 @@ l_restart:
         {
           print_err("A group begun on line ");
           print_int(group_line);
-          print(" never ended");
+          r_print(" never ended");
           help2("I saw a `begingroup' back there that hasn't been matched",
             "by `endgroup'. So I've inserted `endgroup' now.");
           back_error();
@@ -18015,7 +18026,7 @@ l_restart:
         if (cur_cmd != of_token)
         {
           missing_err("of");
-          print(" for ");
+          r_print(" for ");
           print_cmd_mod(primary_binary, c);
           help1("I've got the first argument; will look now for the other.");
           back_error();
@@ -18888,9 +18899,9 @@ void close_files_and_terminate (void)
       for (k = 0; k <= 255; k++)
         if (skip_table[k] < lig_table_size)
         {
-          print_nl("(local label ");
+          r_print_nl("(local label ");
           print_int(k);
-          print(":: was missing)");
+          r_print(":: was missing)");
           cancel_skips(skip_table[k]);
         }
       if (lk_started)
@@ -18943,14 +18954,14 @@ void close_files_and_terminate (void)
       if (tfm_changed > 0)
       {
         if (tfm_changed == 1)
-          print_nl("(a font metric dimension");
+          r_print_nl("(a font metric dimension");
         else
         {
-          print_nl("(");
+          r_print_nl("(");
           print_int(tfm_changed);
-          print(" font metric dimensions");
+          r_print(" font metric dimensions");
         }
-        print(" had to be decreased)");
+        r_print(" had to be decreased)");
       }
 #ifdef STAT
       if (internal[tracing_stats] > 0)
@@ -18963,7 +18974,7 @@ void close_files_and_terminate (void)
         wlog_ln("%s%s%ld%s%ld%s%ld%s\n", "  out of ", "256w,16h,16d,64i,", (long)lig_table_size, "l,", (long)max_kerns, "k,256e,", (long)max_font_dimen, "p)");
       }
 #endif
-      print_nl("Font metrics written on ");
+      r_print_nl("Font metrics written on ");
       slow_print(metric_file_name);
       print_char('.');
       b_close(tfm_file);
@@ -19023,16 +19034,16 @@ void close_files_and_terminate (void)
         write_gf(half_buf, gf_buf_size - 1);
       if (gf_ptr > 0)
         write_gf(0, gf_ptr - 1);
-      print_nl("Output written on ");
+      r_print_nl("Output written on ");
       slow_print(output_file_name);
-      print(" (");
+      r_print(" (");
       print_int(total_chars);
-      print(" character");
+      r_print(" character");
       if (total_chars != 1)
         print_char('s');
-      print(", ");
+      r_print(", ");
       print_int(gf_offset + gf_ptr);
-      print(" bytes).");
+      r_print(" bytes).");
       b_close(gf_file);
     }
   }
@@ -19043,7 +19054,7 @@ void close_files_and_terminate (void)
     selector = selector - 2;
     if (selector == term_only)
     {
-      print_nl("Transcript written on ");
+      r_print_nl("Transcript written on ");
       slow_print(log_name);
       print_char('.');
     }
@@ -19067,19 +19078,19 @@ void final_cleanup (void)
     stop_iteration();
   while (open_parens > 0)
   {
-    print(" )");
+    r_print(" )");
     decr(open_parens);
   }
   while (cond_ptr != null)
   {
-    print_nl("(end occurred when ");
+    r_print_nl("(end occurred when ");
     print_cmd_mod(fi_or_else, cur_if);
     if (if_line != 0)
     {
-      print(" on line ");
+      r_print(" on line ");
       print_int(if_line);
     }
-    print(" was incomplete)");
+    r_print(" was incomplete)");
     if_line = if_line_field(cond_ptr);
     cur_if = name_type(cond_ptr);
     loop_ptr = cond_ptr;
@@ -19091,7 +19102,7 @@ void final_cleanup (void)
       if (selector == term_and_log)
       {
         selector = term_only;
-        print_nl("(see the transcript file for additional information)");
+        r_print_nl("(see the transcript file for additional information)");
         selector = term_and_log;
       }
   if (c == 1)
@@ -19103,7 +19114,7 @@ void final_cleanup (void)
       goto l_exit;
     }
 #endif
-    print_nl("(dump is performed only by INIMF)");
+    r_print_nl("(dump is performed only by INIMF)");
     goto l_exit;
   }
 l_exit:;
@@ -19465,7 +19476,7 @@ void debug_help (void)
   while (true)
   {
     wake_up_terminal();
-    print_nl("debug # (-1 to exit):");
+    r_print_nl("debug # (-1 to exit):");
     unpated_terminal();
     read(term_in, m);
     if (m < 0)
@@ -19531,7 +19542,7 @@ void debug_help (void)
           panicking = !panicking;
           break;
         default:
-          print("?");
+          r_print("?");
           break;
       }
     }
