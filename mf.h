@@ -559,6 +559,13 @@ do {                    \
 #define nonstop_mode 1 //{omits all stops}
 #define scroll_mode 2 //{omits error stops}
 #define error_stop_mode 3 //{stops at every opportunity to interact}
+#define print_err(a) \
+do {                 \
+  if (interaction == error_stop_mode) \
+    wake_up_terminal();               \
+  r_print_nl("! ");                   \
+  r_print(a);                         \
+} while (0)
 /* 71 */
 #define spotless 0 //{|history| value when nothing has been amiss yet}
 #define warning_issued 1 //{|history| value when |begin_diagnostic| has been called}
@@ -595,8 +602,6 @@ do {                                      \
     interaction = scroll_mode;            \
   if (log_opened)                         \
     error();                              \
-  if (debug) if (interaction > batch_mode)\
-   debug_help();                          \
   history = fatal_error_stop;             \
   jump_out();                             \
 } while (0)
@@ -672,6 +677,12 @@ do {                \
 /* 161 */
 #define link(a) mem[a].hh.rh //{the |link| field of a memory word}
 #define info(a) mem[a].hh.lh //{the |info| field of a memory word}
+/* 164 */
+#define free_avail(a)   \
+do {                    \
+  link(a) = avail;      \
+  avail = a;            \
+} while(0)
 /* 165 */
 #define fast_get_avail(a) \
 do {                  \

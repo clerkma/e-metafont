@@ -798,7 +798,7 @@ void error (void)
                   "Maybe you should try asking a human?");
               do {
                 decr(help_ptr);
-                print(help_line[help_ptr]);
+                r_print(help_line[help_ptr]);
                 print_ln();
               } while (!(help_ptr == 0));
             }
@@ -911,7 +911,7 @@ void error (void)
     while (help_ptr > 0)
     {
       decr(help_ptr);
-      print_nl(help_line[help_ptr]);
+      r_print_nl(help_line[help_ptr]);
     }
   }
   print_ln();
@@ -979,7 +979,7 @@ boolean init_terminal (void)
   }
   while (true)
   {
-    wakeup_terminal();
+    wake_up_terminal();
     fputs("**", stdout);
     fflush(stdout);
     if (!input_ln(stdin, true))
