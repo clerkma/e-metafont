@@ -14,6 +14,11 @@
   #pragma warning(disable:4700)
 #endif
 
+/* < emulate pascal's internal functions */
+#define chr(x) i
+#define odd(x) ((x) % 2)
+/* > */
+
 typedef int32_t  integer;
 typedef uint32_t boolean;
 
@@ -1565,3 +1570,42 @@ do {                          \
   str_pool[k + 2] = si(qo(w.b2)); \
   str_pool[k + 3] = si(qo(w.b3)); \
 } while (0)
+
+/* < inline functions */
+static inline void write_log (const char * fmt, ...)
+{
+  va_list m_ptr;
+  va_start(m_ptr, fmt);
+  vfprintf(log_file, fmt, m_ptr);
+  va_end(m_ptr);
+}
+
+static inline void wlog_ln (const char * fmt, ...)
+{
+  va_list m_ptr;
+  va_start(m_ptr, fmt);
+  vfprintf(log_file, fmt, m_ptr);
+  fprintf(log_file, "\n");
+  va_end(m_ptr);
+}
+
+static inline void wterm (ASCII_code s)
+{
+  (void) fputc(s, stdout);
+}
+
+static inline void wlog (ASCII_code s)
+{
+  (void) fputc(s, log_file);
+}
+
+static inline void wterm_cr (void)
+{
+  (void) fputc('\n', stdout);
+}
+
+static inline void wlog_cr (void)
+{
+  (void) fputc('\n', log_file);
+}
+/* > */

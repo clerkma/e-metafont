@@ -106,7 +106,7 @@ void initialize (void)
   for (i = 0177; i <= 0377; i++)
     xchr[i] = ' ';
   for (i = first_text_char; i <= last_text_char; i++)
-    xord[chr (i)] = 0177;
+    xord[chr(i)] = 0177;
   for (i = 0200; i <= 0377; i++)
     xord[xchr[i]] = i;
   for (i = 0; i <= 0176; i++)
@@ -19667,7 +19667,7 @@ start_of_MF:
     }
     buffer[limit] = '%';
     fix_date_and_time();
-    ini_trandoms((internal[time] / unity) + internal[day]);
+    init_randoms((internal[time] / unity) + internal[day]);
     if (interaction == batch_mode)
       selector = no_print;
     else
