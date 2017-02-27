@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #ifdef _WIN32
   #pragma warning(disable:4459)
@@ -17,6 +18,7 @@
 /* < emulate pascal's internal functions */
 #define chr(x) i
 #define odd(x) ((x) % 2)
+#define ho(a) a
 /* > */
 
 typedef int32_t  integer;
@@ -1583,6 +1585,9 @@ do {                          \
 } while (0)
 
 /* < inline functions */
+
+/* logging functions */
+
 static inline void write_log (const char * fmt, ...)
 {
   va_list m_ptr;
@@ -1619,4 +1624,106 @@ static inline void wlog_cr (void)
 {
   (void) fputc('\n', log_file);
 }
+
+/* string intern functions */
+
+str_number make_str_string (const char * s)
+{
+  size_t slen = strlen(s);
+
+  if (slen == 1)
+  {
+    return ((str_number) s[0]);
+  }
+  else
+  {
+    memcpy(str_pool + pool_ptr, s, slen);
+    pool_ptr += slen;
+    return (make_string());
+  }
+}
+
+char * take_str_string (str_number s)
+{
+  char * a = (char *) malloc(length(s) + 1);
+  strncpy(a, (const char *)(str_pool + str_start[s]), length(s));
+  a[length(s)] = '\0';
+
+  return a;
+}
+
+/* file I/O functions */
+
+static boolean open_input (FILE ** f)
+{
+  boolean openable = false;
+  char * file_name_utf8 = (char *) calloc(1, name_length + 1);
+  strncpy(file_name_utf8, (const char *) name_of_file + 1, name_length);
+
+  if (file_name_utf8 != NULL)
+  {
+    *f = fopen(file_name_utf8, "rb");
+
+    if (*f)
+    {
+      openable = true;
+    }
+  }
+
+  if (file_name_utf8 != NULL)
+    free(file_name_utf8);
+
+  return openable;
+}
+
+void a_close (alpha_file f)
+{
+  if (f == NULL)
+    return;
+  else if (ferror(f) || fclose(f))
+  {
+    perror("\n! I/O Error");
+  }
+}
+
+void b_close (alpha_file f)
+{
+  if (f == NULL)
+    return;
+  else if (ferror(f) || fclose(f))
+  {
+    perror("\n! I/O Error");
+  }
+}
+
+void w_close (alpha_file f)
+{
+  if (f == NULL)
+    return;
+  else if (ferror(f) || fclose(f))
+  {
+    perror("\n! I/O Error");
+  }
+}
+
+boolean open_output (FILE ** f)
+{
+  char * file_name_utf8 = (char *) calloc(1, name_length + 1);
+  strncpy(file_name_utf8, (const char *) name_of_file + 1, name_length);
+  *f = fopen(file_name_utf8, "wb");
+
+  if (file_name_utf8 != NULL)
+    free(file_name_utf8);
+
+  return (*f != NULL);
+}
+
+#define primitive(s, c, o) primitive_(make_str_string((const char *) s), (halfword) (c), (halfword) (o))
+
+#define a_open_in(f)    open_input(&(f))
+#define w_open_in(f)    open_input(&(f))
+//
+#define a_open_out(f)   a_open_output(&(f))
+#define b_open_out(f)   b_open_output(&(f))
+#define w_open_out(f)   w_open_output(&(f))
 /* > */

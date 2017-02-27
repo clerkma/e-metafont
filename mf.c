@@ -921,6 +921,14 @@ void error (void)
   l_exit:;
 }
 /* 88 */
+void fatal_error (const char * s)
+{
+  normalize_selector();
+  print_err("Emergency stop");
+  help1(s);
+  succumb();
+}
+/*
 void fatal_error (str_number s)
 {
   normalize_selector();
@@ -928,7 +936,21 @@ void fatal_error (str_number s)
   help1(s);
   succumb();
 }
+*/
 /* 89 */
+void overflow (const char * s, integer n)
+{
+  normalize_selector();
+  print_err("METAFONT capacity exceeded, sorry [");
+  r_print(s);
+  print_char('=');
+  print_int(n);
+  print_char(']');
+  help2("If you really absolutely need more capacity,",
+    "you can ask a wizard to enlarge me.");
+  succumb();
+}
+/*
 void overflow (str_number s, integer n)
 {
   normalize_selector();
@@ -941,7 +963,27 @@ void overflow (str_number s, integer n)
     "you can ask a wizard to enlarge me.");
   succumb();
 }
+*/
 /* 90 */
+void confusion (const char * s)
+{
+  normalize_selector();
+  if (history < error_message_issued)
+  {
+    print_err("This can't happen (");
+    r_print(s);
+    print_char(')');
+    help1("I'm broken. Please show this to someone who can fix can fix");
+  }
+  else
+  {
+    print_err("I can't go on meeting you like this");
+    help2("One of your faux pas seems to have wounded me deeply...",
+      "in fact, I'm barely conscious. Please fix it and try again.");
+  }
+  succumb();
+}
+/*
 void confusion (str_number s)
 {
   normalize_selector();
@@ -960,6 +1002,7 @@ void confusion (str_number s)
   }
   succumb();
 }
+*/
 /* 36 */
 boolean init_terminal (void)
 {
@@ -2774,13 +2817,13 @@ void print_op (quarterword c)
         r_print("<=");
         break;
       case greater_than:
-        print_char(">");
+        print_char('>');
         break;
       case greater_or_equal:
         r_print(">=");
         break;
       case equal_to:
-        print_char("=");
+        print_char('=');
         break;
       case unequal_to:
         r_print("<>");
@@ -2907,7 +2950,7 @@ found:
   return p;
 }
 /* 210 */
-void primitive (str_number s, halfword c, halfword o)
+void primitive_ (str_number s, halfword c, halfword o)
 {
   pool_pointer k;
   small_number j;
@@ -3085,7 +3128,7 @@ void print_cmd_mod (integer c, integer m)
       r_print("randomseed");
       break;
     case relax:
-      print_char("\\");
+      print_char('\\');
       break;
     case right_brace:
       r_print("}");
@@ -3157,7 +3200,7 @@ void print_cmd_mod (integer c, integer m)
           r_print("#@");
           break;
         case macro_at:
-          print_char("@");
+          print_char('@');
           break;
         case macro_suffix:
           r_print("@#");
@@ -3427,7 +3470,7 @@ void show_macro (pointer p, integer q, integer l)
     case secondary_macro:
     case tertiary_macro:
       {
-        print_char("<");
+        print_char('<');
         print_cmd_mod(param_type, info(p));
         r_print(">->");
       }
@@ -7193,7 +7236,7 @@ void print_strange (str_number s)
       if (left_type(p) != t)
       {
         t = left_type(p);
-        print_char(" ");
+        print_char(' ');
         print_int(t - 1);
       }
       if (q != null)
@@ -7205,13 +7248,13 @@ void print_strange (str_number s)
           q = link(q);
           while (left_type(link(q)) == endpoint)
           {
-            print_char(" ");
+            print_char(' ');
             print(octant_dir[left_octant(q)]);
             q = link(q);
           }
           print_char(')');
         }
-        print_char(" ");
+        print_char(' ');
         print(octant_dir[left_octant(q)]);
         q = null;
       }
@@ -7220,7 +7263,7 @@ void print_strange (str_number s)
       q = p;
     p = link(p);
   } while (!(p == f));
-  print_char(" ");
+  print_char(' ');
   print_int(left_type(p) - 1);
   if (q != null)
   {
@@ -7231,7 +7274,7 @@ void print_strange (str_number s)
       q = link(q);
       while (left_type(link(q)) == endpoint)
       {
-        print_char(" ");
+        print_char(' ');
         print(octant_dir[left_octant(q)]);
         q = link(q);
       }
