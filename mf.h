@@ -19,6 +19,8 @@
 #define chr(x) i
 #define odd(x) ((x) % 2)
 #define ho(a) a
+#define qo(a) a
+#define qi(a) a
 /* > */
 
 typedef int32_t  integer;
@@ -1177,6 +1179,21 @@ do {                          \
 #define double_path_code 0 //{command modifier for `\&{doublepath}'}
 #define contour_code 1 //{command modifier for `\&{contour}'}
 #define also_code 2 //{command modifier for `\&{also}'}
+/* 404 */
+#define procrustes(a)           \
+do {                            \
+  if (abs(a) >= dmax)           \
+    if (abs(a) > max_allowed)   \
+    {                           \
+      chopped = 1;              \
+      if (a > 0)                \
+        a = max_allowed;        \
+      else                      \
+        a = -max_allowed;       \
+    }                           \
+    else if (chopped == 0)      \
+      chopped = 1;              \
+} while (0)
 /* 410 */
 #define t_of_the_way(a,b) (a - take_fraction(a - b, t))
 /* 435 */
@@ -1184,6 +1201,8 @@ do {                          \
 #define south_edge(a) y_coord(link(a + first_octant))
 #define east_edge(a) y_coord(link(a + second_octant))
 #define west_edge(a) y_coord(link(a + seventh_octant))
+/* 442 */
+#define diag_offset(a) x_coord(knil(link(cur_pen + a)))
 /* 472 */
 #define pen_node_size 10
 #define coord_node_size 3
@@ -1261,6 +1280,40 @@ do {                          \
 #define stack_uv bisect_stack[bisect_ptr+3] //{stacked value of |uv|}
 #define stack_xy bisect_stack[bisect_ptr+4] //{stacked value of |xy|}
 #define int_increment (int_packets+int_packets+5) //{number of stack words per level}
+/* 554 */
+#define set_min_max(a)  \
+do {                    \
+  if (stack_1(a) < 0)                                               \
+    if (stack_3(a) >= 0)                                            \
+    {                                                               \
+      if (stack_2(a) < 0) stack_min(a) = stack_1(a) + stack_2(a);   \
+      else stack_min(a) = stack_1(a);                               \
+      stack_max(a) = stack_1(a) + stack_2(a) + stack_3(a);          \
+      if (stack_max(a) < 0) stack_max(a) = 0;                       \
+    }                                                               \
+    else                                                            \
+    {                                                               \
+      stack_min(a) = stack_1(a) + stack_2(a) + stack_3(a);          \
+      if (stack_min(a) > stack_1(a)) stack_min(a) = stack_1(a);     \
+      stack_max(a) = stack_1(a) + stack_2(a);                       \
+      if (stack_max(a) < 0) stack_max(a) = 0;                       \
+    }                                                               \
+  else                                                              \
+    if (stack_3(a) <= 0)                                            \
+    {                                                               \
+      if (stack_2(a) > 0) stack_max(a) = stack_1(a) + stack_2(a);   \
+      else stack_max(a) = stack_1(a);                               \
+      stack_min(a) = stack_1(a) + stack_2(a) + stack_3(a);          \
+      if (stack_min(a) > 0) stack_min(a) = 0;                       \
+    }                                                               \
+    else                                                            \
+    {                                                               \
+      stack_max(a) = stack_1(a) + stack_2(a) + stack_3(a);          \
+      if (stack_max(a) < stack_1(a)) stack_max(a) = stack_1(a);     \
+      stack_min(a) = stack_1(a) + stack_2(a);                       \
+      if (stack_min(a) > 0) stack_min(a) = 0;                       \
+    }                                                               \
+} while (0)
 /* 555 */
 #define max_patience 5000
 /* 565 */
@@ -1419,7 +1472,7 @@ do {                                              \
   if (job_name == 0)                              \
     open_log_file();                              \
   pack_job_name(gf_ext);                          \
-  while (!bopenout(gf_file))                      \
+  while (!b_open_out(gf_file))                    \
     prompt_file_name(756, gf_ext);                \
   output_file_name = b_make_name_string(gf_file); \
 } while (0)

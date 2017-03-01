@@ -4278,7 +4278,7 @@ void print_exp (pointer p, small_number verbosity)
           else if (type(v) == independent)
             print_variable_name(v);
           else
-            print_dp(type(v), disp_list(v), verbosity);
+            print_dp(type(v), dep_list(v), verbosity);
           v = v + 2;
           if (v != q)
             print_char(',');
@@ -4304,6 +4304,19 @@ void print_exp (pointer p, small_number verbosity)
     unstash_cur_exp(p);
 }
 /* 807 */
+void disp_err (pointer p, const char * s)
+{
+  if (interaction == error_stop_mode)
+    wake_up_terminal();
+  r_print_nl(">> ");
+  print_exp(p, 1);
+  if (s != "")
+  {
+    r_print_nl("! ");
+    r_print(s);
+  }
+}
+/*
 void disp_err (pointer p, str_number s)
 {
   if (interaction == error_stop_mode)
@@ -4316,6 +4329,7 @@ void disp_err (pointer p, str_number s)
     print(s);
   }
 }
+*/
 /* 594 */
 pointer p_plus_fq (pointer p, integer f, pointer q, small_number t, small_number tt)
 {
@@ -11557,7 +11571,7 @@ void firm_up_the_line (void)
   {
     if (interaction > nonstop_mode)
     {
-      wakeup_terminal();
+      wake_up_terminal();
       print_ln();
       if (start < limit)
       {
@@ -14463,7 +14477,7 @@ void edges_trans (pointer p, quarterword c)
             }
             if (tyy < 0)
             {
-              yreflect_edges();
+              y_reflect_edges();
               tyy = -tyy;
             }
             if (txx != unity)
@@ -15001,7 +15015,7 @@ void do_binary (pointer p, quarterword c)
       else if (type(p) == pair_type)
         bad_binary(p, c);
       else
-        add_or_sub_tract(p, null, c);
+        add_or_subtract(p, null, c);
       break;
     case less_than:
     case less_or_equal:
@@ -17756,6 +17770,27 @@ void fix_check_sum (void)
 l_exit:;
 }
 /* 1133 */
+void tfm_two (integer x)
+{
+  tfm_out(x / 256);
+  tfm_out(x % 256);
+}
+void tfm_four (integer x)
+{
+  if (x >= 0)
+    tfm_out(x / three_bytes);
+  else
+  {
+    x = x + 010000000000;
+    x = x + 010000000000;
+    tfm_out((x / three_bytes) + 128);
+  }
+  x = x % three_bytes;
+  tfm_out(x / unity);
+  x = x % unity;
+  tfm_out(x / 0400);
+  tfm_out(x % 0400);
+}
 void tfm_qqqq (four_quarters x)
 {
   tfm_out(qo(x.b0));
