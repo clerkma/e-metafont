@@ -1600,6 +1600,55 @@ integer ab_vs_cd (integer a, integer b, integer c, integer d)
   l_exit:;
   return Result;
 }
+/* 119 */
+scaled floor_scaled (scaled x)
+{
+  integer be_careful;
+  if (x >= 0)
+    return x - (x % unity);
+  else
+  {
+    be_careful = x + 1;
+    return x + ((-be_careful) % unity) + 1 - unity;
+  }
+}
+integer floor_unscaled (scaled x)
+{
+  integer be_careful;
+  if (x >= 0)
+    return x / unity;
+  else
+  {
+    be_careful = x + 1;
+    return -(1 + ((-be_careful) / unity));
+  }
+}
+integer round_unscaled(scaled x)
+{
+  integer be_careful;
+  if (x >= half_unit)
+    return 1 + ((x - half_unit) / unity);
+  else if (x >= -half_unit)
+    return 0;
+  else
+  {
+    be_careful = x + 1;
+    return -(1 + ((-be_careful - half_unit) / unity));
+  }
+}
+scaled round_fraction(fraction x)
+{
+  integer be_careful;
+  if (x >= 2048)
+    return 1 + ((x - 2048) / 4096)
+  else if (x >= -2048)
+    return 0;
+  else
+  {
+    be_careful = x + 1;
+    return -(1 + ((-be_careful - 2048) / 4096));
+  }
+}
 /* 121 */
 scaled square_rt (scaled x)
 {
