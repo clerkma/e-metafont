@@ -231,14 +231,14 @@ void initialize (void)
   big_node_size[transform_type] = transform_node_size;
   big_node_size[pair_type] = pair_node_size;
   save_ptr = null;
-  octant_dir[first_octant] = "ENE";
-  octant_dir[second_octant] = "NNE";
-  octant_dir[third_octant] = "NNW";
-  octant_dir[fourth_octant] = "WNW";
-  octant_dir[fifth_octant] = "WSW";
-  octant_dir[sixth_octant] = "SSW";
-  octant_dir[seventh_octant] = "SSE";
-  octant_dir[eighth_octant] = "ESE";
+  octant_dir[first_octant] = make_str_string("ENE");
+  octant_dir[second_octant] = make_str_string("NNE");
+  octant_dir[third_octant] = make_str_string("NNW");
+  octant_dir[fourth_octant] = make_str_string("WNW");
+  octant_dir[fifth_octant] = make_str_string("WSW");
+  octant_dir[sixth_octant] = make_str_string("SSW");
+  octant_dir[seventh_octant] = make_str_string("SSE");
+  octant_dir[eighth_octant] = make_str_string("ESE");
   max_rounding_ptr = 0;
   octant_code[1] = first_octant;
   octant_code[2] = second_octant;
@@ -420,7 +420,7 @@ void print (integer s)
   pool_pointer j;
 
   if ((s < 0) || (s >= str_ptr))
-    s = "???";
+    s = make_str_string("???");
   if ((s < 256) && (selector > pseudo))
     print_char(s);
   else
@@ -444,7 +444,7 @@ void slow_print (integer s)
   pool_pointer j;
 
   if ((s < 0) || (s >= str_ptr))
-    s = "???";
+    s = make_str_string("???");
   if ((s < 256) && (selector > pseudo))
     print_char(s);
   else
@@ -1640,7 +1640,7 @@ scaled round_fraction(fraction x)
 {
   integer be_careful;
   if (x >= 2048)
-    return 1 + ((x - 2048) / 4096)
+    return 1 + ((x - 2048) / 4096);
   else if (x >= -2048)
     return 0;
   else

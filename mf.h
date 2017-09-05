@@ -1679,6 +1679,10 @@ static inline void wlog_cr (void)
 }
 
 /* string intern functions */
+extern inline void append_lc_hex (ASCII_code c);
+extern boolean input_ln (alpha_file f, boolean bypass_eoln);
+extern str_number make_string (void);
+extern  str_number load_pool_strings (integer spare_size);
 
 str_number make_str_string (const char * s)
 {
